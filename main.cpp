@@ -43,7 +43,7 @@ int main(){
 		}}
 		tracksystem.render();
 		train.render();
-		/*SDL_GetMouseState(&xMouse, &yMouse);
+		SDL_GetMouseState(&xMouse, &yMouse);
 		tracksystem.nodes.back().pos.x = xMouse;
 		tracksystem.nodes.back().pos.y = yMouse;
 		int nNodes = tracksystem.nodes.size();
@@ -53,7 +53,7 @@ int main(){
 		if(tracksystem.nodes.back().dir-tracksystem.nodes[nNodes-2].dir < -2*pi)
 			tracksystem.nodes.back().dir += 4*pi;
 		if(tracksystem.nodes.back().dir-tracksystem.nodes[nNodes-2].dir > 2*pi)
-			tracksystem.nodes.back().dir -= 4*pi;*/
+			tracksystem.nodes.back().dir -= 4*pi;
 		SDL_RenderPresent(renderer);
 
 	}

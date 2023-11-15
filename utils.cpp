@@ -133,7 +133,6 @@ Vec Tracksystem::getpos(Node node1, Node node2, float nodedist)
 	if(isinf(radius)){
 		ddx = nodedist*(node2.pos.x - node1.pos.x);
 		ddy = -nodedist*(node2.pos.y - node1.pos.y);
-		std::cout << ddx << std::endl;
 	}
 	else{
 		float phi = nodedist*(node2.dir - node1.dir);
@@ -191,6 +190,7 @@ Train::Train(Tracksystem* newtracksystem)
 	tracksystem = newtracksystem;
 	tex = loadImage("assets/train.png");
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+	h = h/2;
 	nodepair[0] = 0;
 	nodepair[1] = 1;
 	nodedist = 0.;
@@ -210,6 +210,7 @@ void Train::update(int ms)
 		nodedist = (nodedist-1)*arclength1/arclength2;
 	}
 	pos = tracksystem->getpos(tracksystem->nodes[nodepair[0]], tracksystem->nodes[nodepair[1]], nodedist);
+	imageangle = (1-nodedist)*(tracksystem->nodes[nodepair[0]].dir) + nodedist*(tracksystem->nodes[nodepair[1]].dir);
 }
 
 void Train::render()
