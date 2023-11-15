@@ -24,6 +24,8 @@ class Vec
     float y;
 };
 
+float sign(float a);
+
 class Node;
 
 class Tracksystem
@@ -31,7 +33,10 @@ class Tracksystem
     public:
     Tracksystem(std::vector<float> xs, std::vector<float> ys);
     void render();
+    void addnode(float x, float y, Node previousnode);
+    float getradius(Node node1, Node node2);
     Vec getpos(Node node1, Node node2, float nodedist);
+    float getarclength(Node node1, Node node2, float nodedist);
     std::vector<Node> nodes;
 };
 
@@ -55,6 +60,7 @@ class Train
     int nodepair[2];
     float nodedist;
     Vec pos;
+    float speed;
     int w;
     int h;
     float imageangle = 0;

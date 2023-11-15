@@ -7,17 +7,26 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,300,200}, {200,300,400});
+	Tracksystem tracksystem({200,400}, {200,200});
 	Train train(&tracksystem);
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
 	int lastTime = SDL_GetTicks();
+	int xMouse, yMouse;
 	SDL_Texture* fieldtex = loadImage("assets/field.png");
 	SDL_Event e;
 	while(!quit){
 		while(SDL_PollEvent(&e)){
-			if(e.type==SDL_QUIT) quit = true;
+			switch(e.type){
+				case SDL_QUIT: 
+					quit = true; break;
+				case SDL_MOUSEBUTTONDOWN:
+					SDL_GetMouseState(&xMouse, &yMouse);
+					if(e.button.button == SDL_BUTTON_LEFT) tracksystem.addnode(xMouse, yMouse, tracksystem.nodes.back());
+					if(e.button.button == SDL_BUTTON_MIDDLE) tracksystem.nodes.pop_back();
+					break;
+			}
 		}
 		keys = SDL_GetKeyboardState(NULL);
 
@@ -34,8 +43,17 @@ int main(){
 		}}
 		tracksystem.render();
 		train.render();
-		int xMouse, yMouse;
-		SDL_GetMouseState(&xMouse, &yMouse);
+		/*SDL_GetMouseState(&xMouse, &yMouse);
+		tracksystem.nodes.back().pos.x = xMouse;
+		tracksystem.nodes.back().pos.y = yMouse;
+		int nNodes = tracksystem.nodes.size();
+		float dx = xMouse - tracksystem.nodes[nNodes-2].pos.x;
+		float dy = -(yMouse - tracksystem.nodes[nNodes-2].pos.y);
+		tracksystem.nodes.back().dir = 2*atan2(dy,dx) - tracksystem.nodes[nNodes-2].dir;
+		if(tracksystem.nodes.back().dir-tracksystem.nodes[nNodes-2].dir < -2*pi)
+			tracksystem.nodes.back().dir += 4*pi;
+		if(tracksystem.nodes.back().dir-tracksystem.nodes[nNodes-2].dir > 2*pi)
+			tracksystem.nodes.back().dir -= 4*pi;*/
 		SDL_RenderPresent(renderer);
 
 	}
