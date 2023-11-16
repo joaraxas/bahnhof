@@ -34,10 +34,13 @@ class Tracksystem
     public:
     Tracksystem(std::vector<float> xs, std::vector<float> ys);
     void render();
-    void addnode(float x, float y, Node* previousnode);
+    void leftclick(int xMouse, int yMouse);
+    void rightclick(int xMouse, int yMouse);
+    void addnode(float x, float y, Node* previousnode, int leftright);
     void addtrack(Node* leftnode, Node* rightnode, int ind);
     std::vector<std::unique_ptr<Node>> nodes;
     std::vector<std::unique_ptr<Track>> tracks;
+    Node* selectednode = nullptr;
 };
 
 class Node

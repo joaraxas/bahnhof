@@ -102,15 +102,16 @@ Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
 	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());
+		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get(), 1);
 		addtrack(nodes[iNode-1].get(), nodes[iNode].get(), iNode);
 	}
+	selectednode = nodes.back().get();
 }
 
-void Tracksystem::addnode(float x, float y, Node* previousnode){
-	float dx = x - previousnode->pos.x;
-	float dy = -(y - previousnode->pos.y);
-	float dir = 2*atan2(dy,dx) - previousnode->dir;
+void Tracksystem::addnode(float x, float y, Node* previousnode, int leftright){
+	float dx = leftright*(x - previousnode->pos.x);
+	float dy = -leftright*(y - previousnode->pos.y);
+	float dir = (2*atan2(dy,dx) - previousnode->dir);
 	if(dir-previousnode->dir <= -2*pi)
 		dir += 4*pi;
 	if(dir-previousnode->dir >= 2*pi)
@@ -131,6 +132,35 @@ void Tracksystem::render()
 		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y-5, node->pos.x+5, node->pos.y+5);
 		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y+5, node->pos.x+5, node->pos.y-5);
 	}
+}
+
+void Tracksystem::leftclick(int xMouse, int yMouse)
+{
+	if(selectednode!=nullptr){
+		int leftright = 1;
+		Vec dv = Vec(xMouse, yMouse) - selectednode->pos;
+		if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
+			leftright = -1;
+		addnode(xMouse, yMouse, selectednode, leftright);
+		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
+		selectednode = nodes.back().get();
+	}
+	else{
+		float mindistsquared = INFINITY;
+		for(auto& node: nodes){
+			float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
+			if(distsquared < mindistsquared){
+				selectednode = node.get();
+				mindistsquared = distsquared;
+			}
+		}
+	}
+
+}
+
+void Tracksystem::rightclick(int xMouse, int yMouse)
+{
+	selectednode = nullptr;
 }
 
 Track::Track(Node* left, Node* right, int ind)

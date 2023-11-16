@@ -7,7 +7,7 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,300}, {200,150});
+	Tracksystem tracksystem({200,300}, {200,200});
 	//Train train(&tracksystem);
 	bool quit = false;
 	int ms = 0;
@@ -24,12 +24,15 @@ int main(){
 				case SDL_MOUSEBUTTONDOWN:
 					SDL_GetMouseState(&xMouse, &yMouse);
 					if(e.button.button == SDL_BUTTON_LEFT){
-						tracksystem.addnode(xMouse, yMouse, tracksystem.nodes.back().get());
-						tracksystem.addtrack(tracksystem.nodes[tracksystem.nodes.size() - 2].get(), tracksystem.nodes.back().get(), tracksystem.nodes.size()-1);
+						tracksystem.leftclick(xMouse, yMouse);
 					}
 					if(e.button.button == SDL_BUTTON_MIDDLE){
 						tracksystem.nodes.pop_back();
 						tracksystem.tracks.pop_back();
+						tracksystem.selectednode = nullptr;
+					}
+					if(e.button.button == SDL_BUTTON_RIGHT){
+						tracksystem.rightclick(xMouse, yMouse);
 					}
 					break;
 			}
@@ -50,7 +53,7 @@ int main(){
 		tracksystem.render();
 		//train.render();
 		SDL_GetMouseState(&xMouse, &yMouse);
-		tracksystem.nodes.back()->pos.x = xMouse;
+		/*tracksystem.nodes.back()->pos.x = xMouse;
 		tracksystem.nodes.back()->pos.y = yMouse;
 		int nNodes = tracksystem.nodes.size();
 		float dx = xMouse - tracksystem.nodes[nNodes-2]->pos.x;
@@ -60,7 +63,7 @@ int main(){
 			tracksystem.nodes.back()->dir += 4*pi;
 		if(tracksystem.nodes.back()->dir-tracksystem.nodes[nNodes-2]->dir > 2*pi)
 			tracksystem.nodes.back()->dir -= 4*pi;
-		tracksystem.tracks.back()->radius=tracksystem.tracks.back()->getradius();
+		tracksystem.tracks.back()->radius=tracksystem.tracks.back()->getradius();*/
 		SDL_RenderPresent(renderer);
 
 	}
