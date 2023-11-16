@@ -100,82 +100,107 @@ float sign(float a){
 
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
-	nodes.push_back(Node(xs[0], ys[0], 0));
+	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		addnode(xs[iNode], ys[iNode], nodes[iNode-1]);
+		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());
+		addtrack(nodes[iNode-1].get(), nodes[iNode].get(), iNode);
 	}
 }
 
-void Tracksystem::addnode(float x, float y, Node previousnode){
-	float dx = x - previousnode.pos.x;
-	float dy = -(y - previousnode.pos.y);
-	float dir = 2*atan2(dy,dx) - previousnode.dir;
-	if(dir-previousnode.dir <= -2*pi)
+void Tracksystem::addnode(float x, float y, Node* previousnode){
+	float dx = x - previousnode->pos.x;
+	float dy = -(y - previousnode->pos.y);
+	float dir = 2*atan2(dy,dx) - previousnode->dir;
+	if(dir-previousnode->dir <= -2*pi)
 		dir += 4*pi;
-	if(dir-previousnode.dir >= 2*pi)
+	if(dir-previousnode->dir >= 2*pi)
 		dir -= 4*pi;
-	nodes.push_back(Node(x, y, dir));
+	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
 }
 
-float Tracksystem::getradius(Node node1, Node node2)
+void Tracksystem::addtrack(Node* leftnode, Node* rightnode, int ind){
+	tracks.push_back(std::unique_ptr<Track>{new Track(leftnode, rightnode, ind)});
+}
+
+void Tracksystem::render()
 {
-	float dx = node2.pos.x - node1.pos.x;
-	float dy = -(node2.pos.y - node1.pos.y);
+	for(int iTrack=0; iTrack<tracks.size(); iTrack++){
+		tracks[iTrack]->render();
+	}
+	for(auto& node: nodes){
+		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y-5, node->pos.x+5, node->pos.y+5);
+		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y+5, node->pos.x+5, node->pos.y-5);
+	}
+}
+
+Track::Track(Node* left, Node* right, int ind)
+{
+	nodeleft = left;
+	noderight = right;
+	radius = getradius();
+	indexx = ind;
+}
+
+Track::~Track()
+{
+	std::cout<<radius<<std::endl;
+}
+
+float Track::getradius()
+{
+	float dx = noderight->pos.x - nodeleft->pos.x;
+	float dy = -(noderight->pos.y - nodeleft->pos.y);
 	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
 	float anglebetween = atan2(dy, dx);
-	return distance/(2*sin(anglebetween-node1.dir));
+	return distance/(2*sin(anglebetween-nodeleft->dir));
 }
 
-Vec Tracksystem::getpos(Node node1, Node node2, float nodedist)
+Vec Track::getpos(float nodedist)
 {
-	float radius = getradius(node1, node2);
+	//radius = getradius();
 	float ddx, ddy;
 	if(isinf(radius)){
-		ddx = nodedist*(node2.pos.x - node1.pos.x);
-		ddy = -nodedist*(node2.pos.y - node1.pos.y);
+		ddx = nodedist*(noderight->pos.x - nodeleft->pos.x);
+		ddy = -nodedist*(noderight->pos.y - nodeleft->pos.y);
 	}
 	else{
-		float phi = nodedist*(node2.dir - node1.dir);
+		float phi = nodedist*(noderight->dir - nodeleft->dir);
 		ddx = radius*sin(phi);
 		ddy = -radius*(1-cos(phi));
 	}
-	return Vec(node1.pos.x + cos(node1.dir)*ddx+sin(node1.dir)*ddy, node1.pos.y - sin(node1.dir)*ddx+cos(node1.dir)*ddy);
+	return Vec(nodeleft->pos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, nodeleft->pos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
 }
 
-float Tracksystem::getarclength(Node node1, Node node2, float nodedist)
+float Track::getarclength(float nodedist)
 {
 	float arclength;
-	float radius = getradius(node1, node2);
+	//radius = getradius();
 	if(isinf(radius)){
-		float dx = node2.pos.x - node1.pos.x;
-		float dy = -(node2.pos.y - node1.pos.y);
+		float dx = noderight->pos.x - nodeleft->pos.x;
+		float dy = -(noderight->pos.y - nodeleft->pos.y);
 		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
 	}
 	else{
-		float phi = nodedist*(node2.dir - node1.dir);
+		float phi = nodedist*(noderight->dir - nodeleft->dir);
 		arclength = radius*phi;
 	}
 	return arclength;
 }
 
-void Tracksystem::render()
+void Track::render()
 {
 	int nSegments = 300;
-	for(int iNode=0; iNode<nodes.size()-1; iNode++){
-		for(float nodedist = 0; nodedist < 1; nodedist+=1./nSegments){
-			Vec drawpos1 = getpos(nodes[iNode], nodes[iNode+1], nodedist);
-			Vec drawpos2 = getpos(nodes[iNode], nodes[iNode+1], nodedist+1./nSegments);
-			if(drawpos2.x>0)
-			if(drawpos2.x<SCREEN_WIDTH)
-			if(drawpos2.y>0)
-			if(drawpos2.y<SCREEN_HEIGHT)
-			SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos2.x, drawpos2.y);
-			if(nodedist==0){
-				SDL_RenderDrawLine(renderer, drawpos1.x-5, drawpos1.y-5, drawpos1.x+5, drawpos1.y+5);
-				SDL_RenderDrawLine(renderer, drawpos1.x-5, drawpos1.y+5, drawpos1.x+5, drawpos1.y-5);
-			}
-		}
+	for(float nodedist = 0; nodedist < 1; nodedist+=1./nSegments){
+		Vec drawpos1 = getpos(nodedist);
+		Vec drawpos2 = getpos(nodedist+1./nSegments);
+		if(drawpos2.x>0)
+		if(drawpos2.x<SCREEN_WIDTH)
+		if(drawpos2.y>0)
+		if(drawpos2.y<SCREEN_HEIGHT)
+		SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos2.x, drawpos2.y);
 	}
+	std::cout<<indexx<<std::endl;
+	std::cout<<radius<<std::endl;
 }
 
 Node::Node(float xstart, float ystart, float dirstart)
@@ -184,7 +209,7 @@ Node::Node(float xstart, float ystart, float dirstart)
 	pos.y = ystart;
 	dir = dirstart;
 }
-
+/*
 Train::Train(Tracksystem* newtracksystem)
 {
 	tracksystem = newtracksystem;
@@ -221,3 +246,4 @@ void Train::render()
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 }
+*/

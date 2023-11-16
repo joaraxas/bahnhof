@@ -27,26 +27,40 @@ class Vec
 float sign(float a);
 
 class Node;
+class Track;
 
 class Tracksystem
 {
     public:
     Tracksystem(std::vector<float> xs, std::vector<float> ys);
     void render();
-    void addnode(float x, float y, Node previousnode);
-    float getradius(Node node1, Node node2);
-    Vec getpos(Node node1, Node node2, float nodedist);
-    float getarclength(Node node1, Node node2, float nodedist);
-    std::vector<Node> nodes;
+    void addnode(float x, float y, Node* previousnode);
+    void addtrack(Node* leftnode, Node* rightnode, int ind);
+    std::vector<std::unique_ptr<Node>> nodes;
+    std::vector<std::unique_ptr<Track>> tracks;
 };
 
 class Node
 {
     public:
     Node(float xstart, float ystart, float dirstart);
-    Tracksystem* tracksystem;
     Vec pos;
     float dir;
+};
+
+class Track
+{
+    public:
+    Track(Node* left, Node* right, int ind);
+    ~Track();
+    int indexx;
+    Node* nodeleft;
+    Node* noderight;
+    float radius;
+    float getradius();
+    void render();
+    Vec getpos(float nodedist);
+    float getarclength(float nodedist);
 };
 
 class Train
