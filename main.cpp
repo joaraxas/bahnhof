@@ -7,7 +7,7 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,300}, {200,200});
+	Tracksystem tracksystem({200,300,300}, {200,300,400});
 	//Train train(&tracksystem);
 	bool quit = false;
 	int ms = 0;

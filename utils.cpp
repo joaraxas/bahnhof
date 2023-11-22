@@ -92,6 +92,10 @@ Vec Vec::operator*(float a)
 	return out;
 }
 
+float norm(Vec v){
+	return sqrt(v.x*v.x + v.y*v.y);
+}
+
 float sign(float a){
 	if(a<0)
 		return -1;
@@ -131,29 +135,53 @@ void Tracksystem::render()
 	for(auto& node: nodes){
 		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y-5, node->pos.x+5, node->pos.y+5);
 		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y+5, node->pos.x+5, node->pos.y-5);
+		SDL_SetRenderDrawColor(renderer, 255*(node->dir>2*pi), 0, 255*(node->dir<-2*pi), 255);
+		SDL_RenderDrawLine(renderer, node->pos.x, node->pos.y, node->pos.x+12*cos(node->dir), node->pos.y-12*sin(node->dir));
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
 }
 
 void Tracksystem::leftclick(int xMouse, int yMouse)
 {
+	float mindistsquared = INFINITY;
+	Node* nearestnode;
+	for(auto& node: nodes){
+		float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
+		if(distsquared < mindistsquared){
+			nearestnode = node.get();
+			mindistsquared = distsquared;
+		}
+	}
 	if(selectednode!=nullptr){
+		float nodex, nodey;
 		int leftright = 1;
-		Vec dv = Vec(xMouse, yMouse) - selectednode->pos;
+		if(mindistsquared>pow(20,2)){
+			nodex = xMouse;
+			nodey = yMouse;
+		}
+		else{
+			float dx = nearestnode->pos.x - selectednode->pos.x;
+			float dy = -(nearestnode->pos.y - selectednode->pos.y);
+			float dxintersect = (dy-dx*tan(nearestnode->dir))/(tan(selectednode->dir)-tan(nearestnode->dir));
+			Vec tangentintersection = selectednode->pos + Vec(dxintersect, -tan(selectednode->dir)*dxintersect);
+			float db = norm(nearestnode->pos - tangentintersection);
+			Vec newnodepoint = tangentintersection - Vec(db*cos(selectednode->dir), -db*sin(selectednode->dir));
+			nodex = newnodepoint.x;
+			nodey = newnodepoint.y;
+		}
+		Vec dv = Vec(nodex, nodey) - selectednode->pos;
 		if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
 			leftright = -1;
-		addnode(xMouse, yMouse, selectednode, leftright);
+		addnode(nodex, nodey, selectednode, leftright);
 		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
+		if(mindistsquared>pow(20,2)){}
+		else{
+			addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
+		}
 		selectednode = nodes.back().get();
 	}
 	else{
-		float mindistsquared = INFINITY;
-		for(auto& node: nodes){
-			float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
-			if(distsquared < mindistsquared){
-				selectednode = node.get();
-				mindistsquared = distsquared;
-			}
-		}
+		selectednode = nearestnode;
 	}
 
 }
@@ -169,11 +197,12 @@ Track::Track(Node* left, Node* right, int ind)
 	noderight = right;
 	radius = getradius();
 	indexx = ind;
+	std::cout<<radius<<std::endl;
 }
 
 Track::~Track()
 {
-	std::cout<<radius<<std::endl;
+	//std::cout<<radius<<std::endl;
 }
 
 float Track::getradius()
@@ -182,7 +211,10 @@ float Track::getradius()
 	float dy = -(noderight->pos.y - nodeleft->pos.y);
 	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
 	float anglebetween = atan2(dy, dx);
-	return distance/(2*sin(anglebetween-nodeleft->dir));
+	if(abs(sin(anglebetween-nodeleft->dir))<0.01)
+		return INFINITY;
+	else
+		return distance/(2*sin(anglebetween-nodeleft->dir));
 }
 
 Vec Track::getpos(float nodedist)
@@ -190,8 +222,8 @@ Vec Track::getpos(float nodedist)
 	//radius = getradius();
 	float ddx, ddy;
 	if(isinf(radius)){
-		ddx = nodedist*(noderight->pos.x - nodeleft->pos.x);
-		ddy = -nodedist*(noderight->pos.y - nodeleft->pos.y);
+		ddx = getarclength(nodedist);
+		ddy = 0;
 	}
 	else{
 		float phi = nodedist*(noderight->dir - nodeleft->dir);
@@ -219,7 +251,7 @@ float Track::getarclength(float nodedist)
 
 void Track::render()
 {
-	int nSegments = 300;
+	int nSegments = 50;
 	for(float nodedist = 0; nodedist < 1; nodedist+=1./nSegments){
 		Vec drawpos1 = getpos(nodedist);
 		Vec drawpos2 = getpos(nodedist+1./nSegments);
@@ -228,9 +260,10 @@ void Track::render()
 		if(drawpos2.y>0)
 		if(drawpos2.y<SCREEN_HEIGHT)
 		SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos2.x, drawpos2.y);
+		//SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos1.x+4, drawpos1.y-4);
 	}
-	std::cout<<indexx<<std::endl;
-	std::cout<<radius<<std::endl;
+	//std::cout<<indexx<<std::endl;
+	//std::cout<<radius<<std::endl;
 }
 
 Node::Node(float xstart, float ystart, float dirstart)

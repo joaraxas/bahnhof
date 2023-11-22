@@ -24,6 +24,7 @@ class Vec
     float y;
 };
 
+float norm(Vec v);
 float sign(float a);
 
 class Node;
