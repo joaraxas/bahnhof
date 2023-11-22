@@ -113,13 +113,13 @@ Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 }
 
 void Tracksystem::addnode(float x, float y, Node* previousnode, int leftright){
-	float dx = leftright*(x - previousnode->pos.x);
-	float dy = -leftright*(y - previousnode->pos.y);
+	float dx = (x - previousnode->pos.x);
+	float dy = -(y - previousnode->pos.y);
 	float dir = (2*atan2(dy,dx) - previousnode->dir);
-	if(dir-previousnode->dir <= -2*pi)
-		dir += 4*pi;
-	if(dir-previousnode->dir >= 2*pi)
-		dir -= 4*pi;
+	if(dir <= -pi)
+		dir += 2*pi;
+	if(dir >= pi)
+		dir -= 2*pi;
 	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
 }
 
@@ -170,8 +170,8 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			nodey = newnodepoint.y;
 		}
 		Vec dv = Vec(nodex, nodey) - selectednode->pos;
-		if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
-			leftright = -1;
+		//if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
+		//	leftright = -1;
 		addnode(nodex, nodey, selectednode, leftright);
 		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
 		if(mindistsquared>pow(20,2)){}
@@ -197,7 +197,7 @@ Track::Track(Node* left, Node* right, int ind)
 	noderight = right;
 	radius = getradius();
 	indexx = ind;
-	std::cout<<radius<<std::endl;
+	std::cout<<"radius: "<<radius<<std::endl;
 }
 
 Track::~Track()
@@ -211,6 +211,7 @@ float Track::getradius()
 	float dy = -(noderight->pos.y - nodeleft->pos.y);
 	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
 	float anglebetween = atan2(dy, dx);
+	std::cout<<"angle between: "<<anglebetween-nodeleft->dir<<std::endl;
 	if(abs(sin(anglebetween-nodeleft->dir))<0.01)
 		return INFINITY;
 	else
@@ -226,7 +227,7 @@ Vec Track::getpos(float nodedist)
 		ddy = 0;
 	}
 	else{
-		float phi = nodedist*(noderight->dir - nodeleft->dir);
+		float phi = nodedist*(fmod(fmod(noderight->dir - nodeleft->dir+pi,2*pi)-pi-pi,2*pi)+pi);
 		ddx = radius*sin(phi);
 		ddy = -radius*(1-cos(phi));
 	}
@@ -260,10 +261,7 @@ void Track::render()
 		if(drawpos2.y>0)
 		if(drawpos2.y<SCREEN_HEIGHT)
 		SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos2.x, drawpos2.y);
-		//SDL_RenderDrawLine(renderer, drawpos1.x, drawpos1.y, drawpos1.x+4, drawpos1.y-4);
 	}
-	//std::cout<<indexx<<std::endl;
-	//std::cout<<radius<<std::endl;
 }
 
 Node::Node(float xstart, float ystart, float dirstart)
@@ -271,6 +269,7 @@ Node::Node(float xstart, float ystart, float dirstart)
 	pos.x = xstart;
 	pos.y = ystart;
 	dir = dirstart;
+	std::cout<<"dir: "<<dir<<std::endl;
 }
 /*
 Train::Train(Tracksystem* newtracksystem)
