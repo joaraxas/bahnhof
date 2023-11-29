@@ -155,6 +155,9 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 	if(selectednode!=nullptr){
 		float nodex, nodey;
 		int leftright = 1;
+		Vec dv = Vec(xMouse, yMouse) - selectednode->pos;
+		if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
+			leftright = -1;
 		if(mindistsquared>pow(20,2)){
 			nodex = xMouse;
 			nodey = yMouse;
@@ -164,19 +167,22 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			float dy = -(nearestnode->pos.y - selectednode->pos.y);
 			float dxintersect = (dy-dx*tan(nearestnode->dir))/(tan(selectednode->dir)-tan(nearestnode->dir));
 			Vec tangentintersection = selectednode->pos + Vec(dxintersect, -tan(selectednode->dir)*dxintersect);
-			float db = norm(nearestnode->pos - tangentintersection);
+			float db = leftright*norm(nearestnode->pos - tangentintersection);
 			Vec newnodepoint = tangentintersection - Vec(db*cos(selectednode->dir), -db*sin(selectednode->dir));
 			nodex = newnodepoint.x;
 			nodey = newnodepoint.y;
 		}
-		Vec dv = Vec(nodex, nodey) - selectednode->pos;
-		//if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
-		//	leftright = -1;
 		addnode(nodex, nodey, selectednode, leftright);
-		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
+		if(leftright==1)
+			addtrack(selectednode, nodes.back().get(), nodes.size()-1);
+		else
+			addtrack(nodes.back().get(), selectednode, nodes.size()-1);
 		if(mindistsquared>pow(20,2)){}
 		else{
-			addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
+			if(leftright==1)
+				addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
+			else
+				addtrack(nearestnode, nodes.back().get(), nodes.size()-1);
 		}
 		selectednode = nodes.back().get();
 	}
@@ -227,7 +233,15 @@ Vec Track::getpos(float nodedist)
 		ddy = 0;
 	}
 	else{
-		float phi = nodedist*(fmod(fmod(noderight->dir - nodeleft->dir+pi,2*pi)-pi-pi,2*pi)+pi);
+		float phi;
+		if(sign(fmod(noderight->dir - nodeleft->dir+20*pi+pi,2*pi)-pi)*sign(radius)>0)
+			phi = nodedist*(fmod(fmod(noderight->dir - nodeleft->dir+pi,2*pi)-pi-pi,2*pi)+pi);
+		else{
+			phi = nodedist*(fmod(fmod((noderight->dir-pi) - (nodeleft->dir)+pi,2*pi)-pi-pi,2*pi)+pi);
+			std::cout<<"active"<<std::endl;
+		}
+		//if(sign(radius)*sign(phi) < 0)
+		//	phi = nodedist*(fmod(fmod(nodeleft->dir - noderight->dir+pi,2*pi)-pi-pi,2*pi)+pi);
 		ddx = radius*sin(phi);
 		ddy = -radius*(1-cos(phi));
 	}
