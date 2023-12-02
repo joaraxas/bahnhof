@@ -285,33 +285,31 @@ Node::Node(float xstart, float ystart, float dirstart)
 	dir = dirstart;
 	std::cout<<"dir: "<<dir<<std::endl;
 }
-/*
+
 Train::Train(Tracksystem* newtracksystem)
 {
 	tracksystem = newtracksystem;
 	tex = loadImage("assets/train.png");
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	h = h/2;
-	nodepair[0] = 0;
-	nodepair[1] = 1;
+	track = tracksystem->tracks[0].get();
 	nodedist = 0.;
-	pos = tracksystem->nodes[nodepair[0]].pos;
+	pos = track->getpos(nodedist);
 	speed = 50.;
 }
 
 void Train::update(int ms)
 {
-	float arclength1 = tracksystem->getarclength(tracksystem->nodes[nodepair[0]], tracksystem->nodes[nodepair[1]], 1);
+	float arclength1 = track->getarclength(1);
 	nodedist += ms*0.001*speed/arclength1;
 	if(nodedist>=1)
 	{
-		nodepair[0] = nodepair[1];
-		nodepair[1] ++;
-		float arclength2 = tracksystem->getarclength(tracksystem->nodes[nodepair[0]], tracksystem->nodes[nodepair[1]], 1);
+		track = tracksystem->tracks[1].get();
+		float arclength2 = track->getarclength(1);
 		nodedist = (nodedist-1)*arclength1/arclength2;
 	}
-	pos = tracksystem->getpos(tracksystem->nodes[nodepair[0]], tracksystem->nodes[nodepair[1]], nodedist);
-	imageangle = (1-nodedist)*(tracksystem->nodes[nodepair[0]].dir) + nodedist*(tracksystem->nodes[nodepair[1]].dir);
+	pos = track->getpos(nodedist);
+	imageangle = (1-nodedist)*(track->nodeleft->dir) + nodedist*(track->noderight->dir);
 }
 
 void Train::render()
@@ -322,4 +320,3 @@ void Train::render()
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 }
-*/

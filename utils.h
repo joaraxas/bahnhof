@@ -75,7 +75,7 @@ class Train
     void update(int ms);
     Tracksystem* tracksystem;
     private:
-    int nodepair[2];
+    Track* track;
     float nodedist;
     Vec pos;
     float speed;

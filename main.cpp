@@ -8,7 +8,7 @@
 int main(){
 	init();
 	Tracksystem tracksystem({200,300,300}, {200,300,400});
-	//Train train(&tracksystem);
+	Train train(&tracksystem);
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -41,7 +41,7 @@ int main(){
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
-		//train.update(ms);
+		train.update(ms);
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
@@ -51,7 +51,7 @@ int main(){
 			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 		}}
 		tracksystem.render();
-		//train.render();
+		train.render();
 		SDL_GetMouseState(&xMouse, &yMouse);
 		/*tracksystem.nodes.back()->pos.x = xMouse;
 		tracksystem.nodes.back()->pos.y = yMouse;
