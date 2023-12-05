@@ -161,18 +161,12 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 		}
 	}
 	if(selectednode!=nullptr){
-		float nodex, nodey;
+		Vec newnodepoint;
 		if(mindistsquared>pow(20,2)){
-			nodex = xMouse;
-			nodey = yMouse;
+			newnodepoint.x = xMouse;
+			newnodepoint.y = yMouse;
 		}
 		else{
-			float dx = nearestnode->pos.x - selectednode->pos.x;
-			float dy = -(nearestnode->pos.y - selectednode->pos.y);
-			float dxintersect = (dy-dx*tan(nearestnode->dir))/(tan(selectednode->dir)-tan(nearestnode->dir));
-			Vec tangentintersection = selectednode->pos + Vec(dxintersect, -tan(selectednode->dir)*dxintersect);
-			float db = norm(nearestnode->pos - tangentintersection);
-			Vec newnodepoint = tangentintersection - Vec(db*cos(selectednode->dir), -db*sin(selectednode->dir));
 			float y1 = -selectednode->pos.y;
 			float y2 = -nearestnode->pos.y;
 			float x1 = selectednode->pos.x;
@@ -181,19 +175,15 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			float tanth2 = tan(nearestnode->dir);
 			float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
 			float intersecty = -(y1 + (intersectx - x1)*tanth1);
-			tangentintersection = Vec(intersectx, intersecty);
+			Vec tangentintersection(intersectx, intersecty);
 			float disttointersect1 = norm(tangentintersection-selectednode->pos);
 			float disttointersect2 = norm(tangentintersection-nearestnode->pos);
-			if(disttointersect1 > disttointersect2){
+			if(disttointersect1 > disttointersect2)
 				newnodepoint = tangentintersection + (selectednode->pos - tangentintersection)/disttointersect1*disttointersect2;
-			}
-			else{
+			else
 				newnodepoint = tangentintersection + (nearestnode->pos - tangentintersection)/disttointersect2*disttointersect1;
-			}
-			nodex = newnodepoint.x;
-			nodey = newnodepoint.y;
 		}
-		addnode(nodex, nodey, selectednode);
+		addnode(newnodepoint.x, newnodepoint.y, selectednode);
 		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
 		if(mindistsquared>pow(20,2)){}
 		else{
@@ -220,12 +210,7 @@ Track::Track(Node* left, Node* right, int ind)
 	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	y0 = 0.5*(dy*dy+dx*dx)/dy;
-	//phi = asin(2*dx*dy/(dx*dx+dy*dy));
 	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
-	std::cout<<"y0: "<<y0<<std::endl;
-	std::cout<<"dy: "<<dy<<std::endl;
-	std::cout<<"phi: "<<phi<<std::endl;
-	std::cout<<"radius: "<<radius<<std::endl;
 	indexx = ind;
 }
 
@@ -248,11 +233,9 @@ float Track::getradius()
 
 Vec Track::getpos(float nodedist)
 {
-	//radius = getradius();
 	Vec currentpos;
 	if(isinf(radius)){
 		currentpos = nodeleft->pos + (noderight->pos-nodeleft->pos)*nodedist;
-		std::cout<<currentpos.x<<std::endl;
 	}
 	else{
 		float ddx, ddy;
@@ -266,15 +249,13 @@ Vec Track::getpos(float nodedist)
 float Track::getarclength(float nodedist)
 {
 	float arclength;
-	//radius = getradius();
 	if(isinf(radius)){
 		float dx = noderight->pos.x - nodeleft->pos.x;
 		float dy = -(noderight->pos.y - nodeleft->pos.y);
 		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
 	}
 	else{
-		float phi = nodedist*(noderight->dir - nodeleft->dir);
-		arclength = radius*phi;
+		arclength = y0*phi;
 	}
 	return arclength;
 }
@@ -298,7 +279,6 @@ Node::Node(float xstart, float ystart, float dirstart)
 	pos.x = xstart;
 	pos.y = ystart;
 	dir = dirstart;
-	std::cout<<"dir: "<<dir<<std::endl;
 }
 
 Train::Train(Tracksystem* newtracksystem)
@@ -324,7 +304,7 @@ void Train::update(int ms)
 		nodedist = (nodedist-1)*arclength1/arclength2;
 	}
 	pos = track->getpos(nodedist);
-	imageangle = (1-nodedist)*(track->nodeleft->dir) + nodedist*(track->noderight->dir);
+	imageangle = track->nodeleft->dir - sign(track->radius)*nodedist*(track->phi);
 }
 
 void Train::render()
