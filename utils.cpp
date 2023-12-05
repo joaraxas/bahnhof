@@ -92,6 +92,14 @@ Vec Vec::operator*(float a)
 	return out;
 }
 
+Vec Vec::operator/(float a)
+{
+	Vec out(0,0);
+	out.x = x/a;
+	out.y = y/a;
+	return out;
+}
+
 float norm(Vec v){
 	return sqrt(v.x*v.x + v.y*v.y);
 }
@@ -102,24 +110,24 @@ float sign(float a){
 	return 1;
 }
 
+float truncate(float dir){
+	return dir - pi*floor(dir/pi);
+}
+
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
 	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get(), 1);
+		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());
 		addtrack(nodes[iNode-1].get(), nodes[iNode].get(), iNode);
 	}
 	selectednode = nodes.back().get();
 }
 
-void Tracksystem::addnode(float x, float y, Node* previousnode, int leftright){
+void Tracksystem::addnode(float x, float y, Node* previousnode){
 	float dx = (x - previousnode->pos.x);
 	float dy = -(y - previousnode->pos.y);
-	float dir = (2*atan2(dy,dx) - previousnode->dir);
-	if(dir <= -pi)
-		dir += 2*pi;
-	if(dir >= pi)
-		dir -= 2*pi;
+	float dir = truncate(2*atan2(dy,dx) - previousnode->dir);
 	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
 }
 
@@ -154,10 +162,6 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 	}
 	if(selectednode!=nullptr){
 		float nodex, nodey;
-		int leftright = 1;
-		Vec dv = Vec(xMouse, yMouse) - selectednode->pos;
-		if(cos(selectednode->dir)*dv.x - sin(selectednode->dir)*dv.y < 0)
-			leftright = -1;
 		if(mindistsquared>pow(20,2)){
 			nodex = xMouse;
 			nodey = yMouse;
@@ -167,22 +171,33 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			float dy = -(nearestnode->pos.y - selectednode->pos.y);
 			float dxintersect = (dy-dx*tan(nearestnode->dir))/(tan(selectednode->dir)-tan(nearestnode->dir));
 			Vec tangentintersection = selectednode->pos + Vec(dxintersect, -tan(selectednode->dir)*dxintersect);
-			float db = leftright*norm(nearestnode->pos - tangentintersection);
+			float db = norm(nearestnode->pos - tangentintersection);
 			Vec newnodepoint = tangentintersection - Vec(db*cos(selectednode->dir), -db*sin(selectednode->dir));
+			float y1 = -selectednode->pos.y;
+			float y2 = -nearestnode->pos.y;
+			float x1 = selectednode->pos.x;
+			float x2 = nearestnode->pos.x;
+			float tanth1 = tan(selectednode->dir);
+			float tanth2 = tan(nearestnode->dir);
+			float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
+			float intersecty = -(y1 + (intersectx - x1)*tanth1);
+			tangentintersection = Vec(intersectx, intersecty);
+			float disttointersect1 = norm(tangentintersection-selectednode->pos);
+			float disttointersect2 = norm(tangentintersection-nearestnode->pos);
+			if(disttointersect1 > disttointersect2){
+				newnodepoint = tangentintersection + (selectednode->pos - tangentintersection)/disttointersect1*disttointersect2;
+			}
+			else{
+				newnodepoint = tangentintersection + (nearestnode->pos - tangentintersection)/disttointersect2*disttointersect1;
+			}
 			nodex = newnodepoint.x;
 			nodey = newnodepoint.y;
 		}
-		addnode(nodex, nodey, selectednode, leftright);
-		if(leftright==1)
-			addtrack(selectednode, nodes.back().get(), nodes.size()-1);
-		else
-			addtrack(nodes.back().get(), selectednode, nodes.size()-1);
+		addnode(nodex, nodey, selectednode);
+		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
 		if(mindistsquared>pow(20,2)){}
 		else{
-			if(leftright==1)
-				addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
-			else
-				addtrack(nearestnode, nodes.back().get(), nodes.size()-1);
+			addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
 		}
 		selectednode = nodes.back().get();
 	}
@@ -202,8 +217,16 @@ Track::Track(Node* left, Node* right, int ind)
 	nodeleft = left;
 	noderight = right;
 	radius = getradius();
-	indexx = ind;
+	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
+	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
+	y0 = 0.5*(dy*dy+dx*dx)/dy;
+	//phi = asin(2*dx*dy/(dx*dx+dy*dy));
+	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
+	std::cout<<"y0: "<<y0<<std::endl;
+	std::cout<<"dy: "<<dy<<std::endl;
+	std::cout<<"phi: "<<phi<<std::endl;
 	std::cout<<"radius: "<<radius<<std::endl;
+	indexx = ind;
 }
 
 Track::~Track()
@@ -217,36 +240,28 @@ float Track::getradius()
 	float dy = -(noderight->pos.y - nodeleft->pos.y);
 	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
 	float anglebetween = atan2(dy, dx);
-	std::cout<<"angle between: "<<anglebetween-nodeleft->dir<<std::endl;
 	if(abs(sin(anglebetween-nodeleft->dir))<0.01)
 		return INFINITY;
 	else
-		return distance/(2*sin(anglebetween-nodeleft->dir));
+		return distance/abs(2*sin(anglebetween-nodeleft->dir));
 }
 
 Vec Track::getpos(float nodedist)
 {
 	//radius = getradius();
-	float ddx, ddy;
+	Vec currentpos;
 	if(isinf(radius)){
-		ddx = getarclength(nodedist);
-		ddy = 0;
+		currentpos = nodeleft->pos + (noderight->pos-nodeleft->pos)*nodedist;
+		std::cout<<currentpos.x<<std::endl;
 	}
 	else{
-		float phi;
-		if(sign(fmod(noderight->dir - nodeleft->dir+20*pi+pi,2*pi)-pi)*sign(radius)>0)
-			phi = nodedist*(fmod(fmod(noderight->dir - nodeleft->dir+pi,2*pi)-pi-pi,2*pi)+pi);
-		else{
-			phi = nodedist*(fmod(fmod((noderight->dir-pi) - (nodeleft->dir)+pi,2*pi)-pi-pi,2*pi)+pi);
-			std::cout<<"active"<<std::endl;
-		}
-		//if(sign(radius)*sign(phi) < 0)
-		//	phi = nodedist*(fmod(fmod(nodeleft->dir - noderight->dir+pi,2*pi)-pi-pi,2*pi)+pi);
-		ddx = radius*sin(phi);
-		ddy = -radius*(1-cos(phi));
+		float ddx, ddy;
+		ddx = y0*sin(nodedist*phi);
+		ddy = y0*(1-cos(nodedist*phi));
+		currentpos = Vec(nodeleft->pos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, nodeleft->pos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
 	}
-	return Vec(nodeleft->pos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, nodeleft->pos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
-}
+	return currentpos;
+	}
 
 float Track::getarclength(float nodedist)
 {

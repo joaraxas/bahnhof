@@ -20,12 +20,14 @@ class Vec
     Vec operator+(Vec);
     Vec operator-(Vec);
     Vec operator*(float);
+    Vec operator/(float);
     float x;
     float y;
 };
 
 float norm(Vec v);
 float sign(float a);
+float truncate(float dir);
 
 class Node;
 class Track;
@@ -37,7 +39,7 @@ class Tracksystem
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
-    void addnode(float x, float y, Node* previousnode, int leftright);
+    void addnode(float x, float y, Node* previousnode);
     void addtrack(Node* leftnode, Node* rightnode, int ind);
     std::vector<std::unique_ptr<Node>> nodes;
     std::vector<std::unique_ptr<Track>> tracks;
@@ -61,6 +63,8 @@ class Track
     Node* nodeleft;
     Node* noderight;
     float radius;
+    float phi;
+    float y0;
     float getradius();
     void render();
     Vec getpos(float nodedist);
