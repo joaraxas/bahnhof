@@ -52,6 +52,10 @@ class Node
     Node(float xstart, float ystart, float dirstart);
     Vec pos;
     float dir;
+    std::vector<Track*> tracksleft;
+    std::vector<Track*> tracksright;
+    int stateleft;
+    int stateright;
 };
 
 class Track

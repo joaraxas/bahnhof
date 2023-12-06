@@ -212,6 +212,15 @@ Track::Track(Node* left, Node* right, int ind)
 	y0 = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
 	indexx = ind;
+	if(y0*phi>=0)
+		nodeleft->tracksright.push_back(this);
+	else
+		nodeleft->tracksleft.push_back(this);
+	std::cout<<nodeleft->dir-phi<<std::endl;
+	if(y0*phi*sin(nodeleft->dir-phi)>=0)
+		noderight->tracksleft.push_back(this);
+	else
+		noderight->tracksright.push_back(this);
 }
 
 Track::~Track()
@@ -255,7 +264,7 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
 	}
 	else{
-		arclength = y0*phi;
+		arclength = abs(y0*phi);
 	}
 	return arclength;
 }
@@ -279,6 +288,8 @@ Node::Node(float xstart, float ystart, float dirstart)
 	pos.x = xstart;
 	pos.y = ystart;
 	dir = dirstart;
+	stateleft = 0;
+	stateright = 0;
 }
 
 Train::Train(Tracksystem* newtracksystem)
@@ -299,9 +310,38 @@ void Train::update(int ms)
 	nodedist += ms*0.001*speed/arclength1;
 	if(nodedist>=1)
 	{
-		track = tracksystem->tracks[1].get();
+		Node* currentnode = track->noderight;
+		if(track->y0*track->phi*sin(track->nodeleft->dir-track->phi)>=0){
+			track = currentnode->tracksright[currentnode->stateright];
+		}
+		else{
+			track = currentnode->tracksleft[currentnode->stateleft];
+		}
 		float arclength2 = track->getarclength(1);
-		nodedist = (nodedist-1)*arclength1/arclength2;
+		if(track->nodeleft==currentnode)
+			nodedist = (nodedist-1)*arclength1/arclength2;
+		else{
+			nodedist = 1-(nodedist-1)*arclength1/arclength2;
+			speed = -speed;
+		}
+	}
+	else if(nodedist<0)
+	{
+		Node* currentnode = track->nodeleft;
+		if(track->y0*track->phi>=0){
+			track = currentnode->tracksleft[currentnode->stateleft];
+		}
+		else{
+			track = currentnode->tracksright[currentnode->stateright];
+		}
+		float arclength2 = track->getarclength(1);
+		if(track->nodeleft==currentnode){
+			nodedist = (-nodedist)*arclength1/arclength2;
+			speed = -speed;
+		}
+		else{
+			nodedist = 1-(-nodedist)*arclength1/arclength2;
+		}
 	}
 	pos = track->getpos(nodedist);
 	imageangle = track->nodeleft->dir - sign(track->radius)*nodedist*(track->phi);
