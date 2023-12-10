@@ -1,6 +1,8 @@
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern const Uint8* keys;
+const int gasbutton = SDL_SCANCODE_W;
+const int breakbutton = SDL_SCANCODE_S;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -79,14 +81,17 @@ class Train
 {
     public:
     Train(Tracksystem* newtracksystem);
-    void render();
+    void getinput();
     void update(int ms);
+    void render();
     Tracksystem* tracksystem;
     private:
     Track* track;
     float nodedist;
     Vec pos;
     float speed;
+    bool selected = true;
+    bool alignedwithtrackdirection = true;
     int w;
     int h;
     float imageangle = 0;

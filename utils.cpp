@@ -234,7 +234,6 @@ Track::Track(Node* left, Node* right, int ind)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	//if(y0*phi*sin(nodeleft->dir-phi)>=0)
 	if(cos(-(sign(y0*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0)
 		noderight->tracksleft.push_back(this);
 	else
@@ -322,10 +321,17 @@ Train::Train(Tracksystem* newtracksystem)
 	speed = 50.;
 }
 
+void Train::getinput()
+{
+	if(selected)
+		if(keys[gasbutton]) speed+=1;
+		if(keys[breakbutton]) speed-=1;
+}
+
 void Train::update(int ms)
 {
 	float arclength1 = track->getarclength(1);
-	nodedist += ms*0.001*speed/arclength1;
+	nodedist += ms*0.001*speed*(alignedwithtrackdirection*2-1)/arclength1;
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
@@ -340,7 +346,7 @@ void Train::update(int ms)
 			nodedist = (nodedist-1)*arclength1/arclength2;
 		else{
 			nodedist = 1-(nodedist-1)*arclength1/arclength2;
-			speed = -speed;
+			alignedwithtrackdirection = 1-alignedwithtrackdirection;
 		}
 	}
 	else if(nodedist<0)
@@ -355,7 +361,7 @@ void Train::update(int ms)
 		float arclength2 = track->getarclength(1);
 		if(track->nodeleft==currentnode){
 			nodedist = (-nodedist)*arclength1/arclength2;
-			speed = -speed;
+			alignedwithtrackdirection = 1-alignedwithtrackdirection;
 		}
 		else{
 			nodedist = 1-(-nodedist)*arclength1/arclength2;

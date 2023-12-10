@@ -7,8 +7,7 @@
 
 int main(){
 	init();
-	//Tracksystem tracksystem({200,300,300,340,400,460,520}, {400,300,200,150,150,150,150});
-	Tracksystem tracksystem({200,300}, {600,550});
+	Tracksystem tracksystem({200,300,300,340,400,460,520}, {400,300,200,150,150,150,150});
 	Train train(&tracksystem);
 	bool quit = false;
 	int ms = 0;
@@ -39,6 +38,7 @@ int main(){
 			}
 		}
 		keys = SDL_GetKeyboardState(NULL);
+		train.getinput();
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
@@ -54,19 +54,7 @@ int main(){
 		tracksystem.render();
 		train.render();
 		SDL_GetMouseState(&xMouse, &yMouse);
-		/*tracksystem.nodes.back()->pos.x = xMouse;
-		tracksystem.nodes.back()->pos.y = yMouse;
-		int nNodes = tracksystem.nodes.size();
-		float dx = xMouse - tracksystem.nodes[nNodes-2]->pos.x;
-		float dy = -(yMouse - tracksystem.nodes[nNodes-2]->pos.y);
-		tracksystem.nodes.back()->dir = 2*atan2(dy,dx) - tracksystem.nodes[nNodes-2]->dir;
-		if(tracksystem.nodes.back()->dir-tracksystem.nodes[nNodes-2]->dir < -2*pi)
-			tracksystem.nodes.back()->dir += 4*pi;
-		if(tracksystem.nodes.back()->dir-tracksystem.nodes[nNodes-2]->dir > 2*pi)
-			tracksystem.nodes.back()->dir -= 4*pi;
-		tracksystem.tracks.back()->radius=tracksystem.tracks.back()->getradius();*/
 		SDL_RenderPresent(renderer);
-
 	}
 	close();
 }
