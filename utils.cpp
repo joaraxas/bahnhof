@@ -200,6 +200,24 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 void Tracksystem::rightclick(int xMouse, int yMouse)
 {
 	selectednode = nullptr;
+
+	float mindistsquared = INFINITY;
+	Node* nearestnode;
+	for(auto& node: nodes){
+		float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
+		if(distsquared < mindistsquared){
+			nearestnode = node.get();
+			mindistsquared = distsquared;
+		}
+	}
+	if(mindistsquared<=pow(20,2)){
+		nearestnode->stateleft++;
+		nearestnode->stateright++;
+		if(nearestnode->stateleft>=nearestnode->tracksleft.size())
+			nearestnode->stateleft = 0;
+		if(nearestnode->stateright>=nearestnode->tracksright.size())
+			nearestnode->stateright = 0;
+	}
 }
 
 Track::Track(Node* left, Node* right, int ind)
@@ -216,8 +234,8 @@ Track::Track(Node* left, Node* right, int ind)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	std::cout<<nodeleft->dir-phi<<std::endl;
-	if(y0*phi*sin(nodeleft->dir-phi)>=0)
+	//if(y0*phi*sin(nodeleft->dir-phi)>=0)
+	if(cos(-(sign(y0*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0)
 		noderight->tracksleft.push_back(this);
 	else
 		noderight->tracksright.push_back(this);
@@ -287,7 +305,7 @@ Node::Node(float xstart, float ystart, float dirstart)
 {
 	pos.x = xstart;
 	pos.y = ystart;
-	dir = dirstart;
+	dir = truncate(dirstart);
 	stateleft = 0;
 	stateright = 0;
 }
@@ -311,7 +329,7 @@ void Train::update(int ms)
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
-		if(track->y0*track->phi*sin(track->nodeleft->dir-track->phi)>=0){
+		if(cos(-(sign(track->y0*track->phi)-1)/2*pi+track->nodeleft->dir-track->phi-track->noderight->dir)>0){
 			track = currentnode->tracksright[currentnode->stateright];
 		}
 		else{
