@@ -80,17 +80,19 @@ class Track
 class Train
 {
     public:
-    Train(Tracksystem* newtracksystem);
+    Train(Tracksystem* newtracksystem, float nodediststart);
     void getinput();
     void update(int ms);
     void render();
     Tracksystem* tracksystem;
+    bool selected = false;
+    Train* connectedleft = nullptr;
+    Train* connectedright = nullptr;
+    float nodedist;
     private:
     Track* track;
-    float nodedist;
     Vec pos;
     float speed;
-    bool selected = true;
     bool alignedwithtrackdirection = true;
     int w;
     int h;

@@ -230,11 +230,11 @@ Track::Track(Node* left, Node* right, int ind)
 	y0 = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
 	indexx = ind;
-	if(y0*phi>=0)
+	if(y0*phi>=0 || radius==INFINITY)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	if(cos(-(sign(y0*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0)
+	if(cos(-(sign(y0*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: y0*phi is nan when straight
 		noderight->tracksleft.push_back(this);
 	else
 		noderight->tracksright.push_back(this);
@@ -309,33 +309,46 @@ Node::Node(float xstart, float ystart, float dirstart)
 	stateright = 0;
 }
 
-Train::Train(Tracksystem* newtracksystem)
+Train::Train(Tracksystem* newtracksystem, float nodediststart)
 {
 	tracksystem = newtracksystem;
 	tex = loadImage("assets/train.png");
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	h = h/2;
 	track = tracksystem->tracks[0].get();
-	nodedist = 0.;
+	nodedist = nodediststart;
 	pos = track->getpos(nodedist);
-	speed = 50.;
+	speed = 0.;
 }
 
 void Train::getinput()
 {
-	if(selected)
+	//if(selected){
 		if(keys[gasbutton]) speed+=1;
 		if(keys[breakbutton]) speed-=1;
+	//}
 }
 
 void Train::update(int ms)
 {
+	if(connectedleft!=nullptr){
+		float delta = norm(pos-connectedleft->pos) - 35;
+		std::cout << norm(pos-connectedleft->pos) << std::endl;
+		float dv = speed - connectedleft->speed;
+		//connectedleft->speed += 0.06*delta*ms + 0.01*ms*dv;
+	}
+	if(connectedright!=nullptr){
+		float delta = norm(pos-connectedright->pos) - 35;
+		float dv = speed - connectedright->speed;
+		//connectedright->speed += -0.06*delta*ms + 0.01*ms*dv;
+	}
+
 	float arclength1 = track->getarclength(1);
 	nodedist += ms*0.001*speed*(alignedwithtrackdirection*2-1)/arclength1;
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
-		if(cos(-(sign(track->y0*track->phi)-1)/2*pi+track->nodeleft->dir-track->phi-track->noderight->dir)>0){
+		if(cos(-(sign(track->y0*track->phi)-1)/2*pi+track->nodeleft->dir-track->phi-track->noderight->dir)>0){ //TODO: y0*phi is nan when straight
 			track = currentnode->tracksright[currentnode->stateright];
 		}
 		else{
@@ -352,7 +365,7 @@ void Train::update(int ms)
 	else if(nodedist<0)
 	{
 		Node* currentnode = track->nodeleft;
-		if(track->y0*track->phi>=0){
+		if(track->y0*track->phi>=0 || track->radius==INFINITY){
 			track = currentnode->tracksleft[currentnode->stateleft];
 		}
 		else{
@@ -367,6 +380,7 @@ void Train::update(int ms)
 			nodedist = 1-(-nodedist)*arclength1/arclength2;
 		}
 	}
+
 	pos = track->getpos(nodedist);
 	imageangle = track->nodeleft->dir - sign(track->radius)*nodedist*(track->phi);
 }

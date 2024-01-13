@@ -7,8 +7,15 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,300,300,340,400,460,520}, {400,300,200,150,150,150,150});
-	Train train(&tracksystem);
+	Tracksystem tracksystem({200,400,600}, {200,200,200});
+	Train train(&tracksystem, 0.1);
+	train.selected = true;
+	Train wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
+	Train wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
+	train.connectedleft = &wagon;
+	wagon.connectedright = &train;
+	wagon.connectedleft = &wagon2;
+	wagon2.connectedright = &wagon;
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -39,10 +46,14 @@ int main(){
 		}
 		keys = SDL_GetKeyboardState(NULL);
 		train.getinput();
+		wagon.getinput();
+		wagon2.getinput();
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
 		train.update(ms);
+		wagon.update(ms);
+		wagon2.update(ms);
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
@@ -53,6 +64,8 @@ int main(){
 		}}
 		tracksystem.render();
 		train.render();
+		wagon.render();
+		wagon2.render();
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}
