@@ -7,15 +7,14 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,400,600}, {200,200,200});
-	Train train(&tracksystem, 0.1);
-	train.selected = true;
-	Train wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
-	Train wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
-	train.connectedleft = &wagon;
-	wagon.connectedright = &train;
-	wagon.connectedleft = &wagon2;
-	wagon2.connectedright = &wagon;
+	Tracksystem tracksystem({200,300,600}, {200,210,400});
+	Wagon locomotive(&tracksystem, 0.1);
+	Wagon wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
+	Wagon wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
+	trains.emplace_back(new Train(&tracksystem, {&locomotive,&wagon}, 0));
+	trains.emplace_back(new Train(&tracksystem, {&wagon2}, 0));
+	trains[0]->selected = true;
+	trains[1]->selected = false;
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -45,13 +44,16 @@ int main(){
 			}
 		}
 		keys = SDL_GetKeyboardState(NULL);
-		train.getinput();
-		wagon.getinput();
-		wagon2.getinput();
+		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--){
+			trains[iTrain]->getinput();
+		}
+		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
+			if(trains[iTrain]->wagons.size() == 0)
+				trains.erase(trains.begin()+iTrain);
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
-		train.update(ms);
+		locomotive.update(ms);
 		wagon.update(ms);
 		wagon2.update(ms);
 
@@ -63,7 +65,7 @@ int main(){
 			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 		}}
 		tracksystem.render();
-		train.render();
+		locomotive.render();
 		wagon.render();
 		wagon2.render();
 		SDL_GetMouseState(&xMouse, &yMouse);

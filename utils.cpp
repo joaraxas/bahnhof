@@ -114,6 +114,8 @@ float truncate(float dir){
 	return dir - pi*floor(dir/pi);
 }
 
+std::vector<std::unique_ptr<Train>> trains;
+
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
 	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
@@ -230,7 +232,8 @@ Track::Track(Node* left, Node* right, int ind)
 	y0 = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
 	indexx = ind;
-	if(y0*phi>=0 || radius==INFINITY)
+	//if(y0*phi>=0 || radius==INFINITY)
+	if(y0*phi>=0)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
@@ -309,7 +312,7 @@ Node::Node(float xstart, float ystart, float dirstart)
 	stateright = 0;
 }
 
-Train::Train(Tracksystem* newtracksystem, float nodediststart)
+Wagon::Wagon(Tracksystem* newtracksystem, float nodediststart)
 {
 	tracksystem = newtracksystem;
 	tex = loadImage("assets/train.png");
@@ -318,33 +321,12 @@ Train::Train(Tracksystem* newtracksystem, float nodediststart)
 	track = tracksystem->tracks[0].get();
 	nodedist = nodediststart;
 	pos = track->getpos(nodedist);
-	speed = 0.;
 }
 
-void Train::getinput()
+void Wagon::update(int ms)
 {
-	//if(selected){
-		if(keys[gasbutton]) speed+=1;
-		if(keys[breakbutton]) speed-=1;
-	//}
-}
-
-void Train::update(int ms)
-{
-	if(connectedleft!=nullptr){
-		float delta = norm(pos-connectedleft->pos) - 35;
-		std::cout << norm(pos-connectedleft->pos) << std::endl;
-		float dv = speed - connectedleft->speed;
-		//connectedleft->speed += 0.06*delta*ms + 0.01*ms*dv;
-	}
-	if(connectedright!=nullptr){
-		float delta = norm(pos-connectedright->pos) - 35;
-		float dv = speed - connectedright->speed;
-		//connectedright->speed += -0.06*delta*ms + 0.01*ms*dv;
-	}
-
 	float arclength1 = track->getarclength(1);
-	nodedist += ms*0.001*speed*(alignedwithtrackdirection*2-1)/arclength1;
+	nodedist += ms*0.001*train->speed*(alignedwithtrackdirection*2-1)/arclength1;
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
@@ -365,7 +347,8 @@ void Train::update(int ms)
 	else if(nodedist<0)
 	{
 		Node* currentnode = track->nodeleft;
-		if(track->y0*track->phi>=0 || track->radius==INFINITY){
+		//if(track->y0*track->phi>=0 || track->radius==INFINITY){
+		if(track->y0*track->phi>=0){
 			track = currentnode->tracksleft[currentnode->stateleft];
 		}
 		else{
@@ -385,11 +368,46 @@ void Train::update(int ms)
 	imageangle = track->nodeleft->dir - sign(track->radius)*nodedist*(track->phi);
 }
 
-void Train::render()
+void Wagon::render()
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+}
+
+Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
+{
+	tracksystem = newtracksystem;
+	wagons = newwagons;
+	speed = newspeed;
+	for(auto wagon : wagons)
+		wagon->train = this;
+}
+
+void Train::getinput()
+{
+	std::cout << wagons.size() << std::endl;
+	if(selected){
+		if(keys[gasbutton]) speed+=1./wagons.size();
+		if(keys[breakbutton]) speed-=1./wagons.size();
+		if(keys[numberbutton]) split(1);
+	}
+}
+
+void Train::split(int where)
+{
+	if(wagons.size()>where){
+		trains.emplace_back(new Train(tracksystem, {wagons.begin() + where, wagons.end()}, speed));
+		wagons = {wagons.begin(), wagons.begin() + where};
+	}
+}
+
+void Train::couple(Train& train)
+{
+	wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+	train.wagons = {};
+	for(auto wagon : wagons)
+		wagon->train = this;
 }

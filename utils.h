@@ -3,6 +3,7 @@ extern SDL_Renderer* renderer;
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
 const int breakbutton = SDL_SCANCODE_S;
+const int numberbutton = SDL_SCANCODE_1;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -33,10 +34,12 @@ float truncate(float dir);
 
 class Node;
 class Track;
+class Wagon;
+class Train;
 
 class Tracksystem
 {
-    public:
+public:
     Tracksystem(std::vector<float> xs, std::vector<float> ys);
     void render();
     void leftclick(int xMouse, int yMouse);
@@ -50,7 +53,7 @@ class Tracksystem
 
 class Node
 {
-    public:
+public:
     Node(float xstart, float ystart, float dirstart);
     Vec pos;
     float dir;
@@ -62,7 +65,7 @@ class Node
 
 class Track
 {
-    public:
+public:
     Track(Node* left, Node* right, int ind);
     ~Track();
     int indexx;
@@ -77,25 +80,37 @@ class Track
     float getarclength(float nodedist);
 };
 
-class Train
+class Wagon
 {
-    public:
-    Train(Tracksystem* newtracksystem, float nodediststart);
-    void getinput();
+public:
+    Wagon(Tracksystem* newtracksystem, float nodediststart);
     void update(int ms);
     void render();
     Tracksystem* tracksystem;
-    bool selected = false;
-    Train* connectedleft = nullptr;
-    Train* connectedright = nullptr;
     float nodedist;
-    private:
+    Train* train;
+private:
     Track* track;
     Vec pos;
-    float speed;
     bool alignedwithtrackdirection = true;
     int w;
     int h;
     float imageangle = 0;
     SDL_Texture* tex;
 };
+
+class Train
+{
+public:
+    Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
+    void getinput();
+    //void update(int ms);
+    Tracksystem* tracksystem;
+    bool selected = false;
+    float speed;
+    std::vector<Wagon*> wagons;
+    void split(int where);
+    void couple(Train& train);
+};
+
+extern std::vector<std::unique_ptr<Train> > trains;
