@@ -7,16 +7,16 @@
 
 int main(){
 	init();
-	Tracksystem tracksystem({200,300,600}, {200,210,400});
-	Wagon locomotive(&tracksystem, 0.1);
-	//Wagon wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
-	//Wagon wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
-	Wagon wagon(&tracksystem, 0.1+50/tracksystem.tracks[0]->getarclength(1));
-	Wagon wagon2(&tracksystem, 0.1+100/tracksystem.tracks[0]->getarclength(1));
-	//trains.emplace_back(new Train(&tracksystem, {&locomotive,&wagon}, 0));
-	trains.emplace_back(new Train(&tracksystem, {&locomotive}, 0));
-	trains.emplace_back(new Train(&tracksystem, {&wagon}, 0));
-	trains.emplace_back(new Train(&tracksystem, {&wagon2}, 0));
+	Tracksystem tracksystem({200,300,800}, {200,210,400});
+	//Wagon locomotive(&tracksystem, 0.1);
+	//wagons.emplace_back(new Wagon(&tracksystem, 0.1));
+	for(int iWagon=0; iWagon<11; iWagon++){
+		wagons.emplace_back(new Wagon(&tracksystem, 0.1+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
+	}
+	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
+		trains.emplace_back(new Train(&tracksystem, {wagons[iWagon].get()}, 0));
+	}
+	//trains.emplace_back(new Train(&tracksystem, {wagons[1].get()}, 0));
 	trains[0]->selected = true;
 	bool quit = false;
 	int ms = 0;
@@ -56,9 +56,8 @@ int main(){
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
-		locomotive.update(ms);
-		wagon.update(ms);
-		wagon2.update(ms);
+		for(auto& wagon : wagons)
+			wagon->update(ms);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++){
 			for(int jTrain=iTrain+1; jTrain<trains.size(); jTrain++){
 				trains[iTrain]->checkCollision(trains[jTrain].get());
@@ -73,9 +72,8 @@ int main(){
 			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 		}}
 		tracksystem.render();
-		locomotive.render();
-		wagon.render();
-		wagon2.render();
+		for(auto& wagon : wagons)
+			wagon->render();
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}

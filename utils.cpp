@@ -115,6 +115,7 @@ float truncate(float dir){
 }
 
 std::vector<std::unique_ptr<Train>> trains;
+std::vector<std::unique_ptr<Wagon>> wagons;
 
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
@@ -391,7 +392,8 @@ void Train::getinput()
 	if(selected){
 		if(keys[gasbutton]) speed+=1./wagons.size();
 		if(keys[breakbutton]) speed-=1./wagons.size();
-		if(keys[numberbutton]) split(1);
+		for(int iKey=1; iKey<fmin(wagons.size(), 10); iKey++)
+			if(keys[numberbuttons[iKey]]) split(iKey);
 	}
 }
 

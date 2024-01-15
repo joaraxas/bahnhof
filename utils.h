@@ -3,7 +3,7 @@ extern SDL_Renderer* renderer;
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
 const int breakbutton = SDL_SCANCODE_S;
-const int numberbutton = SDL_SCANCODE_1;
+const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -115,3 +115,4 @@ public:
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;
+extern std::vector<std::unique_ptr<Wagon> > wagons;
