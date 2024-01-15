@@ -9,12 +9,15 @@ int main(){
 	init();
 	Tracksystem tracksystem({200,300,600}, {200,210,400});
 	Wagon locomotive(&tracksystem, 0.1);
-	Wagon wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
-	Wagon wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
-	trains.emplace_back(new Train(&tracksystem, {&locomotive,&wagon}, 0));
+	//Wagon wagon(&tracksystem, 0.1+35/tracksystem.tracks[0]->getarclength(1));
+	//Wagon wagon2(&tracksystem, 0.1+70/tracksystem.tracks[0]->getarclength(1));
+	Wagon wagon(&tracksystem, 0.1+50/tracksystem.tracks[0]->getarclength(1));
+	Wagon wagon2(&tracksystem, 0.1+100/tracksystem.tracks[0]->getarclength(1));
+	//trains.emplace_back(new Train(&tracksystem, {&locomotive,&wagon}, 0));
+	trains.emplace_back(new Train(&tracksystem, {&locomotive}, 0));
+	trains.emplace_back(new Train(&tracksystem, {&wagon}, 0));
 	trains.emplace_back(new Train(&tracksystem, {&wagon2}, 0));
 	trains[0]->selected = true;
-	trains[1]->selected = false;
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -56,6 +59,11 @@ int main(){
 		locomotive.update(ms);
 		wagon.update(ms);
 		wagon2.update(ms);
+		for(int iTrain=0; iTrain<trains.size(); iTrain++){
+			for(int jTrain=iTrain+1; jTrain<trains.size(); jTrain++){
+				trains[iTrain]->checkCollision(trains[jTrain].get());
+			}
+		}
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);

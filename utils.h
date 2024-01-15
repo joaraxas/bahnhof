@@ -89,9 +89,9 @@ public:
     Tracksystem* tracksystem;
     float nodedist;
     Train* train;
+    Vec pos;
 private:
     Track* track;
-    Vec pos;
     bool alignedwithtrackdirection = true;
     int w;
     int h;
@@ -109,8 +109,9 @@ public:
     bool selected = false;
     float speed;
     std::vector<Wagon*> wagons;
+    void checkCollision(Train* train);
     void split(int where);
-    void couple(Train& train);
+    void couple(Train& train, bool ismyback, bool ishisback);
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

@@ -388,7 +388,6 @@ Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, 
 
 void Train::getinput()
 {
-	std::cout << wagons.size() << std::endl;
 	if(selected){
 		if(keys[gasbutton]) speed+=1./wagons.size();
 		if(keys[breakbutton]) speed-=1./wagons.size();
@@ -396,18 +395,57 @@ void Train::getinput()
 	}
 }
 
+void Train::checkCollision(Train* train)
+{
+	if(size(wagons) >= 1)
+	if(size(train->wagons) >= 1)
+	if(abs(speed - train->speed)>10){
+		if(norm(wagons.back()->pos - train->wagons.front()->pos) <= 35){
+			std::cout << "back front" << std::endl;
+			couple(*train, true, false);
+		}
+		else if(norm(wagons.back()->pos - train->wagons.back()->pos) <= 35){
+			std::cout << "back back" << std::endl;
+			couple(*train, true, true);
+		}
+		else if(norm(wagons.front()->pos - train->wagons.front()->pos) <= 35)
+			couple(*train, false, false);
+		else if(norm(wagons.front()->pos - train->wagons.back()->pos) <= 35)
+			couple(*train, false, true);
+		}
+}
+
+void Train::couple(Train& train, bool ismyback, bool ishisback)
+{
+	std::cout << "couple" << std::endl;
+	if(ismyback && !ishisback){
+		std::cout << "couple back front" << std::endl;
+		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+	}
+	else if(ismyback && ishisback){
+		std::cout << "couple back back" << std::endl;
+		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+	}
+	else if(!ismyback && !ishisback){
+		std::cout << "couple front front" << std::endl;
+		std::reverse(wagons.begin(), wagons.end());
+		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+	}
+	else if(!ismyback && ishisback){
+		std::cout << "couple front back" << std::endl;
+		std::reverse(wagons.begin(), wagons.end());
+		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+	}
+	train.wagons = {};
+	for(auto wagon : wagons)
+		wagon->train = this;
+}
+
 void Train::split(int where)
 {
 	if(wagons.size()>where){
 		trains.emplace_back(new Train(tracksystem, {wagons.begin() + where, wagons.end()}, speed));
 		wagons = {wagons.begin(), wagons.begin() + where};
+		std::cout << "split" << std::endl;
 	}
-}
-
-void Train::couple(Train& train)
-{
-	wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
-	train.wagons = {};
-	for(auto wagon : wagons)
-		wagon->train = this;
 }
