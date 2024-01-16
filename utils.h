@@ -90,9 +90,9 @@ public:
     float nodedist;
     Train* train;
     Vec pos;
+    bool alignedwithtrackdirection = true;
 private:
     Track* track;
-    bool alignedwithtrackdirection = true;
     int w;
     int h;
     float imageangle = 0;

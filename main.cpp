@@ -8,15 +8,12 @@
 int main(){
 	init();
 	Tracksystem tracksystem({200,300,800}, {200,210,400});
-	//Wagon locomotive(&tracksystem, 0.1);
-	//wagons.emplace_back(new Wagon(&tracksystem, 0.1));
 	for(int iWagon=0; iWagon<11; iWagon++){
 		wagons.emplace_back(new Wagon(&tracksystem, 0.1+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
 	}
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(&tracksystem, {wagons[iWagon].get()}, 0));
 	}
-	//trains.emplace_back(new Train(&tracksystem, {wagons[1].get()}, 0));
 	trains[0]->selected = true;
 	bool quit = false;
 	int ms = 0;
