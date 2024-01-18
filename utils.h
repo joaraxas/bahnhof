@@ -91,6 +91,7 @@ public:
     Train* train;
     Vec pos;
     bool alignedwithtrackdirection = true;
+    bool alignedforward = true;
 private:
     Track* track;
     int w;

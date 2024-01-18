@@ -366,7 +366,7 @@ void Wagon::update(int ms)
 	}
 
 	pos = track->getpos(nodedist);
-	imageangle = track->nodeleft->dir - nodedist*track->phi + pi/2+pi/2*sign(track->phi*track->y0) + pi*alignedwithtrackdirection;
+	imageangle = track->nodeleft->dir - nodedist*track->phi + pi/2+pi/2*sign(track->phi*track->y0) + pi*alignedwithtrackdirection + pi*(1-alignedforward);
 }
 
 void Wagon::render()
@@ -441,8 +441,10 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 	}
 	if(flipdirection)
-		for(auto w : train.wagons)
+		for(auto w : train.wagons){
 			w->alignedwithtrackdirection = 1 - w->alignedwithtrackdirection;
+			w->alignedforward = 1 - w->alignedforward;
+		}
 	train.wagons = {};
 	for(auto wagon : wagons)
 		wagon->train = this;
