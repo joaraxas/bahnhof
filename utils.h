@@ -5,6 +5,8 @@ const int gasbutton = SDL_SCANCODE_W;
 const int breakbutton = SDL_SCANCODE_S;
 const int gearbutton = SDL_SCANCODE_LSHIFT;
 const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
+const int loadbutton = SDL_SCANCODE_L;
+const int unloadbutton = SDL_SCANCODE_U;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -37,6 +39,7 @@ class Node;
 class Track;
 class Wagon;
 class Train;
+class Resource;
 
 class Tracksystem
 {
@@ -95,12 +98,17 @@ public:
     bool alignedforward = true;
     float P[2] = {0,0};
     float maxspeed[2] = {40,140};
+    int loadwagon(Resource &type, int amount);
+    void unloadwagon();
+    int maxamount = 40;
 private:
     Track* track;
     int w;
     int h;
     float imageangle = 0;
     SDL_Texture* tex;
+    Resource* loadtype = nullptr;
+    int loadamount = 0;
 };
 
 class Train
@@ -119,5 +127,18 @@ public:
     void couple(Train& train, bool ismyback, bool ishisback);
 };
 
+class Resource
+{
+public:
+    Resource(std::string newname, std::string pathtotex);
+    void render(Vec pos);
+private:
+    std::string name;
+    SDL_Texture* tex;
+    int w;
+    int h;
+};
+
 extern std::vector<std::unique_ptr<Train> > trains;
 extern std::vector<std::unique_ptr<Wagon> > wagons;
+extern Resource* selectedresource;

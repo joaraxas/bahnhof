@@ -7,6 +7,7 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 const Uint8* keys = NULL;
+Resource* selectedresource = NULL;
 
 int init(){
 	bool success = true;
@@ -376,6 +377,26 @@ void Wagon::render()
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+	if(loadtype!=nullptr)
+		loadtype->render(pos);
+}
+
+int Wagon::loadwagon(Resource &type, int amount)
+{
+	int loadedamount = 0;
+	if(loadtype == &type || loadtype == nullptr){
+		loadedamount = fmin(amount, maxamount - loadamount);
+		loadamount += loadedamount;
+		if(loadedamount>0)
+			loadtype = &type;
+		}
+	return loadedamount;
+}
+
+void Wagon::unloadwagon()
+{
+	loadtype = nullptr;
+	loadamount = 0;
 }
 
 Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
@@ -413,9 +434,17 @@ void Train::getinput()
 				speed = 5*(2*direction-1);
 			}
 		}
+		if(keys[loadbutton]){
+			for(auto w : wagons)
+				w->loadwagon(*selectedresource, 1);
+		}
+		if(keys[unloadbutton]){
+			for(auto w : wagons)
+				w->unloadwagon();
+		}
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);
-		std::cout<<speed<<std::endl;
+		//std::cout<<speed<<std::endl;
 	}
 }
 
@@ -479,4 +508,20 @@ void Train::split(int where)
 		wagons = {wagons.begin(), wagons.begin() + where};
 		std::cout << "split" << std::endl;
 	}
+}
+
+Resource::Resource(std::string newname, std::string pathtotex)
+{
+	name = newname;
+	tex = loadImage(pathtotex);
+	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+}
+
+void Resource::render(Vec pos)
+{
+	int x = int(pos.x);
+	int y = int(pos.y);
+	SDL_Rect srcrect = {0, 0, w, h};
+	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
+	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
 }

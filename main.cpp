@@ -4,9 +4,11 @@
 #include<string>
 #include "utils.h"
 
-
 int main(){
 	init();
+
+	Resource beer("Beer", "assets/beer.png");
+	selectedresource = &beer;
 	Tracksystem tracksystem({200,300,800}, {200,210,400});
 	for(int iWagon=0; iWagon<11; iWagon++){
 		wagons.emplace_back(new Wagon(&tracksystem, 0.1+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
@@ -18,6 +20,9 @@ int main(){
 	wagons[0]->alignedwithtrackdirection = false;
 	wagons[0]->P[1] = 1;
 	wagons[0]->P[0] = 1;
+	wagons[0]->maxamount = 0;
+	wagons[1]->loadwagon(beer, 12);
+	wagons[3]->loadwagon(beer, 12);
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -25,6 +30,7 @@ int main(){
 	int xMouse, yMouse;
 	SDL_Texture* fieldtex = loadImage("assets/field.png");
 	SDL_Event e;
+
 	while(!quit){
 		while(SDL_PollEvent(&e)){
 			switch(e.type){
@@ -77,5 +83,6 @@ int main(){
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}
+
 	close();
 }
