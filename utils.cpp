@@ -366,7 +366,7 @@ void Wagon::update(int ms)
 	}
 
 	pos = track->getpos(nodedist);
-	imageangle = track->nodeleft->dir - sign(track->radius)*nodedist*(track->phi);
+	imageangle = track->nodeleft->dir - nodedist*track->phi + pi/2+pi/2*sign(track->phi*track->y0) + pi*alignedwithtrackdirection;
 }
 
 void Wagon::render()

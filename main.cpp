@@ -15,6 +15,7 @@ int main(){
 		trains.emplace_back(new Train(&tracksystem, {wagons[iWagon].get()}, 0));
 	}
 	trains[0]->selected = true;
+	wagons[0]->alignedwithtrackdirection = false;
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
