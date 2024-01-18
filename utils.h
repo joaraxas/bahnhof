@@ -3,6 +3,7 @@ extern SDL_Renderer* renderer;
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
 const int breakbutton = SDL_SCANCODE_S;
+const int gearbutton = SDL_SCANCODE_LSHIFT;
 const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
 
 const int SCREEN_WIDTH = 1000;
@@ -92,6 +93,8 @@ public:
     Vec pos;
     bool alignedwithtrackdirection = true;
     bool alignedforward = true;
+    float P[2] = {0,0};
+    float maxspeed[2] = {40,140};
 private:
     Track* track;
     int w;
@@ -109,6 +112,7 @@ public:
     Tracksystem* tracksystem;
     bool selected = false;
     float speed;
+    bool direction = 1;
     std::vector<Wagon*> wagons;
     void checkCollision(Train* train);
     void split(int where);

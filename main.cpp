@@ -16,6 +16,8 @@ int main(){
 	}
 	trains[0]->selected = true;
 	wagons[0]->alignedwithtrackdirection = false;
+	wagons[0]->P[1] = 1;
+	wagons[0]->P[0] = 1;
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();

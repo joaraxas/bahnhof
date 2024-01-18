@@ -390,10 +390,32 @@ Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, 
 void Train::getinput()
 {
 	if(selected){
-		if(keys[gasbutton]) speed+=1./wagons.size();
-		if(keys[breakbutton]) speed-=1./wagons.size();
+		if(keys[gasbutton]){
+			float Ptot = 0;
+			for(auto w : wagons)
+				if(abs(speed)<w->maxspeed[(w->alignedforward)==direction])
+					Ptot += w->P[(w->alignedforward)==direction];
+			//m = sum(wagons.m)
+			float mtot = size(wagons);
+			speed+=(2*direction-1)*Ptot/mtot;
+		}
+		if(keys[breakbutton]){
+			float Ptot = 0;
+			for(auto w : wagons)
+				Ptot += 1;
+			//m = sum(wagons.m)
+			float mtot = size(wagons);
+			speed = (2*direction-1)*fmax(0,(2*direction-1)*(speed - (2*direction-1)*Ptot/mtot));
+		}
+		if(keys[gearbutton]){
+			if(speed==0){
+				direction = 1-direction;
+				speed = 5*(2*direction-1);
+			}
+		}
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);
+		std::cout<<speed<<std::endl;
 	}
 }
 
