@@ -122,18 +122,16 @@ Track::Track(Node* left, Node* right)
 {
 	nodeleft = left;
 	noderight = right;
-	radius = getradius();
 	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
-	y0 = 0.5*(dy*dy+dx*dx)/dy;
-	std::cout << radius << " " << y0 << std::endl;
-	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
-	//if(y0*phi>=0 || radius==INFINITY)
-	if(y0*phi>=0)
+	radius = 0.5*(dy*dy+dx*dx)/dy;
+	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
+	//if(radius*phi>=0 || radius==INFINITY)
+	if(radius*phi>=0)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	if(cos(-(sign(y0*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: y0*phi is nan when straight
+	if(cos(-(sign(radius*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: radius*phi is nan when straight
 		noderight->tracksleft.push_back(this);
 	else
 		noderight->tracksright.push_back(this);
@@ -141,19 +139,6 @@ Track::Track(Node* left, Node* right)
 
 Track::~Track()
 {
-	//std::cout<<radius<<std::endl;
-}
-
-float Track::getradius()
-{
-	float dx = noderight->pos.x - nodeleft->pos.x;
-	float dy = -(noderight->pos.y - nodeleft->pos.y);
-	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
-	float anglebetween = atan2(dy, dx);
-	if(abs(sin(anglebetween-nodeleft->dir))<0.01)
-		return INFINITY;
-	else
-		return distance/abs(2*sin(anglebetween-nodeleft->dir));
 }
 
 Vec Track::getpos(float nodedist)
@@ -164,8 +149,8 @@ Vec Track::getpos(float nodedist)
 	}
 	else{
 		float ddx, ddy;
-		ddx = y0*sin(nodedist*phi);
-		ddy = y0*(1-cos(nodedist*phi));
+		ddx = radius*sin(nodedist*phi);
+		ddy = radius*(1-cos(nodedist*phi));
 		currentpos = Vec(nodeleft->pos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, nodeleft->pos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
 	}
 	return currentpos;
@@ -180,7 +165,7 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
 	}
 	else{
-		arclength = abs(y0*phi);
+		arclength = abs(radius*phi);
 	}
 	return arclength;
 }

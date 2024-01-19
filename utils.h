@@ -80,10 +80,8 @@ public:
     ~Track();
     Node* nodeleft;
     Node* noderight;
-    float radius;
     float phi;
-    float y0;
-    float getradius();
+    float radius;
     void render();
     Vec getpos(float nodedist);
     float getarclength(float nodedist);
