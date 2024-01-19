@@ -42,6 +42,11 @@ class Wagon;
 class Train;
 class Resource;
 
+enum resourcetype
+{
+    BEER, HOPS, BARLEY
+};
+
 class Tracksystem
 {
 public:
@@ -50,7 +55,7 @@ public:
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
     void addnode(float x, float y, Node* previousnode);
-    void addtrack(Node* leftnode, Node* rightnode, int ind);
+    void addtrack(Node* leftnode, Node* rightnode);
     std::vector<std::unique_ptr<Node>> nodes;
     std::vector<std::unique_ptr<Track>> tracks;
     Node* selectednode = nullptr;
@@ -71,9 +76,8 @@ public:
 class Track
 {
 public:
-    Track(Node* left, Node* right, int ind);
+    Track(Node* left, Node* right);
     ~Track();
-    int indexx;
     Node* nodeleft;
     Node* noderight;
     float radius;
@@ -108,7 +112,7 @@ private:
     int h;
     float imageangle = 0;
     SDL_Texture* tex;
-    Resource* loadtype = nullptr;
+    Resource* loadedresource = nullptr;
     int loadamount = 0;
 };
 
@@ -116,7 +120,7 @@ class Train
 {
 public:
     Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
-    void getinput();
+    void getinput(int ms);
     //void update(int ms);
     void checkCollision(Train* train);
     void split(int where);
@@ -131,8 +135,9 @@ public:
 class Resource
 {
 public:
-    Resource(std::string newname, std::string pathtotex);
+    Resource(resourcetype newtype, std::string newname, std::string pathtotex);
     void render(Vec pos);
+    resourcetype type;
 private:
     std::string name;
     SDL_Texture* tex;

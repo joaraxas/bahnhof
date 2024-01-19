@@ -1,7 +1,6 @@
 #include<iostream>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
-#include<string>
 #include "utils.h"
 
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
@@ -9,7 +8,7 @@ Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
 	for(int iNode = 1; iNode<xs.size(); iNode++){
 		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());
-		addtrack(nodes[iNode-1].get(), nodes[iNode].get(), iNode);
+		addtrack(nodes[iNode-1].get(), nodes[iNode].get());
 	}
 	selectednode = nodes.back().get();
 }
@@ -21,8 +20,8 @@ void Tracksystem::addnode(float x, float y, Node* previousnode){
 	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
 }
 
-void Tracksystem::addtrack(Node* leftnode, Node* rightnode, int ind){
-	tracks.push_back(std::unique_ptr<Track>{new Track(leftnode, rightnode, ind)});
+void Tracksystem::addtrack(Node* leftnode, Node* rightnode){
+	tracks.push_back(std::unique_ptr<Track>{new Track(leftnode, rightnode)});
 }
 
 void Tracksystem::render()
@@ -74,10 +73,10 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 				newnodepoint = tangentintersection + (nearestnode->pos - tangentintersection)/disttointersect2*disttointersect1;
 		}
 		addnode(newnodepoint.x, newnodepoint.y, selectednode);
-		addtrack(selectednode, nodes.back().get(), nodes.size()-1);
+		addtrack(selectednode, nodes.back().get());
 		if(mindistsquared>pow(20,2)){}
 		else{
-			addtrack(nodes.back().get(), nearestnode, nodes.size()-1);
+			addtrack(nodes.back().get(), nearestnode);
 		}
 		selectednode = nodes.back().get();
 	}
@@ -119,7 +118,7 @@ Node::Node(float xstart, float ystart, float dirstart)
 	stateright = 0;
 }
 
-Track::Track(Node* left, Node* right, int ind)
+Track::Track(Node* left, Node* right)
 {
 	nodeleft = left;
 	noderight = right;
@@ -127,8 +126,8 @@ Track::Track(Node* left, Node* right, int ind)
 	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	y0 = 0.5*(dy*dy+dx*dx)/dy;
+	std::cout << radius << " " << y0 << std::endl;
 	phi = sign(dy)*atan2(dx, sign(dy)*(y0-dy));
-	indexx = ind;
 	//if(y0*phi>=0 || radius==INFINITY)
 	if(y0*phi>=0)
 		nodeleft->tracksright.push_back(this);

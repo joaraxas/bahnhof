@@ -69,24 +69,24 @@ void Wagon::render()
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
-	if(loadtype!=nullptr)
-		loadtype->render(pos);
+	if(loadedresource!=nullptr)
+		loadedresource->render(pos);
 }
 
-int Wagon::loadwagon(Resource &type, int amount)
+int Wagon::loadwagon(Resource &resource, int amount)
 {
 	int loadedamount = 0;
-	if(loadtype == &type || loadtype == nullptr){
+	if(loadedresource == &resource || loadedresource == nullptr){
 		loadedamount = fmin(amount, maxamount - loadamount);
 		loadamount += loadedamount;
 		if(loadedamount>0)
-			loadtype = &type;
+			loadedresource = &resource;
 		}
 	return loadedamount;
 }
 
 void Wagon::unloadwagon()
 {
-	loadtype = nullptr;
+	loadedresource = nullptr;
 	loadamount = 0;
 }

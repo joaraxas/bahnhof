@@ -17,7 +17,7 @@ Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, 
 		wagon->train = this;
 }
 
-void Train::getinput()
+void Train::getinput(int ms)
 {
 	if(selected){
 		if(keys[gasbutton]){
@@ -25,17 +25,15 @@ void Train::getinput()
 			for(auto w : wagons)
 				if(abs(speed)<w->maxspeed[(w->alignedforward)==direction])
 					Ptot += w->P[(w->alignedforward)==direction];
-			//m = sum(wagons.m)
 			float mtot = size(wagons);
-			speed+=(2*direction-1)*Ptot/mtot;
+			speed+=(2*direction-1)*ms*Ptot/mtot;
 		}
 		if(keys[breakbutton]){
 			float Ptot = 0;
 			for(auto w : wagons)
-				Ptot += 1;
-			//m = sum(wagons.m)
+				Ptot += 0.2;
 			float mtot = size(wagons);
-			speed = (2*direction-1)*fmax(0,(2*direction-1)*(speed - (2*direction-1)*Ptot/mtot));
+			speed = (2*direction-1)*fmax(0,(2*direction-1)*(speed - (2*direction-1)*ms*Ptot/mtot));
 		}
 		if(keys[gearbutton]){
 			if(speed==0){
@@ -53,7 +51,6 @@ void Train::getinput()
 		}
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);
-		//std::cout<<speed<<std::endl;
 	}
 }
 
@@ -119,8 +116,9 @@ void Train::split(int where)
 	}
 }
 
-Resource::Resource(std::string newname, std::string pathtotex)
+Resource::Resource(resourcetype newtype, std::string newname, std::string pathtotex)
 {
+    type = newtype;
 	name = newname;
 	tex = loadImage(pathtotex);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
