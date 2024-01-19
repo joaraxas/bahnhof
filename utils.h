@@ -13,6 +13,8 @@ const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
 const double pi = 3.141592653589793238;
 
+extern float money;
+
 int init();
 
 SDL_Texture* loadImage(std::string path);
@@ -154,5 +156,4 @@ private:
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;
-extern std::vector<std::unique_ptr<Wagon> > wagons;
 extern Resource* selectedresource;

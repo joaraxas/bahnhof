@@ -4,8 +4,6 @@
 #include<string>
 #include "utils.h"
 
-std::vector<std::unique_ptr<Wagon>> wagons;
-
 Wagon::Wagon(Tracksystem* newtracksystem, float nodediststart)
 {
 	tracksystem = newtracksystem;
@@ -79,5 +77,5 @@ int Wagon::unloadwagon()
 	loadedresource = nullptr;
 	int unloadedamount = loadamount;
 	loadamount = 0;
-	return loadamount;
+	return unloadedamount;
 }

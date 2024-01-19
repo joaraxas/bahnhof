@@ -46,8 +46,11 @@ void Train::getinput(int ms)
 				w->loadwagon(*selectedresource, 1);
 		}
 		if(keys[unloadbutton]){
-			for(auto w : wagons)
-				w->unloadwagon();
+			for(auto w : wagons){
+				int unloadedamount = w->unloadwagon();
+				money += unloadedamount;
+			}
+			std::cout << money << std::endl;
 		}
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);
@@ -130,3 +133,4 @@ void Resource::render(Vec pos)
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
 }
+

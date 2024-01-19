@@ -4,12 +4,16 @@
 #include<string>
 #include "utils.h"
 
+std::vector<std::unique_ptr<Wagon>> wagons;
+float money;
+
 int main(){
 	init();
 
 	Resource beer(BEER, "Beer", "assets/beer.png");
 	Resource hops(HOPS, "Hops", "assets/beer.png");
 	selectedresource = &beer;
+	money = 100;
 	Tracksystem tracksystem({200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	for(int iWagon=0; iWagon<11; iWagon++){
 		wagons.emplace_back(new Wagon(&tracksystem, 0.5+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
