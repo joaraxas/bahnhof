@@ -24,12 +24,7 @@ void Wagon::update(int ms)
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
-		if(cos(track->getorientation(1)-track->noderight->dir)>0){ //TODO: radius*phi is nan when straight
-			track = currentnode->tracksright[currentnode->stateright];
-		}
-		else{
-			track = currentnode->tracksleft[currentnode->stateleft];
-		}
+		track = track->getrighttrack();
 		float arclength2 = track->getarclength(1);
 		if(track->nodeleft==currentnode)
 			nodedist = (nodedist-1)*arclength1/arclength2;
@@ -41,13 +36,7 @@ void Wagon::update(int ms)
 	else if(nodedist<0)
 	{
 		Node* currentnode = track->nodeleft;
-		//if(track->radius*track->phi>=0 || track->radius==INFINITY){
-		if(track->isrightofleftnode()){
-			track = currentnode->tracksleft[currentnode->stateleft];
-		}
-		else{
-			track = currentnode->tracksright[currentnode->stateright];
-		}
+		track = track->getlefttrack();
 		float arclength2 = track->getarclength(1);
 		if(track->nodeleft==currentnode){
 			nodedist = (-nodedist)*arclength1/arclength2;
@@ -85,8 +74,10 @@ int Wagon::loadwagon(Resource &resource, int amount)
 	return loadedamount;
 }
 
-void Wagon::unloadwagon()
+int Wagon::unloadwagon()
 {
 	loadedresource = nullptr;
+	int unloadedamount = loadamount;
 	loadamount = 0;
+	return loadamount;
 }

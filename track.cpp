@@ -30,11 +30,7 @@ void Tracksystem::render()
 		tracks[iTrack]->render();
 	}
 	for(auto& node: nodes){
-		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y-5, node->pos.x+5, node->pos.y+5);
-		SDL_RenderDrawLine(renderer, node->pos.x-5, node->pos.y+5, node->pos.x+5, node->pos.y-5);
-		SDL_SetRenderDrawColor(renderer, 255*(node->dir>2*pi), 0, 255*(node->dir<-2*pi), 255);
-		SDL_RenderDrawLine(renderer, node->pos.x, node->pos.y, node->pos.x+12*cos(node->dir), node->pos.y-12*sin(node->dir));
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		node->render();
 	}
 }
 
@@ -100,12 +96,7 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 		}
 	}
 	if(mindistsquared<=pow(20,2)){
-		nearestnode->stateleft++;
-		nearestnode->stateright++;
-		if(nearestnode->stateleft>=nearestnode->tracksleft.size())
-			nearestnode->stateleft = 0;
-		if(nearestnode->stateright>=nearestnode->tracksright.size())
-			nearestnode->stateright = 0;
+		nearestnode->incrementswitch();
 	}
 }
 
@@ -118,25 +109,63 @@ Node::Node(float xstart, float ystart, float dirstart)
 	stateright = 0;
 }
 
+void Node::render()
+{
+	SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
+	SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+Track* Node::getrighttrack()
+{
+	Track* righttrack = nullptr;
+	if(tracksright.size() > stateright)
+		righttrack = tracksright[stateright];
+	return righttrack;
+}
+
+Track* Node::getlefttrack()
+{
+	Track* lefttrack = nullptr;
+	if(tracksleft.size() > stateleft)
+		lefttrack = tracksleft[stateleft];
+	return lefttrack;
+}
+
+void Node::incrementswitch()
+{
+	stateleft++;
+	stateright++;
+	if(stateleft>=tracksleft.size())
+		stateleft = 0;
+	if(stateright>=tracksright.size())
+		stateright = 0;
+}
+
 Track::Track(Node* left, Node* right)
 {
 	nodeleft = left;
 	noderight = right;
+
 	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
-	//if(isrightofleftnode() || radius==INFINITY)
+	if(abs(radius)>1e5){
+		radius = INFINITY;
+		phi = 0;
+	}
+
 	if(isrightofleftnode())
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	if(cos(getorientation(1)-noderight->dir)>0){ //TODO: radius*phi is nan when straight
+	if(isleftofrightnode())
 		noderight->tracksleft.push_back(this);
-	}
-	else{
+	else
 		noderight->tracksright.push_back(this);
-	}
 }
 
 Track::~Track()
@@ -167,7 +196,7 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
 	}
 	else{
-		arclength = abs(radius*phi);
+		arclength = nodedist*abs(radius*phi);
 	}
 	return arclength;
 }
@@ -179,7 +208,37 @@ float Track::getorientation(float nodedist)
 
 bool Track::isrightofleftnode()
 {
-	return (radius*phi)>=0;
+	if(isinf(radius))
+		return nodeleft->pos.y >= noderight->pos.y;
+	else
+		return radius*phi >= 0;
+}
+
+bool Track::isleftofrightnode()
+{
+	return cos(getorientation(1) - noderight->dir) > 0;
+}
+
+Track* Track::getrighttrack(){
+	Track* righttrack;
+	if(isleftofrightnode())
+		righttrack = noderight->getrighttrack();
+	else
+		righttrack = noderight->getlefttrack();
+	if(righttrack == nullptr)
+		righttrack = this;
+	return righttrack;
+}
+
+Track* Track::getlefttrack(){
+	Track* lefttrack;
+	if(isrightofleftnode())
+		lefttrack = nodeleft->getlefttrack();
+	else
+		lefttrack = nodeleft->getrighttrack();
+	if(lefttrack == nullptr)
+		lefttrack = this;
+	return lefttrack;
 }
 
 void Track::render()

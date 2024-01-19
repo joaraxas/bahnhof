@@ -67,8 +67,13 @@ public:
     Node(float xstart, float ystart, float dirstart);
     Vec pos;
     float dir;
+    void render();
+    Track* getrighttrack();
+    Track* getlefttrack();
+    void incrementswitch();
     std::vector<Track*> tracksleft;
     std::vector<Track*> tracksright;
+private:
     int stateleft;
     int stateright;
 };
@@ -85,6 +90,9 @@ public:
     float getarclength(float nodedist);
     float getorientation(float nodedist);
     bool isrightofleftnode();
+    bool isleftofrightnode();
+    Track* getrighttrack();
+    Track* getlefttrack();
 private:
     float phi;
     float radius;
@@ -96,6 +104,8 @@ public:
     Wagon(Tracksystem* newtracksystem, float nodediststart);
     void update(int ms);
     void render();
+    int loadwagon(Resource &type, int amount);
+    int unloadwagon();
     Tracksystem* tracksystem;
     float nodedist;
     Train* train;
@@ -104,8 +114,6 @@ public:
     bool alignedforward = true;
     float P[2] = {0,0};
     float maxspeed[2] = {4*40,2*140};
-    int loadwagon(Resource &type, int amount);
-    void unloadwagon();
     int maxamount = 40;
 private:
     Track* track;
@@ -122,7 +130,6 @@ class Train
 public:
     Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput(int ms);
-    //void update(int ms);
     void checkCollision(Train* train);
     void split(int where);
     void couple(Train& train, bool ismyback, bool ishisback);
