@@ -24,7 +24,7 @@ void Wagon::update(int ms)
 	if(nodedist>=1)
 	{
 		Node* currentnode = track->noderight;
-		if(cos(-(sign(track->radius*track->phi)-1)/2*pi+track->nodeleft->dir-track->phi-track->noderight->dir)>0){ //TODO: radius*phi is nan when straight
+		if(cos(track->getorientation(1)-track->noderight->dir)>0){ //TODO: radius*phi is nan when straight
 			track = currentnode->tracksright[currentnode->stateright];
 		}
 		else{
@@ -42,7 +42,7 @@ void Wagon::update(int ms)
 	{
 		Node* currentnode = track->nodeleft;
 		//if(track->radius*track->phi>=0 || track->radius==INFINITY){
-		if(track->radius*track->phi>=0){
+		if(track->isrightofleftnode()){
 			track = currentnode->tracksleft[currentnode->stateleft];
 		}
 		else{
@@ -57,9 +57,9 @@ void Wagon::update(int ms)
 			nodedist = 1-(-nodedist)*arclength1/arclength2;
 		}
 	}
-
 	pos = track->getpos(nodedist);
-	imageangle = track->nodeleft->dir - nodedist*track->phi + pi/2+pi/2*sign(track->phi*track->radius) + pi*alignedwithtrackdirection + pi*(1-alignedforward);
+
+	imageangle = track->getorientation(nodedist) + pi*!alignedwithtrackdirection + pi*!alignedforward;
 }
 
 void Wagon::render()

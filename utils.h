@@ -80,11 +80,14 @@ public:
     ~Track();
     Node* nodeleft;
     Node* noderight;
-    float phi;
-    float radius;
     void render();
     Vec getpos(float nodedist);
     float getarclength(float nodedist);
+    float getorientation(float nodedist);
+    bool isrightofleftnode();
+private:
+    float phi;
+    float radius;
 };
 
 class Wagon
@@ -100,7 +103,7 @@ public:
     bool alignedwithtrackdirection = true;
     bool alignedforward = true;
     float P[2] = {0,0};
-    float maxspeed[2] = {40,140};
+    float maxspeed[2] = {4*40,2*140};
     int loadwagon(Resource &type, int amount);
     void unloadwagon();
     int maxamount = 40;

@@ -19,8 +19,8 @@ int main(){
 	}
 	trains[0]->selected = true;
 	wagons[0]->alignedwithtrackdirection = false;
-	wagons[0]->P[1] = 0.2;
-	wagons[0]->P[0] = 0.2;
+	wagons[0]->P[1] = 4*0.2;
+	wagons[0]->P[0] = 4*0.2;
 	wagons[0]->maxamount = 0;
 	wagons[1]->loadwagon(beer, 12);
 	wagons[3]->loadwagon(hops, 12);

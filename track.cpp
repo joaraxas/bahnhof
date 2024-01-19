@@ -126,15 +126,24 @@ Track::Track(Node* left, Node* right)
 	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
-	//if(radius*phi>=0 || radius==INFINITY)
-	if(radius*phi>=0)
+	//if(isrightofleftnode() || radius==INFINITY)
+	if(isrightofleftnode())
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	if(cos(-(sign(radius*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: radius*phi is nan when straight
+	//if(cos(-(sign(radius*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: radius*phi is nan when straight
+	if(cos(getorientation(1)-noderight->dir)>0){
 		noderight->tracksleft.push_back(this);
-	else
+		std::cout << "more" <<std::endl;
+		std::cout<< getorientation(1) << std::endl;
+		std::cout<< noderight->dir << std::endl;
+	}
+	else{
 		noderight->tracksright.push_back(this);
+		std::cout << "less" <<std::endl;
+		std::cout<< getorientation(1) << std::endl;
+		std::cout<< noderight->dir << std::endl;
+	}
 }
 
 Track::~Track()
@@ -154,7 +163,7 @@ Vec Track::getpos(float nodedist)
 		currentpos = Vec(nodeleft->pos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, nodeleft->pos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
 	}
 	return currentpos;
-	}
+}
 
 float Track::getarclength(float nodedist)
 {
@@ -168,6 +177,16 @@ float Track::getarclength(float nodedist)
 		arclength = abs(radius*phi);
 	}
 	return arclength;
+}
+
+float Track::getorientation(float nodedist)
+{
+	return nodeleft->dir - nodedist*phi + pi*!isrightofleftnode();
+}
+
+bool Track::isrightofleftnode()
+{
+	return (radius*phi)>=0;
 }
 
 void Track::render()
