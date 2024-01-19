@@ -1,5 +1,6 @@
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
+
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
 const int breakbutton = SDL_SCANCODE_S;
@@ -117,14 +118,14 @@ public:
     Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput();
     //void update(int ms);
+    void checkCollision(Train* train);
+    void split(int where);
+    void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
     bool selected = false;
     float speed;
     bool direction = 1;
     std::vector<Wagon*> wagons;
-    void checkCollision(Train* train);
-    void split(int where);
-    void couple(Train& train, bool ismyback, bool ishisback);
 };
 
 class Resource
