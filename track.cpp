@@ -131,18 +131,11 @@ Track::Track(Node* left, Node* right)
 		nodeleft->tracksright.push_back(this);
 	else
 		nodeleft->tracksleft.push_back(this);
-	//if(cos(-(sign(radius*phi)-1)/2*pi+nodeleft->dir-phi-noderight->dir)>0) //TODO: radius*phi is nan when straight
-	if(cos(getorientation(1)-noderight->dir)>0){
+	if(cos(getorientation(1)-noderight->dir)>0){ //TODO: radius*phi is nan when straight
 		noderight->tracksleft.push_back(this);
-		std::cout << "more" <<std::endl;
-		std::cout<< getorientation(1) << std::endl;
-		std::cout<< noderight->dir << std::endl;
 	}
 	else{
 		noderight->tracksright.push_back(this);
-		std::cout << "less" <<std::endl;
-		std::cout<< getorientation(1) << std::endl;
-		std::cout<< noderight->dir << std::endl;
 	}
 }
 
