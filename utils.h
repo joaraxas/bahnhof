@@ -164,6 +164,7 @@ public:
     int loadstorage(Resource &resource, int amount);
     int unloadstorage(Resource &resource, int amount);
     bool containspoint(Vec pos);
+    Resource* getfirststoredresource();
 private:
     std::map<Resource*, int> storedresources;
     SDL_Rect rect;

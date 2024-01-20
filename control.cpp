@@ -47,6 +47,7 @@ void Train::getinput(int ms)
 			for(auto w : wagons){
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
+					selectedresource = storage->getfirststoredresource();
 					int unloadedamount = storage->unloadstorage(*selectedresource, 1);
 					int loadedamount = w->loadwagon(*selectedresource, unloadedamount);
 					if(loadedamount!=unloadedamount)
@@ -182,7 +183,7 @@ int Storage::loadstorage(Resource &resource, int amount)
 			storedresources[&resource] += amount;
 		else
 			storedresources[&resource] = amount;
-		}
+	}
 	else
 		amount = 0;
 	return amount;
@@ -203,6 +204,14 @@ int Storage::unloadstorage(Resource &resource, int amount)
 bool Storage::containspoint(Vec pos)
 {
 	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
+}
+
+Resource* Storage::getfirststoredresource()
+{
+	if(storedresources.size()>0)
+		return storedresources.begin()->first;
+	else
+		return nullptr;
 }
 
 Storage* getstorageatpoint(Vec pos)

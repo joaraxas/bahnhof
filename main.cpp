@@ -31,7 +31,7 @@ int main(){
 	wagons[3]->loadwagon(hops, 1);
 	storages.emplace_back(new Storage(100,100,400,150));
 	storages.emplace_back(new Storage(600,600,300,100));
-	storages[0]->loadstorage(beer, 16);
+	storages[0]->loadstorage(beer, 4);
 	
 	bool quit = false;
 	int ms = 0;
