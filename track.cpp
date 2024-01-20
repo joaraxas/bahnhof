@@ -1,6 +1,8 @@
 #include<iostream>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
+#include<string>
+#include<map>
 #include "utils.h"
 
 Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)

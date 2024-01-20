@@ -2,6 +2,7 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<string>
+#include<map>
 #include "utils.h"
 
 std::vector<std::unique_ptr<Wagon>> wagons;
@@ -11,10 +12,10 @@ int main(){
 	init();
 
 	Resource beer(BEER, "Beer", "assets/beer.png");
-	Resource hops(HOPS, "Hops", "assets/beer.png");
+	Resource hops(HOPS, "Hops", "assets/hops.png");
 	selectedresource = &beer;
-	money = 100;
-	Tracksystem tracksystem({200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
+	money = 0;
+	Tracksystem tracksystem({200,301,702,803,804,805,706,307,208,209,301,602,653,604,105}, {200,201,202,303,504,605,706,707,608,509,401,402,353,304,305});
 	for(int iWagon=0; iWagon<11; iWagon++){
 		wagons.emplace_back(new Wagon(&tracksystem, 0.5+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
 	}
@@ -23,11 +24,14 @@ int main(){
 	}
 	trains[0]->selected = true;
 	wagons[0]->alignedwithtrackdirection = false;
-	wagons[0]->P[1] = 4*0.2;
-	wagons[0]->P[0] = 4*0.2;
+	wagons[0]->P[1] = 0.2*4;
+	wagons[0]->P[0] = 0.2*4;
 	wagons[0]->maxamount = 0;
-	wagons[1]->loadwagon(beer, 12);
-	wagons[3]->loadwagon(hops, 12);
+	wagons[1]->loadwagon(beer, 1);
+	wagons[3]->loadwagon(hops, 1);
+	storages.emplace_back(new Storage(100,100,400,150));
+	storages.emplace_back(new Storage(600,600,300,100));
+	storages[0]->loadstorage(beer, 16);
 	
 	bool quit = false;
 	int ms = 0;
@@ -84,6 +88,8 @@ int main(){
 			SDL_Rect rect = {x,y,128,128};
 			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 		}}
+		for(auto& storage : storages)
+			storage->render();
 		tracksystem.render();
 		for(auto& wagon : wagons)
 			wagon->render();

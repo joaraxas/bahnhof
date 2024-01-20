@@ -43,6 +43,7 @@ class Track;
 class Wagon;
 class Train;
 class Resource;
+class Storage;
 
 enum resourcetype
 {
@@ -106,8 +107,8 @@ public:
     Wagon(Tracksystem* newtracksystem, float nodediststart);
     void update(int ms);
     void render();
-    int loadwagon(Resource &type, int amount);
-    int unloadwagon();
+    int loadwagon(Resource &resource, int amount);
+    int unloadwagon(Resource** resource);
     Tracksystem* tracksystem;
     float nodedist;
     Train* train;
@@ -115,8 +116,8 @@ public:
     bool alignedwithtrackdirection = true;
     bool alignedforward = true;
     float P[2] = {0,0};
-    float maxspeed[2] = {4*40,2*140};
-    int maxamount = 40;
+    float maxspeed[2] = {40*4,4*140};
+    int maxamount = 1;
 private:
     Track* track;
     int w;
@@ -155,5 +156,21 @@ private:
     int h;
 };
 
+class Storage
+{
+public:
+    Storage(int x, int y, int w, int h);
+    void render();
+    int loadstorage(Resource &resource, int amount);
+    int unloadstorage(Resource &resource, int amount);
+    bool containspoint(Vec pos);
+private:
+    std::map<Resource*, int> storedresources;
+    SDL_Rect rect;
+};
+
+Storage* getstorageatpoint(Vec pos);
+
 extern std::vector<std::unique_ptr<Train> > trains;
+extern std::vector<std::unique_ptr<Storage> > storages;
 extern Resource* selectedresource;

@@ -2,10 +2,12 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<string>
+#include<map>
 #include "utils.h"
 
 Resource* selectedresource = NULL;
 std::vector<std::unique_ptr<Train>> trains;
+std::vector<std::unique_ptr<Storage>> storages;
 
 
 Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
@@ -42,13 +44,25 @@ void Train::getinput(int ms)
 			}
 		}
 		if(keys[loadbutton]){
-			for(auto w : wagons)
-				w->loadwagon(*selectedresource, 1);
+			for(auto w : wagons){
+				Storage* storage = getstorageatpoint(w->pos);
+				if(storage){
+					int unloadedamount = storage->unloadstorage(*selectedresource, 1);
+					int loadedamount = w->loadwagon(*selectedresource, unloadedamount);
+					if(loadedamount!=unloadedamount)
+						storage->loadstorage(*selectedresource, unloadedamount-loadedamount);
+				}
+			}
 		}
 		if(keys[unloadbutton]){
 			for(auto w : wagons){
-				int unloadedamount = w->unloadwagon();
-				money += unloadedamount;
+				Storage* storage = getstorageatpoint(w->pos);
+				if(storage){
+					Resource* beingunloaded;
+					int unloadedamount = w->unloadwagon(&beingunloaded);
+					storage->loadstorage(*beingunloaded, unloadedamount);
+					money += unloadedamount;
+				}
 			}
 			std::cout << money << std::endl;
 		}
@@ -134,3 +148,68 @@ void Resource::render(Vec pos)
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
 }
 
+Storage::Storage(int x, int y, int w, int h)
+{
+	rect = {x, y, w, h};
+}
+
+void Storage::render()
+{
+	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
+	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	int xoffset = 0;
+	int nCols = 0;
+	int sep = 20;
+	for(auto resourcepair : storedresources){
+		Resource* resource = resourcepair.first;
+		int amount = resourcepair.second;
+		for(int i=0; i<amount; i++){
+			int maxrows = floor(rect.h/sep);
+			nCols = floor(i/maxrows);
+			int y = 5+rect.y+sep/2+sep*i-nCols*maxrows*sep;
+			int x = 5+xoffset+rect.x+sep/2+sep*nCols;
+			resource->render(Vec(x, y));
+		}
+		xoffset += (1+nCols)*sep;
+	}
+}
+
+int Storage::loadstorage(Resource &resource, int amount)
+{
+	if(&resource!=nullptr){
+		if(storedresources.count(&resource))
+			storedresources[&resource] += amount;
+		else
+			storedresources[&resource] = amount;
+		}
+	else
+		amount = 0;
+	return amount;
+}
+
+int Storage::unloadstorage(Resource &resource, int amount)
+{
+	int unloadedamount = 0;
+	if(storedresources.count(&resource)){
+		unloadedamount = fmin(storedresources[&resource], amount);
+		storedresources[&resource] -= unloadedamount;
+		if(storedresources[&resource] == 0)
+			storedresources.erase(&resource);
+	}
+	return unloadedamount;
+}
+
+bool Storage::containspoint(Vec pos)
+{
+	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
+}
+
+Storage* getstorageatpoint(Vec pos)
+{
+	for(auto& storage : storages){
+		if(storage->containspoint(pos))
+			return storage.get();
+	}
+	return nullptr;
+}

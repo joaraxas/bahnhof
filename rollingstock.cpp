@@ -2,6 +2,7 @@
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 #include<string>
+#include<map>
 #include "utils.h"
 
 Wagon::Wagon(Tracksystem* newtracksystem, float nodediststart)
@@ -68,12 +69,13 @@ int Wagon::loadwagon(Resource &resource, int amount)
 		loadamount += loadedamount;
 		if(loadedamount>0)
 			loadedresource = &resource;
-		}
+	}
 	return loadedamount;
 }
 
-int Wagon::unloadwagon()
+int Wagon::unloadwagon(Resource** unloadedresource)
 {
+	*unloadedresource = loadedresource;
 	loadedresource = nullptr;
 	int unloadedamount = loadamount;
 	loadamount = 0;
