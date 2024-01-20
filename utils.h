@@ -172,6 +172,21 @@ private:
 
 Storage* getstorageatpoint(Vec pos);
 
+class Building
+{
+public:
+    Building(int x, int y, int w, int h, Resource* need, Resource* production);
+    void render();
+    void update(int ms);
+    bool containspoint(Vec pos);
+private:
+    SDL_Rect rect;
+    Storage* storage;
+    int timeleft;
+    Resource* wants;
+    Resource* makes;
+};
+
 extern std::vector<std::unique_ptr<Train> > trains;
 extern std::vector<std::unique_ptr<Storage> > storages;
 extern Resource* selectedresource;

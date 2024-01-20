@@ -62,10 +62,8 @@ void Train::getinput(int ms)
 					Resource* beingunloaded;
 					int unloadedamount = w->unloadwagon(&beingunloaded);
 					storage->loadstorage(*beingunloaded, unloadedamount);
-					money += unloadedamount;
 				}
 			}
-			std::cout << money << std::endl;
 		}
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);

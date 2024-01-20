@@ -32,6 +32,9 @@ int main(){
 	storages.emplace_back(new Storage(100,100,400,150));
 	storages.emplace_back(new Storage(600,600,300,100));
 	storages[0]->loadstorage(beer, 4);
+	Building brewery(150,120,100,50, &hops, &beer);
+	Building farm(625,625,50,50, nullptr, &hops);
+	Building city(700,625,20,50, &beer, nullptr);
 	
 	bool quit = false;
 	int ms = 0;
@@ -71,6 +74,9 @@ int main(){
 		}
 		for(auto& wagon : wagons)
 			wagon->update(ms);
+		brewery.update(ms);
+		farm.update(ms);
+		city.update(ms);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++){
 			for(int jTrain=iTrain+1; jTrain<trains.size(); jTrain++){
 				trains[iTrain]->checkCollision(trains[jTrain].get());
@@ -88,6 +94,9 @@ int main(){
 			SDL_Rect rect = {x,y,128,128};
 			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 		}}
+		brewery.render();
+		farm.render();
+		city.render();
 		for(auto& storage : storages)
 			storage->render();
 		tracksystem.render();
