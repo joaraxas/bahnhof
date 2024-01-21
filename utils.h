@@ -14,6 +14,7 @@ const int SCREEN_HEIGHT = 800;
 const double pi = 3.141592653589793238;
 
 extern float money;
+extern bool nicetracks;
 
 int init();
 
@@ -90,6 +91,7 @@ public:
     Node* noderight;
     void render();
     Vec getpos(float nodedist);
+    Vec getpos(float nodedist, float transverseoffset);
     float getarclength(float nodedist);
     float getorientation(float nodedist);
     bool isrightofleftnode();

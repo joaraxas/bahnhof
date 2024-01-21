@@ -7,6 +7,7 @@
 
 std::vector<std::unique_ptr<Wagon>> wagons;
 float money;
+bool nicetracks = true;
 
 int main(){
 	init();
@@ -15,7 +16,7 @@ int main(){
 	Resource hops(HOPS, "Hops", "assets/hops.png");
 	selectedresource = &beer;
 	money = 0;
-	Tracksystem tracksystem({200,301,702,803,804,805,706,307,208,209,301,602,653,604,105}, {200,201,202,303,504,605,706,707,608,509,401,402,353,304,305});
+	Tracksystem tracksystem({200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	for(int iWagon=0; iWagon<11; iWagon++){
 		wagons.emplace_back(new Wagon(&tracksystem, 0.5+iWagon*50/tracksystem.tracks[0]->getarclength(1)));
 	}
