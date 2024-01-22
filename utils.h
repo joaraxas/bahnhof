@@ -15,6 +15,7 @@ const double pi = 3.141592653589793238;
 
 extern float money;
 extern bool nicetracks;
+extern float scale;
 
 int init();
 
@@ -106,7 +107,7 @@ private:
 class Wagon
 {
 public:
-    Wagon(Tracksystem* newtracksystem, float nodediststart);
+    Wagon(Tracksystem* newtracksystem, float nodediststart, std::string path);
     void update(int ms);
     void render();
     int loadwagon(Resource &resource, int amount);
@@ -120,11 +121,14 @@ public:
     float P[2] = {0,0};
     float maxspeed[2] = {40*4,4*140};
     int maxamount = 1;
+    int w;
 private:
     Track* track;
-    int w;
     int h;
     float imageangle = 0;
+    int imagenumber = 4;
+    float imageindex = 0;
+    float imagespeed = 2;
     SDL_Texture* tex;
     Resource* loadedresource = nullptr;
     int loadamount = 0;

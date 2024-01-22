@@ -75,13 +75,13 @@ void Train::checkCollision(Train* train)
 	if(size(wagons) >= 1)
 	if(size(train->wagons) >= 1)
 	if(abs(speed - train->speed)>10){
-		if(norm(wagons.back()->pos - train->wagons.front()->pos) <= 35)
+		if(norm(wagons.back()->pos - train->wagons.front()->pos) <= wagons.back()->w/2/scale+train->wagons.front()->w/2/scale)
 			couple(*train, true, false);
-		else if(norm(wagons.back()->pos - train->wagons.back()->pos) <= 35)
+		else if(norm(wagons.back()->pos - train->wagons.back()->pos) <= wagons.back()->w/2/scale+train->wagons.back()->w/2/scale)
 			couple(*train, true, true);
-		else if(norm(wagons.front()->pos - train->wagons.front()->pos) <= 35)
+		else if(norm(wagons.front()->pos - train->wagons.front()->pos) <= wagons.front()->w/2/scale+train->wagons.front()->w/2/scale)
 			couple(*train, false, false);
-		else if(norm(wagons.front()->pos - train->wagons.back()->pos) <= 35)
+		else if(norm(wagons.front()->pos - train->wagons.back()->pos) <= wagons.front()->w/2/scale+train->wagons.back()->w/2/scale)
 			couple(*train, false, true);
 	}
 }

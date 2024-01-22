@@ -174,6 +174,8 @@ Track::Track(Node* left, Node* right)
 		noderight->tracksleft.push_back(this);
 	else
 		noderight->tracksright.push_back(this);
+	
+	std::cout << radius*150*scale/1000 << std::endl;
 }
 
 Track::~Track()
@@ -279,7 +281,7 @@ void Track::render()
 	//// syllar ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
-		float sleeperwidth = 2600/200;
+		float sleeperwidth = 2600/150/scale;
 		int nSleepers = round(getarclength(1)/3);
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
@@ -300,7 +302,7 @@ void Track::render()
 	if(!isinf(radius))
 		nSegments = fmax(1,round(abs(phi/2/pi*4*16)));
 	float gauge = 0;
-	if(nicetracks) gauge = 1435/200;
+	if(nicetracks) gauge = 1435/150/scale;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
