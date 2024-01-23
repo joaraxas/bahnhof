@@ -5,10 +5,10 @@
 #include<map>
 #include "utils.h"
 
-Wagon::Wagon(Tracksystem* newtracksystem, float nodediststart, std::string path)
+Wagon::Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path)
 {
-	tracksystem = newtracksystem;
-	allresources = newtracksystem->allresources;
+	tracksystem = &newtracksystem;
+	allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	h = h/imagenumber;

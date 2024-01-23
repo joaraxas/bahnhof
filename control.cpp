@@ -10,9 +10,9 @@ std::vector<std::unique_ptr<Train>> trains;
 std::vector<std::unique_ptr<Storage>> storages;
 
 
-Train::Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
+Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
 {
-	tracksystem = newtracksystem;
+	tracksystem = &newtracksystem;
 	wagons = newwagons;
 	speed = newspeed;
 	for(auto wagon : wagons)
@@ -124,7 +124,7 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 void Train::split(int where)
 {
 	if(wagons.size()>where){
-		trains.emplace_back(new Train(tracksystem, {wagons.begin() + where, wagons.end()}, speed));
+		trains.emplace_back(new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed));
 		wagons = {wagons.begin(), wagons.begin() + where};
 		std::cout << "split" << std::endl;
 	}

@@ -109,7 +109,7 @@ private:
 class Wagon
 {
 public:
-    Wagon(Tracksystem* newtracksystem, float nodediststart, std::string path);
+    Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path);
     void update(int ms);
     void render();
     int loadwagon(resourcetype type, int amount);
@@ -140,7 +140,7 @@ private:
 class Train
 {
 public:
-    Train(Tracksystem* newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
+    Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput(int ms);
     void checkCollision(Train* train);
     void split(int where);
