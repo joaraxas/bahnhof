@@ -8,6 +8,7 @@
 Wagon::Wagon(Tracksystem* newtracksystem, float nodediststart, std::string path)
 {
 	tracksystem = newtracksystem;
+	allresources = newtracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	h = h/imagenumber;
@@ -64,26 +65,28 @@ void Wagon::render()
 	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
 	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
-	if(loadedresource!=nullptr)
-		loadedresource->render(pos);
+	if(loadedresource!=none){
+		Resource* resource = allresources->get(loadedresource);
+		resource->render(pos);
+	}
 }
 
-int Wagon::loadwagon(Resource &resource, int amount)
+int Wagon::loadwagon(resourcetype resource, int amount)
 {
 	int loadedamount = 0;
-	if(loadedresource == &resource || loadedresource == nullptr){
+	if(loadedresource == resource || loadedresource == none){
 		loadedamount = fmin(amount, maxamount - loadamount);
 		loadamount += loadedamount;
 		if(loadedamount>0)
-			loadedresource = &resource;
+			loadedresource = resource;
 	}
 	return loadedamount;
 }
 
-int Wagon::unloadwagon(Resource** unloadedresource)
+int Wagon::unloadwagon(resourcetype* unloadedresource)
 {
 	*unloadedresource = loadedresource;
-	loadedresource = nullptr;
+	loadedresource = none;
 	int unloadedamount = loadamount;
 	loadamount = 0;
 	return unloadedamount;

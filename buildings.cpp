@@ -5,8 +5,9 @@
 #include<map>
 #include "utils.h"
 
-Building::Building(int x, int y, int w, int h, Resource* need, Resource* production)
+Building::Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production)
 {
+	allresources = &resources;
 	rect = {x, y, w, h};
 	storage = getstorageatpoint(Vec(x,y));
 	if(!storage)
@@ -23,10 +24,10 @@ void Building::update(int ms)
 {
 	timeleft = fmax(0,timeleft-ms);
 	if(timeleft==0){
-		int got = storage->unloadstorage(*wants, 1);
-		if(wants==nullptr) got = 1;
-		int put = storage->loadstorage(*makes, got);
-		if(makes==nullptr && got){
+		int got = storage->unloadstorage(wants, 1);
+		if(wants==none) got = 1;
+		int put = storage->loadstorage(makes, got);
+		if(makes==none && got){
 			money+=got; 
 			std::cout << money << std::endl;
 		}
@@ -41,6 +42,6 @@ void Building::render()
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-Brewery::Brewery(int x, int y, int w, int h) : Building(x, y, w, h, nullptr, nullptr)
+Brewery::Brewery(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, none, none)
 {
 };

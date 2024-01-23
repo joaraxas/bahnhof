@@ -5,8 +5,9 @@
 #include<map>
 #include "utils.h"
 
-Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
+Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
 {
+	allresources = &resources;
 	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
 	for(int iNode = 1; iNode<xs.size(); iNode++){
 		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());

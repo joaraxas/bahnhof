@@ -44,18 +44,19 @@ class Node;
 class Track;
 class Wagon;
 class Train;
+class ResourceManager;
 class Resource;
 class Storage;
 
 enum resourcetype
 {
-    beer, hops, barley
+    none=-1, beer, hops, barley
 };
 
 class Tracksystem
 {
 public:
-    Tracksystem(std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
@@ -64,6 +65,7 @@ public:
     std::vector<std::unique_ptr<Node>> nodes;
     std::vector<std::unique_ptr<Track>> tracks;
     Node* selectednode = nullptr;
+    ResourceManager* allresources;
 };
 
 class Node
@@ -110,8 +112,8 @@ public:
     Wagon(Tracksystem* newtracksystem, float nodediststart, std::string path);
     void update(int ms);
     void render();
-    int loadwagon(Resource &resource, int amount);
-    int unloadwagon(Resource** resource);
+    int loadwagon(resourcetype type, int amount);
+    int unloadwagon(resourcetype* type);
     Tracksystem* tracksystem;
     float nodedist;
     Train* train;
@@ -130,7 +132,8 @@ private:
     float imageindex = 0;
     float imagespeed = 2;
     SDL_Texture* tex;
-    Resource* loadedresource = nullptr;
+    ResourceManager* allresources;
+    resourcetype loadedresource = none;
     int loadamount = 0;
 };
 
@@ -149,11 +152,11 @@ public:
     std::vector<Wagon*> wagons;
 };
 
-class Resources
+class ResourceManager
 {
 public:
-    Resources();
-    ~Resources();
+    ResourceManager();
+    ~ResourceManager();
     Resource* get(resourcetype type);
 private:
     std::map<resourcetype, Resource*> resourcemap;
@@ -175,14 +178,15 @@ private:
 class Storage
 {
 public:
-    Storage(int x, int y, int w, int h);
+    Storage(ResourceManager& resources, int x, int y, int w, int h);
     void render();
-    int loadstorage(Resource &resource, int amount);
-    int unloadstorage(Resource &resource, int amount);
+    int loadstorage(resourcetype type, int amount);
+    int unloadstorage(resourcetype type, int amount);
     bool containspoint(Vec pos);
-    Resource* getfirststoredresource();
+    resourcetype getfirststoredresource();
 private:
-    std::map<Resource*, int> storedresources;
+    ResourceManager* allresources;
+    std::map<resourcetype, int> storedresources;
     SDL_Rect rect;
 };
 
@@ -191,7 +195,7 @@ Storage* getstorageatpoint(Vec pos);
 class Building
 {
 public:
-    Building(int x, int y, int w, int h, Resource* need, Resource* production);
+    Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
     void render();
     void update(int ms);
     bool containspoint(Vec pos);
@@ -199,16 +203,17 @@ private:
     SDL_Rect rect;
     Storage* storage;
     int timeleft;
-    Resource* wants;
-    Resource* makes;
+    ResourceManager* allresources;
+    resourcetype wants;
+    resourcetype makes;
 };
 
 class Brewery : private Building
 {
     public:
-    Brewery(int x, int y, int w, int h);
+    Brewery(ResourceManager& resources, int x, int y, int w, int h);
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;
 extern std::vector<std::unique_ptr<Storage> > storages;
-extern Resource* selectedresource;
+extern resourcetype selectedresource;

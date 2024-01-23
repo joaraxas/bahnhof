@@ -5,7 +5,7 @@
 #include<map>
 #include "utils.h"
 
-Resource* selectedresource = NULL;
+resourcetype selectedresource = none;
 std::vector<std::unique_ptr<Train>> trains;
 std::vector<std::unique_ptr<Storage>> storages;
 
@@ -48,10 +48,10 @@ void Train::getinput(int ms)
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
 					selectedresource = storage->getfirststoredresource();
-					int unloadedamount = storage->unloadstorage(*selectedresource, 1);
-					int loadedamount = w->loadwagon(*selectedresource, unloadedamount);
+					int unloadedamount = storage->unloadstorage(selectedresource, 1);
+					int loadedamount = w->loadwagon(selectedresource, unloadedamount);
 					if(loadedamount!=unloadedamount)
-						storage->loadstorage(*selectedresource, unloadedamount-loadedamount);
+						storage->loadstorage(selectedresource, unloadedamount-loadedamount);
 				}
 			}
 		}
@@ -59,9 +59,9 @@ void Train::getinput(int ms)
 			for(auto w : wagons){
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
-					Resource* beingunloaded;
+					resourcetype beingunloaded;
 					int unloadedamount = w->unloadwagon(&beingunloaded);
-					storage->loadstorage(*beingunloaded, unloadedamount);
+					storage->loadstorage(beingunloaded, unloadedamount);
 				}
 			}
 		}
@@ -130,21 +130,20 @@ void Train::split(int where)
 	}
 }
 
-Resources::Resources()
+ResourceManager::ResourceManager()
 {
 	resourcemap[beer] = new Resource(beer, "Beer", "assets/beer.png");
 	resourcemap[hops] = new Resource(hops, "Hops", "assets/hops.png");
-	selectedresource = resourcemap[beer];
 }
 
-Resources::~Resources()
+ResourceManager::~ResourceManager()
 {
 	for (auto& pair : resourcemap) {
         delete pair.second;
     }
 }
 
-Resource* Resources::get(resourcetype type)
+Resource* ResourceManager::get(resourcetype type)
 {
 	auto it = resourcemap.find(type);
     return (it != resourcemap.end()) ? it->second : nullptr;
@@ -167,8 +166,9 @@ void Resource::render(Vec pos)
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
 }
 
-Storage::Storage(int x, int y, int w, int h)
+Storage::Storage(ResourceManager& resources, int x, int y, int w, int h)
 {
+	allresources = &resources;
 	rect = {x, y, w, h};
 }
 
@@ -181,7 +181,7 @@ void Storage::render()
 	int nCols = 0;
 	int sep = 20;
 	for(auto resourcepair : storedresources){
-		Resource* resource = resourcepair.first;
+		Resource* resource = allresources->get(resourcepair.first);
 		int amount = resourcepair.second;
 		for(int i=0; i<amount; i++){
 			int maxrows = floor(rect.h/sep);
@@ -194,27 +194,28 @@ void Storage::render()
 	}
 }
 
-int Storage::loadstorage(Resource &resource, int amount)
+int Storage::loadstorage(resourcetype resource, int amount)
 {
-	if(&resource!=nullptr){
-		if(storedresources.count(&resource))
-			storedresources[&resource] += amount;
+	if(resource!=none){
+		if(storedresources.count(resource)){
+			storedresources[resource] += amount;
+		}
 		else
-			storedresources[&resource] = amount;
+			storedresources[resource] = amount;
 	}
 	else
 		amount = 0;
 	return amount;
 }
 
-int Storage::unloadstorage(Resource &resource, int amount)
+int Storage::unloadstorage(resourcetype resource, int amount)
 {
 	int unloadedamount = 0;
-	if(storedresources.count(&resource)){
-		unloadedamount = fmin(storedresources[&resource], amount);
-		storedresources[&resource] -= unloadedamount;
-		if(storedresources[&resource] == 0)
-			storedresources.erase(&resource);
+	if(storedresources.count(resource)){
+		unloadedamount = fmin(storedresources[resource], amount);
+		storedresources[resource] -= unloadedamount;
+		if(storedresources[resource] == 0)
+			storedresources.erase(resource);
 	}
 	return unloadedamount;
 }
@@ -224,12 +225,12 @@ bool Storage::containspoint(Vec pos)
 	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
 }
 
-Resource* Storage::getfirststoredresource()
+resourcetype Storage::getfirststoredresource()
 {
 	if(storedresources.size()>0)
 		return storedresources.begin()->first;
 	else
-		return nullptr;
+		return none;
 }
 
 Storage* getstorageatpoint(Vec pos)
