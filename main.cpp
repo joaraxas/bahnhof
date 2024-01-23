@@ -20,7 +20,7 @@ int main(){
 	Tracksystem tracksystem({200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	wagons.emplace_back(new Wagon(&tracksystem, 0.5, "assets/loco0.png"));
 	for(int iWagon=1; iWagon<11; iWagon++){
-		wagons.emplace_back(new Wagon(&tracksystem, 0.5+iWagon*80/scale/tracksystem.tracks[0]->getarclength(1), "assets/train.png"));
+		wagons.emplace_back(new Wagon(&tracksystem, 0.5+iWagon*80/scale/tracksystem.tracks[0]->getarclength(1), "assets/flakvagn1.png"));
 	}
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(&tracksystem, {wagons[iWagon].get()}, 0));
