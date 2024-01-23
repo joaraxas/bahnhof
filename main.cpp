@@ -17,18 +17,16 @@ int main(){
 	selectedresource = beer;
 	money = 0;
 	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
-	wagons.emplace_back(new Wagon(tracksystem, 0.5, "assets/loco0.png"));
-	for(int iWagon=1; iWagon<11; iWagon++){
+	wagons.emplace_back(new Locomotive(tracksystem, 0.5));
+	for(int iWagon=1; iWagon<5; iWagon++){
 		wagons.emplace_back(new Wagon(tracksystem, 0.5+iWagon*80/scale/tracksystem.tracks[0]->getarclength(1), "assets/flakvagn1.png"));
 	}
+	wagons.emplace_back(new Locomotive(tracksystem, 10));
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));
 	}
 	trains[0]->selected = true;
 	wagons[0]->alignedwithtrackdirection = false;
-	wagons[0]->P[1] = 0.2*4;
-	wagons[0]->P[0] = 0.2*4;
-	wagons[0]->maxamount = 0;
 	wagons[1]->loadwagon(beer, 1);
 	wagons[3]->loadwagon(hops, 1);
 	storages.emplace_back(new Storage(resources, 100,100,400,150));

@@ -11,7 +11,6 @@ Wagon::Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path)
 	allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	h = h/imagenumber;
 	track = tracksystem->tracks[0].get();
 	nodedist = nodediststart;
 	pos = track->getpos(nodedist);
@@ -49,26 +48,24 @@ void Wagon::update(int ms)
 	pos = track->getpos(nodedist);
 
 	imageangle = track->getorientation(nodedist) + pi*!alignedwithtrackdirection + pi*!alignedforward;
-
-	imagespeed = train->speed*0.2*(2*alignedforward-1);
-	imageindex += imagespeed*ms*0.001;
-	if(imageindex>=imagenumber)
-		imageindex -= imagenumber;
-	if(imageindex<0)
-		imageindex += imagenumber;
 }
 
 void Wagon::render()
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
-	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
+	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 	if(loadedresource!=none){
 		Resource* resource = allresources->get(loadedresource);
 		resource->render(pos);
 	}
+}
+
+float Wagon::getpower()
+{
+	return 0;
 }
 
 int Wagon::loadwagon(resourcetype resource, int amount)
@@ -89,5 +86,51 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	loadedresource = none;
 	int unloadedamount = loadamount;
 	loadamount = 0;
+	return unloadedamount;
+}
+
+Locomotive::Locomotive(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/loco0.png")
+{
+	h = h/imagenumber;
+}
+
+void Locomotive::update(int ms)
+{
+	Wagon::update(ms);
+	imagespeed = train->speed*0.2*(2*alignedforward-1);
+	imageindex += imagespeed*ms*0.001;
+	if(imageindex>=imagenumber)
+		imageindex -= imagenumber;
+	if(imageindex<0)
+		imageindex += imagenumber;
+}
+
+void Locomotive::render()
+{
+	int x = int(pos.x);
+	int y = int(pos.y);
+	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
+	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
+	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+}
+
+float Locomotive::getpower()
+{
+	if(abs(train->speed)<maxspeed[alignedforward==train->direction])
+		return P[alignedforward==train->direction];
+	else
+		return 0;
+}
+
+int Locomotive::loadwagon(resourcetype resource, int amount)
+{
+	int loadedamount = 0;
+	return loadedamount;
+}
+
+int Locomotive::unloadwagon(resourcetype* unloadedresource)
+{
+	*unloadedresource = none;
+	int unloadedamount = 0;
 	return unloadedamount;
 }

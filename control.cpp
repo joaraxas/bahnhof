@@ -25,8 +25,7 @@ void Train::getinput(int ms)
 		if(keys[gasbutton]){
 			float Ptot = 0;
 			for(auto w : wagons)
-				if(abs(speed)<w->maxspeed[(w->alignedforward)==direction])
-					Ptot += w->P[(w->alignedforward)==direction];
+				Ptot += w->getpower();
 			float mtot = size(wagons);
 			speed+=(2*direction-1)*ms*Ptot/mtot;
 		}

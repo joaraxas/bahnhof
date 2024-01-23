@@ -45,6 +45,13 @@ void Building::render()
 Brewery::Brewery(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, hops, beer)
 {};
 
+void Brewery::render()
+{
+	SDL_SetRenderDrawColor(renderer, 63, 63, 127, 255);
+	SDL_RenderFillRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
 Hopsfield::Hopsfield(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, none, hops)
 {};
 

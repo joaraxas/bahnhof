@@ -110,31 +110,45 @@ class Wagon
 {
 public:
     Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path);
-    void update(int ms);
-    void render();
-    int loadwagon(resourcetype type, int amount);
-    int unloadwagon(resourcetype* type);
+    virtual void update(int ms);
+    virtual void render();
+    virtual int loadwagon(resourcetype type, int amount);
+    virtual int unloadwagon(resourcetype* type);
+    virtual float getpower();
     Tracksystem* tracksystem;
     float nodedist;
     Train* train;
     Vec pos;
     bool alignedwithtrackdirection = true;
     bool alignedforward = true;
-    float P[2] = {0,0};
-    float maxspeed[2] = {40*4,4*140};
-    int maxamount = 1;
     int w;
-private:
+protected:
     Track* track;
     int h;
     float imageangle = 0;
+    SDL_Texture* tex;
+    ResourceManager* allresources;
+private:
+    resourcetype loadedresource = none;
+    int loadamount = 0;
+    int maxamount = 1;
+};
+
+class Locomotive : public Wagon
+{
+public:
+    Locomotive(Tracksystem& newtracksystem, float nodediststart);
+    void render();
+    void update(int ms);
+    int loadwagon(resourcetype type, int amount);
+    int unloadwagon(resourcetype* type);
+    float getpower();
+private:
+    float P[2] = {0.2*4,0.2*4};
+    float maxspeed[2] = {40*4,4*140};
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;
-    SDL_Texture* tex;
-    ResourceManager* allresources;
-    resourcetype loadedresource = none;
-    int loadamount = 0;
 };
 
 class Train
@@ -196,11 +210,11 @@ class Building
 {
 public:
     Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
-    void render();
+    virtual void render();
     void update(int ms);
     bool containspoint(Vec pos);
-private:
     SDL_Rect rect;
+private:
     Storage* storage;
     int timeleft;
     ResourceManager* allresources;
@@ -212,6 +226,7 @@ class Brewery : public Building
 {
     public:
     Brewery(ResourceManager& resources, int x, int y, int w, int h);
+    void render();
 };
 
 class Hopsfield : public Building
