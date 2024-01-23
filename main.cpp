@@ -34,9 +34,9 @@ int main(){
 	storages.emplace_back(new Storage(resources, 100,100,400,150));
 	storages.emplace_back(new Storage(resources, 600,600,300,100));
 	storages[0]->loadstorage(beer, 4);
-	Building brewery(resources, 150,120,100,50, hops, beer);
-	Building farm(resources, 625,625,50,50, none, hops);
-	Building city(resources, 700,625,20,50, beer, none);
+	Brewery brewery(resources, 150,120,100,50);
+	Hopsfield farm(resources, 625,625,50,50);
+	City city(resources, 700,625,20,50);
 	
 	bool quit = false;
 	int ms = 0;

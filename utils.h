@@ -208,10 +208,22 @@ private:
     resourcetype makes;
 };
 
-class Brewery : private Building
+class Brewery : public Building
 {
     public:
     Brewery(ResourceManager& resources, int x, int y, int w, int h);
+};
+
+class Hopsfield : public Building
+{
+    public:
+    Hopsfield(ResourceManager& resources, int x, int y, int w, int h);
+};
+
+class City : public Building
+{
+    public:
+    City(ResourceManager& resources, int x, int y, int w, int h);
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;
