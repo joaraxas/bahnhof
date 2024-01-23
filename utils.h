@@ -49,7 +49,7 @@ class Storage;
 
 enum resourcetype
 {
-    BEER, HOPS, BARLEY
+    beer, hops, barley
 };
 
 class Tracksystem
@@ -149,6 +149,16 @@ public:
     std::vector<Wagon*> wagons;
 };
 
+class Resources
+{
+public:
+    Resources();
+    ~Resources();
+    Resource* get(resourcetype type);
+private:
+    std::map<resourcetype, Resource*> resourcemap;
+};
+
 class Resource
 {
 public:
@@ -191,6 +201,12 @@ private:
     int timeleft;
     Resource* wants;
     Resource* makes;
+};
+
+class Brewery : private Building
+{
+    public:
+    Brewery(int x, int y, int w, int h);
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

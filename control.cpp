@@ -130,6 +130,26 @@ void Train::split(int where)
 	}
 }
 
+Resources::Resources()
+{
+	resourcemap[beer] = new Resource(beer, "Beer", "assets/beer.png");
+	resourcemap[hops] = new Resource(hops, "Hops", "assets/hops.png");
+	selectedresource = resourcemap[beer];
+}
+
+Resources::~Resources()
+{
+	for (auto& pair : resourcemap) {
+        delete pair.second;
+    }
+}
+
+Resource* Resources::get(resourcetype type)
+{
+	auto it = resourcemap.find(type);
+    return (it != resourcemap.end()) ? it->second : nullptr;
+}
+
 Resource::Resource(resourcetype newtype, std::string newname, std::string pathtotex)
 {
     type = newtype;

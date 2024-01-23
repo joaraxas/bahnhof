@@ -40,3 +40,7 @@ void Building::render()
 	SDL_RenderFillRect(renderer, &rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
+
+Brewery::Brewery(int x, int y, int w, int h) : Building(x, y, w, h, nullptr, nullptr)
+{
+};

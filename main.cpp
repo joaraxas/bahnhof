@@ -13,9 +13,9 @@ float scale = 1;
 int main(){
 	init();
 
-	Resource beer(BEER, "Beer", "assets/beer.png");
-	Resource hops(HOPS, "Hops", "assets/hops.png");
-	selectedresource = &beer;
+	Resources resources;
+	Resource* BEER = resources.get(beer);
+	Resource* HOPS = resources.get(hops);
 	money = 0;
 	Tracksystem tracksystem({200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	wagons.emplace_back(new Wagon(&tracksystem, 0.5, "assets/loco0.png"));
@@ -30,14 +30,14 @@ int main(){
 	wagons[0]->P[1] = 0.2*4;
 	wagons[0]->P[0] = 0.2*4;
 	wagons[0]->maxamount = 0;
-	wagons[1]->loadwagon(beer, 1);
-	wagons[3]->loadwagon(hops, 1);
+	wagons[1]->loadwagon(*BEER, 1);
+	wagons[3]->loadwagon(*HOPS, 1);
 	storages.emplace_back(new Storage(100,100,400,150));
 	storages.emplace_back(new Storage(600,600,300,100));
-	storages[0]->loadstorage(beer, 4);
-	Building brewery(150,120,100,50, &hops, &beer);
-	Building farm(625,625,50,50, nullptr, &hops);
-	Building city(700,625,20,50, &beer, nullptr);
+	storages[0]->loadstorage(*BEER, 4);
+	Building brewery(150,120,100,50, HOPS, BEER);
+	Building farm(625,625,50,50, nullptr, HOPS);
+	Building city(700,625,20,50, BEER, nullptr);
 	
 	bool quit = false;
 	int ms = 0;
