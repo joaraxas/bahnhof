@@ -134,3 +134,25 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	int unloadedamount = 0;
 	return unloadedamount;
 }
+
+Openwagon::Openwagon(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/flakvagn1.png")
+{}
+
+int Openwagon::loadwagon(resourcetype type, int amount)
+{
+	int loadedamount = 0;
+	if(type==hops||type==barley)
+		loadedamount = Wagon::loadwagon(type, amount);
+	return loadedamount;
+}
+
+Tankwagon::Tankwagon(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/train.png")
+{}
+
+int Tankwagon::loadwagon(resourcetype type, int amount)
+{
+	int loadedamount = 0;
+	if(type==beer)
+		loadedamount = Wagon::loadwagon(type, amount);
+	return loadedamount;
+}

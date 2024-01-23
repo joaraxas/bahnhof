@@ -151,6 +151,20 @@ private:
     float imagespeed = 2;
 };
 
+class Openwagon : public Wagon
+{
+public:
+    Openwagon(Tracksystem& newtracksystem, float nodediststart);
+    int loadwagon(resourcetype type, int amount);
+};
+
+class Tankwagon : public Wagon
+{
+public:
+    Tankwagon(Tracksystem& newtracksystem, float nodediststart);
+    int loadwagon(resourcetype type, int amount);
+};
+
 class Train
 {
 public:
