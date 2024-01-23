@@ -226,8 +226,15 @@ float Track::getorientation(float nodedist)
 
 bool Track::isrightofleftnode()
 {
-	if(isinf(radius))
-		return nodeleft->pos.y >= noderight->pos.y;
+	if(isinf(radius)){
+		if(abs(nodeleft->pos.y - noderight->pos.y)>1)
+			return nodeleft->pos.y >= noderight->pos.y;
+		else
+			if(cos(nodeleft->dir) > 0)
+				return (noderight->pos.x >= nodeleft->pos.x);
+			else
+				return (noderight->pos.x <= nodeleft->pos.x);
+	}
 	else
 		return radius*phi >= 0;
 }

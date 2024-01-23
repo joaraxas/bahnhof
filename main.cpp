@@ -7,7 +7,7 @@
 
 std::vector<std::unique_ptr<Wagon>> wagons;
 float money;
-bool nicetracks = true;
+bool nicetracks = false;
 float scale = 1;
 
 int main(){
