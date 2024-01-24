@@ -16,15 +16,17 @@ Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std:
 	selectednode = nodes.back().get();
 }
 
-void Tracksystem::addnode(float x, float y, Node* previousnode){
+Node* Tracksystem::addnode(float x, float y, Node* previousnode){
 	float dx = (x - previousnode->pos.x);
 	float dy = -(y - previousnode->pos.y);
 	float dir = truncate(2*atan2(dy,dx) - previousnode->dir);
 	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
+	return nodes.back().get();
 }
 
-void Tracksystem::addtrack(Node* leftnode, Node* rightnode){
+Track* Tracksystem::addtrack(Node* leftnode, Node* rightnode){
 	tracks.push_back(std::unique_ptr<Track>{new Track(leftnode, rightnode)});
+	return tracks.back().get();
 }
 
 void Tracksystem::render()
@@ -39,72 +41,76 @@ void Tracksystem::render()
 
 void Tracksystem::leftclick(int xMouse, int yMouse)
 {
-	float mindistsquared = INFINITY;
-	Node* nearestnode;
-	for(auto& node: nodes){
-		float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
-		if(distsquared < mindistsquared){
-			nearestnode = node.get();
-			mindistsquared = distsquared;
-		}
-	}
-	if(selectednode!=nullptr){
-		Vec newnodepoint;
-		if(mindistsquared>pow(20,2)){
-			newnodepoint.x = xMouse;
-			newnodepoint.y = yMouse;
-		}
-		else{
-			float y1 = -selectednode->pos.y;
-			float y2 = -nearestnode->pos.y;
-			float x1 = selectednode->pos.x;
-			float x2 = nearestnode->pos.x;
-			float tanth1 = tan(selectednode->dir);
-			float tanth2 = tan(nearestnode->dir);
-			float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
-			float intersecty = -(y1 + (intersectx - x1)*tanth1);
-			if(abs(tanth1)>1e5){
-				intersectx = x1;
-				intersecty = -(y2 + (intersectx - x2)*tanth2);
-			}
-			Vec tangentintersection(intersectx, intersecty);
-			float disttointersect1 = norm(tangentintersection-selectednode->pos);
-			float disttointersect2 = norm(tangentintersection-nearestnode->pos);
-			if(disttointersect1 > disttointersect2)
-				newnodepoint = tangentintersection + (selectednode->pos - tangentintersection)/disttointersect1*disttointersect2;
-			else
-				newnodepoint = tangentintersection + (nearestnode->pos - tangentintersection)/disttointersect2*disttointersect1;
-		}
-		addnode(newnodepoint.x, newnodepoint.y, selectednode);
-		addtrack(selectednode, nodes.back().get());
-		if(mindistsquared>pow(20,2)){}
-		else{
-			addtrack(nodes.back().get(), nearestnode);
-		}
-		selectednode = nodes.back().get();
+	Vec mousepos(xMouse, yMouse);
+	Node* clickednode = getclosestnode(mousepos);
+	float mousedistance = norm(clickednode->pos - mousepos);
+	bool clickedextantnode = mousedistance<=20;
+	if(!selectednode){
+		if(clickedextantnode)
+			selectednode = clickednode;
 	}
 	else{
-		selectednode = nearestnode;
+		if(clickedextantnode){
+			connecttwonodes(selectednode, clickednode);
+			selectednode = clickednode;
+		}
+		else{
+			Node* newnode = addnode(mousepos.x, mousepos.y, selectednode);
+			addtrack(selectednode, newnode);
+			selectednode = newnode;
+		}
 	}
-
 }
 
 void Tracksystem::rightclick(int xMouse, int yMouse)
 {
 	selectednode = nullptr;
+	Vec mousepos(xMouse,yMouse);
+	Node* clickednode = getclosestnode(mousepos);
+	if(norm(clickednode->pos-mousepos)<=20){
+		clickednode->incrementswitch();
+	}
+}
 
+Node* Tracksystem::getclosestnode(Vec pos)
+{
 	float mindistsquared = INFINITY;
-	Node* nearestnode;
+	Node* closestnode = nullptr;
 	for(auto& node: nodes){
-		float distsquared = pow(node->pos.x-xMouse, 2) + pow(node->pos.y-yMouse, 2);
+		float distsquared = pow(node->pos.x-pos.x, 2) + pow(node->pos.y-pos.y, 2);
 		if(distsquared < mindistsquared){
-			nearestnode = node.get();
+			closestnode = node.get();
 			mindistsquared = distsquared;
 		}
 	}
-	if(mindistsquared<=pow(20,2)){
-		nearestnode->incrementswitch();
+	return closestnode;
+}
+
+void Tracksystem::connecttwonodes(Node* node1, Node* node2)
+{
+	Vec newnodepoint;
+	float y1 = -node1->pos.y;
+	float y2 = -node2->pos.y;
+	float x1 = node1->pos.x;
+	float x2 = node2->pos.x;
+	float tanth1 = tan(node1->dir);
+	float tanth2 = tan(node2->dir);
+	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
+	float intersecty = -(y1 + (intersectx - x1)*tanth1);
+	if(abs(tanth1)>1e5){
+		intersectx = x1;
+		intersecty = -(y2 + (intersectx - x2)*tanth2);
 	}
+	Vec tangentintersection(intersectx, intersecty);
+	float disttointersect1 = norm(tangentintersection-node1->pos);
+	float disttointersect2 = norm(tangentintersection-node2->pos);
+	if(disttointersect1 > disttointersect2)
+		newnodepoint = tangentintersection + (node1->pos - tangentintersection)/disttointersect1*disttointersect2;
+	else
+		newnodepoint = tangentintersection + (node2->pos - tangentintersection)/disttointersect2*disttointersect1;
+	Node* newnode = addnode(newnodepoint.x, newnodepoint.y, node1);
+	addtrack(node1, newnode);
+	addtrack(newnode, node2);
 }
 
 Node::Node(float xstart, float ystart, float dirstart)

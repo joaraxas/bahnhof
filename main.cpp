@@ -34,11 +34,14 @@ int main(){
 	wagons[3]->loadwagon(hops, 1);
 	storages.emplace_back(new Storage(resources, 100,100,400,150));
 	storages.emplace_back(new Storage(resources, 600,600,300,100));
-	storages[0]->loadstorage(beer, 4);
+	storages[0]->loadstorage(beer, 1);
+	storages[0]->loadstorage(hops, 2);
+	storages[1]->loadstorage(hops, 3);
+	storages[1]->loadstorage(beer, 4);
 	Brewery brewery(resources, 150,120,100,50);
 	Hopsfield farm(resources, 625,625,50,50);
 	City city(resources, 700,625,20,50);
-	
+
 	bool quit = false;
 	int ms = 0;
 	int startTime = SDL_GetTicks();
@@ -60,7 +63,7 @@ int main(){
 					if(e.button.button == SDL_BUTTON_MIDDLE){
 						tracksystem.nodes.pop_back();
 						tracksystem.tracks.pop_back();
-						tracksystem.selectednode = nullptr;
+						//tracksystem.selectednode = nullptr;
 					}
 					if(e.button.button == SDL_BUTTON_RIGHT){
 						tracksystem.rightclick(xMouse, yMouse);
