@@ -8,18 +8,14 @@
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
 {
 	allresources = &resources;
-	nodes.push_back(std::unique_ptr<Node>{new Node(xs[0], ys[0], 0)});
+	Node* newnode = addnode(xs[0], ys[0], 0);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		addnode(xs[iNode], ys[iNode], nodes[iNode-1].get());
-		addtrack(nodes[iNode-1].get(), nodes[iNode].get());
+		newnode = extendtrackto(newnode, Vec(xs[iNode], ys[iNode]));
 	}
-	selectednode = nodes.back().get();
+	selectednode = newnode;
 }
 
-Node* Tracksystem::addnode(float x, float y, Node* previousnode){
-	float dx = (x - previousnode->pos.x);
-	float dy = -(y - previousnode->pos.y);
-	float dir = truncate(2*atan2(dy,dx) - previousnode->dir);
+Node* Tracksystem::addnode(float x, float y, float dir){
 	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
 	return nodes.back().get();
 }
@@ -55,8 +51,7 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			selectednode = clickednode;
 		}
 		else{
-			Node* newnode = addnode(mousepos.x, mousepos.y, selectednode);
-			addtrack(selectednode, newnode);
+			Node* newnode = extendtrackto(selectednode, mousepos);
 			selectednode = newnode;
 		}
 	}
@@ -67,7 +62,7 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 	selectednode = nullptr;
 	Vec mousepos(xMouse,yMouse);
 	Node* clickednode = getclosestnode(mousepos);
-	if(norm(clickednode->pos-mousepos)<=20){
+	if(norm(clickednode->pos-mousepos)<=30){
 		clickednode->incrementswitch();
 	}
 }
@@ -86,8 +81,26 @@ Node* Tracksystem::getclosestnode(Vec pos)
 	return closestnode;
 }
 
+Node* Tracksystem::extendtrackto(Node* fromnode, Vec pos)
+{
+	Vec posdiff = pos - fromnode->pos;
+	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - fromnode->dir);
+	Node* newnode = addnode(pos.x, pos.y, dir);
+	addtrack(fromnode, newnode);
+	return newnode;
+
+}
+
 void Tracksystem::connecttwonodes(Node* node1, Node* node2)
 {
+	if(node1==node2)
+		return;
+	for(auto& track : node1->tracksleft)
+		if(track->nodeleft==node2 || track->noderight==node2)
+			return;
+	for(auto& track : node1->tracksright)
+		if(track->nodeleft==node2 || track->noderight==node2)
+			return;
 	Vec newnodepoint;
 	float y1 = -node1->pos.y;
 	float y2 = -node2->pos.y;
@@ -108,9 +121,12 @@ void Tracksystem::connecttwonodes(Node* node1, Node* node2)
 		newnodepoint = tangentintersection + (node1->pos - tangentintersection)/disttointersect1*disttointersect2;
 	else
 		newnodepoint = tangentintersection + (node2->pos - tangentintersection)/disttointersect2*disttointersect1;
-	Node* newnode = addnode(newnodepoint.x, newnodepoint.y, node1);
-	addtrack(node1, newnode);
-	addtrack(newnode, node2);
+	if(norm(newnodepoint-node1->pos)> 10 && norm(newnodepoint-node2->pos)> 10){
+		Node* newnode = extendtrackto(node1, newnodepoint);
+		addtrack(newnode, node2);
+	}
+	else
+		addtrack(node1, node2);
 }
 
 Node::Node(float xstart, float ystart, float dirstart)

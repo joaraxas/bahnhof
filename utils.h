@@ -60,7 +60,7 @@ public:
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
-    Node* addnode(float x, float y, Node* previousnode);
+    Node* addnode(float x, float y, float dir);
     Track* addtrack(Node* leftnode, Node* rightnode);
     ResourceManager* allresources;
     std::vector<std::unique_ptr<Node>> nodes;
@@ -68,6 +68,7 @@ public:
 private:
     Node* getclosestnode(Vec pos);
     Node* selectednode = nullptr;
+    Node* extendtrackto(Node* fromnode, Vec pos);
     void connecttwonodes(Node* node1, Node* node2);
 };
 
