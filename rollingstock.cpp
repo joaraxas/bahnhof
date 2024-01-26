@@ -11,43 +11,18 @@ Wagon::Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path)
 	allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	track = tracksystem->tracks[0].get();
+	track = 1;
 	nodedist = nodediststart;
-	pos = track->getpos(nodedist);
+	pos = tracksystem->getpos(track, nodedist);
 }
 
 void Wagon::update(int ms)
 {
-	float arclength1 = track->getarclength(1);
-	nodedist += ms*0.001*train->speed*(alignedwithtrackdirection*2-1)/arclength1;
-	if(nodedist>=1)
-	{
-		Node* currentnode = track->noderight;
-		track = track->getrighttrack();
-		float arclength2 = track->getarclength(1);
-		if(track->nodeleft==currentnode)
-			nodedist = (nodedist-1)*arclength1/arclength2;
-		else{
-			nodedist = 1-(nodedist-1)*arclength1/arclength2;
-			alignedwithtrackdirection = 1-alignedwithtrackdirection;
-		}
-	}
-	else if(nodedist<0)
-	{
-		Node* currentnode = track->nodeleft;
-		track = track->getlefttrack();
-		float arclength2 = track->getarclength(1);
-		if(track->nodeleft==currentnode){
-			nodedist = (-nodedist)*arclength1/arclength2;
-			alignedwithtrackdirection = 1-alignedwithtrackdirection;
-		}
-		else{
-			nodedist = 1-(-nodedist)*arclength1/arclength2;
-		}
-	}
-	pos = track->getpos(nodedist);
+	tracksystem->travel(&track, &nodedist, &alignedwithtrackdirection, ms*0.001*train->speed);
+	
+	pos = tracksystem->getpos(track, nodedist);
 
-	imageangle = track->getorientation(nodedist) + pi*!alignedwithtrackdirection + pi*!alignedforward;
+	imageangle = tracksystem->getorientation(track, nodedist, alignedwithtrackdirection) + pi*!alignedforward;
 }
 
 void Wagon::render()

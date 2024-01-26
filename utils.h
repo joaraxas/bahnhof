@@ -53,6 +53,9 @@ enum resourcetype
     none=-1, beer, hops, barley
 };
 
+typedef int trackid;
+typedef int nodeid;
+
 class Tracksystem
 {
 public:
@@ -60,54 +63,80 @@ public:
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
-    Node* addnode(float x, float y, float dir);
-    Track* addtrack(Node* leftnode, Node* rightnode);
+    nodeid addnode(Vec pos, float dir);
+    trackid addtrack(nodeid leftnode, nodeid rightnode);
+    void removenode(nodeid nodetoremove);
+    void removetrack(trackid tracktoremove);
+    Vec getpos(trackid track, float nodedist);
+    float getorientation(trackid track, float nodedist, bool alignedwithtrack);
+    void travel(trackid* track, float* nodedist, bool* alignedwithtrack, float pixels);
     ResourceManager* allresources;
-    std::vector<std::unique_ptr<Node>> nodes;
-    std::vector<std::unique_ptr<Track>> tracks;
+    friend class Node;
+    friend class Track;
 private:
-    Node* getclosestnode(Vec pos);
-    Node* selectednode = nullptr;
-    Node* extendtrackto(Node* fromnode, Vec pos);
-    void connecttwonodes(Node* node1, Node* node2);
+    Node* getnode(nodeid node);
+    Track* gettrack(trackid track);
+    float getnodedir(nodeid node);
+    Vec getnodepos(nodeid node);
+    float distancetonode(nodeid node, Vec pos);
+    nodeid getclosestnode(Vec pos);
+    nodeid extendtracktopos(nodeid fromnode, Vec pos);
+    void connecttwonodes(nodeid node1, nodeid node2);
+    std::map<nodeid, Node*> nodes;
+    std::map<trackid, Track*> tracks;
+    nodeid selectednode = 0;
+    nodeid nodecounter = 0;
+    trackid trackcounter = 0;
 };
 
 class Node
 {
 public:
-    Node(float xstart, float ystart, float dirstart);
+    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart);
+    void render();
+    trackid gettrackup();
+    trackid gettrackdown();
+    friend class Tracksystem;
+    friend class Track;
+private:
+    void connecttrackfromabove(trackid track);
+    void connecttrackfrombelow(trackid track);
+    Tracksystem* tracksystem;
+    void incrementswitch();
     Vec pos;
     float dir;
-    void render();
-    Track* getrighttrack();
-    Track* getlefttrack();
-    void incrementswitch();
-    std::vector<Track*> tracksleft;
-    std::vector<Track*> tracksright;
-private:
-    int stateleft;
-    int stateright;
+    int stateup;
+    int statedown;
+    std::vector<trackid> tracksup;
+    std::vector<trackid> tracksdown;
 };
 
 class Track
 {
 public:
-    Track(Node* left, Node* right);
+    Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
     ~Track();
-    Node* nodeleft;
-    Node* noderight;
+    Tracksystem* tracksystem;
+    nodeid previousnode, nextnode;
     void render();
     Vec getpos(float nodedist);
     Vec getpos(float nodedist, float transverseoffset);
     float getarclength(float nodedist);
     float getorientation(float nodedist);
-    bool isrightofleftnode();
-    bool isleftofrightnode();
-    Track* getrighttrack();
-    Track* getlefttrack();
+    bool isabovepreviousnode();
+    bool isbelownextnode();
+    trackid getnexttrack();
+    trackid getprevioustrack();
+    friend class Tracksystem;
+    friend class Node;
 private:
+    trackid id;
     float phi;
     float radius;
+    float previousdir;
+    float nextdir;
+    Vec previouspos;
+    Vec nextpos;
 };
 
 class Wagon
@@ -127,7 +156,7 @@ public:
     bool alignedforward = true;
     int w;
 protected:
-    Track* track;
+    trackid track;
     int h;
     float imageangle = 0;
     SDL_Texture* tex;

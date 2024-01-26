@@ -8,38 +8,110 @@
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
 {
 	allresources = &resources;
-	Node* newnode = addnode(xs[0], ys[0], 0);
+	nodeid newnode = addnode(Vec(xs[0], ys[0]), 0);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		newnode = extendtrackto(newnode, Vec(xs[iNode], ys[iNode]));
+		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
 	selectednode = newnode;
 }
 
-Node* Tracksystem::addnode(float x, float y, float dir){
-	nodes.push_back(std::unique_ptr<Node>{new Node(x, y, dir)});
-	return nodes.back().get();
+nodeid Tracksystem::addnode(Vec pos, float dir){
+	nodecounter++;
+	nodes[nodecounter] = new Node(*this, pos, dir);
+	return nodecounter;
 }
 
-Track* Tracksystem::addtrack(Node* leftnode, Node* rightnode){
-	tracks.push_back(std::unique_ptr<Track>{new Track(leftnode, rightnode)});
-	return tracks.back().get();
+trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
+	trackcounter++;
+	tracks[trackcounter] = new Track(*this, previousnode, nextnode, trackcounter);
+	return trackcounter;
+}
+
+void Tracksystem::removenode(nodeid nodetoremove)
+{
+	delete nodes[nodetoremove];
+	nodes.erase(nodetoremove);
+}
+
+void Tracksystem::removetrack(nodeid tracktoremove)
+{
+	delete tracks[tracktoremove];
+	tracks.erase(tracktoremove);
+}
+
+Vec Tracksystem::getpos(trackid track, float nodedist)
+{
+	return gettrack(track)->getpos(nodedist);
+}
+
+float Tracksystem::getorientation(trackid track, float nodedist, bool alignedwithtrackdirection)
+{
+	return gettrack(track)->getorientation(nodedist) + pi*!alignedwithtrackdirection;
+}
+
+void Tracksystem::travel(trackid* trackpointer, float* nodedistpointer, bool* alignedwithtrackpointer, float pixels)
+{
+	trackid oldtrack = *trackpointer;
+	trackid newtrack = oldtrack;
+	float nodedist = *nodedistpointer;
+	bool alignedwithtrack = *alignedwithtrackpointer;
+	bool finishedtrip = false;
+
+	float arclength1 = gettrack(oldtrack)->getarclength(1);
+	float arclength2 = 0;
+	nodedist += pixels*((alignedwithtrack)*2-1)/arclength1;
+
+	while(!finishedtrip){
+		if(nodedist>=1)
+		{
+			nodeid currentnode = gettrack(oldtrack)->nextnode;
+			newtrack = gettrack(oldtrack)->getnexttrack();
+			arclength2 = gettrack(newtrack)->getarclength(1);
+			std::cout<<newtrack<<std::endl;
+			if(gettrack(newtrack)->previousnode==currentnode){
+				nodedist = (nodedist-1)*arclength1/arclength2;
+			}
+			else{
+				nodedist = 1-(nodedist-1)*arclength1/arclength2;
+				alignedwithtrack = !alignedwithtrack;
+			}
+		}
+		else if(nodedist<0)
+		{
+			nodeid currentnode = gettrack(oldtrack)->previousnode;
+			newtrack = gettrack(oldtrack)->getprevioustrack();
+			arclength2 = gettrack(newtrack)->getarclength(1);
+			if(gettrack(newtrack)->nextnode==currentnode){
+				nodedist = 1-(-nodedist)*arclength1/arclength2;
+			}
+			else{
+				nodedist = (-nodedist)*arclength1/arclength2;
+				alignedwithtrack = !alignedwithtrack;
+			}
+		}
+		else finishedtrip = true;
+		oldtrack = newtrack;
+		arclength1 = arclength2;
+	}
+
+	*trackpointer = oldtrack;
+	*nodedistpointer = nodedist;
+	*alignedwithtrackpointer = alignedwithtrack;
 }
 
 void Tracksystem::render()
 {
-	for(int iTrack=0; iTrack<tracks.size(); iTrack++){
-		tracks[iTrack]->render();
-	}
-	for(auto& node: nodes){
+	for(auto const& [id, track] : tracks)
+		track->render();
+	for(auto const& [id, node] : nodes)
 		node->render();
-	}
 }
 
 void Tracksystem::leftclick(int xMouse, int yMouse)
 {
 	Vec mousepos(xMouse, yMouse);
-	Node* clickednode = getclosestnode(mousepos);
-	float mousedistance = norm(clickednode->pos - mousepos);
+	nodeid clickednode = getclosestnode(mousepos);
+	float mousedistance = norm(getnodepos(clickednode) - mousepos);
 	bool clickedextantnode = mousedistance<=20;
 	if(!selectednode){
 		if(clickedextantnode)
@@ -51,7 +123,7 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 			selectednode = clickednode;
 		}
 		else{
-			Node* newnode = extendtrackto(selectednode, mousepos);
+			nodeid newnode = extendtracktopos(selectednode, mousepos);
 			selectednode = newnode;
 		}
 	}
@@ -59,55 +131,54 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 
 void Tracksystem::rightclick(int xMouse, int yMouse)
 {
-	selectednode = nullptr;
+	selectednode = 0;
 	Vec mousepos(xMouse,yMouse);
-	Node* clickednode = getclosestnode(mousepos);
-	if(norm(clickednode->pos-mousepos)<=30){
-		clickednode->incrementswitch();
+	nodeid clickednode = getclosestnode(mousepos);
+	if(distancetonode(clickednode, mousepos)<=30){
+		getnode(clickednode)->incrementswitch();
 	}
 }
 
-Node* Tracksystem::getclosestnode(Vec pos)
+nodeid Tracksystem::getclosestnode(Vec pos)
 {
 	float mindistsquared = INFINITY;
-	Node* closestnode = nullptr;
-	for(auto& node: nodes){
+	nodeid closestnode = 0;
+	for(auto const& [id,node]: nodes){
 		float distsquared = pow(node->pos.x-pos.x, 2) + pow(node->pos.y-pos.y, 2);
 		if(distsquared < mindistsquared){
-			closestnode = node.get();
+			closestnode = id;
 			mindistsquared = distsquared;
 		}
 	}
 	return closestnode;
 }
 
-Node* Tracksystem::extendtrackto(Node* fromnode, Vec pos)
+nodeid Tracksystem::extendtracktopos(nodeid fromnode, Vec pos)
 {
-	Vec posdiff = pos - fromnode->pos;
-	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - fromnode->dir);
-	Node* newnode = addnode(pos.x, pos.y, dir);
+	Vec posdiff = pos - getnodepos(fromnode);
+	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - getnodedir(fromnode));
+	nodeid newnode = addnode(pos, dir);
 	addtrack(fromnode, newnode);
 	return newnode;
-
 }
 
-void Tracksystem::connecttwonodes(Node* node1, Node* node2)
+void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 {
 	if(node1==node2)
 		return;
-	for(auto& track : node1->tracksleft)
-		if(track->nodeleft==node2 || track->noderight==node2)
-			return;
-	for(auto& track : node1->tracksright)
-		if(track->nodeleft==node2 || track->noderight==node2)
-			return;
+	//for(auto& track : node1->tracksleft)
+	//	if(track->nodeleft==node2 || track->noderight==node2)
+	//		return;
+	//for(auto& track : node1->tracksright)
+	//	if(track->nodeleft==node2 || track->noderight==node2)
+	//		return;
 	Vec newnodepoint;
-	float y1 = -node1->pos.y;
-	float y2 = -node2->pos.y;
-	float x1 = node1->pos.x;
-	float x2 = node2->pos.x;
-	float tanth1 = tan(node1->dir);
-	float tanth2 = tan(node2->dir);
+	float y1 = -getnodepos(node1).y;
+	float y2 = -getnodepos(node2).y;
+	float x1 = getnodepos(node1).x;
+	float x2 = getnodepos(node2).x;
+	float tanth1 = tan(getnodedir(node1));
+	float tanth2 = tan(getnodedir(node2));
 	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
 	float intersecty = -(y1 + (intersectx - x1)*tanth1);
 	if(abs(tanth1)>1e5){
@@ -115,27 +186,62 @@ void Tracksystem::connecttwonodes(Node* node1, Node* node2)
 		intersecty = -(y2 + (intersectx - x2)*tanth2);
 	}
 	Vec tangentintersection(intersectx, intersecty);
-	float disttointersect1 = norm(tangentintersection-node1->pos);
-	float disttointersect2 = norm(tangentintersection-node2->pos);
+	float disttointersect1 = distancetonode(node1, tangentintersection);
+	float disttointersect2 = distancetonode(node2, tangentintersection);
 	if(disttointersect1 > disttointersect2)
-		newnodepoint = tangentintersection + (node1->pos - tangentintersection)/disttointersect1*disttointersect2;
+		newnodepoint = tangentintersection + (getnodepos(node1) - tangentintersection)/disttointersect1*disttointersect2;
 	else
-		newnodepoint = tangentintersection + (node2->pos - tangentintersection)/disttointersect2*disttointersect1;
-	if(norm(newnodepoint-node1->pos)> 10 && norm(newnodepoint-node2->pos)> 10){
-		Node* newnode = extendtrackto(node1, newnodepoint);
+		newnodepoint = tangentintersection + (getnodepos(node2) - tangentintersection)/disttointersect2*disttointersect1;
+	if(distancetonode(node1, newnodepoint)> 10 && distancetonode(node2, newnodepoint)> 10){
+		nodeid newnode = extendtracktopos(node1, newnodepoint);
 		addtrack(newnode, node2);
 	}
 	else
 		addtrack(node1, node2);
 }
 
-Node::Node(float xstart, float ystart, float dirstart)
+Node* Tracksystem::getnode(nodeid node)
 {
-	pos.x = xstart;
-	pos.y = ystart;
+	if(nodes.contains(node))
+		return nodes[node];
+	else{
+		std::cout << "Error: failed to find node with id" << node << std::endl;
+		return nullptr;
+	}
+}
+
+float Tracksystem::getnodedir(nodeid node)
+{
+	return getnode(node)->dir;
+}
+
+Vec Tracksystem::getnodepos(nodeid node)
+{
+	return getnode(node)->pos;
+}
+
+float Tracksystem::distancetonode(nodeid node, Vec pos)
+{
+	return norm(getnodepos(node)-pos);
+}
+
+Track* Tracksystem::gettrack(trackid track)
+{
+	if(tracks.contains(track))
+		return tracks[track];
+	else{
+		std::cout << "Error: failed to find track with id" << track << std::endl;
+		return nullptr;
+	}
+}
+
+Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart)
+{
+	tracksystem = &newtracksystem;
+	pos = posstart;
 	dir = truncate(dirstart);
-	stateleft = 0;
-	stateright = 0;
+	stateup = 0;
+	statedown = 0;
 }
 
 void Node::render()
@@ -149,39 +255,55 @@ void Node::render()
 	}
 }
 
-Track* Node::getrighttrack()
+void Node::connecttrackfromabove(trackid track)
 {
-	Track* righttrack = nullptr;
-	if(tracksright.size() > stateright)
-		righttrack = tracksright[stateright];
-	return righttrack;
+	tracksup.push_back(track);
 }
 
-Track* Node::getlefttrack()
+void Node::connecttrackfrombelow(trackid track)
 {
-	Track* lefttrack = nullptr;
-	if(tracksleft.size() > stateleft)
-		lefttrack = tracksleft[stateleft];
-	return lefttrack;
+	tracksdown.push_back(track);
+}
+
+trackid Node::gettrackdown()
+{
+	trackid trackdown = 0;
+	if(tracksdown.size() > 0)
+		trackdown = tracksdown[statedown];
+	return trackdown;
+}
+
+trackid Node::gettrackup()
+{
+	trackid trackup = 0;
+	if(tracksup.size() > 0)
+		trackup = tracksup[stateup];
+	return trackup;
 }
 
 void Node::incrementswitch()
 {
-	stateleft++;
-	stateright++;
-	if(stateleft>=tracksleft.size())
-		stateleft = 0;
-	if(stateright>=tracksright.size())
-		stateright = 0;
+	statedown++;
+	stateup++;
+	if(stateup>=tracksup.size())
+		stateup = 0;
+	if(statedown>=tracksdown.size())
+		statedown = 0;
 }
 
-Track::Track(Node* left, Node* right)
+Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid)
 {
-	nodeleft = left;
-	noderight = right;
+	previousnode = previous;
+	nextnode = next;
+	tracksystem = &newtracksystem;
+	id = myid;
 
-	float dx = cos(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) - sin(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
-	float dy = sin(nodeleft->dir)*(noderight->pos.x - nodeleft->pos.x) + cos(nodeleft->dir)*(noderight->pos.y - nodeleft->pos.y);
+	previousdir = tracksystem->getnodedir(previousnode);
+	previouspos = tracksystem->getnodepos(previousnode);
+	nextdir = tracksystem->getnodedir(nextnode);
+	nextpos = tracksystem->getnodepos(nextnode);
+	float dx = cos(previousdir)*(nextpos.x - previouspos.x) - sin(previousdir)*(nextpos.y - previouspos.y);
+	float dy = sin(previousdir)*(nextpos.x - previouspos.x) + cos(previousdir)*(nextpos.y - previouspos.y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
 	if(abs(radius)>1e5){
@@ -189,20 +311,31 @@ Track::Track(Node* left, Node* right)
 		phi = 0;
 	}
 
-	if(isrightofleftnode())
-		nodeleft->tracksright.push_back(this);
+	if(isabovepreviousnode())
+		tracksystem->getnode(previousnode)->connecttrackfromabove(id);
 	else
-		nodeleft->tracksleft.push_back(this);
-	if(isleftofrightnode())
-		noderight->tracksleft.push_back(this);
+		tracksystem->getnode(previousnode)->connecttrackfrombelow(id);
+	if(isbelownextnode())
+		tracksystem->getnode(nextnode)->connecttrackfrombelow(id);
 	else
-		noderight->tracksright.push_back(this);
-	
-	std::cout << radius*150*scale/1000 << std::endl;
+		tracksystem->getnode(nextnode)->connecttrackfromabove(id);
 }
 
 Track::~Track()
 {
+	/*if(isrightofleftnode())
+		nodeleft->tracksright.erase(find(nodeleft->tracksright.begin(),nodeleft->tracksright.end(),this));
+	else
+		nodeleft->tracksleft.erase(find(nodeleft->tracksleft.begin(),nodeleft->tracksleft.end(),this));
+	nodeleft->incrementswitch();
+	if(nodeleft->tracksleft.size()+nodeleft->tracksright.size() == 0)
+		
+
+	if(isleftofrightnode())
+		noderight->tracksleft.erase(find(noderight->tracksleft.begin(),noderight->tracksleft.end(),this));
+	else
+		noderight->tracksright.erase(find(noderight->tracksright.begin(),noderight->tracksright.end(),this));
+	noderight->incrementswitch();*/
 }
 
 Vec Track::getpos(float nodedist)
@@ -213,16 +346,16 @@ Vec Track::getpos(float nodedist)
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec leftnodeoffsetpos = nodeleft->pos - Vec(sin(nodeleft->dir), cos(nodeleft->dir))*transverseoffset;
+	Vec leftnodeoffsetpos = previouspos - Vec(sin(previousdir), cos(previousdir))*transverseoffset;
 	if(isinf(radius)){
-		Vec rightnodeoffsetpos = noderight->pos - Vec(sin(nodeleft->dir), cos(nodeleft->dir))*transverseoffset;
+		Vec rightnodeoffsetpos = nextpos - Vec(sin(previousdir), cos(previousdir))*transverseoffset;
 		currentpos = leftnodeoffsetpos + (rightnodeoffsetpos-leftnodeoffsetpos)*nodedist;
 	}
 	else{
 		float ddx, ddy;
 		ddx = (radius+transverseoffset)*sin(nodedist*phi);
 		ddy = (radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = Vec(leftnodeoffsetpos.x + cos(nodeleft->dir)*ddx+sin(nodeleft->dir)*ddy, leftnodeoffsetpos.y - sin(nodeleft->dir)*ddx+cos(nodeleft->dir)*ddy);
+		currentpos = Vec(leftnodeoffsetpos.x + cos(previousdir)*ddx+sin(previousdir)*ddy, leftnodeoffsetpos.y - sin(previousdir)*ddx+cos(previousdir)*ddy);
 	}
 	return currentpos;
 }
@@ -231,9 +364,7 @@ float Track::getarclength(float nodedist)
 {
 	float arclength;
 	if(isinf(radius)){
-		float dx = noderight->pos.x - nodeleft->pos.x;
-		float dy = -(noderight->pos.y - nodeleft->pos.y);
-		arclength = nodedist*sqrt(pow(dx, 2) + pow(dy, 2));
+		arclength = nodedist*norm(previouspos - nextpos);
 	}
 	else{
 		arclength = nodedist*abs(radius*phi);
@@ -243,49 +374,53 @@ float Track::getarclength(float nodedist)
 
 float Track::getorientation(float nodedist)
 {
-	return nodeleft->dir - nodedist*phi + pi*!isrightofleftnode();
+	return previousdir - nodedist*phi + pi*!isabovepreviousnode();
 }
 
-bool Track::isrightofleftnode()
+bool Track::isabovepreviousnode()
 {
 	if(isinf(radius)){
-		if(abs(nodeleft->pos.y - noderight->pos.y)>1)
-			return nodeleft->pos.y >= noderight->pos.y;
+		if(abs(previouspos.y - nextpos.y)>1)
+			return previouspos.y >= nextpos.y;
 		else
-			if(cos(nodeleft->dir) > 0)
-				return (noderight->pos.x >= nodeleft->pos.x);
+			if(cos(tracksystem->getnodedir(previousnode)) > 0)
+				return (nextpos.x >= previouspos.x);
 			else
-				return (noderight->pos.x <= nodeleft->pos.x);
+				return (nextpos.x <= previouspos.x);
 	}
 	else
 		return radius*phi >= 0;
 }
 
-bool Track::isleftofrightnode()
+bool Track::isbelownextnode()
 {
-	return cos(getorientation(1) - noderight->dir) > 0;
+	return cos(getorientation(1) - nextdir) > 0;
 }
 
-Track* Track::getrighttrack(){
-	Track* righttrack;
-	if(isleftofrightnode())
-		righttrack = noderight->getrighttrack();
+trackid Track::getnexttrack(){
+	trackid nexttrack;
+	std::cout << getorientation(1) << std::endl;
+	std::cout << nextdir << std::endl;
+	if(isbelownextnode()){
+		std::cout<<"below"<<std::endl;
+		nexttrack = tracksystem->getnode(nextnode)->gettrackup();
+	}
 	else
-		righttrack = noderight->getlefttrack();
-	if(righttrack == nullptr)
-		righttrack = this;
-	return righttrack;
+		nexttrack = tracksystem->getnode(nextnode)->gettrackdown();
+	if(nexttrack == 0)
+		nexttrack = id;
+	return nexttrack;
 }
 
-Track* Track::getlefttrack(){
-	Track* lefttrack;
-	if(isrightofleftnode())
-		lefttrack = nodeleft->getlefttrack();
+trackid Track::getprevioustrack(){
+	trackid previoustrack;
+	if(isabovepreviousnode())
+		previoustrack = tracksystem->getnode(previousnode)->gettrackdown();
 	else
-		lefttrack = nodeleft->getrighttrack();
-	if(lefttrack == nullptr)
-		lefttrack = this;
-	return lefttrack;
+		previoustrack = tracksystem->getnode(previousnode)->gettrackup();
+	if(previoustrack == 0)
+		previoustrack = id;
+	return previoustrack;
 }
 
 void Track::render()
@@ -327,7 +462,7 @@ void Track::render()
 	}
 	//// rals ////
 	if(nicetracks) SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	else SDL_SetRenderDrawColor(renderer, 255*isrightofleftnode(),0, 255*isleftofrightnode(),255);
+	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!isinf(radius))
 		nSegments = fmax(1,round(abs(phi/2/pi*4*16)));
