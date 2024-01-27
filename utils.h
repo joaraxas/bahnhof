@@ -58,10 +58,11 @@ typedef int nodeid;
 
 struct State
 {
-    State(trackid _trackid, float _nodedist, bool _isalignedwithtrackdirection);
-    trackid track = 0;
-    float nodedist = 0;
-    bool isalignedwithtrack = true;
+    State();
+    State(trackid trackstart, float nodediststart, bool alignedwithtrack);
+    trackid track;
+    float nodedist;
+    bool alignedwithtrack;
 };
 
 class Tracksystem
@@ -73,9 +74,9 @@ public:
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
-    Vec getpos(trackid track, float nodedist);
-    float getorientation(trackid track, float nodedist, bool alignedwithtrack);
-    void travel(trackid* track, float* nodedist, bool* alignedwithtrack, float pixels);
+    Vec getpos(State state);
+    float getorientation(State state);
+    State travel(State state, float pixels);
     ResourceManager* allresources;
 private:
     nodeid addnode(Vec pos, float dir);
@@ -144,21 +145,19 @@ private:
 class Wagon
 {
 public:
-    Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path);
+    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path);
     virtual void update(int ms);
     virtual void render();
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
-    Tracksystem* tracksystem;
-    float nodedist;
     Train* train;
     Vec pos;
-    bool alignedwithtrackdirection = true;
     bool alignedforward = true;
     int w;
 protected:
-    trackid track;
+    Tracksystem* tracksystem;
+    State state;
     int h;
     float imageangle = 0;
     SDL_Texture* tex;
@@ -172,7 +171,7 @@ private:
 class Locomotive : public Wagon
 {
 public:
-    Locomotive(Tracksystem& newtracksystem, float nodediststart);
+    Locomotive(Tracksystem& newtracksystem, State trackstate);
     void render();
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
@@ -189,14 +188,14 @@ private:
 class Openwagon : public Wagon
 {
 public:
-    Openwagon(Tracksystem& newtracksystem, float nodediststart);
+    Openwagon(Tracksystem& newtracksystem, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
-    Tankwagon(Tracksystem& newtracksystem, float nodediststart);
+    Tankwagon(Tracksystem& newtracksystem, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 

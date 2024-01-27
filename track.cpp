@@ -5,11 +5,18 @@
 #include<map>
 #include "utils.h"
 
-State::State(trackid trackstart, float nodediststart, bool isalignedwithtrackstart)
+State::State()
+{
+	track = 0; 
+	nodedist = 0; 
+	alignedwithtrack = true;
+}
+
+State::State(trackid trackstart, float nodediststart, bool alignedwithtrackstart)
 {
 	track = trackstart; 
 	nodedist = nodediststart; 
-	isalignedwithtrack = isalignedwithtrackstart;
+	alignedwithtrack = alignedwithtrackstart;
 }
 
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
@@ -57,22 +64,22 @@ void Tracksystem::removetrack(nodeid tracktoremove)
 	tracks.erase(tracktoremove);
 }
 
-Vec Tracksystem::getpos(trackid track, float nodedist)
+Vec Tracksystem::getpos(State state)
 {
-	return gettrack(track)->getpos(nodedist);
+	return gettrack(state.track)->getpos(state.nodedist);
 }
 
-float Tracksystem::getorientation(trackid track, float nodedist, bool alignedwithtrackdirection)
+float Tracksystem::getorientation(State state)
 {
-	return gettrack(track)->getorientation(nodedist) + pi*!alignedwithtrackdirection;
+	return gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
 }
 
-void Tracksystem::travel(trackid* trackpointer, float* nodedistpointer, bool* alignedwithtrackpointer, float pixels)
+State Tracksystem::travel(State state, float pixels)
 {
-	trackid oldtrack = *trackpointer;
+	trackid oldtrack = state.track;
 	trackid newtrack = oldtrack;
-	float nodedist = *nodedistpointer;
-	bool alignedwithtrack = *alignedwithtrackpointer;
+	float nodedist = state.nodedist;
+	bool alignedwithtrack = state.alignedwithtrack;
 	bool finishedtrip = false;
 
 	float arclength1 = gettrack(oldtrack)->getarclength(1);
@@ -111,9 +118,7 @@ void Tracksystem::travel(trackid* trackpointer, float* nodedistpointer, bool* al
 		arclength1 = arclength2;
 	}
 
-	*trackpointer = oldtrack;
-	*nodedistpointer = nodedist;
-	*alignedwithtrackpointer = alignedwithtrack;
+	return State(oldtrack, nodedist, alignedwithtrack);
 }
 
 void Tracksystem::render()

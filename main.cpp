@@ -7,7 +7,7 @@
 
 std::vector<std::unique_ptr<Wagon>> wagons;
 float money;
-bool nicetracks = false;
+bool nicetracks = true;
 float scale = 1;
 
 int main(){
@@ -17,14 +17,16 @@ int main(){
 	selectedresource = beer;
 	money = 0;
 	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
-	wagons.emplace_back(new Locomotive(tracksystem, 0.5));
+	wagons.emplace_back(new Locomotive(tracksystem, State(1,0.5,1)));
 	for(int iWagon=1; iWagon<5; iWagon++){
-		wagons.emplace_back(new Openwagon(tracksystem, 0.5+iWagon*80/scale/100));
+		State state(1, 0.5+iWagon*80/scale/100, true);
+		wagons.emplace_back(new Openwagon(tracksystem, state));
 	}
 	for(int iWagon=5; iWagon<8; iWagon++){
-		wagons.emplace_back(new Tankwagon(tracksystem, 0.5+iWagon*80/scale/100));
+		State state(1, 0.5+iWagon*80/scale/100, true);
+		wagons.emplace_back(new Tankwagon(tracksystem, state));
 	}
-	wagons.emplace_back(new Locomotive(tracksystem, 10));
+	wagons.emplace_back(new Locomotive(tracksystem, State(1,10,true)));
 	
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));

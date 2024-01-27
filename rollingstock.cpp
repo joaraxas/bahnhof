@@ -5,24 +5,23 @@
 #include<map>
 #include "utils.h"
 
-Wagon::Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path)
+Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path)
 {
 	tracksystem = &newtracksystem;
 	allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	track = 1;
-	nodedist = nodediststart;
-	pos = tracksystem->getpos(track, nodedist);
+	state = trackstate;
+	pos = tracksystem->getpos(state);
 }
 
 void Wagon::update(int ms)
 {
-	tracksystem->travel(&track, &nodedist, &alignedwithtrackdirection, ms*0.001*train->speed*(2*alignedforward-1));
+	state = tracksystem->travel(state, ms*0.001*train->speed*(2*alignedforward-1));
 	
-	pos = tracksystem->getpos(track, nodedist);
+	pos = tracksystem->getpos(state);
 
-	imageangle = tracksystem->getorientation(track, nodedist, alignedwithtrackdirection);
+	imageangle = tracksystem->getorientation(state);
 }
 
 void Wagon::render()
@@ -64,7 +63,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/loco0.png")
+Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/loco0.png")
 {
 	h = h/imagenumber;
 }
@@ -110,7 +109,7 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/flakvagn1.png")
+Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/flakvagn1.png")
 {}
 
 int Openwagon::loadwagon(resourcetype type, int amount)
@@ -121,7 +120,7 @@ int Openwagon::loadwagon(resourcetype type, int amount)
 	return loadedamount;
 }
 
-Tankwagon::Tankwagon(Tracksystem& newtracksystem, float nodediststart) : Wagon(newtracksystem, nodediststart, "assets/train.png")
+Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/train.png")
 {}
 
 int Tankwagon::loadwagon(resourcetype type, int amount)
