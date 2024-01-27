@@ -9,6 +9,7 @@ std::vector<std::unique_ptr<Wagon>> wagons;
 float money;
 bool nicetracks = true;
 float scale = 1;
+int xMouse, yMouse;
 
 int main(){
 	init();
@@ -17,16 +18,17 @@ int main(){
 	selectedresource = beer;
 	money = 0;
 	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
-	wagons.emplace_back(new Locomotive(tracksystem, State(1,0.5,1)));
+	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
+	wagons.emplace_back(new Locomotive(tracksystem, State(2,0.5,1)));
 	for(int iWagon=1; iWagon<5; iWagon++){
-		State state(1, 0.5+iWagon*80/scale/100, true);
+		State state = tracksystem.travel(State(2, 0.5, true), iWagon*60);
 		wagons.emplace_back(new Openwagon(tracksystem, state));
 	}
 	for(int iWagon=5; iWagon<8; iWagon++){
-		State state(1, 0.5+iWagon*80/scale/100, true);
+		State state = tracksystem.travel(State(2, 0.5, true), iWagon*80);
 		wagons.emplace_back(new Tankwagon(tracksystem, state));
 	}
-	wagons.emplace_back(new Locomotive(tracksystem, State(1,10,true)));
+	wagons.emplace_back(new Locomotive(tracksystem, State(2,10,true)));
 	
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));
@@ -51,7 +53,6 @@ int main(){
 	int ms = 0;
 	int startTime = SDL_GetTicks();
 	int lastTime = SDL_GetTicks();
-	int xMouse, yMouse;
 	SDL_Texture* fieldtex = loadImage("assets/field.png");
 	SDL_Event e;
 

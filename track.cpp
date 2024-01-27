@@ -29,6 +29,16 @@ Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std:
 	selectednode = newnode;
 }
 
+Tracksystem::~Tracksystem()
+{
+	auto trackscopy = tracks;
+	for(auto & [id, track] : trackscopy)
+		removetrack(id);
+	auto nodescopy = nodes;
+	for(auto & [id, node] : nodescopy)
+		removenode(id);
+}
+
 nodeid Tracksystem::addnode(Vec pos, float dir){
 	nodecounter++;
 	nodes[nodecounter] = new Node(*this, pos, dir);
@@ -40,14 +50,16 @@ trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	trackid newtrack = trackcounter;
 	tracks[newtrack] = new Track(*this, previousnode, nextnode, newtrack);
 
-	if(gettrack(newtrack)->isabovepreviousnode())
-		getnode(previousnode)->tracksup.push_back(newtrack);
-	else
-		getnode(previousnode)->tracksdown.push_back(newtrack);
-	if(gettrack(newtrack)->isbelownextnode())
-		getnode(nextnode)->tracksdown.push_back(newtrack);
-	else
-		getnode(nextnode)->tracksup.push_back(newtrack);
+	if(!preparingtrack){
+		if(gettrack(newtrack)->isabovepreviousnode())
+			getnode(previousnode)->tracksup.push_back(newtrack);
+		else
+			getnode(previousnode)->tracksdown.push_back(newtrack);
+		if(gettrack(newtrack)->isbelownextnode())
+			getnode(nextnode)->tracksdown.push_back(newtrack);
+		else
+			getnode(nextnode)->tracksup.push_back(newtrack);
+	}
 
 	return newtrack;
 }
@@ -127,14 +139,41 @@ void Tracksystem::render()
 		track->render();
 	for(auto const& [id, node] : nodes)
 		node->render();
+	
+	preparingtrack = true;
+	nodeid lastnodeindex = nodecounter;
+	trackid lasttrackindex = trackcounter;
+
+	Vec mousepos(xMouse, yMouse);
+	nodeid snappednode = getclosestnode(mousepos);
+	bool snappedextantnode = distancetonode(snappednode, mousepos)<=20;
+	if(selectednode){
+		if(snappedextantnode){
+			connecttwonodes(selectednode, snappednode);
+		}
+		else{
+			nodeid newnode = extendtracktopos(selectednode, mousepos);
+		}
+	}
+
+	for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+		gettrack(id)->render();
+	for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
+		getnode(id)->render();
+	for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+		removetrack(id);
+	for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
+		removenode(id);
+	nodecounter = lastnodeindex;
+	trackcounter = lasttrackindex;
+	preparingtrack = false;
 }
 
 void Tracksystem::leftclick(int xMouse, int yMouse)
 {
 	Vec mousepos(xMouse, yMouse);
 	nodeid clickednode = getclosestnode(mousepos);
-	float mousedistance = norm(getnodepos(clickednode) - mousepos);
-	bool clickedextantnode = mousedistance<=20;
+	bool clickedextantnode = distancetonode(clickednode, mousepos)<=20;
 	if(!selectednode){
 		if(clickedextantnode)
 			selectednode = clickednode;
@@ -351,6 +390,7 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 
 Track::~Track()
 {
+	//std::cout << "deleted: " << id << std::endl;
 	/*if(isrightofleftnode())
 		nodeleft->tracksright.erase(find(nodeleft->tracksright.begin(),nodeleft->tracksright.end(),this));
 	else
@@ -448,6 +488,8 @@ void Track::render()
 	//// syllar ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
+		if(tracksystem->preparingtrack)
+			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 		float sleeperwidth = 2600/150/scale;
 		int nSleepers = round(getarclength(1)/3);
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
@@ -463,7 +505,11 @@ void Track::render()
 		}
 	}
 	//// rals ////
-	if(nicetracks) SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	if(nicetracks){
+		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+		if(tracksystem->preparingtrack)
+			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!isinf(radius))

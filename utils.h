@@ -16,6 +16,7 @@ const double pi = 3.141592653589793238;
 extern float money;
 extern bool nicetracks;
 extern float scale;
+extern int xMouse, yMouse;
 
 int init();
 
@@ -71,6 +72,7 @@ friend class Node;
 friend class Track;
 public:
     Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
+    ~Tracksystem();
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
@@ -98,6 +100,7 @@ private:
     nodeid selectednode = 0;
     nodeid nodecounter = 0;
     trackid trackcounter = 0;
+    bool preparingtrack = false;
 };
 
 class Node
