@@ -18,11 +18,11 @@ Wagon::Wagon(Tracksystem& newtracksystem, float nodediststart, std::string path)
 
 void Wagon::update(int ms)
 {
-	tracksystem->travel(&track, &nodedist, &alignedwithtrackdirection, ms*0.001*train->speed);
+	tracksystem->travel(&track, &nodedist, &alignedwithtrackdirection, ms*0.001*train->speed*(2*alignedforward-1));
 	
 	pos = tracksystem->getpos(track, nodedist);
 
-	imageangle = tracksystem->getorientation(track, nodedist, alignedwithtrackdirection) + pi*!alignedforward;
+	imageangle = tracksystem->getorientation(track, nodedist, alignedwithtrackdirection);
 }
 
 void Wagon::render()

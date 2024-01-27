@@ -112,7 +112,7 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	}
 	if(flipdirection)
 		for(auto w : train.wagons){
-			w->alignedwithtrackdirection = 1 - w->alignedwithtrackdirection;
+			//w->alignedwithtrackdirection = 1 - w->alignedwithtrackdirection;
 			w->alignedforward = 1 - w->alignedforward;
 		}
 	train.wagons = {};
