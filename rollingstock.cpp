@@ -91,8 +91,8 @@ void Locomotive::render()
 
 float Locomotive::getpower()
 {
-	if(abs(train->speed)<maxspeed[alignedforward==train->direction])
-		return P[alignedforward==train->direction];
+	if(abs(train->speed)<maxspeed[alignedforward==train->gasisforward])
+		return P[alignedforward==train->gasisforward];
 	else
 		return 0;
 }

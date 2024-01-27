@@ -27,19 +27,19 @@ void Train::getinput(int ms)
 			for(auto w : wagons)
 				Ptot += w->getpower();
 			float mtot = size(wagons);
-			speed+=(2*direction-1)*ms*Ptot/mtot;
+			speed+=(2*gasisforward-1)*ms*Ptot/mtot;
 		}
 		if(keys[breakbutton]){
 			float Ptot = 0;
 			for(auto w : wagons)
 				Ptot += 0.2;
 			float mtot = size(wagons);
-			speed = (2*direction-1)*fmax(0,(2*direction-1)*(speed - (2*direction-1)*ms*Ptot/mtot));
+			speed = (2*gasisforward-1)*fmax(0,(2*gasisforward-1)*(speed - (2*gasisforward-1)*ms*Ptot/mtot));
 		}
 		if(keys[gearbutton]){
 			if(speed==0){
-				direction = 1-direction;
-				speed = 5*(2*direction-1);
+				gasisforward = 1-gasisforward;
+				speed = 5*(2*gasisforward-1);
 			}
 		}
 		if(keys[loadbutton]){
@@ -90,29 +90,26 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	bool flipdirection = false;
 	if(ismyback && !ishisback){
 		std::cout << "couple back front" << std::endl;
-		flipdirection = wagons.back()->alignedwithtrackdirection != train.wagons.front()->alignedwithtrackdirection;
 		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 	}
 	else if(ismyback && ishisback){
 		std::cout << "couple back back" << std::endl;
-		flipdirection = wagons.back()->alignedwithtrackdirection != train.wagons.back()->alignedwithtrackdirection;
 		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+		flipdirection = 1;
 	}
 	else if(!ismyback && !ishisback){
 		std::cout << "couple front front" << std::endl;
-		flipdirection = wagons.front()->alignedwithtrackdirection != train.wagons.front()->alignedwithtrackdirection;
 		std::reverse(wagons.begin(), wagons.end());
 		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+		flipdirection = 1;
 	}
 	else if(!ismyback && ishisback){
 		std::cout << "couple front back" << std::endl;
-		flipdirection = wagons.front()->alignedwithtrackdirection != train.wagons.back()->alignedwithtrackdirection;
 		std::reverse(wagons.begin(), wagons.end());
 		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 	}
 	if(flipdirection)
 		for(auto w : train.wagons){
-			//w->alignedwithtrackdirection = 1 - w->alignedwithtrackdirection;
 			w->alignedforward = 1 - w->alignedforward;
 		}
 	train.wagons = {};

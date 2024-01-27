@@ -179,8 +179,8 @@ public:
     int unloadwagon(resourcetype* type);
     float getpower();
 private:
-    float P[2] = {0.2*4,0.2*4};
-    float maxspeed[2] = {40*4,4*140};
+    float P[2] = {4*0.2,4*0.2};
+    float maxspeed[2] = {4*40,140};
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;
@@ -211,7 +211,7 @@ public:
     Tracksystem* tracksystem;
     bool selected = false;
     float speed;
-    bool direction = 1;
+    bool gasisforward = true;
     std::vector<Wagon*> wagons;
 };
 
