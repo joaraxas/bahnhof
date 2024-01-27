@@ -29,7 +29,7 @@ void Building::update(int ms)
 		int put = storage->loadstorage(makes, got);
 		if(makes==none && got){
 			money+=got; 
-			std::cout << money << std::endl;
+			//std::cout << money << std::endl;
 		}
 		timeleft = 3000;
 	}

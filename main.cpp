@@ -18,14 +18,14 @@ int main(){
 	money = 0;
 	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	wagons.emplace_back(new Locomotive(tracksystem, 0.5));
-	/*for(int iWagon=1; iWagon<5; iWagon++){
-		wagons.emplace_back(new Openwagon(tracksystem, 0.5+iWagon*80/scale/tracksystem.tracks[0]->getarclength(1)));
+	for(int iWagon=1; iWagon<5; iWagon++){
+		wagons.emplace_back(new Openwagon(tracksystem, 0.5+iWagon*80/scale/100));
 	}
 	for(int iWagon=5; iWagon<8; iWagon++){
-		wagons.emplace_back(new Tankwagon(tracksystem, 0.5+iWagon*80/scale/tracksystem.tracks[0]->getarclength(1)));
+		wagons.emplace_back(new Tankwagon(tracksystem, 0.5+iWagon*80/scale/100));
 	}
 	wagons.emplace_back(new Locomotive(tracksystem, 10));
-	*/
+	
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));
 	}
@@ -83,7 +83,7 @@ int main(){
 		brewery.update(ms);
 		farm.update(ms);
 		city.update(ms);
-		/*
+		
 		for(int iTrain=0; iTrain<trains.size(); iTrain++){
 			for(int jTrain=iTrain+1; jTrain<trains.size(); jTrain++){
 				trains[iTrain]->checkCollision(trains[jTrain].get());
@@ -92,7 +92,6 @@ int main(){
 		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
 			if(trains[iTrain]->wagons.size() == 0)
 				trains.erase(trains.begin()+iTrain);
-*/
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);

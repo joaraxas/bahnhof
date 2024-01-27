@@ -56,30 +56,40 @@ enum resourcetype
 typedef int trackid;
 typedef int nodeid;
 
+struct State
+{
+    State(trackid _trackid, float _nodedist, bool _isalignedwithtrackdirection);
+    trackid track = 0;
+    float nodedist = 0;
+    bool isalignedwithtrack = true;
+};
+
 class Tracksystem
 {
+friend class Node;
+friend class Track;
 public:
     Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
-    nodeid addnode(Vec pos, float dir);
-    trackid addtrack(nodeid leftnode, nodeid rightnode);
-    void removenode(nodeid nodetoremove);
-    void removetrack(trackid tracktoremove);
     Vec getpos(trackid track, float nodedist);
     float getorientation(trackid track, float nodedist, bool alignedwithtrack);
     void travel(trackid* track, float* nodedist, bool* alignedwithtrack, float pixels);
     ResourceManager* allresources;
-    friend class Node;
-    friend class Track;
 private:
-    Node* getnode(nodeid node);
-    Track* gettrack(trackid track);
-    float getnodedir(nodeid node);
-    Vec getnodepos(nodeid node);
+    nodeid addnode(Vec pos, float dir);
+    trackid addtrack(nodeid leftnode, nodeid rightnode);
+    void removenode(nodeid nodetoremove);
+    void removetrack(trackid tracktoremove);
     float distancetonode(nodeid node, Vec pos);
     nodeid getclosestnode(Vec pos);
+    Node* getnode(nodeid node);
+    float getnodedir(nodeid node);
+    Vec getnodepos(nodeid node);
+    Track* gettrack(trackid track);
+    trackid nexttrack(trackid track);
+    trackid previoustrack(trackid track);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
     std::map<nodeid, Node*> nodes;
@@ -91,16 +101,12 @@ private:
 
 class Node
 {
-public:
+friend class Tracksystem;
+private:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart);
     void render();
     trackid gettrackup();
     trackid gettrackdown();
-    friend class Tracksystem;
-    friend class Track;
-private:
-    void connecttrackfromabove(trackid track);
-    void connecttrackfrombelow(trackid track);
     Tracksystem* tracksystem;
     void incrementswitch();
     Vec pos;
@@ -113,7 +119,8 @@ private:
 
 class Track
 {
-public:
+friend class Tracksystem;
+private:
     Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
     ~Track();
     Tracksystem* tracksystem;
@@ -125,11 +132,6 @@ public:
     float getorientation(float nodedist);
     bool isabovepreviousnode();
     bool isbelownextnode();
-    trackid getnexttrack();
-    trackid getprevioustrack();
-    friend class Tracksystem;
-    friend class Node;
-private:
     trackid id;
     float phi;
     float radius;

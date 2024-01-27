@@ -5,6 +5,13 @@
 #include<map>
 #include "utils.h"
 
+State::State(trackid trackstart, float nodediststart, bool isalignedwithtrackstart)
+{
+	track = trackstart; 
+	nodedist = nodediststart; 
+	isalignedwithtrack = isalignedwithtrackstart;
+}
+
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
 {
 	allresources = &resources;
@@ -23,8 +30,19 @@ nodeid Tracksystem::addnode(Vec pos, float dir){
 
 trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	trackcounter++;
-	tracks[trackcounter] = new Track(*this, previousnode, nextnode, trackcounter);
-	return trackcounter;
+	trackid newtrack = trackcounter;
+	tracks[newtrack] = new Track(*this, previousnode, nextnode, newtrack);
+
+	if(gettrack(newtrack)->isabovepreviousnode())
+		getnode(previousnode)->tracksup.push_back(newtrack);
+	else
+		getnode(previousnode)->tracksdown.push_back(newtrack);
+	if(gettrack(newtrack)->isbelownextnode())
+		getnode(nextnode)->tracksdown.push_back(newtrack);
+	else
+		getnode(nextnode)->tracksup.push_back(newtrack);
+
+	return newtrack;
 }
 
 void Tracksystem::removenode(nodeid nodetoremove)
@@ -65,9 +83,8 @@ void Tracksystem::travel(trackid* trackpointer, float* nodedistpointer, bool* al
 		if(nodedist>=1)
 		{
 			nodeid currentnode = gettrack(oldtrack)->nextnode;
-			newtrack = gettrack(oldtrack)->getnexttrack();
+			newtrack = nexttrack(oldtrack);
 			arclength2 = gettrack(newtrack)->getarclength(1);
-			std::cout<<newtrack<<std::endl;
 			if(gettrack(newtrack)->previousnode==currentnode){
 				nodedist = (nodedist-1)*arclength1/arclength2;
 			}
@@ -79,7 +96,7 @@ void Tracksystem::travel(trackid* trackpointer, float* nodedistpointer, bool* al
 		else if(nodedist<0)
 		{
 			nodeid currentnode = gettrack(oldtrack)->previousnode;
-			newtrack = gettrack(oldtrack)->getprevioustrack();
+			newtrack = previoustrack(oldtrack);
 			arclength2 = gettrack(newtrack)->getarclength(1);
 			if(gettrack(newtrack)->nextnode==currentnode){
 				nodedist = 1-(-nodedist)*arclength1/arclength2;
@@ -192,7 +209,7 @@ void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 		newnodepoint = tangentintersection + (getnodepos(node1) - tangentintersection)/disttointersect1*disttointersect2;
 	else
 		newnodepoint = tangentintersection + (getnodepos(node2) - tangentintersection)/disttointersect2*disttointersect1;
-	if(distancetonode(node1, newnodepoint)> 10 && distancetonode(node2, newnodepoint)> 10){
+	if(distancetonode(node1, newnodepoint)> 10 && distancetonode(node2, newnodepoint)> 10){ //TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
 		nodeid newnode = extendtracktopos(node1, newnodepoint);
 		addtrack(newnode, node2);
 	}
@@ -235,6 +252,31 @@ Track* Tracksystem::gettrack(trackid track)
 	}
 }
 
+trackid Tracksystem::nexttrack(trackid track){
+	trackid nexttrack;
+	Track* trackpointer = gettrack(track);
+	if(trackpointer->isbelownextnode()){
+		nexttrack = getnode(trackpointer->nextnode)->gettrackup();
+	}
+	else
+		nexttrack = getnode(trackpointer->nextnode)->gettrackdown();
+	if(nexttrack == 0)
+		nexttrack = track;
+	return nexttrack;
+}
+
+trackid Tracksystem::previoustrack(trackid track){
+	trackid previoustrack;
+	Track* trackpointer = gettrack(track);
+	if(trackpointer->isabovepreviousnode())
+		previoustrack = getnode(trackpointer->previousnode)->gettrackdown();
+	else
+		previoustrack = getnode(trackpointer->previousnode)->gettrackup();
+	if(previoustrack == 0)
+		previoustrack = track;
+	return previoustrack;
+}
+
 Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart)
 {
 	tracksystem = &newtracksystem;
@@ -253,16 +295,6 @@ void Node::render()
 		SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
-}
-
-void Node::connecttrackfromabove(trackid track)
-{
-	tracksup.push_back(track);
-}
-
-void Node::connecttrackfrombelow(trackid track)
-{
-	tracksdown.push_back(track);
 }
 
 trackid Node::gettrackdown()
@@ -310,15 +342,6 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
-
-	if(isabovepreviousnode())
-		tracksystem->getnode(previousnode)->connecttrackfromabove(id);
-	else
-		tracksystem->getnode(previousnode)->connecttrackfrombelow(id);
-	if(isbelownextnode())
-		tracksystem->getnode(nextnode)->connecttrackfrombelow(id);
-	else
-		tracksystem->getnode(nextnode)->connecttrackfromabove(id);
 }
 
 Track::~Track()
@@ -395,32 +418,6 @@ bool Track::isabovepreviousnode()
 bool Track::isbelownextnode()
 {
 	return cos(getorientation(1) - nextdir) > 0;
-}
-
-trackid Track::getnexttrack(){
-	trackid nexttrack;
-	std::cout << getorientation(1) << std::endl;
-	std::cout << nextdir << std::endl;
-	if(isbelownextnode()){
-		std::cout<<"below"<<std::endl;
-		nexttrack = tracksystem->getnode(nextnode)->gettrackup();
-	}
-	else
-		nexttrack = tracksystem->getnode(nextnode)->gettrackdown();
-	if(nexttrack == 0)
-		nexttrack = id;
-	return nexttrack;
-}
-
-trackid Track::getprevioustrack(){
-	trackid previoustrack;
-	if(isabovepreviousnode())
-		previoustrack = tracksystem->getnode(previousnode)->gettrackdown();
-	else
-		previoustrack = tracksystem->getnode(previousnode)->gettrackup();
-	if(previoustrack == 0)
-		previoustrack = id;
-	return previoustrack;
 }
 
 void Track::render()
