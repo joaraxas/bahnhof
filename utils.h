@@ -76,6 +76,7 @@ public:
     void render();
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
+    void deleteclick(int xMouse, int yMouse);
     Vec getpos(State state);
     float getorientation(State state);
     State travel(State state, float pixels);
@@ -111,8 +112,8 @@ private:
     void render();
     trackid gettrackup();
     trackid gettrackdown();
-    Tracksystem* tracksystem;
     void incrementswitch();
+    Tracksystem* tracksystem;
     Vec pos;
     float dir;
     int stateup;

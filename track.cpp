@@ -200,6 +200,16 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 	}
 }
 
+void Tracksystem::deleteclick(int xMouse, int yMouse)
+{
+	selectednode = 0;
+	Vec mousepos(xMouse,yMouse);
+	nodeid clickednode = getclosestnode(mousepos);
+	if(distancetonode(clickednode, mousepos)<=30){
+		//removenode(clickednode);
+	}
+}
+
 nodeid Tracksystem::getclosestnode(Vec pos)
 {
 	float mindistsquared = INFINITY;
@@ -513,7 +523,7 @@ void Track::render()
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!isinf(radius))
-		nSegments = fmax(1,round(abs(phi/2/pi*4*16)));
+		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
 	float gauge = 0;
 	if(nicetracks) gauge = 1435/150/scale;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
