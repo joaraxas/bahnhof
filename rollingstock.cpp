@@ -15,12 +15,14 @@ Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path)
 	pos = tracksystem->getpos(state);
 }
 
+void Wagon::travel(float pixels)
+{
+	state = tracksystem->travel(state, pixels*(2*alignedforward-1));	
+}
+
 void Wagon::update(int ms)
 {
-	state = tracksystem->travel(state, ms*0.001*train->speed*(2*alignedforward-1));
-	
 	pos = tracksystem->getpos(state);
-
 	imageangle = tracksystem->getorientation(state);
 }
 
@@ -35,6 +37,11 @@ void Wagon::render()
 		Resource* resource = allresources->get(loadedresource);
 		resource->render(pos);
 	}
+}
+
+Vec Wagon::getpos(bool front)
+{
+	return tracksystem->getpos(tracksystem->travel(state, (2*alignedforward-1)*(2*front-1)*w/2/scale));
 }
 
 float Wagon::getpower()

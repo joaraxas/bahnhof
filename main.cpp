@@ -70,23 +70,23 @@ int main(){
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
 
-		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--){
+		for(int iTrain=0; iTrain<trains.size(); iTrain++)
 			trains[iTrain]->getinput(ms);
+		for(int iTrain=0; iTrain<trains.size(); iTrain++)
+			for(int jTrain=0; jTrain<trains.size(); jTrain++)
+				if(iTrain!=jTrain)
+					trains[iTrain]->checkCollision(ms, trains[jTrain].get());
+		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
+			if(trains[iTrain]->wagons.size() == 0)
+				trains.erase(trains.begin()+iTrain);
+		for(int iTrain=0; iTrain<trains.size(); iTrain++){
+			trains[iTrain]->update(ms);
 		}
 		for(auto& wagon : wagons)
 			wagon->update(ms);
 		brewery.update(ms);
 		farm.update(ms);
 		city.update(ms);
-		
-		for(int iTrain=0; iTrain<trains.size(); iTrain++){
-			for(int jTrain=iTrain+1; jTrain<trains.size(); jTrain++){
-				trains[iTrain]->checkCollision(trains[jTrain].get());
-			}
-		}
-		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
-			if(trains[iTrain]->wagons.size() == 0)
-				trains.erase(trains.begin()+iTrain);
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);

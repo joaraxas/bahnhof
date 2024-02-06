@@ -150,8 +150,10 @@ class Wagon
 {
 public:
     Wagon(Tracksystem& newtracksystem, State trackstate, std::string path);
+    void travel(float pixels);
     virtual void update(int ms);
     virtual void render();
+    virtual Vec getpos(bool front);
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
@@ -182,7 +184,7 @@ public:
     int unloadwagon(resourcetype* type);
     float getpower();
 private:
-    float P[2] = {4*0.2,4*0.2};
+    float P[2] = {0.2,0.2};
     float maxspeed[2] = {4*40,140};
     int imagenumber = 4;
     float imageindex = 0;
@@ -208,7 +210,8 @@ class Train
 public:
     Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput(int ms);
-    void checkCollision(Train* train);
+    void update(int ms);
+    void checkCollision(int ms, Train* train);
     void split(int where);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;

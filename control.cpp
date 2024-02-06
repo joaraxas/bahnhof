@@ -69,19 +69,34 @@ void Train::getinput(int ms)
 	}
 }
 
-void Train::checkCollision(Train* train)
+void Train::update(int ms)
+{
+	float pixels = ms*0.001*speed;
+	for(auto& wagon : wagons)
+		wagon->travel(pixels);
+}
+
+void Train::checkCollision(int ms, Train* train)
 {
 	if(size(wagons) >= 1)
-	if(size(train->wagons) >= 1)
-	if(abs(speed - train->speed)>10){
-		if(norm(wagons.back()->pos - train->wagons.front()->pos) <= wagons.back()->w/2/scale+train->wagons.front()->w/2/scale)
-			couple(*train, true, false);
-		else if(norm(wagons.back()->pos - train->wagons.back()->pos) <= wagons.back()->w/2/scale+train->wagons.back()->w/2/scale)
-			couple(*train, true, true);
-		else if(norm(wagons.front()->pos - train->wagons.front()->pos) <= wagons.front()->w/2/scale+train->wagons.front()->w/2/scale)
-			couple(*train, false, false);
-		else if(norm(wagons.front()->pos - train->wagons.back()->pos) <= wagons.front()->w/2/scale+train->wagons.back()->w/2/scale)
-			couple(*train, false, true);
+	if(size(train->wagons) >= 1){
+		float pixels = ms*0.001*speed;
+		if(speed>=0){
+			wagons.front()->travel(pixels);
+			if(norm(wagons.front()->getpos(true) - train->wagons.back()->getpos(false)) < abs(pixels))
+				couple(*train, false, true);
+			else if(norm(wagons.front()->getpos(true) - train->wagons.front()->getpos(true)) < abs(pixels))
+				couple(*train, false, false);
+			wagons.front()->travel(-pixels);
+		}
+		else{
+			wagons.back()->travel(pixels);
+			if(norm(wagons.back()->getpos(false) - train->wagons.back()->getpos(false)) < abs(pixels))
+				couple(*train, true, true);
+			else if(norm(wagons.back()->getpos(false) - train->wagons.front()->getpos(true)) < abs(pixels))
+				couple(*train, true, false);
+			wagons.back()->travel(-pixels);
+		}
 	}
 }
 
@@ -101,12 +116,14 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 		std::cout << "couple front front" << std::endl;
 		std::reverse(wagons.begin(), wagons.end());
 		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+		std::reverse(wagons.begin(), wagons.end());
 		flipdirection = 1;
 	}
 	else if(!ismyback && ishisback){
 		std::cout << "couple front back" << std::endl;
 		std::reverse(wagons.begin(), wagons.end());
 		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+		std::reverse(wagons.begin(), wagons.end());
 	}
 	if(flipdirection)
 		for(auto w : train.wagons){
@@ -115,6 +132,8 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	train.wagons = {};
 	for(auto wagon : wagons)
 		wagon->train = this;
+	if(train.selected)
+		selected = true;
 }
 
 void Train::split(int where)
