@@ -5,7 +5,6 @@
 #include<map>
 #include "utils.h"
 
-resourcetype selectedresource = none;
 std::vector<std::unique_ptr<Train>> trains;
 std::vector<std::unique_ptr<Storage>> storages;
 
@@ -32,16 +31,18 @@ void Train::getinput(int ms)
 				speed = 5*(2*gasisforward-1);
 			}
 		}
+		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
+			if(keys[numberbuttons[iKey]]) split(iKey);
+	}
 		if(keys[loadbutton]||1==1){
 			if(speed==0)
 			for(auto w : wagons){
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
-					selectedresource = storage->provides;
-					int unloadedamount = storage->unloadstorage(selectedresource, 1);
-					int loadedamount = w->loadwagon(selectedresource, unloadedamount);
+					int unloadedamount = storage->unloadstorage(storage->provides, 1);
+					int loadedamount = w->loadwagon(storage->provides, unloadedamount);
 					if(loadedamount!=unloadedamount)
-						storage->loadstorage(selectedresource, unloadedamount-loadedamount);
+						storage->loadstorage(storage->provides, unloadedamount-loadedamount);
 				}
 			}
 		}
@@ -59,14 +60,16 @@ void Train::getinput(int ms)
 				}
 			}
 		}
-		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
-			if(keys[numberbuttons[iKey]]) split(iKey);
-	}
+	//}
 }
 
 void Train::update(int ms)
 {
 	float pixels = ms*0.001*speed;
+	if(tracksystem->isred(wagons.front()->state, (2*gasisforward-1)*(2*wagons.front()->alignedforward-1)))
+		brake(ms);
+	else if(!selected)
+		gas(ms);
 	for(auto& wagon : wagons)
 		wagon->travel(pixels);
 }

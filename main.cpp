@@ -13,12 +13,12 @@ int xMouse, yMouse;
 
 int main(){
 	init();
-
 	ResourceManager resources;
-	selectedresource = beer;
 	money = 0;
-	//Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
-	Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
+	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
+	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
+	tracksystem.addsignal(State(2,0.5,true));
+	tracksystem.addsignal(State(7,0.1,true));
 	wagons.emplace_back(new Locomotive(tracksystem, State(1,0.5,1)));
 	for(int iWagon=1; iWagon<2; iWagon++){
 		State state = tracksystem.travel(State(1, 0.5, true), iWagon*60);
@@ -35,7 +35,7 @@ int main(){
 	}
 	trains[0]->selected = true;
 	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
-	storages.emplace_back(new Storage(resources, 600,600,300,100, beer, hops));
+	storages.emplace_back(new Storage(resources, 600,600,300,150, beer, hops));
 	Brewery brewery(resources, 150,120,100,50);
 	Hopsfield farm(resources, 625,625,50,50);
 	City city(resources, 700,625,20,50);

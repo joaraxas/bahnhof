@@ -48,6 +48,7 @@ class Train;
 class ResourceManager;
 class Resource;
 class Storage;
+class Signal;
 
 enum resourcetype
 {
@@ -56,6 +57,7 @@ enum resourcetype
 
 typedef int trackid;
 typedef int nodeid;
+typedef int signalid;
 
 struct State
 {
@@ -81,6 +83,8 @@ public:
     float getorientation(State state);
     State travel(State state, float pixels);
     ResourceManager* allresources;
+    signalid addsignal(State state);
+    bool isred(State trainstate, float pixels);
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
@@ -96,11 +100,14 @@ private:
     trackid previoustrack(trackid track);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
+    Signal* getsignal(signalid signal);
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
+    std::map<signalid, Signal*> signals;
     nodeid selectednode = 0;
     nodeid nodecounter = 0;
     trackid trackcounter = 0;
+    signalid signalcounter = 0;
     bool preparingtrack = false;
 };
 
@@ -161,9 +168,9 @@ public:
     Vec pos;
     bool alignedforward = true;
     int w;
+    State state; //should be protected
 protected:
     Tracksystem* tracksystem;
-    State state;
     int h;
     float imageangle = 0;
     SDL_Texture* tex;
@@ -303,12 +310,15 @@ public:
 class Signal
 {
 public:
-    Signal(State startstate);
-    bool isred(State trainstate);
+    Signal(Tracksystem& newtracksystem, State signalstate);
+    void render();
+    bool isred(State trainstate, float pixels);
+    bool isgreen = false;
 private:
     State state;
+    Vec pos;
+    Tracksystem* tracksystem;
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;
 extern std::vector<std::unique_ptr<Storage> > storages;
-extern resourcetype selectedresource;

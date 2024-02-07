@@ -64,6 +64,12 @@ trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	return newtrack;
 }
 
+signalid Tracksystem::addsignal(State state){
+	signalcounter++;
+	signals[signalcounter] = new Signal(*this, state);
+	return signalcounter;
+}
+
 void Tracksystem::removenode(nodeid nodetoremove)
 {
 	delete nodes[nodetoremove];
@@ -139,6 +145,8 @@ void Tracksystem::render()
 		track->render();
 	for(auto const& [id, node] : nodes)
 		node->render();
+	for(auto const& [id, signal] : signals)
+		signal->render();
 	
 	preparingtrack = true;
 	nodeid lastnodeindex = nodecounter;
@@ -198,6 +206,8 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 	if(distancetonode(clickednode, mousepos)<=30){
 		getnode(clickednode)->incrementswitch();
 	}
+	for(auto const& [id, signal] : signals)
+		signal->isgreen = !signal->isgreen;
 }
 
 void Tracksystem::deleteclick(int xMouse, int yMouse)
@@ -329,6 +339,27 @@ trackid Tracksystem::previoustrack(trackid track){
 	if(previoustrack == 0)
 		previoustrack = track;
 	return previoustrack;
+}
+
+Signal* Tracksystem::getsignal(signalid signal)
+{
+	if(signals.contains(signal))
+		return signals[signal];
+	else{
+		std::cout << "Error: failed to find signal with id" << signal << std::endl;
+		return nullptr;
+	}
+}
+
+bool Tracksystem::isred(State trainstate, float pixels)
+{
+	bool red = false;
+	for(auto const& [id, signal] : signals)
+		if(signal->isred(trainstate, pixels)){
+			red = true;
+			break;
+		}
+	return red;
 }
 
 Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart)
@@ -543,3 +574,30 @@ void Track::render()
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }
 
+Signal::Signal(Tracksystem& newtracksystem, State signalstate)
+{
+	tracksystem = &newtracksystem;
+	state = signalstate;
+	float orientation = tracksystem->getorientation(state)+pi*state.alignedwithtrack;
+	float transverseoffset = -20/scale;
+	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
+}
+
+void Signal::render()
+{
+	SDL_SetRenderDrawColor(renderer, 255*(!isgreen), 255*(isgreen), 0, 255);
+	SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
+	SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+bool Signal::isred(State trainstate, float pixels)
+{
+	bool red = false;
+	if(!isgreen)
+		if(trainstate.track == state.track){
+			if((trainstate.alignedwithtrack==(pixels>0)) == state.alignedwithtrack)
+				red = true;
+		}
+	return red;
+}
