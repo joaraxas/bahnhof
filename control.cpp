@@ -22,31 +22,22 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 void Train::getinput(int ms)
 {
 	if(selected){
-		if(keys[gasbutton]){
-			float Ptot = 0;
-			for(auto w : wagons)
-				Ptot += w->getpower();
-			float mtot = size(wagons);
-			speed+=(2*gasisforward-1)*ms*Ptot/mtot;
-		}
-		if(keys[breakbutton]){
-			float Ptot = 0;
-			for(auto w : wagons)
-				Ptot += 0.2;
-			float mtot = size(wagons);
-			speed = (2*gasisforward-1)*fmax(0,(2*gasisforward-1)*(speed - (2*gasisforward-1)*ms*Ptot/mtot));
-		}
+		if(keys[gasbutton])
+			gas(ms);
+		if(keys[brakebutton])
+			brake(ms);
 		if(keys[gearbutton]){
 			if(speed==0){
 				gasisforward = 1-gasisforward;
 				speed = 5*(2*gasisforward-1);
 			}
 		}
-		if(keys[loadbutton]){
+		if(keys[loadbutton]||1==1){
+			if(speed==0)
 			for(auto w : wagons){
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
-					selectedresource = storage->getfirststoredresource();
+					selectedresource = storage->provides;
 					int unloadedamount = storage->unloadstorage(selectedresource, 1);
 					int loadedamount = w->loadwagon(selectedresource, unloadedamount);
 					if(loadedamount!=unloadedamount)
@@ -54,13 +45,17 @@ void Train::getinput(int ms)
 				}
 			}
 		}
-		if(keys[unloadbutton]){
+		if(keys[unloadbutton]||1==1){
+			if(speed==0)
 			for(auto w : wagons){
 				Storage* storage = getstorageatpoint(w->pos);
 				if(storage){
 					resourcetype beingunloaded;
 					int unloadedamount = w->unloadwagon(&beingunloaded);
-					storage->loadstorage(beingunloaded, unloadedamount);
+					if(storage->accepts==beingunloaded)
+						storage->loadstorage(beingunloaded, unloadedamount);
+					else
+						w->loadwagon(beingunloaded, unloadedamount);
 				}
 			}
 		}
@@ -100,6 +95,24 @@ void Train::checkCollision(int ms, Train* train)
 	}
 }
 
+void Train::gas(int ms)
+{
+	float Ptot = 0;
+	for(auto w : wagons)
+		Ptot += w->getpower();
+	float mtot = size(wagons);
+	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
+}
+
+void Train::brake(int ms)
+{
+	float Ptot = 0;
+	for(auto w : wagons)
+		Ptot += 0.2;
+	float mtot = size(wagons);
+	speed = (2*gasisforward-1)*fmax(0,(2*gasisforward-1)*(speed - (2*gasisforward-1)*ms*Ptot/mtot));
+}
+
 void Train::couple(Train& train, bool ismyback, bool ishisback)
 {
 	bool flipdirection = false;
@@ -134,10 +147,13 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 		wagon->train = this;
 	if(train.selected)
 		selected = true;
+	speed = 0;
+	train.speed = 0;
 }
 
 void Train::split(int where)
 {
+	if(speed==0)
 	if(wagons.size()>where){
 		trains.emplace_back(new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed));
 		wagons = {wagons.begin(), wagons.begin() + where};
@@ -181,10 +197,12 @@ void Resource::render(Vec pos)
 	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
 }
 
-Storage::Storage(ResourceManager& resources, int x, int y, int w, int h)
+Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
 {
 	allresources = &resources;
 	rect = {x, y, w, h};
+	accepts = _accepts;
+	provides = _provides;
 }
 
 void Storage::render()

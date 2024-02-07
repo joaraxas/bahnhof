@@ -3,7 +3,7 @@ extern SDL_Renderer* renderer;
 
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
-const int breakbutton = SDL_SCANCODE_S;
+const int brakebutton = SDL_SCANCODE_S;
 const int gearbutton = SDL_SCANCODE_LSHIFT;
 const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
 const int loadbutton = SDL_SCANCODE_L;
@@ -212,6 +212,8 @@ public:
     void getinput(int ms);
     void update(int ms);
     void checkCollision(int ms, Train* train);
+    void gas(int ms);
+    void brake(int ms);
     void split(int where);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
@@ -247,12 +249,14 @@ private:
 class Storage
 {
 public:
-    Storage(ResourceManager& resources, int x, int y, int w, int h);
+    Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides);
     void render();
     int loadstorage(resourcetype type, int amount);
     int unloadstorage(resourcetype type, int amount);
     bool containspoint(Vec pos);
     resourcetype getfirststoredresource();
+    resourcetype accepts;
+    resourcetype provides;
 private:
     ResourceManager* allresources;
     std::map<resourcetype, int> storedresources;
@@ -279,21 +283,30 @@ private:
 
 class Brewery : public Building
 {
-    public:
+public:
     Brewery(ResourceManager& resources, int x, int y, int w, int h);
     void render();
 };
 
 class Hopsfield : public Building
 {
-    public:
+public:
     Hopsfield(ResourceManager& resources, int x, int y, int w, int h);
 };
 
 class City : public Building
 {
-    public:
+public:
     City(ResourceManager& resources, int x, int y, int w, int h);
+};
+
+class Signal
+{
+public:
+    Signal(State startstate);
+    bool isred(State trainstate);
+private:
+    State state;
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

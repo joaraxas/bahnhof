@@ -34,8 +34,8 @@ int main(){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));
 	}
 	trains[0]->selected = true;
-	storages.emplace_back(new Storage(resources, 100,100,400,150));
-	storages.emplace_back(new Storage(resources, 600,600,300,100));
+	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
+	storages.emplace_back(new Storage(resources, 600,600,300,100, beer, hops));
 	Brewery brewery(resources, 150,120,100,50);
 	Hopsfield farm(resources, 625,625,50,50);
 	City city(resources, 700,625,20,50);
@@ -58,7 +58,17 @@ int main(){
 						tracksystem.deleteclick(xMouse, yMouse);
 					}
 					else if(e.button.button == SDL_BUTTON_LEFT){
-						tracksystem.leftclick(xMouse, yMouse);
+						bool clickedtrain = false;
+						for(auto& train : trains){
+							train->selected = false;
+							for(auto& wagon : train->wagons)
+								if(norm(Vec(xMouse,yMouse)-wagon->pos)<wagon->w/2){
+									train->selected = true;
+									clickedtrain = true;
+								}
+						}
+						if(!clickedtrain)
+							tracksystem.leftclick(xMouse, yMouse);
 					}
 					if(e.button.button == SDL_BUTTON_RIGHT){
 						tracksystem.rightclick(xMouse, yMouse);
