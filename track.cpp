@@ -37,6 +37,9 @@ Tracksystem::~Tracksystem()
 	auto nodescopy = nodes;
 	for(auto & [id, node] : nodescopy)
 		removenode(id);
+	auto signalscopy = signals;
+	for(auto & [id, signal] : signalscopy)
+		removesignal(id);
 }
 
 nodeid Tracksystem::addnode(Vec pos, float dir){
@@ -70,16 +73,22 @@ signalid Tracksystem::addsignal(State state){
 	return signalcounter;
 }
 
-void Tracksystem::removenode(nodeid nodetoremove)
+void Tracksystem::removenode(nodeid toremove)
 {
-	delete nodes[nodetoremove];
-	nodes.erase(nodetoremove);
+	delete nodes[toremove];
+	nodes.erase(toremove);
 }
 
-void Tracksystem::removetrack(nodeid tracktoremove)
+void Tracksystem::removetrack(trackid toremove)
 {
-	delete tracks[tracktoremove];
-	tracks.erase(tracktoremove);
+	delete tracks[toremove];
+	tracks.erase(toremove);
+}
+
+void Tracksystem::removesignal(signalid toremove)
+{
+	delete signals[toremove];
+	signals.erase(toremove);
 }
 
 Vec Tracksystem::getpos(State state)
@@ -594,10 +603,22 @@ void Signal::render()
 bool Signal::isred(State trainstate, float pixels)
 {
 	bool red = false;
-	if(!isgreen)
-		if(trainstate.track == state.track){
-			if((trainstate.alignedwithtrack==(pixels>0)) == state.alignedwithtrack)
-				red = true;
+	if(!isgreen){
+		if(trainstate.track == state.track)
+			if((trainstate.alignedwithtrack==(pixels>0)) == state.alignedwithtrack){
+				State backwardstate = tracksystem->travel(state, -sign(pixels)*100);
+				if((trainstate.nodedist > state.nodedist) != state.alignedwithtrack)
+				if((trainstate.nodedist < backwardstate.nodedist) != backwardstate.alignedwithtrack)
+					red = true;
+			}
+	}
+	else{
+		State forwardstate = tracksystem->travel(state, sign(pixels)*60);
+		if(trainstate.track == forwardstate.track){
+			if((trainstate.alignedwithtrack==(pixels>0)) == forwardstate.alignedwithtrack)
+				if((trainstate.nodedist < state.nodedist) != state.alignedwithtrack)
+					isgreen = false;
 		}
+	}
 	return red;
 }

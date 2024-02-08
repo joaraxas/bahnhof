@@ -7,7 +7,7 @@
 
 std::vector<std::unique_ptr<Wagon>> wagons;
 float money;
-bool nicetracks = true;
+bool nicetracks = false;
 float scale = 1;
 int xMouse, yMouse;
 
@@ -18,7 +18,7 @@ int main(){
 	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
 	tracksystem.addsignal(State(2,0.5,true));
-	tracksystem.addsignal(State(7,0.1,true));
+	tracksystem.addsignal(State(7,0.5,true));
 	wagons.emplace_back(new Locomotive(tracksystem, State(1,0.5,1)));
 	for(int iWagon=1; iWagon<2; iWagon++){
 		State state = tracksystem.travel(State(1, 0.5, true), iWagon*60);

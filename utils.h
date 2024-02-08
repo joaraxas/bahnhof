@@ -88,8 +88,9 @@ public:
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
-    void removenode(nodeid nodetoremove);
-    void removetrack(trackid tracktoremove);
+    void removenode(nodeid toremove);
+    void removetrack(trackid toremove);
+    void removesignal(signalid toremove);
     float distancetonode(nodeid node, Vec pos);
     nodeid getclosestnode(Vec pos);
     Node* getnode(nodeid node);
