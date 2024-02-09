@@ -45,6 +45,8 @@ class Node;
 class Track;
 class Wagon;
 class Train;
+class Route;
+struct Order;
 class ResourceManager;
 class Resource;
 class Storage;
@@ -220,15 +222,94 @@ public:
     void getinput(int ms);
     void update(int ms);
     void checkCollision(int ms, Train* train);
-    void gas(int ms);
-    void brake(int ms);
-    void split(int where);
+    bool perform(int ms);
+    void proceed();
+    bool gas(int ms);
+    bool brake(int ms);
+    bool shiftdirection();
+    bool loadall();
+    bool unloadall();
+    bool checkifreachedstate(State goalstate);
+    bool split(int where);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
     bool selected = false;
     float speed;
     bool gasisforward = true;
     std::vector<Wagon*> wagons;
+    Route* route = nullptr;
+    int orderindex = 0;
+};
+
+class Route
+{
+public:
+    Route();
+    Order* getorder(int orderindex);
+    int nextorderindex(int orderindex);
+    void appendorder(Order* order);
+    void insertorder(Order* order, int orderindex);
+    void removeorder(int orderindex);
+private:
+    std::vector<std::unique_ptr<Order>> orders;
+};
+
+enum ordertype
+{
+    gotostate, setsignal, setswitch, couple, decouple, turn, loadresource
+};
+struct Order
+{
+    virtual ~Order() {std::cout<<"del order"<<std::endl;};
+    ordertype order;
+    std::string description;
+};
+struct Gotostate : public Order
+{
+    Gotostate(State whichstate);
+    Gotostate(State whichstate, bool mustpass);
+    State state;
+    bool pass;
+};
+struct Setsignal : public Order
+{
+    Setsignal(signalid whichsignal, int redgreenorflip);
+    signalid signal;
+    int redgreenflip;
+};
+struct Setswitch : public Order
+{
+    Setswitch(nodeid whichnode, bool upordown);
+    Setswitch(nodeid whichnode, bool upordown, int whichnodestate);
+    nodeid node;
+    bool updown;
+    bool flip;
+    int nodestate;
+};
+struct Couple : public Order
+{
+    Couple();
+};
+struct Decouple : public Order
+{
+    Decouple();
+    Decouple(int keephowmany);
+    int where;
+};
+struct Turn : public Order
+{
+    Turn();
+};
+struct Loadresource : public Order
+{
+    Loadresource();
+    ~Loadresource() {std::cout<<"del loadres"<<std::endl;};
+    Loadresource(int loadunloadorboth);
+    Loadresource(resourcetype whichresource, int loadunloadorboth);
+    resourcetype resource;
+    bool anyresource;
+    bool loading;
+    bool unloading;
 };
 
 class ResourceManager

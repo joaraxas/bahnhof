@@ -25,53 +25,91 @@ void Train::getinput(int ms)
 			gas(ms);
 		if(keys[brakebutton])
 			brake(ms);
-		if(keys[gearbutton]){
-			if(speed==0){
-				gasisforward = 1-gasisforward;
-				speed = 5*(2*gasisforward-1);
-			}
-		}
+		if(keys[gearbutton])
+			shiftdirection();
 		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
 			if(keys[numberbuttons[iKey]]) split(iKey);
+		if(keys[loadbutton])
+			loadall();
+		if(keys[unloadbutton])
+			unloadall();
 	}
-		if(keys[loadbutton]||1==1){
-			if(speed==0)
-			for(auto w : wagons){
-				Storage* storage = getstorageatpoint(w->pos);
-				if(storage){
-					int unloadedamount = storage->unloadstorage(storage->provides, 1);
-					int loadedamount = w->loadwagon(storage->provides, unloadedamount);
-					if(loadedamount!=unloadedamount)
-						storage->loadstorage(storage->provides, unloadedamount-loadedamount);
-				}
-			}
-		}
-		if(keys[unloadbutton]||1==1){
-			if(speed==0)
-			for(auto w : wagons){
-				Storage* storage = getstorageatpoint(w->pos);
-				if(storage){
-					resourcetype beingunloaded;
-					int unloadedamount = w->unloadwagon(&beingunloaded);
-					if(storage->accepts==beingunloaded)
-						storage->loadstorage(beingunloaded, unloadedamount);
-					else
-						w->loadwagon(beingunloaded, unloadedamount);
-				}
-			}
-		}
-	//}
 }
 
 void Train::update(int ms)
 {
+	//unloadall();
+	//loadall();
+	if(perform(ms))
+		proceed();
 	float pixels = ms*0.001*speed;
 	if(tracksystem->isred(wagons.front()->state, (2*gasisforward-1)*(2*wagons.front()->alignedforward-1)))
 		brake(ms);
-	else if(!selected)
-		gas(ms);
+	//else if(!selected)
+		//gas(ms);
 	for(auto& wagon : wagons)
 		wagon->travel(pixels);
+}
+
+bool Train::perform(int ms)
+{
+	bool done = false;
+	if(route){
+	Order* order = route->getorder(orderindex);
+	switch(order->order){
+		case gotostate:{
+			Gotostate* specification = dynamic_cast<Gotostate*>(order);
+			done = checkifreachedstate(specification->state);
+			if(!done)
+				gas(ms);
+			break;}
+		//case 1:
+		//	done = checkifleftstate(state); break;
+		//case setsignal:
+		//	done = setsignal(signal, isgreen); break;
+		//case setswitch:
+		//	done = flipswitch(node); break;
+		//case 4:
+		//	done = setswitch(node, track); break;
+		//case couple:
+		//	done = checkifcoupled(); break
+		case decouple:{
+			Decouple* specification = dynamic_cast<Decouple*>(order);
+			done = split(specification->where);
+			break;}
+		case turn:{
+			Turn* specification = dynamic_cast<Turn*>(order);
+			done = shiftdirection();
+			if(!done)
+				brake(ms);
+			break;}
+		case loadresource:{
+			Loadresource* specification = dynamic_cast<Loadresource*>(order);
+			if(specification->anyresource){
+				bool doneloading = true; bool doneunloading = true;
+				if(specification->loading)
+					doneloading = loadall();
+				if(specification->unloading)
+					doneunloading = unloadall();
+				done = doneloading && doneunloading;
+				if(!done)
+					brake(ms);
+			}
+			break;}
+		//case 8:
+		//	done = unloadall(); break;
+		//case 9:
+		//	done = unloadall(resource); break;
+	}
+	}
+	return done;
+}
+
+void Train::proceed()
+{
+	orderindex = route->nextorderindex(orderindex);
+	Order* order = route->getorder(orderindex);
+	std::cout<<order->description<<std::endl;
 }
 
 void Train::checkCollision(int ms, Train* train)
@@ -98,22 +136,84 @@ void Train::checkCollision(int ms, Train* train)
 	}
 }
 
-void Train::gas(int ms)
+bool Train::checkifreachedstate(State goalstate)
+{
+	if(norm(wagons.back()->getpos(false) - tracksystem->getpos(goalstate)) < abs(10))
+		return true;
+	if(norm(wagons.front()->getpos(true) - tracksystem->getpos(goalstate)) < abs(10))
+		return true;
+	return false;
+}
+
+bool Train::gas(int ms)
 {
 	float Ptot = 0;
 	for(auto w : wagons)
 		Ptot += w->getpower();
 	float mtot = size(wagons);
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
+	return true;
 }
 
-void Train::brake(int ms)
+bool Train::brake(int ms)
 {
 	float Ptot = 0;
 	for(auto w : wagons)
 		Ptot += 0.2;
 	float mtot = size(wagons);
 	speed = (2*gasisforward-1)*fmax(0,(2*gasisforward-1)*(speed - (2*gasisforward-1)*ms*Ptot/mtot));
+	return (speed==0);
+}
+
+bool Train::shiftdirection()
+{
+	if(speed==0){
+		gasisforward = 1-gasisforward;
+		speed = 5*(2*gasisforward-1);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool Train::loadall()
+{
+	bool done = true;
+	if(speed!=0)
+		done = false;
+	else for(auto w : wagons){
+		Storage* storage = getstorageatpoint(w->pos);
+		if(storage){
+			int unloadedamount = storage->unloadstorage(storage->provides, 1);
+			int loadedamount = w->loadwagon(storage->provides, unloadedamount);
+			if(loadedamount!=unloadedamount)
+				storage->loadstorage(storage->provides, unloadedamount-loadedamount);
+			if(loadedamount!=0)
+				done = false;
+		}
+	}
+	return done;
+}
+
+bool Train::unloadall()
+{
+	bool done = true;
+	if(speed!=0)
+		done = false;
+	else for(auto w : wagons){
+		Storage* storage = getstorageatpoint(w->pos);
+		if(storage){
+			resourcetype beingunloaded;
+			int unloadedamount = w->unloadwagon(&beingunloaded);
+			if(storage->accepts==beingunloaded){
+				storage->loadstorage(beingunloaded, unloadedamount);
+				done = false;
+			}
+			else
+				w->loadwagon(beingunloaded, unloadedamount);
+		}
+	}
+	return done;
 }
 
 void Train::couple(Train& train, bool ismyback, bool ishisback)
@@ -154,14 +254,67 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	train.speed = 0;
 }
 
-void Train::split(int where)
+bool Train::split(int where)
 {
-	if(speed==0)
-	if(wagons.size()>where){
+	bool splitsucceed = true;
+	if(speed!=0)
+		splitsucceed = false;
+	else if(wagons.size()>where){
 		trains.emplace_back(new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed));
 		wagons = {wagons.begin(), wagons.begin() + where};
 		std::cout << "split" << std::endl;
 	}
+	return splitsucceed;
+}
+
+Route::Route(){}
+
+Order* Route::getorder(int orderindex)
+{
+	return orders[orderindex].get();
+}
+
+int Route::nextorderindex(int orderindex)
+{
+	orderindex++;
+	if(orderindex>=orders.size()) orderindex = 0;
+	return orderindex;
+}
+
+void Route::appendorder(Order* order)
+{
+	orders.emplace_back(order);
+}
+
+Gotostate::Gotostate(State whichstate)
+{
+	order = gotostate;
+	state = whichstate;
+	pass = false;
+	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
+}
+
+Decouple::Decouple()
+{
+	order = decouple;
+	where = 1;
+	description = "Decouple all wagons";
+}
+
+Turn::Turn()
+{
+	order = turn;
+	description = "Switch travel direction";
+}
+
+Loadresource::Loadresource()
+{
+	order = loadresource;
+	resource = none;
+	anyresource = true;
+	loading = true;
+	unloading = true;
+	description = "Load and unload all possible cargo";
 }
 
 ResourceManager::ResourceManager()
