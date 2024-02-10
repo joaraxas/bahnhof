@@ -15,43 +15,62 @@ int main(){
 	init();
 	ResourceManager resources;
 	money = 0;
-	Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
+	//Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
 	//tracksystem.addsignal(State(2,0.5,true));
 	//tracksystem.addsignal(State(7,0.5,true));
-	wagons.emplace_back(new Locomotive(tracksystem, State(3,0.5,true)));
-	for(int iWagon=1; iWagon<2; iWagon++){
+	Tracksystem tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,600,700,700,600,300});
+	tracksystem.leftclick(200, 200);
+	wagons.emplace_back(new Locomotive(tracksystem, State(2,0.5,true)));
+	for(int iWagon=0; iWagon<2; iWagon++){
 		State state = tracksystem.travel(State(1, 0.5, true), iWagon*60);
 		wagons.emplace_back(new Openwagon(tracksystem, state));
 	}
-	for(int iWagon=2; iWagon<3; iWagon++){
-		State state = tracksystem.travel(State(1, 0.5, true), iWagon*80);
+	wagons.emplace_back(new Locomotive(tracksystem, State(4,0.5,true)));
+	for(int iWagon=0; iWagon<2; iWagon++){
+		State state = tracksystem.travel(State(3, 0.5, true), iWagon*80);
 		wagons.emplace_back(new Tankwagon(tracksystem, state));
 	}
-	//wagons.emplace_back(new Locomotive(tracksystem, tracksystem.travel(State(1,0.5,true), 250)));
 	
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		trains.emplace_back(new Train(tracksystem, {wagons[iWagon].get()}, 0));
 	}
 	trains[0]->selected = true;
 	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
-	storages.emplace_back(new Storage(resources, 600,600,300,150, beer, hops));
+	storages.emplace_back(new Storage(resources, 300,600,600,150, beer, hops));
 	Brewery brewery(resources, 150,120,100,50);
 	Hopsfield farm(resources, 625,625,50,50);
 	City city(resources, 700,625,20,50);
 
 	Route route1;
 	route1.appendorder(new Turn());
-	route1.appendorder(new Gotostate(State(1,0.5,true)));
+	route1.appendorder(new Gotostate(State(1,0.1,true)));
 	route1.appendorder(new Turn());
+	route1.appendorder(new Wipe());
 	route1.appendorder(new Loadresource());
-	route1.appendorder(new Gotostate(State(7,0.1,true)));
+	route1.appendorder(new Gotostate(State(5,0.5,true)));
 	route1.appendorder(new Loadresource());
+	//route1.appendorder(new Decouple());
+	//route1.appendorder(new Gotostate(State(5,0.9,true)));
+	//route1.appendorder(new Turn());
+	//route1.appendorder(new Gotostate(State(5,0.4,true)));
+	//route1.appendorder(new Turn());
 	route1.appendorder(new Gotostate(State(1,0.5,true)));
 
 	//route1.appendorder(new Decouple());
 	//route1.appendorder(new Turn());
 	trains[0]->route = &route1;
+
+	Route route2;
+	route2.appendorder(new Turn());
+	route2.appendorder(new Gotostate(State(3,0.3,true)));
+	route2.appendorder(new Turn());
+	route2.appendorder(new Wipe());
+	route2.appendorder(new Gotostate(State(5,0.5,true)));
+	route2.appendorder(new Loadresource());
+	route2.appendorder(new Gotostate(State(1,0.5,true)));
+	route2.appendorder(new Loadresource());
+	trains[3]->route = &route2;
 
 	bool quit = false;
 	int ms = 0;

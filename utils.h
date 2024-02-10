@@ -238,25 +238,30 @@ public:
     bool gasisforward = true;
     std::vector<Wagon*> wagons;
     Route* route = nullptr;
-    int orderindex = 0;
+    int orderid = 0;
 };
 
 class Route
 {
 public:
     Route();
-    Order* getorder(int orderindex);
-    int nextorderindex(int orderindex);
-    void appendorder(Order* order);
-    void insertorder(Order* order, int orderindex);
-    void removeorder(int orderindex);
+    Order* getorder(int orderid);
+    int nextorder(int orderid);
+    int appendorder(Order* order);
+    int insertorder(Order* order, int orderid);
+    void removeorder(int orderid);
+    void removeordersupto(int orderid);
+    void removeorders(int orderindexfrom, int orderindexto);
 private:
+    int getindex(int orderid);
     std::vector<std::unique_ptr<Order>> orders;
+    int ordercounter = 0;
+    std::vector<int> orderids;
 };
 
 enum ordertype
 {
-    gotostate, setsignal, setswitch, couple, decouple, turn, loadresource
+    gotostate, setsignal, setswitch, couple, decouple, turn, loadresource, wipe
 };
 struct Order
 {
@@ -268,6 +273,7 @@ struct Gotostate : public Order
 {
     Gotostate(State whichstate);
     Gotostate(State whichstate, bool mustpass);
+    ~Gotostate() {std::cout<<"del goto"<<std::endl;};
     State state;
     bool pass;
 };
@@ -299,6 +305,7 @@ struct Decouple : public Order
 struct Turn : public Order
 {
     Turn();
+    ~Turn() {std::cout<<"del turn"<<std::endl;};
 };
 struct Loadresource : public Order
 {
@@ -310,6 +317,11 @@ struct Loadresource : public Order
     bool anyresource;
     bool loading;
     bool unloading;
+};
+struct Wipe : public Order
+{
+    Wipe();
+    ~Wipe() {std::cout<<"del wipe"<<std::endl;};
 };
 
 class ResourceManager

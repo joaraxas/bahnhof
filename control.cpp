@@ -55,7 +55,7 @@ bool Train::perform(int ms)
 {
 	bool done = false;
 	if(route){
-	Order* order = route->getorder(orderindex);
+	Order* order = route->getorder(orderid);
 	switch(order->order){
 		case gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
@@ -78,7 +78,6 @@ bool Train::perform(int ms)
 			done = split(specification->where);
 			break;}
 		case turn:{
-			Turn* specification = dynamic_cast<Turn*>(order);
 			done = shiftdirection();
 			if(!done)
 				brake(ms);
@@ -96,10 +95,11 @@ bool Train::perform(int ms)
 					brake(ms);
 			}
 			break;}
-		//case 8:
-		//	done = unloadall(); break;
-		//case 9:
-		//	done = unloadall(resource); break;
+		case wipe:{
+			std::cout<<orderid<<std::endl;
+			route->removeordersupto(orderid);
+			done = true;
+			break;}
 	}
 	}
 	return done;
@@ -107,8 +107,8 @@ bool Train::perform(int ms)
 
 void Train::proceed()
 {
-	orderindex = route->nextorderindex(orderindex);
-	Order* order = route->getorder(orderindex);
+	orderid = route->nextorder(orderid);
+	Order* order = route->getorder(orderid);
 	std::cout<<order->description<<std::endl;
 }
 
@@ -269,21 +269,57 @@ bool Train::split(int where)
 
 Route::Route(){}
 
-Order* Route::getorder(int orderindex)
+int Route::getindex(int orderid)
 {
+	auto it = find(orderids.begin(), orderids.end(), orderid) - orderids.begin();
+	if(it<orderids.size()){
+		//std::cout << "found index " << it << std::endl;
+		return it;}
+	else{
+		//std::cout << "found no index, returning 0" << std::endl;
+		return 0;}
+}
+
+Order* Route::getorder(int orderid)
+{
+	int orderindex = getindex(orderid);
 	return orders[orderindex].get();
 }
 
-int Route::nextorderindex(int orderindex)
+int Route::nextorder(int orderid)
 {
-	orderindex++;
-	if(orderindex>=orders.size()) orderindex = 0;
-	return orderindex;
+	int orderindex = getindex(orderid);
+	if(std::find(orderids.begin(), orderids.end(), orderid) != orderids.end()) // if the last order still exists
+		orderindex++;
+	if(orderindex>=orderids.size()) orderindex = 0;
+	return orderids[orderindex];
 }
 
-void Route::appendorder(Order* order)
+int Route::appendorder(Order* order)
 {
+	int neworderid = ordercounter;
 	orders.emplace_back(order);
+	orderids.push_back(neworderid);
+	ordercounter++;
+	return(neworderid);
+}
+
+void Route::removeorder(int orderid)
+{
+	int orderindex = getindex(orderid);
+	removeorders(orderindex, orderindex);
+}
+
+void Route::removeordersupto(int orderid)
+{
+	int orderindex = getindex(orderid);
+	removeorders(0, orderindex);
+}
+
+void Route::removeorders(int orderindexfrom, int orderindexto)
+{
+	orders.erase(orders.begin() + orderindexfrom, orders.begin() + orderindexto + 1);
+	orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
 }
 
 Gotostate::Gotostate(State whichstate)
@@ -315,6 +351,12 @@ Loadresource::Loadresource()
 	loading = true;
 	unloading = true;
 	description = "Load and unload all possible cargo";
+}
+
+Wipe::Wipe()
+{
+	order = wipe;
+	description = "Wipe all previous orders";
 }
 
 ResourceManager::ResourceManager()
