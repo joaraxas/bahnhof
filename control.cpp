@@ -62,15 +62,16 @@ bool Train::perform(int ms)
 			break;}
 		//case 1:
 		//	done = checkifleftstate(state); break;
-		case setsignal:{
+		case o_setsignal:{
 			Setsignal* specification = dynamic_cast<Setsignal*>(order);
 			tracksystem->setsignal(specification->signal, specification->redgreenflip);
 			done = true;
 			break;}
-		//case setswitch:
-		//	done = flipswitch(node); break;
-		//case 4:
-		//	done = setswitch(node, track); break;
+		case o_setswitch:{
+			Setswitch* specification = dynamic_cast<Setswitch*>(order);
+			tracksystem->setswitch(specification->node, specification->nodestate); 
+			done = true;
+			break;}
 		//case couple:
 		//	done = checkifcoupled(); break
 		case decouple:{
@@ -331,7 +332,7 @@ Gotostate::Gotostate(State whichstate)
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 {
-	order = setsignal;
+	order = o_setsignal;
     signal = whichsignal;
     redgreenflip = redgreenorflip;
 	if(redgreenflip==0)
@@ -340,6 +341,21 @@ Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 		description = "Set signal " + std::to_string(signal) + " to green";
 	else if(redgreenflip==2)
 		description = "Flip signal " + std::to_string(signal);
+}
+
+Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
+{
+	order = o_setswitch;
+    node = whichnode;
+    updown = upordown;
+	nodestate = whichnodestate;
+	flip = false;
+	if(nodestate == -1){
+		flip = true;
+		description = "Flip switch " + std::to_string(node);
+	}
+	else
+		description = "Set switch " + std::to_string(node) + " to state " + std::to_string(nodestate);
 }
 
 Decouple::Decouple()

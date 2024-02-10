@@ -88,6 +88,8 @@ public:
     signalid addsignal(State state);
     bool setsignal(signalid signal, int redgreenorflip);
     bool isred(State trainstate, float pixels);
+    int setswitch(nodeid node, int switchstate);
+    nodeid selectednode = 0;
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
@@ -108,7 +110,6 @@ private:
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
     std::map<signalid, Signal*> signals;
-    nodeid selectednode = 0;
     nodeid nodecounter = 0;
     trackid trackcounter = 0;
     signalid signalcounter = 0;
@@ -262,7 +263,7 @@ private:
 
 enum ordertype
 {
-    gotostate, setsignal, setswitch, couple, decouple, turn, loadresource, wipe
+    gotostate, o_setsignal, o_setswitch, couple, decouple, turn, loadresource, wipe
 };
 struct Order
 {
@@ -286,7 +287,7 @@ struct Setsignal : public Order
 };
 struct Setswitch : public Order
 {
-    Setswitch(nodeid whichnode, bool upordown);
+    //Setswitch(nodeid whichnode, bool upordown);
     Setswitch(nodeid whichnode, bool upordown, int whichnodestate);
     nodeid node;
     bool updown;
@@ -377,7 +378,7 @@ public:
     SDL_Rect rect;
 private:
     Storage* storage;
-    int timeleft;
+    int timeleft = 3000;
     ResourceManager* allresources;
     resourcetype wants;
     resourcetype makes;
@@ -408,7 +409,7 @@ public:
     Signal(Tracksystem& newtracksystem, State signalstate);
     void render();
     bool isred(State trainstate, float pixels);
-    bool isgreen = false;
+    bool isgreen = true;
 private:
     State state;
     Vec pos;

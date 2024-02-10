@@ -212,11 +212,21 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 	selectednode = 0;
 	Vec mousepos(xMouse,yMouse);
 	nodeid clickednode = getclosestnode(mousepos);
-	if(distancetonode(clickednode, mousepos)<=30){
-		getnode(clickednode)->incrementswitch();
-	}
+	if(distancetonode(clickednode, mousepos)<=40)
+		setswitch(clickednode, -1);
 	for(auto const& [id, signal] : signals)
 		setsignal(id, 2);
+}
+
+int Tracksystem::setswitch(nodeid node, int switchstate)
+{
+	Node* nodeptr = getnode(node);
+	if(switchstate==-1)
+		nodeptr->incrementswitch();
+	else{
+		nodeptr->statedown = switchstate;
+		std::cout << "set to " << nodeptr->statedown << std::endl;
+	}
 }
 
 bool Tracksystem::setsignal(signalid signal, int redgreenorflip)
@@ -398,6 +408,12 @@ void Node::render()
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	}
+	if(size(tracksup)>1 || size(tracksdown)>1){
+		if(stateup>0 || statedown>0)
+			SDL_RenderDrawLine(renderer, pos.x+10, pos.y, pos.x+20, pos.y);
+		else
+			SDL_RenderDrawLine(renderer, pos.x+15, pos.y-5, pos.x+15, pos.y+5);
 	}
 }
 
