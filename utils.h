@@ -86,6 +86,7 @@ public:
     State travel(State state, float pixels);
     ResourceManager* allresources;
     signalid addsignal(State state);
+    bool setsignal(signalid signal, int redgreenorflip);
     bool isred(State trainstate, float pixels);
 private:
     nodeid addnode(Vec pos, float dir);

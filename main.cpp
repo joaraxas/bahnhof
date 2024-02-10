@@ -17,17 +17,18 @@ int main(){
 	money = 0;
 	//Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
 	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
-	//tracksystem.addsignal(State(2,0.5,true));
-	//tracksystem.addsignal(State(7,0.5,true));
 	Tracksystem tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,600,700,700,600,300});
 	tracksystem.leftclick(200, 200);
+	tracksystem.rightclick(0, 0);
+	signalid beforefields = tracksystem.addsignal(State(4,0.9,true));
+	//tracksystem.addsignal(State(7,0.5,true));
 	wagons.emplace_back(new Locomotive(tracksystem, State(2,0.5,true)));
-	for(int iWagon=0; iWagon<2; iWagon++){
-		State state = tracksystem.travel(State(1, 0.5, true), iWagon*60);
+	wagons.emplace_back(new Locomotive(tracksystem, State(4,0.5,true)));
+	for(int iWagon=0; iWagon<6; iWagon++){
+		State state = tracksystem.travel(State(1, 0.2, true), iWagon*60);
 		wagons.emplace_back(new Openwagon(tracksystem, state));
 	}
-	wagons.emplace_back(new Locomotive(tracksystem, State(4,0.5,true)));
-	for(int iWagon=0; iWagon<2; iWagon++){
+	for(int iWagon=0; iWagon<1; iWagon++){
 		State state = tracksystem.travel(State(3, 0.5, true), iWagon*80);
 		wagons.emplace_back(new Tankwagon(tracksystem, state));
 	}
@@ -48,8 +49,12 @@ int main(){
 	route1.appendorder(new Turn());
 	route1.appendorder(new Wipe());
 	route1.appendorder(new Loadresource());
-	route1.appendorder(new Gotostate(State(5,0.5,true)));
+	route1.appendorder(new Gotostate(State(5,0.1,true)));
+	route1.appendorder(new Setsignal(beforefields, 0));
+	route1.appendorder(new Gotostate(State(5,0.7,true)));
 	route1.appendorder(new Loadresource());
+	route1.appendorder(new Gotostate(State(7,0.9,true)));
+	route1.appendorder(new Setsignal(beforefields, 1));
 	//route1.appendorder(new Decouple());
 	//route1.appendorder(new Gotostate(State(5,0.9,true)));
 	//route1.appendorder(new Turn());
@@ -66,11 +71,15 @@ int main(){
 	route2.appendorder(new Gotostate(State(3,0.3,true)));
 	route2.appendorder(new Turn());
 	route2.appendorder(new Wipe());
-	route2.appendorder(new Gotostate(State(5,0.5,true)));
+	route2.appendorder(new Gotostate(State(5,0.1,true)));
+	route2.appendorder(new Setsignal(beforefields, 0));
+	route2.appendorder(new Gotostate(State(5,0.7,true)));
 	route2.appendorder(new Loadresource());
+	route2.appendorder(new Gotostate(State(7,0.9,true)));
+	route2.appendorder(new Setsignal(beforefields, 1));
 	route2.appendorder(new Gotostate(State(1,0.5,true)));
 	route2.appendorder(new Loadresource());
-	trains[3]->route = &route2;
+	trains[1]->route = &route2;
 
 	bool quit = false;
 	int ms = 0;

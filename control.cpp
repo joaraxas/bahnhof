@@ -38,15 +38,9 @@ void Train::getinput(int ms)
 
 void Train::update(int ms)
 {
-	//unloadall();
-	//loadall();
 	if(perform(ms))
 		proceed();
 	float pixels = ms*0.001*speed;
-	if(tracksystem->isred(wagons.front()->state, (2*gasisforward-1)*(2*wagons.front()->alignedforward-1)))
-		brake(ms);
-	//else if(!selected)
-		//gas(ms);
 	for(auto& wagon : wagons)
 		wagon->travel(pixels);
 }
@@ -60,13 +54,19 @@ bool Train::perform(int ms)
 		case gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state);
-			if(!done)
-				gas(ms);
+			if(!done){
+				if(tracksystem->isred(wagons.front()->state, (2*gasisforward-1)*(2*wagons.front()->alignedforward-1)))
+					brake(ms);
+				else
+					gas(ms);}
 			break;}
 		//case 1:
 		//	done = checkifleftstate(state); break;
-		//case setsignal:
-		//	done = setsignal(signal, isgreen); break;
+		case setsignal:{
+			Setsignal* specification = dynamic_cast<Setsignal*>(order);
+			tracksystem->setsignal(specification->signal, specification->redgreenflip);
+			done = true;
+			break;}
 		//case setswitch:
 		//	done = flipswitch(node); break;
 		//case 4:
@@ -96,7 +96,6 @@ bool Train::perform(int ms)
 			}
 			break;}
 		case wipe:{
-			std::cout<<orderid<<std::endl;
 			route->removeordersupto(orderid);
 			done = true;
 			break;}
@@ -328,6 +327,19 @@ Gotostate::Gotostate(State whichstate)
 	state = whichstate;
 	pass = false;
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
+}
+
+Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
+{
+	order = setsignal;
+    signal = whichsignal;
+    redgreenflip = redgreenorflip;
+	if(redgreenflip==0)
+		description = "Set signal " + std::to_string(signal) + " to red";
+	else if(redgreenflip==1)
+		description = "Set signal " + std::to_string(signal) + " to green";
+	else if(redgreenflip==2)
+		description = "Flip signal " + std::to_string(signal);
 }
 
 Decouple::Decouple()

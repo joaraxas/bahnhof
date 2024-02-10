@@ -216,7 +216,17 @@ void Tracksystem::rightclick(int xMouse, int yMouse)
 		getnode(clickednode)->incrementswitch();
 	}
 	for(auto const& [id, signal] : signals)
-		signal->isgreen = !signal->isgreen;
+		setsignal(id, 2);
+}
+
+bool Tracksystem::setsignal(signalid signal, int redgreenorflip)
+{
+	Signal* signalpointer = getsignal(signal);
+	if(redgreenorflip==2)
+		signalpointer->isgreen = !signalpointer->isgreen;
+	else
+		signalpointer->isgreen = redgreenorflip;
+	return signalpointer->isgreen;
 }
 
 void Tracksystem::deleteclick(int xMouse, int yMouse)
@@ -606,19 +616,19 @@ bool Signal::isred(State trainstate, float pixels)
 	if(!isgreen){
 		if(trainstate.track == state.track)
 			if((trainstate.alignedwithtrack==(pixels>0)) == state.alignedwithtrack){
-				State backwardstate = tracksystem->travel(state, -sign(pixels)*100);
+				State backwardstate = tracksystem->travel(state, -sign(pixels)*60);
 				if((trainstate.nodedist > state.nodedist) != state.alignedwithtrack)
 				if((trainstate.nodedist < backwardstate.nodedist) != backwardstate.alignedwithtrack)
 					red = true;
 			}
 	}
-	else{
+	/*else{
 		State forwardstate = tracksystem->travel(state, sign(pixels)*60);
 		if(trainstate.track == forwardstate.track){
 			if((trainstate.alignedwithtrack==(pixels>0)) == forwardstate.alignedwithtrack)
 				if((trainstate.nodedist < state.nodedist) != state.alignedwithtrack)
 					isgreen = false;
 		}
-	}
+	}*/
 	return red;
 }
