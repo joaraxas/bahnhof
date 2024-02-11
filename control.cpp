@@ -109,7 +109,8 @@ void Train::proceed()
 {
 	orderid = route->nextorder(orderid);
 	Order* order = route->getorder(orderid);
-	std::cout<<order->description<<std::endl;
+	if(selected)
+		std::cout<<order->description<<std::endl;
 }
 
 void Train::checkCollision(int ms, Train* train)

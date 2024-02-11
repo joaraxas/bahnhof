@@ -120,9 +120,25 @@ float truncate(float dir)
 
 Gamestate::Gamestate()
 {
+	initthreetrains();
+
+	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
+		if(!wagons[iWagon]->train){
+			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
+			std::cout<<"added train automatically"<<std::endl;
+		}
+	}
+}
+
+Gamestate::~Gamestate()
+{
+	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
+		delete wagons[iWagon];
+}
+
+void Gamestate::initthreetrains()
+{
 	money = 10;
-	//Tracksystem tracksystem(resources, {200,300,700,800,800,800,700,300,200,200,300,600,650,600,100}, {200,200,200,300,500,600,700,700,600,500,400,400,350,300,300});
-	//Tracksystem tracksystem(resources, {200,300,700}, {200,200,200});
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
 	tracksystem->leftclick(200, 200);
 	tracksystem->rightclick(0, 0);
@@ -138,26 +154,36 @@ Gamestate::Gamestate()
 	signalid lowerfields = tracksystem->addsignal(State(11,0.9,true));
 	signalid enterupper = tracksystem->addsignal(State(5,0.3,true));
 
-	wagons.emplace_back(new Locomotive(*tracksystem, State(2,0.5,true)));
-	wagons.emplace_back(new Locomotive(*tracksystem, State(4,0.9,true)));
-	wagons.emplace_back(new Locomotive(*tracksystem, State(13,0.5,true)));
+	State trainstart;
+	int nWagons = 0;
+	
+	nWagons = wagons.size();
+	trainstart = State(2,0.5,true);
+	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
 	for(int iWagon=0; iWagon<7; iWagon++){
-		State state = tracksystem->travel(State(1, 0.2, true), iWagon*60);
+		State state = tracksystem->travel(trainstart, -(53+49)/2-iWagon*49);
 		wagons.emplace_back(new Openwagon(*tracksystem, state));
 	}
+	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
+
+	nWagons = wagons.size();
+	trainstart = State(4,0.9,true);
+	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
 	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = tracksystem->travel(State(3, 0.5, true), iWagon*80);
+		State state = tracksystem->travel(trainstart, -(53+69)/2-iWagon*69);
 		wagons.emplace_back(new Tankwagon(*tracksystem, state));
 	}
+	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
+
+	nWagons = wagons.size();
+	trainstart = State(13,0.5,true);
+	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
 	for(int iWagon=0; iWagon<2; iWagon++){
-		State state = tracksystem->travel(State(11, 0.5, true), iWagon*80);
+		State state = tracksystem->travel(trainstart, -(53+69)/2-iWagon*69);
 		wagons.emplace_back(new Tankwagon(*tracksystem, state));
 	}
+	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
 	
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
-		trains.emplace_back(new Train(*tracksystem, {wagons[iWagon].get()}, 0));
-	}
-	trains[0]->selected = true;
 	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
 	storages.emplace_back(new Storage(resources, 300,500,600,250, beer, hops));
 	buildings.emplace_back(new Brewery(resources, 150,120,100,50));
@@ -166,10 +192,6 @@ Gamestate::Gamestate()
 
 	routes.emplace_back(new Route);
 	int ri = size(routes)-1;
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(State(1,0.1,true)));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Wipe());
 	routes[ri]->appendorder(new Loadresource());
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
 	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 1));
@@ -182,10 +204,6 @@ Gamestate::Gamestate()
 
 	routes.emplace_back(new Route);
 	ri = size(routes)-1;
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(State(3,0.1,true)));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Wipe());
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
 	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 0));
 	routes[ri]->appendorder(new Gotostate(State(5,0.7,true)));
@@ -198,23 +216,5 @@ Gamestate::Gamestate()
 	routes[ri]->appendorder(new Setsignal(lowerfields, 1));
 	routes[ri]->appendorder(new Loadresource());
 	trains[1]->route = routes[ri].get();
-
-	routes.emplace_back(new Route);
-	ri = size(routes)-1;
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(State(11,0.4,true)));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Wipe());
-	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
-	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 0));
-	routes[ri]->appendorder(new Gotostate(State(5,0.7,true)));
-	routes[ri]->appendorder(new Setsignal(enterupper, 0));
-	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Setsignal(lowerfields, 0));
-	routes[ri]->appendorder(new Gotostate(State(6,0.5,true)));
-	routes[ri]->appendorder(new Setsignal(enterupper, 1));
-	routes[ri]->appendorder(new Gotostate(State(1,0.5,true)));
-	routes[ri]->appendorder(new Setsignal(lowerfields, 1));
-	routes[ri]->appendorder(new Loadresource());
 	trains[2]->route = routes[ri].get();
 }

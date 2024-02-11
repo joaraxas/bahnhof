@@ -269,7 +269,7 @@ enum ordertype
 };
 struct Order
 {
-    virtual ~Order() {std::cout<<"del order"<<std::endl;};
+    virtual ~Order() {};//std::cout<<"del order"<<std::endl;};
     ordertype order;
     std::string description;
 };
@@ -277,7 +277,7 @@ struct Gotostate : public Order
 {
     Gotostate(State whichstate);
     Gotostate(State whichstate, bool mustpass);
-    ~Gotostate() {std::cout<<"del goto"<<std::endl;};
+    ~Gotostate() {};//std::cout<<"del order"<<std::endl;};std::cout<<"del goto"<<std::endl;};
     State state;
     bool pass;
 };
@@ -309,12 +309,12 @@ struct Decouple : public Order
 struct Turn : public Order
 {
     Turn();
-    ~Turn() {std::cout<<"del turn"<<std::endl;};
+    ~Turn() {};//std::cout<<"del order"<<std::endl;};std::cout<<"del turn"<<std::endl;};
 };
 struct Loadresource : public Order
 {
     Loadresource();
-    ~Loadresource() {std::cout<<"del loadres"<<std::endl;};
+    ~Loadresource() {};//std::cout<<"del order"<<std::endl;};std::cout<<"del loadres"<<std::endl;};
     Loadresource(int loadunloadorboth);
     Loadresource(resourcetype whichresource, int loadunloadorboth);
     resourcetype resource;
@@ -325,7 +325,7 @@ struct Loadresource : public Order
 struct Wipe : public Order
 {
     Wipe();
-    ~Wipe() {std::cout<<"del wipe"<<std::endl;};
+    ~Wipe() {};//std::cout<<"del order"<<std::endl;};std::cout<<"del wipe"<<std::endl;};
 };
 
 class ResourceManager
@@ -422,8 +422,11 @@ class Gamestate
 {
 public:
     Gamestate();
+    ~Gamestate();
+    void initthreetrains();
 	ResourceManager resources;
-    std::vector<std::unique_ptr<Wagon>> wagons;
+    //std::vector<std::unique_ptr<Wagon>> wagons;
+    std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Route>> routes;
     std::unique_ptr<Tracksystem> tracksystem;
 };

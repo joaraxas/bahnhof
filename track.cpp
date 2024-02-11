@@ -191,9 +191,7 @@ void Tracksystem::render()
 void Tracksystem::leftclick(int x, int y)
 {
 	Vec mousepos(x, y);
-	std::cout<<x<<","<<y<<std::endl;
 	nodeid clickednode = getclosestnode(mousepos);
-	std::cout<<clickednode<<std::endl;
 	bool clickedextantnode = distancetonode(clickednode, mousepos)<=20;
 	if(!selectednode){
 		if(clickedextantnode)
@@ -229,7 +227,6 @@ int Tracksystem::setswitch(nodeid node, int switchstate)
 		nodeptr->incrementswitch();
 	else{
 		nodeptr->statedown = switchstate;
-		std::cout << "set to " << nodeptr->statedown << std::endl;
 	}
 }
 
