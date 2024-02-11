@@ -19,6 +19,8 @@ State::State(trackid trackstart, float nodediststart, bool alignedwithtrackstart
 	alignedwithtrack = alignedwithtrackstart;
 }
 
+Tracksystem::Tracksystem(){}
+
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
 {
 	allresources = &resources;
@@ -186,10 +188,12 @@ void Tracksystem::render()
 	preparingtrack = false;
 }
 
-void Tracksystem::leftclick(int xMouse, int yMouse)
+void Tracksystem::leftclick(int x, int y)
 {
-	Vec mousepos(xMouse, yMouse);
+	Vec mousepos(x, y);
+	std::cout<<x<<","<<y<<std::endl;
 	nodeid clickednode = getclosestnode(mousepos);
+	std::cout<<clickednode<<std::endl;
 	bool clickedextantnode = distancetonode(clickednode, mousepos)<=20;
 	if(!selectednode){
 		if(clickedextantnode)
@@ -207,10 +211,10 @@ void Tracksystem::leftclick(int xMouse, int yMouse)
 	}
 }
 
-void Tracksystem::rightclick(int xMouse, int yMouse)
+void Tracksystem::rightclick(int x, int y)
 {
 	selectednode = 0;
-	Vec mousepos(xMouse,yMouse);
+	Vec mousepos(x,y);
 	nodeid clickednode = getclosestnode(mousepos);
 	if(distancetonode(clickednode, mousepos)<=40)
 		setswitch(clickednode, -1);
@@ -239,10 +243,10 @@ bool Tracksystem::setsignal(signalid signal, int redgreenorflip)
 	return signalpointer->isgreen;
 }
 
-void Tracksystem::deleteclick(int xMouse, int yMouse)
+void Tracksystem::deleteclick(int x, int y)
 {
 	selectednode = 0;
-	Vec mousepos(xMouse,yMouse);
+	Vec mousepos(x,y);
 	nodeid clickednode = getclosestnode(mousepos);
 	if(distancetonode(clickednode, mousepos)<=30){
 		//removenode(clickednode);

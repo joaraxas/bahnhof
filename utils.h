@@ -74,7 +74,9 @@ class Tracksystem
 {
 friend class Node;
 friend class Track;
+friend class Gamestate;
 public:
+    Tracksystem();
     Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void render();
@@ -128,8 +130,8 @@ private:
     Tracksystem* tracksystem;
     Vec pos;
     float dir;
-    int stateup;
-    int statedown;
+    int stateup = 0;
+    int statedown = 0;
     std::vector<trackid> tracksup;
     std::vector<trackid> tracksdown;
 };
@@ -416,5 +418,16 @@ private:
     Tracksystem* tracksystem;
 };
 
+class Gamestate
+{
+public:
+    Gamestate();
+	ResourceManager resources;
+    std::vector<std::unique_ptr<Wagon>> wagons;
+    std::vector<std::unique_ptr<Route>> routes;
+    std::unique_ptr<Tracksystem> tracksystem;
+};
+
 extern std::vector<std::unique_ptr<Train> > trains;
 extern std::vector<std::unique_ptr<Storage> > storages;
+extern std::vector<std::unique_ptr<Building> > buildings;
