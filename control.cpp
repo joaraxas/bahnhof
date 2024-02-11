@@ -76,7 +76,9 @@ bool Train::perform(int ms)
 		//	done = checkifcoupled(); break
 		case decouple:{
 			Decouple* specification = dynamic_cast<Decouple*>(order);
-			done = split(specification->where);
+			done = split(specification->where, specification->route);
+			if(!done)
+				brake(ms);
 			break;}
 		case turn:{
 			done = shiftdirection();
@@ -113,7 +115,7 @@ void Train::proceed()
 		std::cout<<order->description<<std::endl;
 }
 
-void Train::checkCollision(int ms, Train* train)
+void Train::checkcollision(int ms, Train* train)
 {
 	if(size(wagons) >= 1)
 	if(size(train->wagons) >= 1){
@@ -255,20 +257,22 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	train.speed = 0;
 }
 
-bool Train::split(int where)
+bool Train::split(int where, Route* assignedroute)
 {
 	bool splitsucceed = true;
 	if(speed!=0)
 		splitsucceed = false;
 	else if(wagons.size()>where){
-		trains.emplace_back(new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed));
+		Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
+		trains.emplace_back(newtrain);
+		newtrain->route = assignedroute;
 		wagons = {wagons.begin(), wagons.begin() + where};
 		std::cout << "split" << std::endl;
 	}
 	return splitsucceed;
 }
 
-Route::Route(){}
+Route::Route(std::string routename){name = routename;}
 
 int Route::getindex(int orderid)
 {
@@ -359,11 +363,16 @@ Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
 		description = "Set switch " + std::to_string(node) + " to state " + std::to_string(nodestate);
 }
 
-Decouple::Decouple()
+Decouple::Decouple(int keephowmany, Route* givewhatroute)
 {
 	order = decouple;
-	where = 1;
-	description = "Decouple all wagons";
+	where = keephowmany;
+	route = givewhatroute;
+	description = "Decouple";
+	if(where>1)
+		description += " " + std::to_string(where) + " wagons";
+	if(route)
+		description += ", assign route " + route->name + " to other half";
 }
 
 Turn::Turn()

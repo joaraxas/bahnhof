@@ -225,7 +225,7 @@ public:
     Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput(int ms);
     void update(int ms);
-    void checkCollision(int ms, Train* train);
+    void checkcollision(int ms, Train* train);
     bool perform(int ms);
     void proceed();
     bool gas(int ms);
@@ -234,7 +234,7 @@ public:
     bool loadall();
     bool unloadall();
     bool checkifreachedstate(State goalstate);
-    bool split(int where);
+    bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
     bool selected = false;
@@ -248,7 +248,7 @@ public:
 class Route
 {
 public:
-    Route();
+    Route(std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
     int appendorder(Order* order);
@@ -256,6 +256,7 @@ public:
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
+    std::string name = "new route";
 private:
     int getindex(int orderid);
     std::vector<std::unique_ptr<Order>> orders;
@@ -302,9 +303,10 @@ struct Couple : public Order
 };
 struct Decouple : public Order
 {
-    Decouple();
-    Decouple(int keephowmany);
+    Decouple(Route* givewhatroute) : Decouple(1, givewhatroute) {};
+    Decouple(int keephowmany=1, Route* givewhatroute=nullptr);
     int where;
+    Route* route;
 };
 struct Turn : public Order
 {
@@ -424,6 +426,7 @@ public:
     Gamestate();
     ~Gamestate();
     void initthreetrains();
+    void initcoupling();
 	ResourceManager resources;
     //std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<Wagon*> wagons;

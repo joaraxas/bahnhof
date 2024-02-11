@@ -120,7 +120,8 @@ float truncate(float dir)
 
 Gamestate::Gamestate()
 {
-	initthreetrains();
+	//initthreetrains();
+	initcoupling();
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
@@ -190,7 +191,7 @@ void Gamestate::initthreetrains()
 	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
 	buildings.emplace_back(new City(resources, 700,625,20,50));
 
-	routes.emplace_back(new Route);
+	routes.emplace_back(new Route("Hops"));
 	int ri = size(routes)-1;
 	routes[ri]->appendorder(new Loadresource());
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
@@ -202,7 +203,7 @@ void Gamestate::initthreetrains()
 	routes[ri]->appendorder(new Setsignal(upperfields, 1));
 	trains[0]->route = routes[ri].get();
 
-	routes.emplace_back(new Route);
+	routes.emplace_back(new Route("Beer"));
 	ri = size(routes)-1;
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
 	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 0));
@@ -217,4 +218,83 @@ void Gamestate::initthreetrains()
 	routes[ri]->appendorder(new Loadresource());
 	trains[1]->route = routes[ri].get();
 	trains[2]->route = routes[ri].get();
+}
+
+void Gamestate::initcoupling()
+{
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
+	tracksystem->leftclick(200, 200);
+	tracksystem->rightclick(0, 0);
+	tracksystem->leftclick(800, 500);//select
+	nodeid rightswitch = tracksystem->selectednode;
+	tracksystem->leftclick(800, 600);
+	tracksystem->leftclick(700, 700);
+	tracksystem->leftclick(200, 700);
+	tracksystem->leftclick(100, 500);//connect
+	nodeid leftswitch = tracksystem->selectednode;
+	tracksystem->rightclick(0, 0);
+	tracksystem->setswitch(rightswitch, 1);
+	tracksystem->setswitch(leftswitch, 0);
+	State topstation(1,0.6,true);
+	State upperstation(5,0.8,true);
+	State lowerstation(11,0.8,true);
+	State turnpoint(7,0.4,true);
+
+	State trainstart;
+	int nWagons = 0;
+	
+	nWagons = wagons.size();
+	trainstart = topstation;
+	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
+	for(int iWagon=0; iWagon<3; iWagon++){
+		State state = tracksystem->travel(trainstart, -(53+49)/2-iWagon*49);
+		wagons.emplace_back(new Openwagon(*tracksystem, state));
+	}
+	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
+	
+	nWagons = wagons.size();
+	trainstart = upperstation;
+	for(int iWagon=0; iWagon<3; iWagon++){
+		State state = tracksystem->travel(trainstart, -iWagon*69);
+		wagons.emplace_back(new Tankwagon(*tracksystem, state));
+	}
+	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
+
+	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
+	storages.emplace_back(new Storage(resources, 300,500,600,250, beer, hops));
+	buildings.emplace_back(new Brewery(resources, 150,120,100,50));
+	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
+	buildings.emplace_back(new City(resources, 700,625,20,50));
+
+	int ri = 0;
+
+	ri = size(routes);
+	Route* loadroute = new Route("Load up");
+	routes.emplace_back(loadroute);
+	routes[ri]->appendorder(new Loadresource());
+
+	ri = size(routes);
+	routes.emplace_back(new Route("Go get"));
+	routes[ri]->appendorder(new Setswitch(rightswitch, 00, 1));
+	routes[ri]->appendorder(new Gotostate(lowerstation));
+	routes[ri]->appendorder(new Decouple(loadroute));
+	routes[ri]->appendorder(new Gotostate(turnpoint));
+	routes[ri]->appendorder(new Setswitch(leftswitch, 00, 0));
+	routes[ri]->appendorder(new Turn());
+	routes[ri]->appendorder(new Gotostate(upperstation));
+	routes[ri]->appendorder(new Turn());
+	routes[ri]->appendorder(new Gotostate(topstation));
+	routes[ri]->appendorder(new Loadresource());
+	routes[ri]->appendorder(new Setswitch(rightswitch, 00, 0));
+	routes[ri]->appendorder(new Gotostate(upperstation));
+	routes[ri]->appendorder(new Decouple(loadroute));
+	routes[ri]->appendorder(new Gotostate(turnpoint));
+	routes[ri]->appendorder(new Setswitch(leftswitch, 00, 1));
+	routes[ri]->appendorder(new Turn());
+	routes[ri]->appendorder(new Gotostate(lowerstation));
+	routes[ri]->appendorder(new Turn());
+	routes[ri]->appendorder(new Gotostate(topstation));
+	routes[ri]->appendorder(new Loadresource());
+	trains[0]->route = routes[ri].get();
+	trains[0]->selected = true;
 }
