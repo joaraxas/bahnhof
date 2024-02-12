@@ -1,6 +1,7 @@
 #include<iostream>
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
 #include<string>
 #include<map>
 #include "utils.h"
@@ -37,10 +38,11 @@ int main(){
 							for(auto& wagon : train->wagons)
 								if(norm(Vec(xMouse,yMouse)-wagon->pos)<wagon->w/2){
 									train->selected = true;
+									gamestate.selectedroute = train->route;
 									clickedtrain = true;
 								}
 						}
-						if(!clickedtrain) 1;
+						if(!clickedtrain);
 							gamestate.tracksystem->leftclick(xMouse, yMouse);
 					}
 					if(e.button.button == SDL_BUTTON_RIGHT){
@@ -84,6 +86,10 @@ int main(){
 		gamestate.tracksystem->render();
 		for(auto& wagon : gamestate.wagons)
 			wagon->render();
+		if(gamestate.selectedroute)
+			gamestate.selectedroute->render();
+		for(auto& train : trains)
+			train->render();
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}

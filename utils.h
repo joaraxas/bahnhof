@@ -1,5 +1,6 @@
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
+extern TTF_Font* font;
 
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_W;
@@ -21,6 +22,8 @@ extern int xMouse, yMouse;
 int init();
 
 SDL_Texture* loadImage(std::string path);
+SDL_Texture* loadText(std::string text, SDL_Color color);
+void rendertext(std::string text, int x, int y, SDL_Color color);
 
 void close();
 
@@ -226,6 +229,7 @@ public:
     void getinput(int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
+    void render();
     bool perform(int ms);
     void proceed();
     bool gas(int ms);
@@ -256,9 +260,10 @@ public:
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
+    void render();
+    int getindex(int orderid);
     std::string name = "new route";
 private:
-    int getindex(int orderid);
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
     std::vector<int> orderids;
@@ -428,10 +433,10 @@ public:
     void initthreetrains();
     void initcoupling();
 	ResourceManager resources;
-    //std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Route>> routes;
     std::unique_ptr<Tracksystem> tracksystem;
+    Route* selectedroute = nullptr;
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

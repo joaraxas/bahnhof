@@ -1,6 +1,7 @@
 #include<iostream>
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
 #include<string>
 #include<map>
 #include "utils.h"
@@ -113,6 +114,16 @@ void Train::proceed()
 	Order* order = route->getorder(orderid);
 	if(selected)
 		std::cout<<order->description<<std::endl;
+}
+
+void Train::render()
+{
+	if(selected){
+		int iOrder = route->getindex(orderid);
+		int rectw = 10;
+		SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
+		SDL_RenderDrawRect(renderer, &rect);
+	}
 }
 
 void Train::checkcollision(int ms, Train* train)
@@ -325,6 +336,13 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 {
 	orders.erase(orders.begin() + orderindexfrom, orders.begin() + orderindexto + 1);
 	orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
+}
+
+void Route::render()
+{
+	for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+		rendertext("(" + std::to_string(orderids[iOrder]) + ") " + orders[iOrder]->description, SCREEN_WIDTH-300, (iOrder+1)*14, {0,0,0,0});
+	}
 }
 
 Gotostate::Gotostate(State whichstate)
