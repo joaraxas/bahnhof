@@ -187,6 +187,10 @@ void Tracksystem::render()
 	nodecounter = lastnodeindex;
 	trackcounter = lasttrackindex;
 	preparingtrack = false;
+
+	State closeststate = getcloseststate(Vec(xMouse, yMouse));
+	Vec cpos = getpos(closeststate);
+	SDL_RenderDrawLine(renderer, int(cpos.x),int(cpos.y),int(cpos.x)+5,int(cpos.y)+5);
 }
 
 void Tracksystem::leftclick(int x, int y)
@@ -225,8 +229,13 @@ void Tracksystem::rightclick(int x, int y)
 State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch)
 {
 	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;
+	State closeststate;
 	if(*track){
-		//track = getclosestnode(mousepos)
+		closeststate = getcloseststate(mousepos);
+		if(closeststate.track){
+			*track = closeststate.track;
+			trackdist = distancetotrack(*track, mousepos);
+		}
 	}
 	if(*node){
 		*node = getclosestnode(mousepos);
@@ -249,6 +258,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	if(mindist<20){
 		if(trackdist==mindist){
 			*node = 0, *signal = 0, *_switch = 0;
+			returnstate = closeststate;
 		}
 		else if(nodedist==mindist){
 			*track = 0, *signal = 0, *_switch = 0;
@@ -298,6 +308,20 @@ void Tracksystem::deleteclick(int x, int y)
 	if(distancetonode(clickednode, mousepos)<=30){
 		//removenode(clickednode);
 	}
+}
+
+State Tracksystem::getcloseststate(Vec pos)
+{
+	float mindist = INFINITY;
+	State closeststate;
+	for(auto const& [id,track]: tracks){
+		float dist = distancetotrack(id, pos);
+		if(dist < mindist){
+			closeststate = track->getcloseststate(pos);
+			mindist = dist;
+		}
+	}
+	return closeststate;
 }
 
 nodeid Tracksystem::getclosestnode(Vec pos)
@@ -428,6 +452,11 @@ Vec Tracksystem::getsignalpos(signalid signal)
 Vec Tracksystem::getswitchpos(nodeid node, bool updown)
 {
 	return getnode(node)->getswitchpos(updown);
+}
+
+float Tracksystem::distancetotrack(trackid track, Vec pos)
+{
+	return norm(getpos(gettrack(track)->getcloseststate(pos))-pos);
 }
 
 float Tracksystem::distancetonode(nodeid node, Vec pos)
@@ -591,6 +620,7 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
+	std::cout<<radius<<std::endl;
 }
 
 Track::~Track()
@@ -631,6 +661,30 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 		currentpos = Vec(leftnodeoffsetpos.x + cos(previousdir)*ddx+sin(previousdir)*ddy, leftnodeoffsetpos.y - sin(previousdir)*ddx+cos(previousdir)*ddy);
 	}
 	return currentpos;
+}
+
+State Track::getcloseststate(Vec pos)
+{
+	State closeststate(id, 0, true);
+	float dx = cos(previousdir)*(pos.x - previouspos.x) - sin(previousdir)*(pos.y - previouspos.y);
+	float dy = sin(previousdir)*(pos.x - previouspos.x) + cos(previousdir)*(pos.y - previouspos.y);
+	if(isinf(radius)){
+		if(isabovepreviousnode())
+			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
+		else
+			closeststate.nodedist = fmax(fmin(1, -dx/getarclength(1)), 0);
+	}
+	else{
+		if(isabovepreviousnode()){
+			float angle = atan2(dx, sign(radius)*(radius-dy));
+			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
+		}
+		else{
+			float angle = atan2(-dx, sign(radius)*(radius-dy));
+			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
+		}
+	}
+	return closeststate;
 }
 
 float Track::getarclength(float nodedist)

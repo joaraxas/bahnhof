@@ -87,6 +87,7 @@ public:
     void rightclick(int xMouse, int yMouse);
     void deleteclick(int xMouse, int yMouse);
     Vec getpos(State state, float transverseoffset=0);
+    State getcloseststate(Vec pos);
     float getorientation(State state);
     State travel(State state, float pixels);
     ResourceManager* allresources;
@@ -102,6 +103,7 @@ private:
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
     State whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
+    float distancetotrack(trackid track, Vec pos);
     float distancetonode(nodeid node, Vec pos);
     float distancetosignal(signalid node, Vec pos);
     float distancetoswitch(nodeid node, Vec pos, bool updown);
@@ -159,6 +161,7 @@ private:
     void render();
     Vec getpos(float nodedist);
     Vec getpos(float nodedist, float transverseoffset);
+    State getcloseststate(Vec pos);
     float getarclength(float nodedist);
     float getorientation(float nodedist);
     bool isabovepreviousnode();
