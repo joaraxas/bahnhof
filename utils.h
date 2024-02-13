@@ -86,14 +86,14 @@ public:
     void leftclick(int xMouse, int yMouse);
     void rightclick(int xMouse, int yMouse);
     void deleteclick(int xMouse, int yMouse);
-    Vec getpos(State state);
+    Vec getpos(State state, float transverseoffset=0);
     float getorientation(State state);
     State travel(State state, float pixels);
     ResourceManager* allresources;
     signalid addsignal(State state);
     bool setsignal(signalid signal, int redgreenorflip);
     bool isred(State trainstate, float pixels);
-    int setswitch(nodeid node, int switchstate);
+    int setswitch(nodeid node, bool updown, int switchstate);
     nodeid selectednode = 0;
 private:
     nodeid addnode(Vec pos, float dir);
@@ -101,14 +101,18 @@ private:
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
+    State whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
     float distancetonode(nodeid node, Vec pos);
     float distancetosignal(signalid node, Vec pos);
+    float distancetoswitch(nodeid node, Vec pos, bool updown);
     nodeid getclosestnode(Vec pos);
     signalid getclosestsignal(Vec pos);
+    nodeid getclosestswitch(Vec pos, bool* updown);
     Node* getnode(nodeid node);
     float getnodedir(nodeid node);
     Vec getnodepos(nodeid node);
     Vec getsignalpos(signalid signal);
+    Vec getswitchpos(nodeid node, bool updown);
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);
     trackid previoustrack(trackid track);
@@ -128,12 +132,14 @@ class Node
 {
 friend class Tracksystem;
 private:
-    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart);
+    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
     void render();
     trackid gettrackup();
     trackid gettrackdown();
-    void incrementswitch();
+    Vec getswitchpos(bool updown);
+    void incrementswitch(bool updown);
     Tracksystem* tracksystem;
+    nodeid id;
     Vec pos;
     float dir;
     int stateup = 0;
@@ -313,7 +319,7 @@ struct Setsignal : public Order
 struct Setswitch : public Order
 {
     //Setswitch(nodeid whichnode, bool upordown);
-    Setswitch(nodeid whichnode, bool upordown, int whichnodestate);
+    Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate);
     nodeid node;
     bool updown;
     bool flip;

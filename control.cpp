@@ -70,7 +70,7 @@ bool Train::perform(int ms)
 			break;}
 		case o_setswitch:{
 			Setswitch* specification = dynamic_cast<Setswitch*>(order);
-			tracksystem->setswitch(specification->node, specification->nodestate); 
+			tracksystem->setswitch(specification->node, specification->updown, specification->nodestate); 
 			done = true;
 			break;}
 		//case couple:
@@ -373,12 +373,14 @@ Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
     updown = upordown;
 	nodestate = whichnodestate;
 	flip = false;
+	std::string switchname = "switch " + std::to_string(node);
+	if(updown) switchname+= " up"; else switchname+= " down";
 	if(nodestate == -1){
 		flip = true;
-		description = "Flip switch " + std::to_string(node);
+		description = "Flip " + switchname;
 	}
 	else
-		description = "Set switch " + std::to_string(node) + " to state " + std::to_string(nodestate);
+		description = "Set " + switchname + " to state " + std::to_string(nodestate);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)

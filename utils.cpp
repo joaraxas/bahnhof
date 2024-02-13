@@ -188,7 +188,7 @@ void Gamestate::initthreetrains()
 	tracksystem->leftclick(200, 700);
 	tracksystem->leftclick(100, 500);//connect
 	tracksystem->rightclick(0, 0);
-	//tracksystem->setswitch(firstswitch, -1);
+	//tracksystem->setswitch(firstswitch, 0, -1);
 	signalid upperfields = tracksystem->addsignal(State(5,0.9,true));
 	signalid lowerfields = tracksystem->addsignal(State(11,0.9,true));
 	signalid enterupper = tracksystem->addsignal(State(5,0.3,true));
@@ -233,7 +233,7 @@ void Gamestate::initthreetrains()
 	int ri = size(routes)-1;
 	routes[ri]->appendorder(new Loadresource());
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
-	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 1));
+	routes[ri]->appendorder(new Setswitch(firstswitch, false, 1));
 	routes[ri]->appendorder(new Gotostate(State(11,0.7,true)));
 	routes[ri]->appendorder(new Loadresource());
 	routes[ri]->appendorder(new Setsignal(upperfields, 0));
@@ -244,7 +244,7 @@ void Gamestate::initthreetrains()
 	routes.emplace_back(new Route("Beer"));
 	ri = size(routes)-1;
 	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
-	routes[ri]->appendorder(new Setswitch(firstswitch, 00, 0));
+	routes[ri]->appendorder(new Setswitch(firstswitch, false, 0));
 	routes[ri]->appendorder(new Gotostate(State(5,0.7,true)));
 	routes[ri]->appendorder(new Setsignal(enterupper, 0));
 	routes[ri]->appendorder(new Loadresource());
@@ -271,8 +271,8 @@ void Gamestate::initcoupling()
 	tracksystem->leftclick(100, 500);//connect
 	nodeid leftswitch = tracksystem->selectednode;
 	tracksystem->rightclick(0, 0);
-	tracksystem->setswitch(rightswitch, 1);
-	tracksystem->setswitch(leftswitch, 0);
+	tracksystem->setswitch(rightswitch, 0, 1);
+	tracksystem->setswitch(leftswitch, 0, 0);
 	State topstation(1,0.6,true);
 	State upperstation(5,0.8,true);
 	State lowerstation(11,0.8,true);
@@ -313,21 +313,21 @@ void Gamestate::initcoupling()
 
 	ri = size(routes);
 	routes.emplace_back(new Route("Go get"));
-	routes[ri]->appendorder(new Setswitch(rightswitch, 00, 1));
+	routes[ri]->appendorder(new Setswitch(rightswitch, false, 1));
 	routes[ri]->appendorder(new Gotostate(lowerstation));
 	routes[ri]->appendorder(new Decouple(loadroute));
 	routes[ri]->appendorder(new Gotostate(turnpoint));
-	routes[ri]->appendorder(new Setswitch(leftswitch, 00, 0));
+	routes[ri]->appendorder(new Setswitch(leftswitch, false, 0));
 	routes[ri]->appendorder(new Turn());
 	routes[ri]->appendorder(new Gotostate(upperstation));
 	routes[ri]->appendorder(new Turn());
 	routes[ri]->appendorder(new Gotostate(topstation));
 	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Setswitch(rightswitch, 00, 0));
+	routes[ri]->appendorder(new Setswitch(rightswitch, false, 0));
 	routes[ri]->appendorder(new Gotostate(upperstation));
 	routes[ri]->appendorder(new Decouple(loadroute));
 	routes[ri]->appendorder(new Gotostate(turnpoint));
-	routes[ri]->appendorder(new Setswitch(leftswitch, 00, 1));
+	routes[ri]->appendorder(new Setswitch(leftswitch, false, 1));
 	routes[ri]->appendorder(new Turn());
 	routes[ri]->appendorder(new Gotostate(lowerstation));
 	routes[ri]->appendorder(new Turn());

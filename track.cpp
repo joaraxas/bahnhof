@@ -47,7 +47,7 @@ Tracksystem::~Tracksystem()
 
 nodeid Tracksystem::addnode(Vec pos, float dir){
 	nodecounter++;
-	nodes[nodecounter] = new Node(*this, pos, dir);
+	nodes[nodecounter] = new Node(*this, pos, dir, nodecounter);
 	return nodecounter;
 }
 
@@ -94,9 +94,9 @@ void Tracksystem::removesignal(signalid toremove)
 	signals.erase(toremove);
 }
 
-Vec Tracksystem::getpos(State state)
+Vec Tracksystem::getpos(State state, float transverseoffset)
 {
-	return gettrack(state.track)->getpos(state.nodedist);
+	return gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
 float Tracksystem::getorientation(State state)
@@ -214,27 +214,69 @@ void Tracksystem::rightclick(int x, int y)
 {
 	selectednode = 0;
 	Vec mousepos(x,y);
-	nodeid clickednode = getclosestnode(mousepos);
-	signalid clickedsignal = getclosestsignal(mousepos);
-	float disttonode = distancetonode(clickednode, mousepos);
-	float disttosignal = INFINITY;
+	trackid clickedtrack=0; nodeid clickednode=0; signalid clickedsignal=1; nodeid clickedswitch=1;
+	State clickedstate = whatdidiclick(mousepos, &clickedtrack, &clickednode, &clickedsignal, &clickedswitch);
 	if(clickedsignal)
-		disttosignal = distancetosignal(clickedsignal, mousepos);
-	if(disttonode<disttosignal){
-		if(disttonode<=40)
-			setswitch(clickednode, -1);
-	}
-	else if(disttosignal<=20)
 		setsignal(clickedsignal, 2);
+	if(clickedswitch)
+		setswitch(clickedswitch, clickedstate.alignedwithtrack, -1);
 }
 
-int Tracksystem::setswitch(nodeid node, int switchstate)
+State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch)
+{
+	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;
+	if(*track){
+		//track = getclosestnode(mousepos)
+	}
+	if(*node){
+		*node = getclosestnode(mousepos);
+		if(*node)
+			nodedist = distancetonode(*node, mousepos);
+	}
+	if(*signal){
+		*signal = getclosestsignal(mousepos);
+		if(*signal)
+			signaldist = distancetosignal(*signal, mousepos);
+	}
+	bool switchisup;
+	if(*_switch){
+		*_switch = getclosestswitch(mousepos, &switchisup);
+		if(*_switch)
+			switchdist = distancetoswitch(*_switch, mousepos, switchisup);
+	}
+	State returnstate;
+	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
+	if(mindist<20){
+		if(trackdist==mindist){
+			*node = 0, *signal = 0, *_switch = 0;
+		}
+		else if(nodedist==mindist){
+			*track = 0, *signal = 0, *_switch = 0;
+		}
+		else if(signaldist==mindist){
+			*track = 0, *node = 0, *_switch = 0;
+			returnstate = getsignal(*signal)->state;
+		}
+		else if(switchdist==mindist){
+			*track = 0, *node = 0, *signal = 0;
+			returnstate.alignedwithtrack = switchisup;
+		}
+	}
+	else
+		*track = 0, *node = 0, *signal = 0, *_switch = 0;
+	return returnstate;
+}
+
+int Tracksystem::setswitch(nodeid node, bool updown, int switchstate)
 {
 	Node* nodeptr = getnode(node);
 	if(switchstate==-1)
-		nodeptr->incrementswitch();
+		nodeptr->incrementswitch(updown);
 	else{
-		nodeptr->statedown = switchstate;
+		if(updown)
+			nodeptr->stateup = switchstate;
+		else
+			nodeptr->statedown = switchstate;
 	}
 }
 
@@ -284,6 +326,31 @@ signalid Tracksystem::getclosestsignal(Vec pos)
 		}
 	}
 	return closestsignal;
+}
+
+nodeid Tracksystem::getclosestswitch(Vec pos, bool* updown)
+{
+	float mindist = INFINITY;
+	nodeid closestswitch = 0;
+	for(auto const& [id,node]: nodes){
+		if(size(node->tracksup)>1){
+			float dist = distancetoswitch(id, pos, true);
+			if(dist < mindist){
+				closestswitch = id;
+				mindist = dist;
+				*updown = true;
+			}
+		}
+		if(size(node->tracksdown)>1){
+			float dist = distancetoswitch(id, pos, false);
+			if(dist < mindist){
+				closestswitch = id;
+				mindist = dist;
+				*updown = false;
+			}
+		}
+	}
+	return closestswitch;
 }
 
 nodeid Tracksystem::extendtracktopos(nodeid fromnode, Vec pos)
@@ -358,6 +425,11 @@ Vec Tracksystem::getsignalpos(signalid signal)
 	return getsignal(signal)->pos;
 }
 
+Vec Tracksystem::getswitchpos(nodeid node, bool updown)
+{
+	return getnode(node)->getswitchpos(updown);
+}
+
 float Tracksystem::distancetonode(nodeid node, Vec pos)
 {
 	return norm(getnodepos(node)-pos);
@@ -366,6 +438,11 @@ float Tracksystem::distancetonode(nodeid node, Vec pos)
 float Tracksystem::distancetosignal(signalid signal, Vec pos)
 {
 	return norm(getsignalpos(signal)-pos);
+}
+
+float Tracksystem::distancetoswitch(nodeid node, Vec pos, bool updown)
+{
+	return norm(getswitchpos(node, updown)-pos);
 }
 
 Track* Tracksystem::gettrack(trackid track)
@@ -424,9 +501,10 @@ bool Tracksystem::isred(State trainstate, float pixels)
 	return red;
 }
 
-Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart)
+Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid)
 {
 	tracksystem = &newtracksystem;
+	id = myid;
 	pos = posstart;
 	dir = truncate(dirstart);
 	stateup = 0;
@@ -442,12 +520,26 @@ void Node::render()
 		SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
-	if(size(tracksup)>1 || size(tracksdown)>1){
-		if(stateup>0 || statedown>0)
-			SDL_RenderDrawLine(renderer, pos.x+10, pos.y, pos.x+20, pos.y);
+	if(size(tracksup)>1){
+		Vec switchpos = getswitchpos(true);
+		if(stateup>0)
+			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
 		else
-			SDL_RenderDrawLine(renderer, pos.x+15, pos.y-5, pos.x+15, pos.y+5);
+			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);
 	}
+	if(size(tracksdown)>1){
+		Vec switchpos = getswitchpos(false);
+		if(statedown>0)
+			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
+		else
+			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);
+	}
+}
+
+Vec Node::getswitchpos(bool updown)
+{
+	float transverseoffset = -(2*updown-1)*15;
+	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
 }
 
 trackid Node::gettrackdown()
@@ -466,14 +558,18 @@ trackid Node::gettrackup()
 	return trackup;
 }
 
-void Node::incrementswitch()
+void Node::incrementswitch(bool updown)
 {
-	statedown++;
-	stateup++;
-	if(stateup>=tracksup.size())
-		stateup = 0;
-	if(statedown>=tracksdown.size())
-		statedown = 0;
+	if(updown){
+		stateup++;
+		if(stateup>=tracksup.size())
+			stateup = 0;
+	}
+	else{
+		statedown++;
+		if(statedown>=tracksdown.size())
+			statedown = 0;
+	}
 }
 
 Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid)
