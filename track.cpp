@@ -215,10 +215,17 @@ void Tracksystem::rightclick(int x, int y)
 	selectednode = 0;
 	Vec mousepos(x,y);
 	nodeid clickednode = getclosestnode(mousepos);
-	if(distancetonode(clickednode, mousepos)<=40)
-		setswitch(clickednode, -1);
-	for(auto const& [id, signal] : signals)
-		setsignal(id, 2);
+	signalid clickedsignal = getclosestsignal(mousepos);
+	float disttonode = distancetonode(clickednode, mousepos);
+	float disttosignal = INFINITY;
+	if(clickedsignal)
+		disttosignal = distancetosignal(clickedsignal, mousepos);
+	if(disttonode<disttosignal){
+		if(disttonode<=40)
+			setswitch(clickednode, -1);
+	}
+	else if(disttosignal<=20)
+		setsignal(clickedsignal, 2);
 }
 
 int Tracksystem::setswitch(nodeid node, int switchstate)
@@ -263,6 +270,20 @@ nodeid Tracksystem::getclosestnode(Vec pos)
 		}
 	}
 	return closestnode;
+}
+
+signalid Tracksystem::getclosestsignal(Vec pos)
+{
+	float mindistsquared = INFINITY;
+	signalid closestsignal = 0;
+	for(auto const& [id,signal]: signals){
+		float distsquared = pow(signal->pos.x-pos.x, 2) + pow(signal->pos.y-pos.y, 2);
+		if(distsquared < mindistsquared){
+			closestsignal = id;
+			mindistsquared = distsquared;
+		}
+	}
+	return closestsignal;
 }
 
 nodeid Tracksystem::extendtracktopos(nodeid fromnode, Vec pos)
@@ -332,9 +353,19 @@ Vec Tracksystem::getnodepos(nodeid node)
 	return getnode(node)->pos;
 }
 
+Vec Tracksystem::getsignalpos(signalid signal)
+{
+	return getsignal(signal)->pos;
+}
+
 float Tracksystem::distancetonode(nodeid node, Vec pos)
 {
 	return norm(getnodepos(node)-pos);
+}
+
+float Tracksystem::distancetosignal(signalid signal, Vec pos)
+{
+	return norm(getsignalpos(signal)-pos);
 }
 
 Track* Tracksystem::gettrack(trackid track)

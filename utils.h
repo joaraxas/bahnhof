@@ -102,10 +102,13 @@ private:
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
     float distancetonode(nodeid node, Vec pos);
+    float distancetosignal(signalid node, Vec pos);
     nodeid getclosestnode(Vec pos);
+    signalid getclosestsignal(Vec pos);
     Node* getnode(nodeid node);
     float getnodedir(nodeid node);
     Vec getnodepos(nodeid node);
+    Vec getsignalpos(signalid signal);
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);
     trackid previoustrack(trackid track);
@@ -161,6 +164,20 @@ private:
     float nextdir;
     Vec previouspos;
     Vec nextpos;
+};
+
+class Signal
+{
+friend class Tracksystem;
+public:
+    Signal(Tracksystem& newtracksystem, State signalstate);
+    void render();
+    bool isred(State trainstate, float pixels);
+    bool isgreen = true;
+private:
+    State state;
+    Vec pos;
+    Tracksystem* tracksystem;
 };
 
 class Wagon
@@ -410,19 +427,6 @@ class City : public Building
 {
 public:
     City(ResourceManager& resources, int x, int y, int w, int h);
-};
-
-class Signal
-{
-public:
-    Signal(Tracksystem& newtracksystem, State signalstate);
-    void render();
-    bool isred(State trainstate, float pixels);
-    bool isgreen = true;
-private:
-    State state;
-    Vec pos;
-    Tracksystem* tracksystem;
 };
 
 class Gamestate

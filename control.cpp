@@ -112,17 +112,19 @@ void Train::proceed()
 {
 	orderid = route->nextorder(orderid);
 	Order* order = route->getorder(orderid);
-	if(selected)
-		std::cout<<order->description<<std::endl;
 }
 
 void Train::render()
 {
 	if(selected){
-		int iOrder = route->getindex(orderid);
-		int rectw = 10;
-		SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
-		SDL_RenderDrawRect(renderer, &rect);
+		if(route){
+			int iOrder = route->getindex(orderid);
+			int rectw = 10;
+			SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
+			SDL_RenderDrawRect(renderer, &rect);
+		}
+		else
+			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0});
 	}
 }
 
@@ -289,10 +291,8 @@ int Route::getindex(int orderid)
 {
 	auto it = find(orderids.begin(), orderids.end(), orderid) - orderids.begin();
 	if(it<orderids.size()){
-		//std::cout << "found index " << it << std::endl;
 		return it;}
 	else{
-		//std::cout << "found no index, returning 0" << std::endl;
 		return 0;}
 }
 

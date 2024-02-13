@@ -159,7 +159,7 @@ Gamestate::Gamestate()
 {
 	initthreetrains();
 	//initcoupling();
-	selectedroute = routes[0].get();
+	//selectedroute = routes[0].get();
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
@@ -334,5 +334,4 @@ void Gamestate::initcoupling()
 	routes[ri]->appendorder(new Gotostate(topstation));
 	routes[ri]->appendorder(new Loadresource());
 	trains[0]->route = routes[ri].get();
-	trains[0]->selected = true;
 }
