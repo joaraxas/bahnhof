@@ -36,7 +36,7 @@ int main(){
 						if(gamestate.selectedroute){
 							Order* neworder = gamestate.tracksystem->generateorderat(mousepos);
 							if(neworder)
-								gamestate.selectedroute->appendorder(neworder);
+								gamestate.selectedroute->insertorder(neworder, gamestate.selectedroute->selectedorderid);
 						}
 						else if(gamestate.tracksystem->selectednode)
 							gamestate.tracksystem->buildat(mousepos);
@@ -67,18 +67,24 @@ int main(){
 					break;
 					}
 					case SDL_KEYDOWN:{
+						if(e.key.keysym.sym == SDLK_UP)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
+						if(e.key.keysym.sym == SDLK_DOWN)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
 						if(e.key.keysym.sym == SDLK_a)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->removeorders(0,0);
+								gamestate.selectedroute->removeselectedorder();
 						if(e.key.keysym.sym == SDLK_t)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->appendorder(new Turn());
+								gamestate.selectedroute->insertorder(new Turn(), gamestate.selectedroute->selectedorderid);
 						if(e.key.keysym.sym == SDLK_d)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->appendorder(new Decouple());
+								gamestate.selectedroute->insertorder(new Decouple(), gamestate.selectedroute->selectedorderid);
 						if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->appendorder(new Loadresource());
+								gamestate.selectedroute->insertorder(new Loadresource(), gamestate.selectedroute->selectedorderid);
 					break;
 					}
 			}

@@ -313,6 +313,20 @@ Order* Route::getorder(int orderid)
 		return nullptr;
 }
 
+int Route::previousorder(int orderid)
+{
+	int orderindex = getindex(orderid);
+	if(orderindex>=0){ // if the last order still exists
+		orderindex--;
+		if(orderindex<0) orderindex = orderids.size()-1;
+		return orderids[orderindex];
+	}
+	else if(orderids.size()>0)
+		return orderids[orderids.size()-1];
+	else
+		return -1;
+}
+
 int Route::nextorder(int orderid)
 {
 	int orderindex = getindex(orderid);
@@ -333,28 +347,53 @@ int Route::appendorder(Order* order)
 	orders.emplace_back(order);
 	orderids.push_back(neworderid);
 	ordercounter++;
+	selectedorderid = neworderid;
 	return(neworderid);
+}
+
+int Route::insertorder(Order* order, int orderindex)
+{
+	int neworderid = ordercounter;
+	orders.emplace(orders.begin() + orderindex + 1, order);
+	orderids.insert(orderids.begin() + orderindex + 1, neworderid);
+	ordercounter++;
+	selectedorderid = neworderid;
+	return(neworderid);
+}
+
+void Route::removeselectedorder()
+{
+	if(selectedorderid>=0){
+		int selectedindex = fmin(getindex(selectedorderid), orderids.size()-1-1);
+		removeorder(selectedorderid);
+		//TODO: remove the below when mouse input implemented for route editing
+		selectedorderid = orderids[selectedindex];
+	}
 }
 
 void Route::removeorder(int orderid)
 {
 	int orderindex = getindex(orderid);
-	removeorders(orderindex, orderindex);
+	if(orderindex>=0)
+		removeorders(orderindex, orderindex);
 }
 
 void Route::removeordersupto(int orderid)
 {
 	int orderindex = getindex(orderid);
-	removeorders(0, orderindex);
+	if(orderindex>=0)
+		removeorders(0, orderindex);
 }
 
 void Route::removeorders(int orderindexfrom, int orderindexto)
 {
+	if(orderindexfrom>=0)
+	if(orderindexto>=0)
 	if(size(orderids)>0){
-		if(orderindexfrom<0) orderindexfrom = 0;
 		if(orderindexto>orderids.size()-1) orderindexto = orderids.size()-1;
 		orders.erase(orders.begin() + orderindexfrom, orders.begin() + orderindexto + 1);
 		orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
+		if(getindex(selectedorderid)<0) selectedorderid = -1;
 	}
 }
 
@@ -363,7 +402,10 @@ void Route::render()
 	if(orderids.empty())
 		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0});
 	else for(int iOrder=0; iOrder<orderids.size(); iOrder++){
-		rendertext("(" + std::to_string(orderids[iOrder]) + ") " + orders[iOrder]->description, SCREEN_WIDTH-300, (iOrder+1)*14, {0,0,0,0});
+		int oid = orderids[iOrder];
+		int x = SCREEN_WIDTH-300+14*(oid==selectedorderid);
+		int y = (iOrder+1)*14;
+		rendertext("(" + std::to_string(oid) + ") " + orders[iOrder]->description, x, y, {0,0,0,0});
 	}
 }
 

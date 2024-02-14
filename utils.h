@@ -283,14 +283,17 @@ public:
     Route(std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
+    int previousorder(int orderid);
     int appendorder(Order* order);
     int insertorder(Order* order, int orderid);
+    void removeselectedorder();
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
     void render();
     int getindex(int orderid);
     std::string name = "New route";
+    int selectedorderid = -1;
 private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
