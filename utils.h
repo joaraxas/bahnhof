@@ -290,7 +290,7 @@ public:
     void removeorders(int orderindexfrom, int orderindexto);
     void render();
     int getindex(int orderid);
-    std::string name = "new route";
+    std::string name = "New route";
 private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
@@ -317,14 +317,13 @@ struct Gotostate : public Order
 };
 struct Setsignal : public Order
 {
-    Setsignal(signalid whichsignal, int redgreenorflip);
+    Setsignal(signalid whichsignal, int redgreenorflip=2);
     signalid signal;
     int redgreenflip;
 };
 struct Setswitch : public Order
 {
-    //Setswitch(nodeid whichnode, bool upordown);
-    Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate);
+    Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate=-1);
     nodeid node;
     bool updown;
     bool flip;
@@ -448,6 +447,7 @@ public:
     void initthreetrains();
     void initcoupling();
     void initjusttrack();
+    void inittrain(State startstate);
 	ResourceManager resources;
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Route>> routes;

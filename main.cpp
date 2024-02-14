@@ -24,22 +24,28 @@ int main(){
 	while(!quit){
 		while(SDL_PollEvent(&e)){
 			switch(e.type){
-				case SDL_QUIT: 
-					quit = true; break;
-				case SDL_MOUSEBUTTONDOWN:
+				case SDL_QUIT:{
+					quit = true; break;}
+				case SDL_MOUSEBUTTONDOWN:{
 					SDL_GetMouseState(&xMouse, &yMouse);
+					Vec mousepos(xMouse, yMouse);
 					if(e.button.button == SDL_BUTTON_LEFT && keys[gearbutton]){
 						gamestate.tracksystem->deleteclick(xMouse, yMouse);
 					}
 					else if(e.button.button == SDL_BUTTON_LEFT){
-						if(gamestate.tracksystem->selectednode)
-							gamestate.tracksystem->buildat(Vec(xMouse, yMouse));
+						if(gamestate.selectedroute){
+							Order* neworder = gamestate.tracksystem->generateorderat(mousepos);
+							if(neworder)
+								gamestate.selectedroute->appendorder(neworder);
+						}
+						else if(gamestate.tracksystem->selectednode)
+							gamestate.tracksystem->buildat(mousepos);
 						else{
 							bool clickedtrain = false;
 							for(auto& train : trains){
 								train->selected = false;
 								for(auto& wagon : train->wagons){
-									if(norm(Vec(xMouse,yMouse)-wagon->pos)<wagon->w/2){
+									if(norm(mousepos-wagon->pos)<wagon->w/2){
 										train->selected = true;
 										gamestate.selectedroute = train->route;
 										clickedtrain = true;
@@ -48,17 +54,36 @@ int main(){
 								}
 							}
 							if(!clickedtrain)
-								gamestate.tracksystem->selectat(Vec(xMouse, yMouse));
+								gamestate.tracksystem->selectat(mousepos);
 						}
 					}
 					if(e.button.button == SDL_BUTTON_RIGHT){
 						gamestate.tracksystem->selectednode = 0;
-						gamestate.tracksystem->switchat(Vec(xMouse, yMouse));
+						gamestate.selectedroute = nullptr;
+						for(auto& train : trains)
+							train->selected = false;
+						gamestate.tracksystem->switchat(mousepos);
 					}
 					break;
+					}
+					case SDL_KEYDOWN:{
+						if(e.key.keysym.sym == SDLK_a)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->removeorders(0,0);
+						if(e.key.keysym.sym == SDLK_t)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->appendorder(new Turn());
+						if(e.key.keysym.sym == SDLK_d)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->appendorder(new Decouple());
+						if(e.key.keysym.sym == SDLK_l)
+							if(gamestate.selectedroute)
+								gamestate.selectedroute->appendorder(new Loadresource());
+					break;
+					}
 			}
 		}
-		keys = SDL_GetKeyboardState(NULL);
+		keys = SDL_GetKeyboardState(nullptr);
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
 

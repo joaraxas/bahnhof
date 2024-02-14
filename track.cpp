@@ -214,6 +214,20 @@ void Tracksystem::switchat(Vec pos)
 		setswitch(clickedswitch, clickedstate.alignedwithtrack, -1);
 }
 
+Order* Tracksystem::generateorderat(Vec pos)
+{
+	Order* neworder = nullptr;
+	trackid clickedtrack=0; signalid clickedsignal=0; nodeid clickedswitch=0;
+	State clickedstate = whatdidiclick(pos, &clickedtrack, nullptr, &clickedsignal, &clickedswitch);
+	if(clickedtrack)
+		neworder = new Gotostate(clickedstate);
+	if(clickedsignal)
+		neworder = new Setsignal(clickedsignal);
+	if(clickedswitch)
+		neworder = new Setswitch(clickedswitch, clickedstate.alignedwithtrack);
+	return neworder;
+}
+
 State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch)
 {
 	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;

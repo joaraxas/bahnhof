@@ -51,6 +51,12 @@ bool Train::perform(int ms)
 	bool done = false;
 	if(route){
 	Order* order = route->getorder(orderid);
+	if(!order){//orderid does not exist in route
+	proceed();
+	//if(orderid==-1)//route has no orders
+	//brake(ms);
+	}
+	else{
 	switch(order->order){
 		case gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
@@ -105,23 +111,25 @@ bool Train::perform(int ms)
 			break;}
 	}
 	}
+	}
 	return done;
 }
 
 void Train::proceed()
 {
 	orderid = route->nextorder(orderid);
-	Order* order = route->getorder(orderid);
 }
 
 void Train::render()
 {
 	if(selected){
 		if(route){
-			int iOrder = route->getindex(orderid);
-			int rectw = 10;
-			SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
-			SDL_RenderDrawRect(renderer, &rect);
+			if(orderid>=0){
+				int iOrder = route->getindex(orderid);
+				int rectw = 10;
+				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
+				SDL_RenderDrawRect(renderer, &rect);
+			}
 		}
 		else
 			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0});
@@ -293,22 +301,30 @@ int Route::getindex(int orderid)
 	if(it<orderids.size()){
 		return it;}
 	else{
-		return 0;}
+		return -1;}
 }
 
 Order* Route::getorder(int orderid)
 {
 	int orderindex = getindex(orderid);
-	return orders[orderindex].get();
+	if(orderindex>=0)
+		return orders[orderindex].get();
+	else
+		return nullptr;
 }
 
 int Route::nextorder(int orderid)
 {
 	int orderindex = getindex(orderid);
-	if(std::find(orderids.begin(), orderids.end(), orderid) != orderids.end()) // if the last order still exists
+	if(orderindex>=0){ // if the last order still exists
 		orderindex++;
-	if(orderindex>=orderids.size()) orderindex = 0;
-	return orderids[orderindex];
+		if(orderindex>=orderids.size()) orderindex = 0;
+		return orderids[orderindex];
+	}
+	else if(orderids.size()>0)
+		return orderids[0];
+	else
+		return -1;
 }
 
 int Route::appendorder(Order* order)
@@ -334,13 +350,19 @@ void Route::removeordersupto(int orderid)
 
 void Route::removeorders(int orderindexfrom, int orderindexto)
 {
-	orders.erase(orders.begin() + orderindexfrom, orders.begin() + orderindexto + 1);
-	orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
+	if(size(orderids)>0){
+		if(orderindexfrom<0) orderindexfrom = 0;
+		if(orderindexto>orderids.size()-1) orderindexto = orderids.size()-1;
+		orders.erase(orders.begin() + orderindexfrom, orders.begin() + orderindexto + 1);
+		orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
+	}
 }
 
 void Route::render()
 {
-	for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+	if(orderids.empty())
+		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0});
+	else for(int iOrder=0; iOrder<orderids.size(); iOrder++){
 		rendertext("(" + std::to_string(orderids[iOrder]) + ") " + orders[iOrder]->description, SCREEN_WIDTH-300, (iOrder+1)*14, {0,0,0,0});
 	}
 }
