@@ -153,6 +153,7 @@ State Tracksystem::travel(State state, float pixels)
 
 void Tracksystem::render()
 {
+	Vec mousepos(xMouse, yMouse);
 	for(auto const& [id, track] : tracks)
 		track->render();
 	for(auto const& [id, node] : nodes)
@@ -160,66 +161,53 @@ void Tracksystem::render()
 	for(auto const& [id, signal] : signals)
 		signal->render();
 	
-	preparingtrack = true;
-	nodeid lastnodeindex = nodecounter;
-	trackid lasttrackindex = trackcounter;
-
-	Vec mousepos(xMouse, yMouse);
-	nodeid snappednode = getclosestnode(mousepos);
-	bool snappedextantnode = distancetonode(snappednode, mousepos)<=20;
 	if(selectednode){
-		if(snappedextantnode){
-			connecttwonodes(selectednode, snappednode);
-		}
-		else{
-			nodeid newnode = extendtracktopos(selectednode, mousepos);
-		}
+		preparingtrack = true;
+		nodeid lastnodeindex = nodecounter;
+		trackid lasttrackindex = trackcounter;
+		nodeid lastselectednode = selectednode;
+		buildat(mousepos);
+		selectednode = lastselectednode;
+		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+			gettrack(id)->render();
+		for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
+			getnode(id)->render();
+		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+			removetrack(id);
+		for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
+			removenode(id);
+		nodecounter = lastnodeindex;
+		trackcounter = lasttrackindex;
+		preparingtrack = false;
 	}
 
-	for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-		gettrack(id)->render();
-	for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
-		getnode(id)->render();
-	for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-		removetrack(id);
-	for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
-		removenode(id);
-	nodecounter = lastnodeindex;
-	trackcounter = lasttrackindex;
-	preparingtrack = false;
-
-	State closeststate = getcloseststate(Vec(xMouse, yMouse));
+	State closeststate = getcloseststate(mousepos);
 	Vec cpos = getpos(closeststate);
 	SDL_RenderDrawLine(renderer, int(cpos.x),int(cpos.y),int(cpos.x)+5,int(cpos.y)+5);
 }
 
-void Tracksystem::leftclick(int x, int y)
+void Tracksystem::buildat(Vec pos)
 {
-	Vec mousepos(x, y);
-	nodeid clickednode = getclosestnode(mousepos);
-	bool clickedextantnode = distancetonode(clickednode, mousepos)<=20;
-	if(!selectednode){
-		if(clickedextantnode)
-			selectednode = clickednode;
+	nodeid clickednode = 0;
+	whatdidiclick(pos, nullptr, &clickednode, nullptr, nullptr);
+	if(clickednode){
+		connecttwonodes(selectednode, clickednode);
+		selectednode = clickednode;
 	}
-	else{
-		if(clickedextantnode){
-			connecttwonodes(selectednode, clickednode);
-			selectednode = clickednode;
-		}
-		else{
-			nodeid newnode = extendtracktopos(selectednode, mousepos);
-			selectednode = newnode;
-		}
-	}
+	else
+		selectednode = extendtracktopos(selectednode, pos);
 }
 
-void Tracksystem::rightclick(int x, int y)
+void Tracksystem::selectat(Vec pos)
 {
 	selectednode = 0;
-	Vec mousepos(x,y);
-	trackid clickedtrack=0; nodeid clickednode=0; signalid clickedsignal=1; nodeid clickedswitch=1;
-	State clickedstate = whatdidiclick(mousepos, &clickedtrack, &clickednode, &clickedsignal, &clickedswitch);
+	whatdidiclick(pos, nullptr, &selectednode, nullptr, nullptr);
+}
+
+void Tracksystem::switchat(Vec pos)
+{
+	signalid clickedsignal=0; nodeid clickedswitch=0;
+	State clickedstate = whatdidiclick(pos, nullptr, nullptr, &clickedsignal, &clickedswitch);
 	if(clickedsignal)
 		setsignal(clickedsignal, 2);
 	if(clickedswitch)
@@ -229,51 +217,51 @@ void Tracksystem::rightclick(int x, int y)
 State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch)
 {
 	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;
-	State closeststate;
-	if(*track){
+	State closeststate; nodeid closestnode = 0; signalid closestsignal = 0; nodeid closestswitch = 0;
+	
+	if(track){
+		*track = 0;
 		closeststate = getcloseststate(mousepos);
-		if(closeststate.track){
-			*track = closeststate.track;
-			trackdist = distancetotrack(*track, mousepos);
-		}
+		if(closeststate.track)
+			trackdist = distancetotrack(closeststate.track, mousepos);
 	}
-	if(*node){
-		*node = getclosestnode(mousepos);
-		if(*node)
-			nodedist = distancetonode(*node, mousepos);
+	if(node){
+		*node = 0;
+		closestnode = getclosestnode(mousepos);
+		if(closestnode)
+			nodedist = distancetonode(closestnode, mousepos);
 	}
-	if(*signal){
-		*signal = getclosestsignal(mousepos);
-		if(*signal)
-			signaldist = distancetosignal(*signal, mousepos);
+	if(signal){
+		*signal = 0;
+		closestsignal = getclosestsignal(mousepos);
+		if(closestsignal)
+			signaldist = distancetosignal(closestsignal, mousepos);
 	}
 	bool switchisup;
-	if(*_switch){
-		*_switch = getclosestswitch(mousepos, &switchisup);
-		if(*_switch)
-			switchdist = distancetoswitch(*_switch, mousepos, switchisup);
+	if(_switch){
+		*_switch = 0;
+		closestswitch = getclosestswitch(mousepos, &switchisup);
+		if(closestswitch)
+			switchdist = distancetoswitch(closestswitch, mousepos, switchisup);
 	}
 	State returnstate;
 	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
 	if(mindist<20){
 		if(trackdist==mindist){
-			*node = 0, *signal = 0, *_switch = 0;
+			*track = closeststate.track;
 			returnstate = closeststate;
 		}
-		else if(nodedist==mindist){
-			*track = 0, *signal = 0, *_switch = 0;
-		}
+		else if(nodedist==mindist)
+			*node = closestnode;
 		else if(signaldist==mindist){
-			*track = 0, *node = 0, *_switch = 0;
-			returnstate = getsignal(*signal)->state;
+			*signal = closestsignal;
+			returnstate = getsignal(closestsignal)->state;
 		}
 		else if(switchdist==mindist){
-			*track = 0, *node = 0, *signal = 0;
+			*_switch = closestswitch;
 			returnstate.alignedwithtrack = switchisup;
 		}
 	}
-	else
-		*track = 0, *node = 0, *signal = 0, *_switch = 0;
 	return returnstate;
 }
 
@@ -620,7 +608,6 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
-	std::cout<<radius<<std::endl;
 }
 
 Track::~Track()

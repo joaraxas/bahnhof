@@ -159,7 +159,9 @@ Gamestate::Gamestate()
 {
 	initthreetrains();
 	//initcoupling();
+	//initjusttrack();
 	//selectedroute = routes[0].get();
+	tracksystem->selectednode = 0;
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
@@ -179,16 +181,14 @@ void Gamestate::initthreetrains()
 {
 	money = 10;
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
-	tracksystem->leftclick(200, 200);
-	tracksystem->rightclick(0, 0);
-	tracksystem->leftclick(800, 500);//select
+	tracksystem->buildat(Vec(200, 200));
+	tracksystem->selectat(Vec(800, 500));
 	nodeid firstswitch = tracksystem->selectednode;
-	tracksystem->leftclick(800, 600);
-	tracksystem->leftclick(700, 700);
-	tracksystem->leftclick(200, 700);
-	tracksystem->leftclick(100, 500);//connect
-	tracksystem->rightclick(0, 0);
-	//tracksystem->setswitch(firstswitch, 0, -1);
+	tracksystem->buildat(Vec(800, 600));
+	tracksystem->buildat(Vec(700, 700));
+	tracksystem->buildat(Vec(200, 700));
+	tracksystem->buildat(Vec(100, 500));//connect
+
 	signalid upperfields = tracksystem->addsignal(State(5,0.9,true));
 	signalid lowerfields = tracksystem->addsignal(State(11,0.9,true));
 	signalid enterupper = tracksystem->addsignal(State(5,0.3,true));
@@ -261,16 +261,14 @@ void Gamestate::initthreetrains()
 void Gamestate::initcoupling()
 {
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
-	tracksystem->leftclick(200, 200);
-	tracksystem->rightclick(0, 0);
-	tracksystem->leftclick(800, 500);//select
+	tracksystem->buildat(Vec(200, 200));
+	tracksystem->selectat(Vec(800, 500));//select
 	nodeid rightswitch = tracksystem->selectednode;
-	tracksystem->leftclick(800, 600);
-	tracksystem->leftclick(700, 700);
-	tracksystem->leftclick(200, 700);
-	tracksystem->leftclick(100, 500);//connect
+	tracksystem->buildat(Vec(800, 600));
+	tracksystem->buildat(Vec(700, 700));
+	tracksystem->buildat(Vec(200, 700));
+	tracksystem->buildat(Vec(100, 500));//connect
 	nodeid leftswitch = tracksystem->selectednode;
-	tracksystem->rightclick(0, 0);
 	tracksystem->setswitch(rightswitch, 0, 1);
 	tracksystem->setswitch(leftswitch, 0, 0);
 	State topstation(1,0.6,true);
@@ -334,4 +332,9 @@ void Gamestate::initcoupling()
 	routes[ri]->appendorder(new Gotostate(topstation));
 	routes[ri]->appendorder(new Loadresource());
 	trains[0]->route = routes[ri].get();
+}
+
+void Gamestate::initjusttrack()
+{
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
 }

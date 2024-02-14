@@ -83,9 +83,11 @@ public:
     Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void render();
-    void leftclick(int xMouse, int yMouse);
-    void rightclick(int xMouse, int yMouse);
     void deleteclick(int xMouse, int yMouse);
+    void selectat(Vec pos);
+    void buildat(Vec pos);
+    void switchat(Vec pos);
+    Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getorientation(State state);
@@ -445,6 +447,7 @@ public:
     ~Gamestate();
     void initthreetrains();
     void initcoupling();
+    void initjusttrack();
 	ResourceManager resources;
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Route>> routes;

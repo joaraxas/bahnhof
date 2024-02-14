@@ -7,7 +7,7 @@
 #include "utils.h"
 
 float money = 0;
-bool nicetracks = false;
+bool nicetracks = true;
 float scale = 1;
 int xMouse, yMouse;
 
@@ -32,21 +32,28 @@ int main(){
 						gamestate.tracksystem->deleteclick(xMouse, yMouse);
 					}
 					else if(e.button.button == SDL_BUTTON_LEFT){
-						bool clickedtrain = false;
-						for(auto& train : trains){
-							train->selected = false;
-							for(auto& wagon : train->wagons)
-								if(norm(Vec(xMouse,yMouse)-wagon->pos)<wagon->w/2){
-									train->selected = true;
-									gamestate.selectedroute = train->route;
-									clickedtrain = true;
+						if(gamestate.tracksystem->selectednode)
+							gamestate.tracksystem->buildat(Vec(xMouse, yMouse));
+						else{
+							bool clickedtrain = false;
+							for(auto& train : trains){
+								train->selected = false;
+								for(auto& wagon : train->wagons){
+									if(norm(Vec(xMouse,yMouse)-wagon->pos)<wagon->w/2){
+										train->selected = true;
+										gamestate.selectedroute = train->route;
+										clickedtrain = true;
+									}
+									if(clickedtrain) break;
 								}
+							}
+							if(!clickedtrain)
+								gamestate.tracksystem->selectat(Vec(xMouse, yMouse));
 						}
-						if(!clickedtrain);
-							gamestate.tracksystem->leftclick(xMouse, yMouse);
 					}
 					if(e.button.button == SDL_BUTTON_RIGHT){
-						gamestate.tracksystem->rightclick(xMouse, yMouse);
+						gamestate.tracksystem->selectednode = 0;
+						gamestate.tracksystem->switchat(Vec(xMouse, yMouse));
 					}
 					break;
 			}
