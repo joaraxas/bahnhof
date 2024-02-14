@@ -39,8 +39,9 @@ void Train::getinput(int ms)
 
 void Train::update(int ms)
 {
-	if(perform(ms))
-		proceed();
+	if(go)
+		if(perform(ms))
+			proceed();
 	float pixels = ms*0.001*speed;
 	for(auto& wagon : wagons)
 		wagon->travel(pixels);
@@ -128,7 +129,9 @@ void Train::render()
 				int iOrder = route->getindex(orderid);
 				int rectw = 10;
 				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
+				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
 				SDL_RenderDrawRect(renderer, &rect);
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 		}
 		else
@@ -351,9 +354,16 @@ int Route::appendorder(Order* order)
 	return(neworderid);
 }
 
+int Route::insertorderatselected(Order* order)
+{
+	int neworderid = insertorder(order, getindex(selectedorderid));
+	return(neworderid);
+}
+
 int Route::insertorder(Order* order, int orderindex)
 {
 	int neworderid = ordercounter;
+	if(orderindex<0 || orderindex>=orderids.size()) orderindex = orderids.size()-1;
 	orders.emplace(orders.begin() + orderindex + 1, order);
 	orderids.insert(orderids.begin() + orderindex + 1, neworderid);
 	ordercounter++;
@@ -401,11 +411,13 @@ void Route::render()
 {
 	if(orderids.empty())
 		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0});
-	else for(int iOrder=0; iOrder<orderids.size(); iOrder++){
-		int oid = orderids[iOrder];
-		int x = SCREEN_WIDTH-300+14*(oid==selectedorderid);
-		int y = (iOrder+1)*14;
-		rendertext("(" + std::to_string(oid) + ") " + orders[iOrder]->description, x, y, {0,0,0,0});
+	else{
+		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+			int oid = orderids[iOrder];
+			int x = SCREEN_WIDTH-300+14*(oid==selectedorderid);
+			int y = (iOrder+1)*14;
+			rendertext("(" + std::to_string(oid) + ") " + orders[iOrder]->description, x, y, {0,0,0,0});
+		}
 	}
 }
 

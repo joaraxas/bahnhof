@@ -275,6 +275,7 @@ public:
     std::vector<Wagon*> wagons;
     Route* route = nullptr;
     int orderid = 0;
+    bool go = true;
 };
 
 class Route
@@ -285,6 +286,7 @@ public:
     int nextorder(int orderid);
     int previousorder(int orderid);
     int appendorder(Order* order);
+    int insertorderatselected(Order* order);
     int insertorder(Order* order, int orderid);
     void removeselectedorder();
     void removeorder(int orderid);

@@ -36,7 +36,7 @@ int main(){
 						if(gamestate.selectedroute){
 							Order* neworder = gamestate.tracksystem->generateorderat(mousepos);
 							if(neworder)
-								gamestate.selectedroute->insertorder(neworder, gamestate.selectedroute->selectedorderid);
+								gamestate.selectedroute->insertorderatselected(neworder);
 						}
 						else if(gamestate.tracksystem->selectednode)
 							gamestate.tracksystem->buildat(mousepos);
@@ -70,21 +70,25 @@ int main(){
 						if(e.key.keysym.sym == SDLK_UP)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
-						else if(e.key.keysym.sym == SDLK_DOWN)
+						if(e.key.keysym.sym == SDLK_DOWN)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
-						else if(e.key.keysym.sym == SDLK_a)
+						if(e.key.keysym.sym == SDLK_a)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->removeselectedorder();
-						else if(e.key.keysym.sym == SDLK_t)
+						if(e.key.keysym.sym == SDLK_t)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorder(new Turn(), gamestate.selectedroute->selectedorderid);
-						else if(e.key.keysym.sym == SDLK_d)
+								gamestate.selectedroute->insertorderatselected(new Turn());
+						if(e.key.keysym.sym == SDLK_d)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorder(new Decouple(), gamestate.selectedroute->selectedorderid);
-						else if(e.key.keysym.sym == SDLK_l)
+								gamestate.selectedroute->insertorderatselected(new Decouple());
+						if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorder(new Loadresource(), gamestate.selectedroute->selectedorderid);
+								gamestate.selectedroute->insertorderatselected(new Loadresource());
+						if(e.key.keysym.sym == SDLK_g)
+							for(auto& train : trains)
+								if(train->selected)
+									train->go = !train->go;
 					break;
 					}
 			}

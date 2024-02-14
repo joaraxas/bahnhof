@@ -82,6 +82,7 @@ void rendertext(std::string text, int x, int y, SDL_Color color){
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};
 	SDL_RenderCopy(renderer, tex, NULL, &rect);
+	SDL_DestroyTexture(tex);
 }
 
 void close(){
@@ -158,12 +159,11 @@ float truncate(float dir)
 Gamestate::Gamestate()
 {
 	//initthreetrains();
-	//initcoupling();
-	initjusttrack();
+	initcoupling();
+	//initjusttrack();
+	//inittrain(State(1,0.5,1));
 	//selectedroute = routes[0].get();
 	tracksystem->selectednode = 0;
-
-	inittrain(State(1,0.5,1));
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
@@ -338,7 +338,18 @@ void Gamestate::initcoupling()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
+	//tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
+	tracksystem->buildat(Vec(200, 200));
+	tracksystem->selectat(Vec(800, 500));//select
+	nodeid rightswitch = tracksystem->selectednode;
+	tracksystem->buildat(Vec(800, 600));
+	tracksystem->buildat(Vec(700, 700));
+	tracksystem->buildat(Vec(200, 700));
+	tracksystem->buildat(Vec(100, 500));//connect
+	nodeid leftswitch = tracksystem->selectednode;
+	tracksystem->setswitch(rightswitch, 0, 1);
+	tracksystem->setswitch(leftswitch, 0, 0);
 }
 
 void Gamestate::inittrain(State startstate)
@@ -353,6 +364,9 @@ void Gamestate::inittrain(State startstate)
 	
 	Route* loadroute = new Route("Load up");
 	routes.emplace_back(loadroute);
+	loadroute->appendorder(new Gotostate(State(11,0.5,1)));
+	loadroute->appendorder(new Loadresource());
+	loadroute->appendorder(new Gotostate(State(1,0.5,1)));
 	loadroute->appendorder(new Loadresource());
 	trains.back()->route = loadroute;
 }
