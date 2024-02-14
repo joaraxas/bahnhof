@@ -70,19 +70,19 @@ int main(){
 						if(e.key.keysym.sym == SDLK_UP)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
-						if(e.key.keysym.sym == SDLK_DOWN)
+						else if(e.key.keysym.sym == SDLK_DOWN)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
-						if(e.key.keysym.sym == SDLK_a)
+						else if(e.key.keysym.sym == SDLK_a)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->removeselectedorder();
-						if(e.key.keysym.sym == SDLK_t)
+						else if(e.key.keysym.sym == SDLK_t)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorder(new Turn(), gamestate.selectedroute->selectedorderid);
-						if(e.key.keysym.sym == SDLK_d)
+						else if(e.key.keysym.sym == SDLK_d)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorder(new Decouple(), gamestate.selectedroute->selectedorderid);
-						if(e.key.keysym.sym == SDLK_l)
+						else if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorder(new Loadresource(), gamestate.selectedroute->selectedorderid);
 					break;
