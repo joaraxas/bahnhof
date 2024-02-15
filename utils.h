@@ -98,6 +98,7 @@ public:
     bool isred(State trainstate, float pixels);
     int setswitch(nodeid node, bool updown, int switchstate);
     nodeid selectednode = 0;
+    bool placingsignal = false;
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);

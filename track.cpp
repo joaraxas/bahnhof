@@ -188,14 +188,21 @@ void Tracksystem::render()
 
 void Tracksystem::buildat(Vec pos)
 {
-	nodeid clickednode = 0;
-	whatdidiclick(pos, nullptr, &clickednode, nullptr, nullptr);
-	if(clickednode){
-		connecttwonodes(selectednode, clickednode);
-		selectednode = clickednode;
+	if(placingsignal){
+		trackid clickedtrack = 0;
+		State signalstate = getcloseststate(pos);
+		addsignal(signalstate);
 	}
-	else
-		selectednode = extendtracktopos(selectednode, pos);
+	else{
+		nodeid clickednode = 0;
+		whatdidiclick(pos, nullptr, &clickednode, nullptr, nullptr);
+		if(clickednode){
+			connecttwonodes(selectednode, clickednode);
+			selectednode = clickednode;
+		}
+		else
+			selectednode = extendtracktopos(selectednode, pos);
+	}
 }
 
 void Tracksystem::selectat(Vec pos)
@@ -671,19 +678,25 @@ State Track::getcloseststate(Vec pos)
 	float dx = cos(previousdir)*(pos.x - previouspos.x) - sin(previousdir)*(pos.y - previouspos.y);
 	float dy = sin(previousdir)*(pos.x - previouspos.x) + cos(previousdir)*(pos.y - previouspos.y);
 	if(isinf(radius)){
-		if(isabovepreviousnode())
+		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
-		else
+			closeststate.alignedwithtrack = (dy>=0);
+		}
+		else{
 			closeststate.nodedist = fmax(fmin(1, -dx/getarclength(1)), 0);
+			closeststate.alignedwithtrack = (dy<=0);
+		}
 	}
 	else{
 		if(isabovepreviousnode()){
 			float angle = atan2(dx, sign(radius)*(radius-dy));
 			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
+			closeststate.alignedwithtrack = sign(radius)*((pow(radius-dy, 2) + pow(dx, 2))) <= sign(radius)*pow(radius,2);
 		}
 		else{
 			float angle = atan2(-dx, sign(radius)*(radius-dy));
 			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
+			closeststate.alignedwithtrack = sign(radius)*((pow(radius-dy, 2) + pow(dx, 2))) >= sign(radius)*pow(radius,2);
 		}
 	}
 	return closeststate;
@@ -798,7 +811,8 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 {
 	tracksystem = &newtracksystem;
 	state = signalstate;
-	float orientation = tracksystem->getorientation(state)+pi*state.alignedwithtrack;
+	float orientation = tracksystem->getorientation(state);
+	std::cout<<orientation<<std::endl;
 	float transverseoffset = -20/scale;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
 }

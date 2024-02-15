@@ -41,7 +41,7 @@ int main(){
 						}
 					}
 					if(e.button.button == SDL_BUTTON_LEFT){
-						if(gamestate.tracksystem->selectednode)
+						if(gamestate.tracksystem->selectednode || gamestate.tracksystem->placingsignal)
 							gamestate.tracksystem->buildat(mousepos);
 						else{
 							Train* clickedtrain = nullptr;
@@ -94,6 +94,8 @@ int main(){
 							for(auto& train : trains)
 								if(train->selected)
 									train->go = !train->go;
+						if(e.key.keysym.sym == SDLK_z)
+							gamestate.tracksystem->placingsignal = !gamestate.tracksystem->placingsignal;
 					break;
 					}
 			}

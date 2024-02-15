@@ -158,13 +158,12 @@ float truncate(float dir)
 
 Gamestate::Gamestate()
 {
-	initthreetrains();
+	//initthreetrains();
 	//initcoupling();
-	//initjusttrack();
-	//inittrain(State(1,0.5,1));
-	//inittrain(State(4,0.5,1));
-	//trains[1]->route = routes.front().get();
-	//selectedroute = routes[0].get();
+	initjusttrack();
+	inittrain(State(1,0.5,1));
+	inittrain(State(4,0.5,1));
+	trains[1]->route = routes.front().get();
 	tracksystem->selectednode = 0;
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
@@ -341,6 +340,7 @@ void Gamestate::initcoupling()
 void Gamestate::initjusttrack()
 {
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,750,700,200}, {200,200,150,100,100}));
+	//tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
 
 }
 
