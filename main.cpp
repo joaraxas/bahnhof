@@ -32,37 +32,42 @@ int main(){
 					if(e.button.button == SDL_BUTTON_LEFT && keys[gearbutton]){
 						gamestate.tracksystem->deleteclick(xMouse, yMouse);
 					}
-					else if(e.button.button == SDL_BUTTON_LEFT){
+					else if(e.button.button == SDL_BUTTON_RIGHT){
+						gamestate.tracksystem->selectednode = 0;
 						if(gamestate.selectedroute){
 							Order* neworder = gamestate.tracksystem->generateorderat(mousepos);
 							if(neworder)
 								gamestate.selectedroute->insertorderatselected(neworder);
 						}
-						else if(gamestate.tracksystem->selectednode)
+					}
+					if(e.button.button == SDL_BUTTON_LEFT){
+						if(gamestate.tracksystem->selectednode)
 							gamestate.tracksystem->buildat(mousepos);
 						else{
-							bool clickedtrain = false;
+							Train* clickedtrain = nullptr;
 							for(auto& train : trains){
-								train->selected = false;
 								for(auto& wagon : train->wagons){
 									if(norm(mousepos-wagon->pos)<wagon->w/2){
-										train->selected = true;
 										gamestate.selectedroute = train->route;
-										clickedtrain = true;
+										clickedtrain = train.get();
 									}
 									if(clickedtrain) break;
 								}
 							}
-							if(!clickedtrain)
-								gamestate.tracksystem->selectat(mousepos);
+							if(clickedtrain){
+								for(auto& train : trains)
+									train->selected = false;
+								clickedtrain->selected = true;
+							}
+							else{
+								if(!gamestate.tracksystem->switchat(mousepos)){
+									gamestate.tracksystem->selectat(mousepos);
+									for(auto& train : trains)
+										train->selected = false;
+									gamestate.selectedroute = nullptr;
+								}
+							}
 						}
-					}
-					if(e.button.button == SDL_BUTTON_RIGHT){
-						gamestate.tracksystem->selectednode = 0;
-						gamestate.selectedroute = nullptr;
-						for(auto& train : trains)
-							train->selected = false;
-						gamestate.tracksystem->switchat(mousepos);
 					}
 					break;
 					}
@@ -73,7 +78,7 @@ int main(){
 						if(e.key.keysym.sym == SDLK_DOWN)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
-						if(e.key.keysym.sym == SDLK_a)
+						if(e.key.keysym.sym == SDLK_BACKSPACE)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->removeselectedorder();
 						if(e.key.keysym.sym == SDLK_t)
@@ -85,7 +90,7 @@ int main(){
 						if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorderatselected(new Loadresource());
-						if(e.key.keysym.sym == SDLK_g)
+						if(e.key.keysym.sym == SDLK_RETURN)
 							for(auto& train : trains)
 								if(train->selected)
 									train->go = !train->go;

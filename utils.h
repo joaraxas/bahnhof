@@ -86,7 +86,7 @@ public:
     void deleteclick(int xMouse, int yMouse);
     void selectat(Vec pos);
     void buildat(Vec pos);
-    void switchat(Vec pos);
+    bool switchat(Vec pos);
     Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);
     State getcloseststate(Vec pos);

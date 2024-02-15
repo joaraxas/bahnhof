@@ -204,7 +204,7 @@ void Tracksystem::selectat(Vec pos)
 	whatdidiclick(pos, nullptr, &selectednode, nullptr, nullptr);
 }
 
-void Tracksystem::switchat(Vec pos)
+bool Tracksystem::switchat(Vec pos)
 {
 	signalid clickedsignal=0; nodeid clickedswitch=0;
 	State clickedstate = whatdidiclick(pos, nullptr, nullptr, &clickedsignal, &clickedswitch);
@@ -212,6 +212,7 @@ void Tracksystem::switchat(Vec pos)
 		setsignal(clickedsignal, 2);
 	if(clickedswitch)
 		setswitch(clickedswitch, clickedstate.alignedwithtrack, -1);
+	return(clickedsignal||clickedswitch);
 }
 
 Order* Tracksystem::generateorderat(Vec pos)
