@@ -245,40 +245,44 @@ bool Train::unloadall()
 
 void Train::couple(Train& train, bool ismyback, bool ishisback)
 {
-	bool flipdirection = false;
-	if(ismyback && !ishisback){
-		std::cout << "couple back front" << std::endl;
-		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
-	}
-	else if(ismyback && ishisback){
-		std::cout << "couple back back" << std::endl;
-		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
-		flipdirection = 1;
-	}
-	else if(!ismyback && !ishisback){
-		std::cout << "couple front front" << std::endl;
-		std::reverse(wagons.begin(), wagons.end());
-		wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
-		std::reverse(wagons.begin(), wagons.end());
-		flipdirection = 1;
-	}
-	else if(!ismyback && ishisback){
-		std::cout << "couple front back" << std::endl;
-		std::reverse(wagons.begin(), wagons.end());
-		wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
-		std::reverse(wagons.begin(), wagons.end());
-	}
-	if(flipdirection)
-		for(auto w : train.wagons){
-			w->alignedforward = 1 - w->alignedforward;
+	if(wantstocouple || train.wantstocouple){
+		bool flipdirection = false;
+		if(ismyback && !ishisback){
+			std::cout << "couple back front" << std::endl;
+			wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 		}
-	train.wagons = {};
-	for(auto wagon : wagons)
-		wagon->train = this;
-	if(train.selected)
-		selected = true;
+		else if(ismyback && ishisback){
+			std::cout << "couple back back" << std::endl;
+			wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+			flipdirection = 1;
+		}
+		else if(!ismyback && !ishisback){
+			std::cout << "couple front front" << std::endl;
+			std::reverse(wagons.begin(), wagons.end());
+			wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+			std::reverse(wagons.begin(), wagons.end());
+			flipdirection = 1;
+		}
+		else if(!ismyback && ishisback){
+			std::cout << "couple front back" << std::endl;
+			std::reverse(wagons.begin(), wagons.end());
+			wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+			std::reverse(wagons.begin(), wagons.end());
+		}
+		if(flipdirection)
+			for(auto w : train.wagons){
+				w->alignedforward = 1 - w->alignedforward;
+			}
+		train.wagons = {};
+		for(auto wagon : wagons)
+			wagon->train = this;
+		if(train.selected)
+			selected = true;
+	}
 	speed = 0;
 	train.speed = 0;
+	go = false;
+	train.go = false;
 }
 
 bool Train::split(int where, Route* assignedroute)
@@ -296,7 +300,11 @@ bool Train::split(int where, Route* assignedroute)
 	return splitsucceed;
 }
 
-Route::Route(std::string routename){name = routename;}
+Route::Route(Tracksystem* whattracksystem, std::string routename)
+{
+	tracksystem = whattracksystem;
+	name = routename;
+}
 
 int Route::getindex(int orderid)
 {
@@ -346,11 +354,7 @@ int Route::nextorder(int orderid)
 
 int Route::appendorder(Order* order)
 {
-	int neworderid = ordercounter;
-	orders.emplace_back(order);
-	orderids.push_back(neworderid);
-	ordercounter++;
-	selectedorderid = neworderid;
+	int neworderid = insertorder(order, orderids.size()-1);
 	return(neworderid);
 }
 
@@ -364,6 +368,7 @@ int Route::insertorder(Order* order, int orderindex)
 {
 	int neworderid = ordercounter;
 	if(orderindex<0 || orderindex>=orderids.size()) orderindex = orderids.size()-1;
+	order->assignroute(this);
 	orders.emplace(orders.begin() + orderindex + 1, order);
 	orderids.insert(orderids.begin() + orderindex + 1, neworderid);
 	ordercounter++;
@@ -405,6 +410,12 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 		orderids.erase(orderids.begin() + orderindexfrom, orderids.begin() + orderindexto + 1);
 		if(getindex(selectedorderid)<0) selectedorderid = -1;
 	}
+
+    signals.clear();
+    switches.clear();
+    updowns.clear();
+	for(auto& order: orders)
+		order->assignroute(this);
 }
 
 void Route::render()
@@ -412,21 +423,44 @@ void Route::render()
 	if(orderids.empty())
 		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0});
 	else{
+		int renderordernr = 1;
+		if(orders[0]->order==gotostate)
+			renderordernr = 0;
 		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
 			int oid = orderids[iOrder];
-			int x = SCREEN_WIDTH-300+14*(oid==selectedorderid);
+			int x = SCREEN_WIDTH-300;
 			int y = (iOrder+1)*14;
-			rendertext("(" + std::to_string(oid) + ") " + orders[iOrder]->description, x, y, {0,0,0,0});
+			Uint8 intsty = (oid==selectedorderid)*255;
+			if(orders[iOrder]->order==gotostate)
+				renderordernr++;
+			rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intsty,intsty,intsty,0});
+			orders[iOrder]->render(renderordernr);
 		}
 	}
 }
 
-Gotostate::Gotostate(State whichstate)
+void Order::assignroute(Route* newroute)
+{
+	route = newroute;
+}
+
+Gotostate::Gotostate(State whichstate, bool mustpass)
 {
 	order = gotostate;
 	state = whichstate;
-	pass = false;
+	pass = mustpass;
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
+}
+
+void Setswitch::assignroute(Route* newroute)
+{
+	offset = 0;
+	Order::assignroute(newroute);
+	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
+		if(route->switches[iSwitch]==node && route->updowns[iSwitch]==updown)
+			offset++;
+	newroute->switches.push_back(node);
+	newroute->updowns.push_back(updown);
 }
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
@@ -440,6 +474,16 @@ Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 		description = "Set signal " + std::to_string(signal) + " to green";
 	else if(redgreenflip==2)
 		description = "Flip signal " + std::to_string(signal);
+}
+
+void Setsignal::assignroute(Route* newroute)
+{
+	offset = 0;
+	Order::assignroute(newroute);
+	for(int iSignal=0; iSignal<route->signals.size(); iSignal++)
+		if(route->signals[iSignal]==signal)
+			offset++;
+	newroute->signals.push_back(signal);
 }
 
 Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
@@ -491,6 +535,50 @@ Wipe::Wipe()
 {
 	order = wipe;
 	description = "Wipe all previous orders";
+}
+
+void Order::renderlabel(Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
+{
+	int x = int(pos.x); int y = int(pos.y);
+	SDL_Rect rect = {x,y,16,14};
+	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
+	SDL_RenderFillRect(renderer, &rect);
+	rendertext(std::to_string(number), x+1, y, textcol);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+void Gotostate::render(int number)
+{
+	Vec posleft = route->tracksystem->getpos(state, 12);
+	Vec posright = route->tracksystem->getpos(state,-12);
+	SDL_RenderDrawLine(renderer, posleft.x, posleft.y, posright.x, posright.y);
+	if(posright.x>=posleft.x){
+		Order::renderlabel(posright, number);
+	}
+	else{
+		Order::renderlabel(posleft, number);
+	}
+}
+
+void Setswitch::render(int number)
+{
+	Vec pos = route->tracksystem->getswitchpos(node, updown);
+	Vec lineend = pos+Vec(12+18*offset,-7);
+	//SDL_RenderDrawLine(renderer, pos.x, pos.y, lineend.x, lineend.y);
+	Order::renderlabel(lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
+}
+
+void Setsignal::render(int number)
+{
+	Vec pos = route->tracksystem->getsignalpos(signal);
+	Vec lineend = pos+Vec(-8,12+16*offset);
+	//SDL_RenderDrawLine(renderer, pos.x, pos.y, lineend.x, lineend.y);
+	SDL_Color bgrcol = {255, 0, 0, 255};
+	if(redgreenflip==1)
+		bgrcol = {0, 255, 0, 255};
+	else if(redgreenflip==2)
+		bgrcol = {255, 255, 0, 255};
+	Order::renderlabel(lineend, number, bgrcol, {0, 0, 0, 255});
 }
 
 ResourceManager::ResourceManager()

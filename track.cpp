@@ -192,6 +192,7 @@ void Tracksystem::buildat(Vec pos)
 		trackid clickedtrack = 0;
 		State signalstate = getcloseststate(pos);
 		addsignal(signalstate);
+		placingsignal = false;
 	}
 	else{
 		nodeid clickednode = 0;
@@ -812,7 +813,6 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 	tracksystem = &newtracksystem;
 	state = signalstate;
 	float orientation = tracksystem->getorientation(state);
-	std::cout<<orientation<<std::endl;
 	float transverseoffset = -20/scale;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
 }

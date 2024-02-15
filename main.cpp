@@ -34,6 +34,7 @@ int main(){
 					}
 					else if(e.button.button == SDL_BUTTON_RIGHT){
 						gamestate.tracksystem->selectednode = 0;
+						gamestate.tracksystem->placingsignal = false;
 						if(gamestate.selectedroute){
 							Order* neworder = gamestate.tracksystem->generateorderat(mousepos);
 							if(neworder)
@@ -90,12 +91,18 @@ int main(){
 						if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorderatselected(new Loadresource());
-						if(e.key.keysym.sym == SDLK_RETURN)
+						if(e.key.keysym.sym == SDLK_n)
 							for(auto& train : trains)
 								if(train->selected)
+									train->proceed();
+						if(e.key.keysym.sym == SDLK_RETURN)
+							for(auto& train : trains)
+								if(train->selected){
 									train->go = !train->go;
+									train->speed = 0;
+								}
 						if(e.key.keysym.sym == SDLK_z)
-							gamestate.tracksystem->placingsignal = !gamestate.tracksystem->placingsignal;
+							gamestate.tracksystem->placingsignal = true;
 					break;
 					}
 			}

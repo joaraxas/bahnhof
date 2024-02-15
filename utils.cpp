@@ -163,7 +163,9 @@ Gamestate::Gamestate()
 	initjusttrack();
 	inittrain(State(1,0.5,1));
 	inittrain(State(4,0.5,1));
-	trains[1]->route = routes.front().get();
+	trains.back()->route = routes.front().get();
+	inittrain(State(7,0.5,1));
+	trains.back()->route = routes.front().get();
 	tracksystem->selectednode = 0;
 
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
@@ -180,6 +182,7 @@ Gamestate::~Gamestate()
 		delete wagons[iWagon];
 }
 
+/*
 void Gamestate::initthreetrains()
 {
 	money = 10;
@@ -336,10 +339,11 @@ void Gamestate::initcoupling()
 	routes[ri]->appendorder(new Loadresource());
 	trains[0]->route = routes[ri].get();
 }
+*/
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,750,700,200}, {200,200,150,100,100}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,750,700,200,150,200,700}, {250,250,200,150,150,100,50,50}));
 	//tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
 
 }
@@ -354,7 +358,7 @@ void Gamestate::inittrain(State startstate)
 	}
 	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
 	
-	Route* loadroute = new Route("Load up");
+	Route* loadroute = new Route(tracksystem.get(), "Route 1");
 	routes.emplace_back(loadroute);
 	trains.back()->route = loadroute;
 }

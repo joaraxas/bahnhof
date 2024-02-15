@@ -89,6 +89,8 @@ public:
     bool switchat(Vec pos);
     Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);
+    Vec getsignalpos(signalid signal);
+    Vec getswitchpos(nodeid node, bool updown);
     State getcloseststate(Vec pos);
     float getorientation(State state);
     State travel(State state, float pixels);
@@ -116,8 +118,6 @@ private:
     Node* getnode(nodeid node);
     float getnodedir(nodeid node);
     Vec getnodepos(nodeid node);
-    Vec getsignalpos(signalid signal);
-    Vec getswitchpos(nodeid node, bool updown);
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);
     trackid previoustrack(trackid track);
@@ -276,13 +276,14 @@ public:
     std::vector<Wagon*> wagons;
     Route* route = nullptr;
     int orderid = 0;
-    bool go = true;
+    bool go = false;
+    bool wantstocouple = false;
 };
 
 class Route
 {
 public:
-    Route(std::string routename);
+    Route(Tracksystem* whattracksystem, std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
     int previousorder(int orderid);
@@ -297,6 +298,10 @@ public:
     int getindex(int orderid);
     std::string name = "New route";
     int selectedorderid = -1;
+    Tracksystem* tracksystem;
+    std::vector<signalid> signals;
+    std::vector<nodeid> switches;
+    std::vector<bool> updowns;
 private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
@@ -310,26 +315,34 @@ enum ordertype
 struct Order
 {
     virtual ~Order() {};//std::cout<<"del order"<<std::endl;};
+    virtual void assignroute(Route* newroute);
+    virtual void render(int number) {};
+    void renderlabel(Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
+    Route* route = nullptr; // initialized by route
     ordertype order;
     std::string description;
+    int offset = 0;
 };
 struct Gotostate : public Order
 {
-    Gotostate(State whichstate);
-    Gotostate(State whichstate, bool mustpass);
-    ~Gotostate() {};//std::cout<<"del order"<<std::endl;};std::cout<<"del goto"<<std::endl;};
+    Gotostate(State whichstate, bool mustpass=false);
+    void render(int number);
     State state;
     bool pass;
 };
 struct Setsignal : public Order
 {
     Setsignal(signalid whichsignal, int redgreenorflip=2);
+    void assignroute(Route* newroute);
+    void render(int number);
     signalid signal;
     int redgreenflip;
 };
 struct Setswitch : public Order
 {
     Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate=-1);
+    void assignroute(Route* newroute);
+    void render(int number);
     nodeid node;
     bool updown;
     bool flip;
