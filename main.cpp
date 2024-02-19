@@ -7,7 +7,7 @@
 #include "utils.h"
 
 float money = 0;
-bool nicetracks = true;
+bool nicetracks = false;
 float scale = 1;
 int xMouse, yMouse;
 

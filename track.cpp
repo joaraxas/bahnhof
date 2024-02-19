@@ -57,14 +57,14 @@ trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	tracks[newtrack] = new Track(*this, previousnode, nextnode, newtrack);
 
 	if(!preparingtrack){
-		if(gettrack(newtrack)->isabovepreviousnode())
-			getnode(previousnode)->tracksup.push_back(newtrack);
-		else
-			getnode(previousnode)->tracksdown.push_back(newtrack);
-		if(gettrack(newtrack)->isbelownextnode())
-			getnode(nextnode)->tracksdown.push_back(newtrack);
-		else
-			getnode(nextnode)->tracksup.push_back(newtrack);
+		//if(gettrack(newtrack)->isabovepreviousnode())
+			getnode(previousnode)->connecttrack(newtrack, gettrack(newtrack)->isabovepreviousnode());
+		//else
+		//	getnode(previousnode)->tracksdown.push_back(newtrack);
+		//if(gettrack(newtrack)->isbelownextnode())
+			getnode(nextnode)->connecttrack(newtrack, !gettrack(newtrack)->isbelownextnode());
+		//else
+		//	getnode(nextnode)->tracksup.push_back(newtrack);
 	}
 
 	return newtrack;
@@ -102,6 +102,11 @@ Vec Tracksystem::getpos(State state, float transverseoffset)
 float Tracksystem::getorientation(State state)
 {
 	return gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
+}
+
+float Tracksystem::getradius(State state)
+{
+	return gettrack(state.track)->radius;
 }
 
 State Tracksystem::travel(State state, float pixels)
@@ -551,6 +556,35 @@ Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myi
 	statedown = 0;
 }
 
+void Node::connecttrack(trackid track, bool fromabove){
+	if(fromabove){
+		int insertionindex = 0;
+		if(tracksup.size()>=1){
+			insertionindex = tracksup.size();
+			float newtrackcurvature = 1./tracksystem->getradius(State(track,0.5,1));
+			for(int iTrack=0; iTrack<tracksup.size(); iTrack++){
+				if(newtrackcurvature < 1./tracksystem->getradius(State(tracksup[iTrack],0.5,1)))
+					insertionindex = iTrack;
+				if(insertionindex==iTrack) break;
+			}
+		}
+		tracksup.insert(tracksup.begin()+insertionindex, track);
+	}
+	else{
+		int insertionindex = 0;
+		if(tracksdown.size()>=1){
+			insertionindex = tracksdown.size();
+			float newtrackcurvature = 1./tracksystem->getradius(State(track,0.5,1));
+			for(int iTrack=0; iTrack<tracksdown.size(); iTrack++){
+				if(newtrackcurvature > 1./tracksystem->getradius(State(tracksdown[iTrack],0.5,1)))
+					insertionindex = iTrack;
+				if(insertionindex==iTrack) break;
+			}
+		}
+		tracksdown.insert(tracksdown.begin()+insertionindex, track);
+	}
+}
+
 void Node::render()
 {
 	if(!nicetracks){
@@ -562,17 +596,19 @@ void Node::render()
 	}
 	if(size(tracksup)>1){
 		Vec switchpos = getswitchpos(true);
-		if(stateup>0)
+		/*if(stateup>0)
 			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
 		else
-			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);
+			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);*/
+		rendertext(std::to_string(stateup), switchpos.x, switchpos.y, {0,0,0,0});
 	}
 	if(size(tracksdown)>1){
 		Vec switchpos = getswitchpos(false);
-		if(statedown>0)
+		/*if(statedown>0)
 			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
 		else
-			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);
+			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);*/
+		rendertext(std::to_string(statedown), switchpos.x, switchpos.y, {0,0,0,0});
 	}
 }
 
@@ -804,6 +840,13 @@ void Track::render()
 			SDL_RenderDrawLine(renderer, drawpos1l.x, drawpos1l.y, drawpos2l.x, drawpos2l.y);
 			SDL_RenderDrawLine(renderer, drawpos1r.x, drawpos1r.y, drawpos2r.x, drawpos2r.y);
 		}
+	}
+	if(!nicetracks){
+		Vec radiustextpos = getpos(0.5,15);
+		std::string radiustext = std::to_string(int(round(radius)));
+		if(isinf(radius))
+			radiustext = std::to_string(radius);
+		rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }

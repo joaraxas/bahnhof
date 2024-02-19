@@ -93,6 +93,7 @@ public:
     Vec getswitchpos(nodeid node, bool updown);
     State getcloseststate(Vec pos);
     float getorientation(State state);
+    float getradius(State state);
     State travel(State state, float pixels);
     ResourceManager* allresources;
     signalid addsignal(State state);
@@ -138,6 +139,7 @@ class Node
 friend class Tracksystem;
 private:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
+    void connecttrack(trackid track, bool fromupordown);
     void render();
     trackid gettrackup();
     trackid gettrackdown();
