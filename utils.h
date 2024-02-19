@@ -97,9 +97,11 @@ public:
     State travel(State state, float pixels);
     ResourceManager* allresources;
     signalid addsignal(State state);
-    bool setsignal(signalid signal, int redgreenorflip);
+    void setsignal(signalid signal, int redgreenorflip);
+    bool getsignalstate(signalid signal);
     bool isred(State trainstate, float pixels);
-    int setswitch(nodeid node, bool updown, int switchstate);
+    void setswitch(nodeid node, bool updown, int switchstate);
+    int getswitchstate(nodeid node, bool updown);
     nodeid selectednode = 0;
     bool placingsignal = false;
 private:
@@ -118,6 +120,7 @@ private:
     nodeid getclosestswitch(Vec pos, bool* updown);
     Node* getnode(nodeid node);
     float getnodedir(nodeid node);
+    float getradiusoriginatingfromnode(nodeid node, trackid track);
     Vec getnodepos(nodeid node);
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);

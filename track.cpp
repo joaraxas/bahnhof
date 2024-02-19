@@ -57,14 +57,8 @@ trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	tracks[newtrack] = new Track(*this, previousnode, nextnode, newtrack);
 
 	if(!preparingtrack){
-		//if(gettrack(newtrack)->isabovepreviousnode())
 			getnode(previousnode)->connecttrack(newtrack, gettrack(newtrack)->isabovepreviousnode());
-		//else
-		//	getnode(previousnode)->tracksdown.push_back(newtrack);
-		//if(gettrack(newtrack)->isbelownextnode())
 			getnode(nextnode)->connecttrack(newtrack, !gettrack(newtrack)->isbelownextnode());
-		//else
-		//	getnode(nextnode)->tracksup.push_back(newtrack);
 	}
 
 	return newtrack;
@@ -106,7 +100,16 @@ float Tracksystem::getorientation(State state)
 
 float Tracksystem::getradius(State state)
 {
-	return gettrack(state.track)->radius;
+	Track* trackpointer = gettrack(state.track);
+	float radd = trackpointer->radius*(2*state.alignedwithtrack-1)*(2*trackpointer->isabovepreviousnode()-1);
+	return radd;
+}
+
+float Tracksystem::getradiusoriginatingfromnode(nodeid node, trackid track)
+{
+	Track* trackpointer = gettrack(track);
+	State state(track, 0.5, trackpointer->previousnode==node);
+	return getradius(state);
 }
 
 State Tracksystem::travel(State state, float pixels)
@@ -236,9 +239,9 @@ Order* Tracksystem::generateorderat(Vec pos)
 	if(clickedtrack)
 		neworder = new Gotostate(clickedstate);
 	if(clickedsignal)
-		neworder = new Setsignal(clickedsignal);
+		neworder = new Setsignal(clickedsignal, getsignalstate(clickedsignal));
 	if(clickedswitch)
-		neworder = new Setswitch(clickedswitch, clickedstate.alignedwithtrack);
+		neworder = new Setswitch(clickedswitch, clickedstate.alignedwithtrack, getswitchstate(clickedswitch, clickedstate.alignedwithtrack));
 	return neworder;
 }
 
@@ -293,7 +296,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	return returnstate;
 }
 
-int Tracksystem::setswitch(nodeid node, bool updown, int switchstate)
+void Tracksystem::setswitch(nodeid node, bool updown, int switchstate)
 {
 	Node* nodeptr = getnode(node);
 	if(switchstate==-1)
@@ -306,14 +309,27 @@ int Tracksystem::setswitch(nodeid node, bool updown, int switchstate)
 	}
 }
 
-bool Tracksystem::setsignal(signalid signal, int redgreenorflip)
+int Tracksystem::getswitchstate(nodeid node, bool updown)
+{
+	Node* nodeptr = getnode(node);
+	if(updown)
+		return nodeptr->stateup;
+	else
+		return nodeptr->statedown;
+}
+
+void Tracksystem::setsignal(signalid signal, int redgreenorflip)
 {
 	Signal* signalpointer = getsignal(signal);
 	if(redgreenorflip==2)
 		signalpointer->isgreen = !signalpointer->isgreen;
 	else
 		signalpointer->isgreen = redgreenorflip;
-	return signalpointer->isgreen;
+}
+
+bool Tracksystem::getsignalstate(signalid signal)
+{
+	return getsignal(signal)->isgreen;
 }
 
 void Tracksystem::deleteclick(int x, int y)
@@ -561,9 +577,9 @@ void Node::connecttrack(trackid track, bool fromabove){
 		int insertionindex = 0;
 		if(tracksup.size()>=1){
 			insertionindex = tracksup.size();
-			float newtrackcurvature = 1./tracksystem->getradius(State(track,0.5,1));
+			float newtrackcurvature = 1./tracksystem->getradiusoriginatingfromnode(id, track);
 			for(int iTrack=0; iTrack<tracksup.size(); iTrack++){
-				if(newtrackcurvature < 1./tracksystem->getradius(State(tracksup[iTrack],0.5,1)))
+				if(newtrackcurvature < 1./tracksystem->getradiusoriginatingfromnode(id, tracksup[iTrack]))
 					insertionindex = iTrack;
 				if(insertionindex==iTrack) break;
 			}
@@ -574,9 +590,9 @@ void Node::connecttrack(trackid track, bool fromabove){
 		int insertionindex = 0;
 		if(tracksdown.size()>=1){
 			insertionindex = tracksdown.size();
-			float newtrackcurvature = 1./tracksystem->getradius(State(track,0.5,1));
+			float newtrackcurvature = 1./tracksystem->getradiusoriginatingfromnode(id, track);
 			for(int iTrack=0; iTrack<tracksdown.size(); iTrack++){
-				if(newtrackcurvature > 1./tracksystem->getradius(State(tracksdown[iTrack],0.5,1)))
+				if(newtrackcurvature < 1./tracksystem->getradiusoriginatingfromnode(id, tracksdown[iTrack]))
 					insertionindex = iTrack;
 				if(insertionindex==iTrack) break;
 			}
@@ -596,25 +612,21 @@ void Node::render()
 	}
 	if(size(tracksup)>1){
 		Vec switchpos = getswitchpos(true);
-		/*if(stateup>0)
-			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
-		else
-			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);*/
-		rendertext(std::to_string(stateup), switchpos.x, switchpos.y, {0,0,0,0});
+		SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*stateup/(size(tracksup)-1), switchpos.y-5);
+		if(!nicetracks)
+			rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
 	if(size(tracksdown)>1){
 		Vec switchpos = getswitchpos(false);
-		/*if(statedown>0)
-			SDL_RenderDrawLine(renderer, switchpos.x-5, switchpos.y, switchpos.x+5, switchpos.y);
-		else
-			SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y-5, switchpos.x, switchpos.y+5);*/
-		rendertext(std::to_string(statedown), switchpos.x, switchpos.y, {0,0,0,0});
+		SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*statedown/(size(tracksdown)-1), switchpos.y-5);
+		if(!nicetracks)
+			rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
 }
 
 Vec Node::getswitchpos(bool updown)
 {
-	float transverseoffset = -(2*updown-1)*15;
+	float transverseoffset = -(2*updown-1)*20;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
 }
 

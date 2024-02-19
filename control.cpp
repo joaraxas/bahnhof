@@ -452,17 +452,6 @@ Gotostate::Gotostate(State whichstate, bool mustpass)
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
 }
 
-void Setswitch::assignroute(Route* newroute)
-{
-	offset = 0;
-	Order::assignroute(newroute);
-	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
-		if(route->switches[iSwitch]==node && route->updowns[iSwitch]==updown)
-			offset++;
-	newroute->switches.push_back(node);
-	newroute->updowns.push_back(updown);
-}
-
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 {
 	order = o_setsignal;
@@ -499,8 +488,25 @@ Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
 		flip = true;
 		description = "Flip " + switchname;
 	}
-	else
-		description = "Set " + switchname + " to state " + std::to_string(nodestate);
+	else{
+		if(nodestate==0)
+			description = "Set " + switchname + " to left";
+		else if(nodestate==1)
+			description = "Set " + switchname + " to right";
+		else
+			description = "Set " + switchname + " to track no. " + std::to_string(nodestate+1) + " counting from left";
+	}
+}
+
+void Setswitch::assignroute(Route* newroute)
+{
+	offset = 0;
+	Order::assignroute(newroute);
+	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
+		if(route->switches[iSwitch]==node && route->updowns[iSwitch]==updown)
+			offset++;
+	newroute->switches.push_back(node);
+	newroute->updowns.push_back(updown);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
@@ -564,8 +570,9 @@ void Setswitch::render(int number)
 {
 	Vec pos = route->tracksystem->getswitchpos(node, updown);
 	Vec lineend = pos+Vec(12+18*offset,-7);
-	//SDL_RenderDrawLine(renderer, pos.x, pos.y, lineend.x, lineend.y);
+	Vec inlabel = lineend+Vec(0+10,10);
 	Order::renderlabel(lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
+	SDL_RenderDrawLine(renderer, inlabel.x+4-nodestate*4, inlabel.y, inlabel.x+nodestate*4, inlabel.y-8);
 }
 
 void Setsignal::render(int number)
