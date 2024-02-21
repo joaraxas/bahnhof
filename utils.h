@@ -204,7 +204,8 @@ public:
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render();
-    virtual Vec getpos(bool front);
+    virtual State frontendstate();
+    virtual State backendstate();
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
@@ -271,7 +272,8 @@ public:
     bool shiftdirection();
     bool loadall();
     bool unloadall();
-    bool checkifreachedstate(State goalstate);
+    State forwardstate();
+    State backwardstate();
     bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
@@ -283,6 +285,8 @@ public:
     int orderid = 0;
     bool go = false;
     bool wantstocouple = false;
+private:
+    bool checkifreachedstate(State goalstate);
 };
 
 class Route

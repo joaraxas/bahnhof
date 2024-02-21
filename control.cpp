@@ -63,7 +63,7 @@ bool Train::perform(int ms)
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state);
 			if(!done){
-				if(tracksystem->isred(wagons.front()->state, (2*gasisforward-1)*(2*wagons.front()->alignedforward-1)))
+				if(tracksystem->isred(forwardstate(), 2*gasisforward-1))
 					brake(ms);
 				else
 					gas(ms);}
@@ -136,38 +136,60 @@ void Train::render()
 		}
 		else
 			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0});
+		if(!nicetracks){
+			Vec frontpos = tracksystem->getpos(forwardstate());
+			rendertext("for", frontpos.x, frontpos.y, {0,255,0,255});
+			Vec backpos = tracksystem->getpos(backwardstate());
+			rendertext("bac", backpos.x, backpos.y, {255,0,0,255});
+		}
 	}
+}
+
+State Train::forwardstate()
+{
+	if(gasisforward)
+		return wagons.front()->frontendstate();
+	else
+		return wagons.back()->backendstate();
+}
+
+State Train::backwardstate()
+{
+	if(gasisforward)
+		return wagons.back()->backendstate();
+	else
+		return wagons.front()->frontendstate();
 }
 
 void Train::checkcollision(int ms, Train* train)
 {
-	if(size(wagons) >= 1)
-	if(size(train->wagons) >= 1){
-		float pixels = ms*0.001*speed;
-		if(speed>=0){
-			wagons.front()->travel(pixels);
-			if(norm(wagons.front()->getpos(true) - train->wagons.back()->getpos(false)) < abs(pixels))
-				couple(*train, false, true);
-			else if(norm(wagons.front()->getpos(true) - train->wagons.front()->getpos(true)) < abs(pixels))
-				couple(*train, false, false);
-			wagons.front()->travel(-pixels);
-		}
-		else{
-			wagons.back()->travel(pixels);
-			if(norm(wagons.back()->getpos(false) - train->wagons.back()->getpos(false)) < abs(pixels))
-				couple(*train, true, true);
-			else if(norm(wagons.back()->getpos(false) - train->wagons.front()->getpos(true)) < abs(pixels))
-				couple(*train, true, false);
-			wagons.back()->travel(-pixels);
+	if(wantstocouple || train->wantstocouple){
+		if(size(wagons) >= 1)
+		if(size(train->wagons) >= 1){
+			float pixels = ms*0.001*speed;/*
+			if(speed>=0){
+				wagons.front()->travel(pixels);
+				if(norm(wagons.front()->frontendstate() - train->wagons.back()->backendstate()) < abs(pixels))
+					couple(*train, false, true);
+				else if(norm(wagons.front()->frontendstate() - train->wagons.front()->frontendstate()) < abs(pixels))
+					couple(*train, false, false);
+				wagons.front()->travel(-pixels);
+			}
+			else{
+				wagons.back()->travel(pixels);
+				if(norm(wagons.back()->backendstate() - train->wagons.back()->backendstate()) < abs(pixels))
+					couple(*train, true, true);
+				else if(norm(wagons.back()->backendstate() - train->wagons.front()->frontendstate()) < abs(pixels))
+					couple(*train, true, false);
+				wagons.back()->travel(-pixels);
+			}*/
 		}
 	}
 }
 
 bool Train::checkifreachedstate(State goalstate)
 {
-	if(norm(wagons.back()->getpos(false) - tracksystem->getpos(goalstate)) < abs(10))
-		return true;
-	if(norm(wagons.front()->getpos(true) - tracksystem->getpos(goalstate)) < abs(10))
+	if(norm(tracksystem->getpos(forwardstate()) - tracksystem->getpos(goalstate)) < abs(10))
 		return true;
 	return false;
 }
@@ -245,6 +267,10 @@ bool Train::unloadall()
 
 void Train::couple(Train& train, bool ismyback, bool ishisback)
 {
+	speed = 0;
+	train.speed = 0;
+	go = false;
+	train.go = false;
 	if(wantstocouple || train.wantstocouple){
 		bool flipdirection = false;
 		if(ismyback && !ishisback){
@@ -279,10 +305,6 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 		if(train.selected)
 			selected = true;
 	}
-	speed = 0;
-	train.speed = 0;
-	go = false;
-	train.go = false;
 }
 
 bool Train::split(int where, Route* assignedroute)

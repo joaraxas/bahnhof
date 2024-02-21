@@ -34,7 +34,7 @@ void Building::update(int ms)
 			money+=got; 
 			//std::cout << money << std::endl;
 		}
-		timeleft = 3000;
+		timeleft = 10000;
 	}
 }
 

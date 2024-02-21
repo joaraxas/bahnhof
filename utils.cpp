@@ -174,6 +174,12 @@ Gamestate::Gamestate()
 			std::cout<<"added train automatically"<<std::endl;
 		}
 	}
+
+	storages.emplace_back(new Storage(resources, 100,300,400,150, hops, beer));
+	storages.emplace_back(new Storage(resources, 500,600,400,150, beer, hops));
+	buildings.emplace_back(new Brewery(resources, 150,320,100,50));
+	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
+	buildings.emplace_back(new City(resources, 700,625,20,50));
 }
 
 Gamestate::~Gamestate()

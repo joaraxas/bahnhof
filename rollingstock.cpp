@@ -40,9 +40,14 @@ void Wagon::render()
 	}
 }
 
-Vec Wagon::getpos(bool front)
+State Wagon::frontendstate()
 {
-	return tracksystem->getpos(tracksystem->travel(state, (2*alignedforward-1)*(2*front-1)*w/2/scale));
+	return tracksystem->travel(state, (2*alignedforward-1)*w/2/scale);
+}
+
+State Wagon::backendstate()
+{
+	return tracksystem->travel(state, (-1)*(2*alignedforward-1)*w/2/scale);
 }
 
 float Wagon::getpower()

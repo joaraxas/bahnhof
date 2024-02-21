@@ -91,7 +91,7 @@ int main(){
 						if(e.key.keysym.sym == SDLK_l)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->insertorderatselected(new Loadresource());
-						if(e.key.keysym.sym == SDLK_n)
+						if(e.key.keysym.sym == SDLK_p)
 							for(auto& train : trains)
 								if(train->selected)
 									train->proceed();
@@ -103,6 +103,8 @@ int main(){
 								}
 						if(e.key.keysym.sym == SDLK_z)
 							gamestate.tracksystem->placingsignal = true;
+						if(e.key.keysym.sym == SDLK_n)
+							nicetracks = !nicetracks;
 					break;
 					}
 			}
