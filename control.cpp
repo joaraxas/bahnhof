@@ -61,7 +61,7 @@ bool Train::perform(int ms)
 	switch(order->order){
 		case gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
-			done = checkifreachedstate(specification->state);
+			done = checkifreachedstate(specification->state, ms);
 			if(!done){
 				if(tracksystem->isred(forwardstate()))
 					brake(ms);
@@ -203,11 +203,13 @@ void Train::checkcollision(int ms, Train* train)
 	}
 }
 
-bool Train::checkifreachedstate(State goalstate)
+bool Train::checkifreachedstate(State goalstate, int ms)
 {
-	if(norm(tracksystem->getpos(forwardstate()) - tracksystem->getpos(goalstate)) < abs(10))
+	float pixels = abs(speed)*ms*0.001;
+	if(tracksystem->distancefromto(flipstate(forwardstate()), goalstate, pixels)<pixels)
 		return true;
-	return false;
+	else
+		return false;
 }
 
 bool Train::gas(int ms)

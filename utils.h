@@ -290,7 +290,7 @@ public:
     bool go = false;
     bool wantstocouple = false;
 private:
-    bool checkifreachedstate(State goalstate);
+    bool checkifreachedstate(State goalstate, int ms);
 };
 
 class Route
