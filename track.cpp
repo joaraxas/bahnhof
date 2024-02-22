@@ -112,51 +112,104 @@ float Tracksystem::getradiusoriginatingfromnode(nodeid node, trackid track)
 	return getradius(state);
 }
 
+State Tracksystem::tryincrementingtrack(State state)
+{
+	if(state.nodedist>=1){
+		Track* currenttrackpointer = gettrack(state.track);
+		nodeid currentnode = currenttrackpointer->nextnode;
+		float arclength1 = currenttrackpointer->getarclength(1);
+		state.track = nexttrack(state.track);
+		Track* nexttrackpointer = gettrack(state.track);
+		float arclength2 = nexttrackpointer->getarclength(1);
+		if(nexttrackpointer->previousnode==currentnode){
+			state.nodedist = (state.nodedist-1)*arclength1/arclength2;
+		}
+		else{
+			state.nodedist = 1-(state.nodedist-1)*arclength1/arclength2;
+			state.alignedwithtrack = !state.alignedwithtrack;
+		}
+	}
+	else if(state.nodedist<0){
+		Track* currenttrackpointer = gettrack(state.track);
+		nodeid currentnode = currenttrackpointer->previousnode;
+		float arclength1 = currenttrackpointer->getarclength(1);
+		state.track = previoustrack(state.track);
+		Track* previoustrackpointer = gettrack(state.track);
+		float arclength2 = previoustrackpointer->getarclength(1);
+		if(previoustrackpointer->nextnode==currentnode){
+			state.nodedist = 1-(-state.nodedist)*arclength1/arclength2;
+		}
+		else{
+			state.nodedist = (-state.nodedist)*arclength1/arclength2;
+			state.alignedwithtrack = !state.alignedwithtrack;
+		}
+	}
+	return state;
+}
+
 State Tracksystem::travel(State state, float pixels)
 {
-	trackid oldtrack = state.track;
-	trackid newtrack = oldtrack;
-	float nodedist = state.nodedist;
-	bool alignedwithtrack = state.alignedwithtrack;
 	bool finishedtrip = false;
 
-	float arclength1 = gettrack(oldtrack)->getarclength(1);
-	float arclength2 = 0;
-	nodedist += pixels*((alignedwithtrack)*2-1)/arclength1;
+	float arclength1 = gettrack(state.track)->getarclength(1);
+	state.nodedist += pixels*((state.alignedwithtrack)*2-1)/arclength1;
 
 	while(!finishedtrip){
-		if(nodedist>=1)
-		{
-			nodeid currentnode = gettrack(oldtrack)->nextnode;
-			newtrack = nexttrack(oldtrack);
-			arclength2 = gettrack(newtrack)->getarclength(1);
-			if(gettrack(newtrack)->previousnode==currentnode){
-				nodedist = (nodedist-1)*arclength1/arclength2;
-			}
-			else{
-				nodedist = 1-(nodedist-1)*arclength1/arclength2;
-				alignedwithtrack = !alignedwithtrack;
-			}
-		}
-		else if(nodedist<0)
-		{
-			nodeid currentnode = gettrack(oldtrack)->previousnode;
-			newtrack = previoustrack(oldtrack);
-			arclength2 = gettrack(newtrack)->getarclength(1);
-			if(gettrack(newtrack)->nextnode==currentnode){
-				nodedist = 1-(-nodedist)*arclength1/arclength2;
-			}
-			else{
-				nodedist = (-nodedist)*arclength1/arclength2;
-				alignedwithtrack = !alignedwithtrack;
-			}
-		}
-		else finishedtrip = true;
-		oldtrack = newtrack;
-		arclength1 = arclength2;
+		trackid currenttrack = state.track;
+		state = tryincrementingtrack(state);
+		if(state.track==currenttrack) finishedtrip = true;
 	}
 
-	return State(oldtrack, nodedist, alignedwithtrack);
+	return state;
+}
+
+float Tracksystem::distancefromto(State state1, State state2, float maxdist)
+{
+	State state = state1;
+	float arclength = gettrack(state.track)->getarclength(1);
+	bool movingalongtrack = (maxdist>0)==state1.alignedwithtrack;
+	//bool movingalongtrack = sign(maxdist);
+	if(state1.track==state2.track){
+		if(movingalongtrack){
+			if(state2.nodedist>=state1.nodedist)
+				return arclength*(state2.nodedist-state1.nodedist);
+		}
+		else
+			if(state2.nodedist<=state1.nodedist)
+				return arclength*(state1.nodedist-state2.nodedist);
+	}
+
+	float distance = 0;
+	if(movingalongtrack)
+		distance = arclength*(1-state.nodedist);
+	else
+		distance = arclength*state.nodedist;
+	state.nodedist += maxdist*((state.alignedwithtrack)*2-1)/arclength;
+	if(state.nodedist>=0 && state.nodedist<=1)
+		distance = maxdist;
+	else{
+		bool finishedtrip = false;
+		while(!finishedtrip){
+			trackid currenttrack = state.track;
+			state = tryincrementingtrack(state);
+			if(state.track==state2.track){
+				finishedtrip = true;
+				movingalongtrack = (maxdist>0)==state.alignedwithtrack;
+				if(movingalongtrack)
+					distance += gettrack(state.track)->getarclength(1)*state2.nodedist;
+				else
+					distance += gettrack(state.track)->getarclength(1)*(1-state2.nodedist);
+			}
+			else
+				distance += gettrack(state.track)->getarclength(1);
+			if(abs(distance)>abs(maxdist)){
+				finishedtrip = true;
+				distance = maxdist;
+			}
+		}
+	}
+
+	return distance;
 }
 
 void Tracksystem::render()
@@ -192,6 +245,8 @@ void Tracksystem::render()
 	State closeststate = getcloseststate(mousepos);
 	Vec cpos = getpos(closeststate);
 	SDL_RenderDrawLine(renderer, int(cpos.x),int(cpos.y),int(cpos.x)+5,int(cpos.y)+5);
+	float dist = distancefromto(trains[0]->forwardstate(), closeststate, (2*trains[0]->gasisforward-1)*900);
+	rendertext(std::to_string(dist), cpos.x,cpos.y, {0,0,0,0});
 }
 
 void Tracksystem::buildat(Vec pos)

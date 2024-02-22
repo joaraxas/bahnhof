@@ -42,12 +42,16 @@ void Wagon::render()
 
 State Wagon::frontendstate()
 {
-	return tracksystem->travel(state, (2*alignedforward-1)*w/2/scale);
+	State frontstate = state;
+	frontstate.alignedwithtrack = state.alignedwithtrack==alignedforward;
+	return tracksystem->travel(frontstate, w/2/scale);
 }
 
 State Wagon::backendstate()
 {
-	return tracksystem->travel(state, (-1)*(2*alignedforward-1)*w/2/scale);
+	State backstate = state;
+	backstate.alignedwithtrack = state.alignedwithtrack==alignedforward;
+	return tracksystem->travel(backstate, (-1)*w/2/scale);
 }
 
 float Wagon::getpower()

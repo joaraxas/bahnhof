@@ -95,6 +95,7 @@ public:
     float getorientation(State state);
     float getradius(State state);
     State travel(State state, float pixels);
+    float distancefromto(State state1, State state2, float maxdist);
     ResourceManager* allresources;
     signalid addsignal(State state);
     void setsignal(signalid signal, int redgreenorflip);
@@ -125,6 +126,7 @@ private:
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);
     trackid previoustrack(trackid track);
+    State tryincrementingtrack(State state);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
     Signal* getsignal(signalid signal);
