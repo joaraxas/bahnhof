@@ -73,6 +73,8 @@ struct State
     bool alignedwithtrack;
 };
 
+State flipstate(State state);
+
 class Tracksystem
 {
 friend class Node;

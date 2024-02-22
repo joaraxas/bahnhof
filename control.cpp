@@ -147,18 +147,34 @@ void Train::render()
 
 State Train::forwardstate()
 {
-	if(gasisforward)
-		return wagons.front()->frontendstate();
-	else
-		return wagons.back()->backendstate();
+	if(gasisforward){
+		if(wagons.front()->alignedforward)
+			return wagons.front()->frontendstate();
+		else
+			return flipstate(wagons.front()->backendstate());
+	}
+	else{
+		if(wagons.back()->alignedforward)
+			return flipstate(wagons.back()->backendstate());
+		else
+			return wagons.back()->frontendstate();
+	}
 }
 
 State Train::backwardstate()
 {
-	if(gasisforward)
-		return wagons.back()->backendstate();
-	else
-		return wagons.front()->frontendstate();
+	if(gasisforward){
+		if(wagons.back()->alignedforward)
+			return flipstate(wagons.back()->backendstate());
+		else
+			return wagons.back()->frontendstate();
+	}
+	else{
+		if(wagons.front()->alignedforward)
+			return wagons.front()->frontendstate();
+		else
+			return flipstate(wagons.front()->backendstate());
+	}
 }
 
 void Train::checkcollision(int ms, Train* train)

@@ -43,14 +43,12 @@ void Wagon::render()
 State Wagon::frontendstate()
 {
 	State frontstate = state;
-	frontstate.alignedwithtrack = state.alignedwithtrack==alignedforward;
 	return tracksystem->travel(frontstate, w/2/scale);
 }
 
 State Wagon::backendstate()
 {
 	State backstate = state;
-	backstate.alignedwithtrack = state.alignedwithtrack==alignedforward;
 	return tracksystem->travel(backstate, (-1)*w/2/scale);
 }
 

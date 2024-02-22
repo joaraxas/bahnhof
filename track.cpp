@@ -20,6 +20,13 @@ State::State(trackid trackstart, float nodediststart, bool alignedwithtrackstart
 	alignedwithtrack = alignedwithtrackstart;
 }
 
+State flipstate(State state)
+{
+	State outstate = state;
+	outstate.alignedwithtrack = !outstate.alignedwithtrack;
+	return outstate;
+}
+
 Tracksystem::Tracksystem(){}
 
 Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
@@ -168,7 +175,6 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist)
 	State state = state1;
 	float arclength = gettrack(state.track)->getarclength(1);
 	bool movingalongtrack = (maxdist>0)==state1.alignedwithtrack;
-	//bool movingalongtrack = sign(maxdist);
 	if(state1.track==state2.track){
 		if(movingalongtrack){
 			if(state2.nodedist>=state1.nodedist)
@@ -245,7 +251,7 @@ void Tracksystem::render()
 	State closeststate = getcloseststate(mousepos);
 	Vec cpos = getpos(closeststate);
 	SDL_RenderDrawLine(renderer, int(cpos.x),int(cpos.y),int(cpos.x)+5,int(cpos.y)+5);
-	float dist = distancefromto(trains[0]->forwardstate(), closeststate, (2*trains[0]->gasisforward-1)*900);
+	float dist = distancefromto(trains[0]->forwardstate(), closeststate, 900);
 	rendertext(std::to_string(dist), cpos.x,cpos.y, {0,0,0,0});
 }
 
