@@ -28,7 +28,7 @@ int main(){
 					quit = true; break;}
 				case SDL_MOUSEBUTTONDOWN:{
 					SDL_GetMouseState(&xMouse, &yMouse);
-					Vec mousepos(xMouse, yMouse);
+					Vec mousepos(xMouse+cam.x, yMouse+cam.y);
 					if(e.button.button == SDL_BUTTON_LEFT && keys[gearbutton]){
 						gamestate.tracksystem->deleteclick(xMouse, yMouse);
 					}
@@ -76,9 +76,17 @@ int main(){
 						if(e.key.keysym.sym == SDLK_UP)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
+							else
+								cam.y-=5;
 						if(e.key.keysym.sym == SDLK_DOWN)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
+							else
+								cam.y+=5;
+						if(e.key.keysym.sym == SDLK_LEFT)
+							cam.x-=5;
+						if(e.key.keysym.sym == SDLK_RIGHT)
+							cam.x+=5;
 						if(e.key.keysym.sym == SDLK_BACKSPACE)
 							if(gamestate.selectedroute)
 								gamestate.selectedroute->removeselectedorder();
@@ -132,10 +140,11 @@ int main(){
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
-		for(int x=0; x<SCREEN_WIDTH; x+=128){
-		for(int y=0; y<SCREEN_HEIGHT; y+=128){
+		for(int x=0; x<MAP_WIDTH; x+=128){
+		for(int y=0; y<MAP_HEIGHT; y+=128){
 			SDL_Rect rect = {x,y,128,128};
-			SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
+			//SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
+			rendertexture(fieldtex, &rect);
 		}}
 		for(auto& building : buildings)
 			building->render();

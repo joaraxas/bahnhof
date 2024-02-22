@@ -1,5 +1,6 @@
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
+extern SDL_Rect cam;
 extern TTF_Font* font;
 
 extern const Uint8* keys;
@@ -12,6 +13,8 @@ const int unloadbutton = SDL_SCANCODE_U;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
+const int MAP_WIDTH = 2000;
+const int MAP_HEIGHT = 1600;
 const double pi = 3.141592653589793238;
 
 extern float money;
@@ -20,12 +23,6 @@ extern float scale;
 extern int xMouse, yMouse;
 
 int init();
-
-SDL_Texture* loadImage(std::string path);
-SDL_Texture* loadText(std::string text, SDL_Color color);
-void rendertext(std::string text, int x, int y, SDL_Color color);
-
-void close();
 
 class Vec
 {
@@ -39,6 +36,16 @@ class Vec
     float x;
     float y;
 };
+
+SDL_Texture* loadImage(std::string path);
+SDL_Texture* loadText(std::string text, SDL_Color color);
+void rendertext(std::string text, int x, int y, SDL_Color color, bool ported=true);
+void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true);
+void renderline(Vec pos1, Vec pos2, bool ported=true);
+void renderrectangle(SDL_Rect* rect, bool ported=true);
+void renderfilledrectangle(SDL_Rect* rect, bool ported=true);
+
+void close();
 
 float norm(Vec v);
 float sign(float a);

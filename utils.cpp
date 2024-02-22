@@ -8,6 +8,7 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+SDL_Rect cam;
 TTF_Font* font = NULL;
 const Uint8* keys = NULL;
 
@@ -38,6 +39,8 @@ int init(){
 	}
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	cam = {200,200,SCREEN_WIDTH, SCREEN_HEIGHT};
+	//SDL_RenderSetViewport(renderer, &cam);
 	res = TTF_Init();
 	if(res<0){
 		success = false;
@@ -76,13 +79,57 @@ SDL_Texture* loadText(std::string text, SDL_Color color){
 	return tex;	
 }
 
-void rendertext(std::string text, int x, int y, SDL_Color color){
+void rendertext(std::string text, int x, int y, SDL_Color color, bool ported){
 	SDL_Texture* tex = loadText(text, color);
 	int w, h;
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};
-	SDL_RenderCopy(renderer, tex, NULL, &rect);
+	//SDL_RenderCopy(renderer, tex, NULL, &rect);
+	rendertexture(tex, &rect, nullptr, 0, ported);
 	SDL_DestroyTexture(tex);
+}
+
+void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported){
+	if(ported){
+		rect->x -= cam.x;
+		rect->y -= cam.y;
+	}
+	//SDL_RenderCopy(renderer, tex, NULL, rect);
+	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
+}
+
+void renderline(Vec pos1, Vec pos2, bool ported){
+	if(ported){
+		pos1.x -= cam.x;
+		pos1.y -= cam.y;
+		pos2.x -= cam.x;
+		pos2.y -= cam.y;
+	}
+	SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+}
+
+void renderrectangle(SDL_Rect* rect, bool ported){
+	if(ported){
+		rect->x -= cam.x;
+		rect->y -= cam.y;
+	}
+	SDL_RenderDrawRect(renderer, rect);
+	if(ported){
+		rect->x += cam.x;
+		rect->y += cam.y;
+	}
+}
+
+void renderfilledrectangle(SDL_Rect* rect, bool ported){
+	if(ported){
+		rect->x -= cam.x;
+		rect->y -= cam.y;
+	}
+	SDL_RenderFillRect(renderer, rect);
+	if(ported){
+		rect->x += cam.x;
+		rect->y += cam.y;
+	}
 }
 
 void close(){

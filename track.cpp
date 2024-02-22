@@ -220,7 +220,7 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist, boo
 
 void Tracksystem::render()
 {
-	Vec mousepos(xMouse, yMouse);
+	Vec mousepos(xMouse+cam.x, yMouse+cam.y);
 	for(auto const& [id, track] : tracks)
 		track->render();
 	for(auto const& [id, node] : nodes)
@@ -660,21 +660,28 @@ void Node::connecttrack(trackid track, bool fromabove){
 void Node::render()
 {
 	if(!nicetracks){
-		SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
-		SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
+		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+		renderline(pos+Vec(-5,-5), pos+Vec(5,5));
+		renderline(pos+Vec(-5,5), pos+Vec(5,-5));
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
+		//SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
+		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir)));
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
 	if(size(tracksup)>1){
 		Vec switchpos = getswitchpos(true);
-		SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*stateup/(size(tracksup)-1), switchpos.y-5);
+		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*stateup/(size(tracksup)-1), switchpos.y-5);
+		int diff = stateup/(size(tracksup)-1);
+		renderline(switchpos+Vec(0,5), switchpos+Vec(-10+20*diff,-5));
 		if(!nicetracks)
 			rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
 	if(size(tracksdown)>1){
 		Vec switchpos = getswitchpos(false);
-		SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*statedown/(size(tracksdown)-1), switchpos.y-5);
+		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*statedown/(size(tracksdown)-1), switchpos.y-5);
+		int diff = statedown/(size(tracksdown)-1);
+		renderline(switchpos+Vec(0,5), switchpos+Vec(-10+20*diff,-5));
 		if(!nicetracks)
 			rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
@@ -879,7 +886,8 @@ void Track::render()
 			if(drawposl.x<SCREEN_WIDTH)
 			if(drawposl.y>0)
 			if(drawposl.y<SCREEN_HEIGHT){
-				SDL_RenderDrawLine(renderer, drawposl.x, drawposl.y, drawposr.x, drawposr.y);
+				//SDL_RenderDrawLine(renderer, drawposl.x, drawposl.y, drawposr.x, drawposr.y);
+				renderline(drawposl, drawposr);
 			}
 		}
 	}
@@ -905,8 +913,10 @@ void Track::render()
 		if(drawpos2l.x<SCREEN_WIDTH)
 		if(drawpos2l.y>0)
 		if(drawpos2l.y<SCREEN_HEIGHT){
-			SDL_RenderDrawLine(renderer, drawpos1l.x, drawpos1l.y, drawpos2l.x, drawpos2l.y);
-			SDL_RenderDrawLine(renderer, drawpos1r.x, drawpos1r.y, drawpos2r.x, drawpos2r.y);
+			//SDL_RenderDrawLine(renderer, drawpos1l.x, drawpos1l.y, drawpos2l.x, drawpos2l.y);
+			//SDL_RenderDrawLine(renderer, drawpos1r.x, drawpos1r.y, drawpos2r.x, drawpos2r.y);
+			renderline(drawpos1l, drawpos2l);
+			renderline(drawpos1r, drawpos2r);
 		}
 	}
 	if(!nicetracks){
@@ -931,8 +941,10 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 void Signal::render()
 {
 	SDL_SetRenderDrawColor(renderer, 255*(!isgreen), 255*(isgreen), 0, 255);
-	SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
-	SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+	//SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
+	//SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
+	renderline(pos+Vec(-5,-5), pos+Vec(5,5));
+	renderline(pos+Vec(-5,5), pos+Vec(5,-5));
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 

@@ -135,7 +135,7 @@ void Train::render()
 			}
 		}
 		else
-			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0});
+			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
 		if(!nicetracks){
 			Vec frontpos = tracksystem->getpos(forwardstate());
 			rendertext("for", frontpos.x, frontpos.y, {0,255,0,255});
@@ -461,7 +461,7 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 void Route::render()
 {
 	if(orderids.empty())
-		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0});
+		rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0}, false);
 	else{
 		int renderordernr = 1;
 		if(orders[0]->order==gotostate)
@@ -473,7 +473,7 @@ void Route::render()
 			Uint8 intsty = (oid==selectedorderid)*255;
 			if(orders[iOrder]->order==gotostate)
 				renderordernr++;
-			rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intsty,intsty,intsty,0});
+			rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intsty,intsty,intsty,0}, false);
 			orders[iOrder]->render(renderordernr);
 		}
 	}
@@ -588,7 +588,8 @@ void Order::renderlabel(Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol
 	int x = int(pos.x); int y = int(pos.y);
 	SDL_Rect rect = {x,y,16,14};
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
-	SDL_RenderFillRect(renderer, &rect);
+	//SDL_RenderFillRect(renderer, &rect);
+	renderfilledrectangle(&rect);
 	rendertext(std::to_string(number), x+1, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
@@ -597,7 +598,8 @@ void Gotostate::render(int number)
 {
 	Vec posleft = route->tracksystem->getpos(state, 12);
 	Vec posright = route->tracksystem->getpos(state,-12);
-	SDL_RenderDrawLine(renderer, posleft.x, posleft.y, posright.x, posright.y);
+	//SDL_RenderDrawLine(renderer, posleft.x, posleft.y, posright.x, posright.y);
+	renderline(posleft, posright);
 	if(posright.x>=posleft.x){
 		Order::renderlabel(posright, number);
 	}
@@ -612,7 +614,8 @@ void Setswitch::render(int number)
 	Vec lineend = pos+Vec(12+18*offset,-7);
 	Vec inlabel = lineend+Vec(0+10,10);
 	Order::renderlabel(lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
-	SDL_RenderDrawLine(renderer, inlabel.x+4-nodestate*4, inlabel.y, inlabel.x+nodestate*4, inlabel.y-8);
+	//SDL_RenderDrawLine(renderer, inlabel.x+4-nodestate*4, inlabel.y, inlabel.x+nodestate*4, inlabel.y-8);
+	renderline(inlabel + Vec(4-nodestate*4, 0), inlabel + Vec(nodestate*4, -8));
 }
 
 void Setsignal::render(int number)
@@ -659,9 +662,10 @@ void Resource::render(Vec pos)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
-	SDL_Rect srcrect = {0, 0, w, h};
+	//SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
-	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
+	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
+	rendertexture(tex, &rect);
 }
 
 Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
@@ -675,7 +679,8 @@ Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourc
 void Storage::render()
 {
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
-	SDL_RenderDrawRect(renderer, &rect);
+	//SDL_RenderDrawRect(renderer, &rect);
+	renderrectangle(&rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;

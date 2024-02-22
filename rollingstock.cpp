@@ -33,7 +33,8 @@ void Wagon::render()
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
-	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+	rendertexture(tex, &rect, &srcrect, imageangle);
 	if(loadedresource!=none){
 		Resource* resource = allresources->get(loadedresource);
 		resource->render(pos);
@@ -100,7 +101,8 @@ void Locomotive::render()
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
 	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
-	SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
+	rendertexture(tex, &rect, &srcrect, imageangle);
 }
 
 float Locomotive::getpower()
