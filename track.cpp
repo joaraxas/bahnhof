@@ -247,12 +247,6 @@ void Tracksystem::render()
 		trackcounter = lasttrackindex;
 		preparingtrack = false;
 	}
-
-	State closeststate = getcloseststate(mousepos);
-	Vec cpos = getpos(closeststate);
-	SDL_RenderDrawLine(renderer, int(cpos.x),int(cpos.y),int(cpos.x)+5,int(cpos.y)+5);
-	float dist = distancefromto(trains[0]->forwardstate(), closeststate, 900);
-	rendertext(std::to_string(dist), cpos.x,cpos.y, {0,0,0,0});
 }
 
 void Tracksystem::buildat(Vec pos)

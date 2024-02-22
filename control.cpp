@@ -205,7 +205,7 @@ void Train::checkcollision(int ms, Train* train)
 
 bool Train::checkifreachedstate(State goalstate, int ms)
 {
-	float pixels = abs(speed)*ms*0.001;
+	float pixels = 4*abs(speed)*ms*0.001;
 	if(tracksystem->distancefromto(flipstate(forwardstate()), goalstate, pixels)<pixels)
 		return true;
 	else
