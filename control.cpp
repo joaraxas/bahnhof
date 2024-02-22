@@ -63,7 +63,7 @@ bool Train::perform(int ms)
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state);
 			if(!done){
-				if(tracksystem->isred(forwardstate(), 2*gasisforward-1))
+				if(tracksystem->isred(forwardstate()))
 					brake(ms);
 				else
 					gas(ms);}

@@ -170,12 +170,12 @@ State Tracksystem::travel(State state, float pixels)
 	return state;
 }
 
-float Tracksystem::distancefromto(State state1, State state2, float maxdist)
+float Tracksystem::distancefromto(State state1, State state2, float maxdist, bool mustalign)
 {
 	State state = state1;
 	float arclength = gettrack(state.track)->getarclength(1);
 	bool movingalongtrack = (maxdist>0)==state1.alignedwithtrack;
-	if(state1.track==state2.track){
+	if(state1.track==state2.track && (!mustalign || state1.alignedwithtrack==state2.alignedwithtrack)){
 		if(movingalongtrack){
 			if(state2.nodedist>=state1.nodedist)
 				return arclength*(state2.nodedist-state1.nodedist);
@@ -198,7 +198,7 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist)
 		while(!finishedtrip){
 			trackid currenttrack = state.track;
 			state = tryincrementingtrack(state);
-			if(state.track==state2.track){
+			if(state.track==state2.track && (!mustalign || state.alignedwithtrack==state2.alignedwithtrack)){
 				finishedtrip = true;
 				movingalongtrack = (maxdist>0)==state.alignedwithtrack;
 				if(movingalongtrack)
@@ -612,14 +612,15 @@ Signal* Tracksystem::getsignal(signalid signal)
 	}
 }
 
-bool Tracksystem::isred(State trainstate, float pixels)
+bool Tracksystem::isred(State trainstate)
 {
 	bool red = false;
-	for(auto const& [id, signal] : signals)
-		if(signal->isred(trainstate, pixels)){
+	for(auto const& [id, signal] : signals){
+		if(signal->isred(trainstate))
 			red = true;
+		if(red)
 			break;
-		}
+	}
 	return red;
 }
 
@@ -941,25 +942,11 @@ void Signal::render()
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-bool Signal::isred(State trainstate, float pixels)
+bool Signal::isred(State trainstate)
 {
 	bool red = false;
-	if(!isgreen){
-		if(trainstate.track == state.track)
-			if((trainstate.alignedwithtrack==(pixels>0)) == state.alignedwithtrack){
-				State backwardstate = tracksystem->travel(state, -sign(pixels)*60);
-				if((trainstate.nodedist > state.nodedist) != state.alignedwithtrack)
-				if((trainstate.nodedist < backwardstate.nodedist) != backwardstate.alignedwithtrack)
-					red = true;
-			}
-	}
-	/*else{
-		State forwardstate = tracksystem->travel(state, sign(pixels)*60);
-		if(trainstate.track == forwardstate.track){
-			if((trainstate.alignedwithtrack==(pixels>0)) == forwardstate.alignedwithtrack)
-				if((trainstate.nodedist < state.nodedist) != state.alignedwithtrack)
-					isgreen = false;
-		}
-	}*/
+	if(!isgreen)
+		if(tracksystem->distancefromto(trainstate, state, 100, true)<100)
+			red = true;
 	return red;
 }

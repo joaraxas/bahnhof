@@ -97,12 +97,12 @@ public:
     float getorientation(State state);
     float getradius(State state);
     State travel(State state, float pixels);
-    float distancefromto(State state1, State state2, float maxdist);
+    float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
     ResourceManager* allresources;
     signalid addsignal(State state);
     void setsignal(signalid signal, int redgreenorflip);
     bool getsignalstate(signalid signal);
-    bool isred(State trainstate, float pixels);
+    bool isred(State trainstate);
     void setswitch(nodeid node, bool updown, int switchstate);
     int getswitchstate(nodeid node, bool updown);
     nodeid selectednode = 0;
@@ -193,7 +193,7 @@ friend class Tracksystem;
 public:
     Signal(Tracksystem& newtracksystem, State signalstate);
     void render();
-    bool isred(State trainstate, float pixels);
+    bool isred(State trainstate);
     bool isgreen = true;
 private:
     State state;
