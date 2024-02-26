@@ -4,17 +4,21 @@ extern SDL_Rect cam;
 extern TTF_Font* font;
 
 extern const Uint8* keys;
-const int gasbutton = SDL_SCANCODE_W;
-const int brakebutton = SDL_SCANCODE_S;
+const int gasbutton = SDL_SCANCODE_RIGHT;
+const int brakebutton = SDL_SCANCODE_LEFT;
 const int gearbutton = SDL_SCANCODE_LSHIFT;
 const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
 const int loadbutton = SDL_SCANCODE_L;
 const int unloadbutton = SDL_SCANCODE_U;
+const int leftpanbutton = SDL_SCANCODE_A;
+const int rightpanbutton = SDL_SCANCODE_D;
+const int uppanbutton = SDL_SCANCODE_W;
+const int downpanbutton = SDL_SCANCODE_S;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
-const int MAP_WIDTH = 2000;
-const int MAP_HEIGHT = 1600;
+const int MAP_WIDTH = SCREEN_WIDTH*8;
+const int MAP_HEIGHT = SCREEN_HEIGHT*8;
 const double pi = 3.141592653589793238;
 
 extern float money;
@@ -39,11 +43,11 @@ class Vec
 
 SDL_Texture* loadImage(std::string path);
 SDL_Texture* loadText(std::string text, SDL_Color color);
-void rendertext(std::string text, int x, int y, SDL_Color color, bool ported=true);
-void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true);
+void rendertext(std::string text, int x, int y, SDL_Color color, bool ported=true, bool zoomed=false);
+void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true);
 void renderline(Vec pos1, Vec pos2, bool ported=true);
-void renderrectangle(SDL_Rect* rect, bool ported=true);
-void renderfilledrectangle(SDL_Rect* rect, bool ported=true);
+void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
+void renderfilledrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
 
 void close();
 

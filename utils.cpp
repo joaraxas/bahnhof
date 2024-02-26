@@ -39,8 +39,7 @@ int init(){
 	}
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	cam = {200,200,SCREEN_WIDTH, SCREEN_HEIGHT};
-	//SDL_RenderSetViewport(renderer, &cam);
+	cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
 	res = TTF_Init();
 	if(res<0){
 		success = false;
@@ -79,20 +78,26 @@ SDL_Texture* loadText(std::string text, SDL_Color color){
 	return tex;	
 }
 
-void rendertext(std::string text, int x, int y, SDL_Color color, bool ported){
+void rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed){
 	SDL_Texture* tex = loadText(text, color);
 	int w, h;
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};
 	//SDL_RenderCopy(renderer, tex, NULL, &rect);
-	rendertexture(tex, &rect, nullptr, 0, ported);
+	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
 	SDL_DestroyTexture(tex);
 }
 
-void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported){
+void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed){
 	if(ported){
 		rect->x -= cam.x;
 		rect->y -= cam.y;
+		rect->x *= scale;
+		rect->y *= scale;
+	}
+	if(zoomed){
+		rect->w *= scale;
+		rect->h *= scale;
 	}
 	//SDL_RenderCopy(renderer, tex, NULL, rect);
 	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
@@ -104,32 +109,42 @@ void renderline(Vec pos1, Vec pos2, bool ported){
 		pos1.y -= cam.y;
 		pos2.x -= cam.x;
 		pos2.y -= cam.y;
+		pos1.x *= scale;
+		pos1.y *= scale;
+		pos2.x *= scale;
+		pos2.y *= scale;
 	}
-	SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+	if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
+		(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
+		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
-void renderrectangle(SDL_Rect* rect, bool ported){
+void renderrectangle(SDL_Rect* rect, bool ported, bool zoomed){
 	if(ported){
 		rect->x -= cam.x;
 		rect->y -= cam.y;
+		rect->x *= scale;
+		rect->y *= scale;
+	}
+	if(zoomed){
+		rect->w *= scale;
+		rect->h *= scale;
 	}
 	SDL_RenderDrawRect(renderer, rect);
-	if(ported){
-		rect->x += cam.x;
-		rect->y += cam.y;
-	}
 }
 
-void renderfilledrectangle(SDL_Rect* rect, bool ported){
+void renderfilledrectangle(SDL_Rect* rect, bool ported, bool zoomed){
 	if(ported){
 		rect->x -= cam.x;
 		rect->y -= cam.y;
+		rect->x *= scale;
+		rect->y *= scale;
+	}
+	if(zoomed){
+		rect->w *= scale;
+		rect->h *= scale;
 	}
 	SDL_RenderFillRect(renderer, rect);
-	if(ported){
-		rect->x += cam.x;
-		rect->y += cam.y;
-	}
 }
 
 void close(){
@@ -222,11 +237,11 @@ Gamestate::Gamestate()
 		}
 	}
 
-	storages.emplace_back(new Storage(resources, 100,300,400,150, hops, beer));
-	storages.emplace_back(new Storage(resources, 500,600,400,150, beer, hops));
+	storages.emplace_back(new Storage(resources, 100,300,800,400, hops, beer));
+	storages.emplace_back(new Storage(resources, 4500,4600,800,600, beer, hops));
 	buildings.emplace_back(new Brewery(resources, 150,320,100,50));
-	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
-	buildings.emplace_back(new City(resources, 700,625,20,50));
+	buildings.emplace_back(new Hopsfield(resources, 4625,4625,50,50));
+	buildings.emplace_back(new City(resources, 4700,4625,20,50));
 }
 
 Gamestate::~Gamestate()

@@ -32,7 +32,7 @@ void Wagon::render()
 	int x = int(pos.x);
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, 0, w, h};
-	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
+	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
 	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 	rendertexture(tex, &rect, &srcrect, imageangle);
 	if(loadedresource!=none){
@@ -44,13 +44,13 @@ void Wagon::render()
 State Wagon::frontendstate()
 {
 	State frontstate = state;
-	return tracksystem->travel(frontstate, w/2/scale);
+	return tracksystem->travel(frontstate, w/2);
 }
 
 State Wagon::backendstate()
 {
 	State backstate = state;
-	return tracksystem->travel(backstate, (-1)*w/2/scale);
+	return tracksystem->travel(backstate, (-1)*w/2);
 }
 
 float Wagon::getpower()
@@ -100,7 +100,7 @@ void Locomotive::render()
 	int x = int(pos.x);
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
-	SDL_Rect rect = {int(x - w / 2/scale), int(y - h / 2/scale), int(w/scale), int(h/scale)};
+	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
 	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 	rendertexture(tex, &rect, &srcrect, imageangle);
 }

@@ -589,7 +589,7 @@ void Order::renderlabel(Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol
 	SDL_Rect rect = {x,y,16,14};
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
 	//SDL_RenderFillRect(renderer, &rect);
-	renderfilledrectangle(&rect);
+	renderfilledrectangle(&rect, true, false);
 	rendertext(std::to_string(number), x+1, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
@@ -611,17 +611,17 @@ void Gotostate::render(int number)
 void Setswitch::render(int number)
 {
 	Vec pos = route->tracksystem->getswitchpos(node, updown);
-	Vec lineend = pos+Vec(12+18*offset,-7);
-	Vec inlabel = lineend+Vec(0+10,10);
+	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
+	Vec inlabel = lineend+Vec(0+10,10)/scale;
 	Order::renderlabel(lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
 	//SDL_RenderDrawLine(renderer, inlabel.x+4-nodestate*4, inlabel.y, inlabel.x+nodestate*4, inlabel.y-8);
-	renderline(inlabel + Vec(4-nodestate*4, 0), inlabel + Vec(nodestate*4, -8));
+	renderline(inlabel + Vec(4-nodestate*4, 0)/scale, inlabel + Vec(nodestate*4, -8)/scale);
 }
 
 void Setsignal::render(int number)
 {
 	Vec pos = route->tracksystem->getsignalpos(signal);
-	Vec lineend = pos+Vec(-8,12+16*offset);
+	Vec lineend = pos+Vec(-8,12+16*offset)/scale;
 	//SDL_RenderDrawLine(renderer, pos.x, pos.y, lineend.x, lineend.y);
 	SDL_Color bgrcol = {255, 0, 0, 255};
 	if(redgreenflip==1)
@@ -680,7 +680,8 @@ void Storage::render()
 {
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
 	//SDL_RenderDrawRect(renderer, &rect);
-	renderrectangle(&rect);
+	SDL_Rect drawrect = rect;
+	renderrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;

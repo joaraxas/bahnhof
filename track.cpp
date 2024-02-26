@@ -220,7 +220,7 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist, boo
 
 void Tracksystem::render()
 {
-	Vec mousepos(xMouse+cam.x, yMouse+cam.y);
+	Vec mousepos(xMouse/scale+cam.x, yMouse/scale+cam.y);
 	for(auto const& [id, track] : tracks)
 		track->render();
 	for(auto const& [id, node] : nodes)
@@ -332,7 +332,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	}
 	State returnstate;
 	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
-	if(mindist<20){
+	if(mindist<20/scale){
 		if(trackdist==mindist){
 			*track = closeststate.track;
 			returnstate = closeststate;
@@ -662,18 +662,18 @@ void Node::render()
 	if(!nicetracks){
 		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
 		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
-		renderline(pos+Vec(-5,-5), pos+Vec(5,5));
-		renderline(pos+Vec(-5,5), pos+Vec(5,-5));
+		renderline(pos+Vec(-5,-5)/scale, pos+Vec(5,5)/scale);
+		renderline(pos+Vec(-5,5)/scale, pos+Vec(5,-5)/scale);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		//SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
-		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir)));
+		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir))/scale);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
 	if(size(tracksup)>1){
 		Vec switchpos = getswitchpos(true);
 		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*stateup/(size(tracksup)-1), switchpos.y-5);
 		int diff = stateup/(size(tracksup)-1);
-		renderline(switchpos+Vec(0,5), switchpos+Vec(-10+20*diff,-5));
+		renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
 		if(!nicetracks)
 			rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
@@ -681,7 +681,7 @@ void Node::render()
 		Vec switchpos = getswitchpos(false);
 		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*statedown/(size(tracksdown)-1), switchpos.y-5);
 		int diff = statedown/(size(tracksdown)-1);
-		renderline(switchpos+Vec(0,5), switchpos+Vec(-10+20*diff,-5));
+		renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
 		if(!nicetracks)
 			rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 	}
@@ -689,7 +689,7 @@ void Node::render()
 
 Vec Node::getswitchpos(bool updown)
 {
-	float transverseoffset = -(2*updown-1)*20;
+	float transverseoffset = -(2*updown-1)*20/scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
 }
 
@@ -876,17 +876,14 @@ void Track::render()
 		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
 		if(tracksystem->preparingtrack)
 			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
-		float sleeperwidth = 2600/150/scale;
-		int nSleepers = round(getarclength(1)/3);
+		float sleeperwidth = 2600/150;
+		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
+		int nSleepers = round(getarclength(1)/3*fmin(1,scale));
+		if(scale<0.3) nSleepers = round(getarclength(1)/20*fmin(1,scale));
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
 			Vec drawposl = getpos(nodedist, sleeperwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperwidth/2);
-			if(drawposl.x>0)
-			if(drawposl.x<SCREEN_WIDTH)
-			if(drawposl.y>0)
-			if(drawposl.y<SCREEN_HEIGHT){
-				//SDL_RenderDrawLine(renderer, drawposl.x, drawposl.y, drawposr.x, drawposr.y);
+			Vec drawposr = getpos(nodedist, -sleeperwidth/2);{
 				renderline(drawposl, drawposr);
 			}
 		}
@@ -900,24 +897,21 @@ void Track::render()
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!isinf(radius))
-		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
+		nSegments = fmax(1,round(abs(phi/2/pi*4*128*scale)));
 	float gauge = 0;
-	if(nicetracks) gauge = 1435/150/scale;
+	if(nicetracks && scale>0.3) gauge = 1435/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
 		Vec drawpos2l = getpos(nodedist+1./nSegments, gauge/2);
+		renderline(drawpos1l, drawpos2l);
+	}
+	if(gauge!=0)
+	for(int iSegment = 0; iSegment < nSegments; iSegment++){
+		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1r = getpos(nodedist, -gauge/2);
 		Vec drawpos2r = getpos(nodedist+1./nSegments, -gauge/2);
-		if(drawpos2l.x>0)
-		if(drawpos2l.x<SCREEN_WIDTH)
-		if(drawpos2l.y>0)
-		if(drawpos2l.y<SCREEN_HEIGHT){
-			//SDL_RenderDrawLine(renderer, drawpos1l.x, drawpos1l.y, drawpos2l.x, drawpos2l.y);
-			//SDL_RenderDrawLine(renderer, drawpos1r.x, drawpos1r.y, drawpos2r.x, drawpos2r.y);
-			renderline(drawpos1l, drawpos2l);
-			renderline(drawpos1r, drawpos2r);
-		}
+		renderline(drawpos1r, drawpos2r);
 	}
 	if(!nicetracks){
 		Vec radiustextpos = getpos(0.5,15);
@@ -934,7 +928,7 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 	tracksystem = &newtracksystem;
 	state = signalstate;
 	float orientation = tracksystem->getorientation(state);
-	float transverseoffset = -20/scale;
+	float transverseoffset = -20;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
 }
 

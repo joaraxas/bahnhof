@@ -28,7 +28,7 @@ int main(){
 					quit = true; break;}
 				case SDL_MOUSEBUTTONDOWN:{
 					SDL_GetMouseState(&xMouse, &yMouse);
-					Vec mousepos(xMouse+cam.x, yMouse+cam.y);
+					Vec mousepos(xMouse/scale+cam.x, yMouse/scale+cam.y);
 					if(e.button.button == SDL_BUTTON_LEFT && keys[gearbutton]){
 						gamestate.tracksystem->deleteclick(xMouse, yMouse);
 					}
@@ -72,52 +72,70 @@ int main(){
 					}
 					break;
 					}
-					case SDL_KEYDOWN:{
-						if(e.key.keysym.sym == SDLK_UP)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
-							else
-								cam.y-=5;
-						if(e.key.keysym.sym == SDLK_DOWN)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
-							else
-								cam.y+=5;
-						if(e.key.keysym.sym == SDLK_LEFT)
-							cam.x-=5;
-						if(e.key.keysym.sym == SDLK_RIGHT)
-							cam.x+=5;
-						if(e.key.keysym.sym == SDLK_BACKSPACE)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->removeselectedorder();
-						if(e.key.keysym.sym == SDLK_t)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorderatselected(new Turn());
-						if(e.key.keysym.sym == SDLK_d)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorderatselected(new Decouple());
-						if(e.key.keysym.sym == SDLK_l)
-							if(gamestate.selectedroute)
-								gamestate.selectedroute->insertorderatselected(new Loadresource());
-						if(e.key.keysym.sym == SDLK_p)
-							for(auto& train : trains)
-								if(train->selected)
-									train->proceed();
-						if(e.key.keysym.sym == SDLK_RETURN)
-							for(auto& train : trains)
-								if(train->selected){
-									train->go = !train->go;
-									train->speed = 0;
-								}
-						if(e.key.keysym.sym == SDLK_z)
-							gamestate.tracksystem->placingsignal = true;
-						if(e.key.keysym.sym == SDLK_n)
-							nicetracks = !nicetracks;
+				case SDL_KEYDOWN:{
+					if(e.key.keysym.sym == SDLK_UP)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
+					if(e.key.keysym.sym == SDLK_DOWN)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->selectedorderid = gamestate.selectedroute->nextorder(gamestate.selectedroute->selectedorderid);
+					if(e.key.keysym.sym == SDLK_BACKSPACE)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->removeselectedorder();
+					if(e.key.keysym.sym == SDLK_t)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->insertorderatselected(new Turn());
+					if(e.key.keysym.sym == SDLK_c)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->insertorderatselected(new Decouple());
+					if(e.key.keysym.sym == SDLK_l)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->insertorderatselected(new Loadresource());
+					if(e.key.keysym.sym == SDLK_p)
+						for(auto& train : trains)
+							if(train->selected)
+								train->proceed();
+					if(e.key.keysym.sym == SDLK_RETURN)
+						for(auto& train : trains)
+							if(train->selected){
+								train->go = !train->go;
+								train->speed = 0;
+							}
+					if(e.key.keysym.sym == SDLK_z)
+						gamestate.tracksystem->placingsignal = true;
+					if(e.key.keysym.sym == SDLK_n)
+						nicetracks = !nicetracks;
 					break;
+				}
+				case SDL_MOUSEWHEEL:{
+					if(e.wheel.y > 0){ // scroll up
+						cam.x+=cam.w/4;
+						cam.w/=2;
+						cam.y+=cam.h/4;
+						cam.h/=2;
+						scale*=2;
 					}
+					if(e.wheel.y < 0){ // scroll down
+						cam.x-=cam.w/2;
+						cam.w*=2;
+						cam.y-=cam.h/2;
+						cam.h*=2;
+						scale/=2;
+					}
+					break;
+				}
 			}
 		}
 		keys = SDL_GetKeyboardState(nullptr);
+		if(keys[leftpanbutton])
+			cam.x-=int(ms*0.4/scale);
+		if(keys[rightpanbutton])
+			cam.x+=int(ms*0.4/scale);
+		if(keys[uppanbutton])
+			cam.y-=int(ms*0.4/scale);
+		if(keys[downpanbutton])
+			cam.y+=int(ms*0.4/scale);
+
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
 
@@ -143,7 +161,6 @@ int main(){
 		for(int x=0; x<MAP_WIDTH; x+=128){
 		for(int y=0; y<MAP_HEIGHT; y+=128){
 			SDL_Rect rect = {x,y,128,128};
-			//SDL_RenderCopy(renderer, fieldtex, NULL, &rect);
 			rendertexture(fieldtex, &rect);
 		}}
 		for(auto& building : buildings)

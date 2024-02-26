@@ -42,7 +42,8 @@ void Building::render()
 {
 	SDL_SetRenderDrawColor(renderer, 63, 127, 63, 255);
 	//SDL_RenderFillRect(renderer, &rect);
-	renderfilledrectangle(&rect);
+	SDL_Rect drawrect = rect;
+	renderfilledrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
@@ -53,7 +54,8 @@ void Brewery::render()
 {
 	SDL_SetRenderDrawColor(renderer, 63, 63, 127, 255);
 	//SDL_RenderFillRect(renderer, &rect);
-	renderfilledrectangle(&rect);
+	SDL_Rect drawrect = rect;
+	renderfilledrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
