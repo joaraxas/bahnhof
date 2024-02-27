@@ -10,6 +10,7 @@ const int gearbutton = SDL_SCANCODE_LSHIFT;
 const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
 const int loadbutton = SDL_SCANCODE_L;
 const int unloadbutton = SDL_SCANCODE_U;
+const int couplebutton = SDL_SCANCODE_G;
 const int leftpanbutton = SDL_SCANCODE_A;
 const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
@@ -334,7 +335,7 @@ private:
 
 enum ordertype
 {
-    gotostate, o_setsignal, o_setswitch, couple, decouple, turn, loadresource, wipe
+    gotostate, o_setsignal, o_setswitch, o_couple, decouple, turn, loadresource, wipe
 };
 struct Order
 {
@@ -491,11 +492,13 @@ public:
     void initcoupling();
     void initjusttrack();
     void inittrain(State startstate);
+    void addtrainstoorphans();
 	ResourceManager resources;
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Route>> routes;
     std::unique_ptr<Tracksystem> tracksystem;
     Route* selectedroute = nullptr;
+    State newwagonstate;
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

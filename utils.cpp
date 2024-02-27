@@ -220,34 +220,39 @@ float truncate(float dir)
 
 Gamestate::Gamestate()
 {
+	newwagonstate = State(1, 0.2, true);
 	//initthreetrains();
 	//initcoupling();
 	initjusttrack();
-	inittrain(State(1,0.5,1));
-	inittrain(State(4,0.5,1));
-	trains.back()->route = routes.front().get();
 	inittrain(State(7,0.5,1));
 	trains.back()->route = routes.front().get();
 	tracksystem->selectednode = 0;
 
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
-		if(!wagons[iWagon]->train){
-			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
-			std::cout<<"added train automatically"<<std::endl;
-		}
-	}
+	addtrainstoorphans();
 
 	storages.emplace_back(new Storage(resources, 100,300,800,400, hops, beer));
-	storages.emplace_back(new Storage(resources, 4500,4600,800,600, beer, hops));
+	storages.emplace_back(new Storage(resources, 1500,1600,800,600, beer, hops));
 	buildings.emplace_back(new Brewery(resources, 150,320,100,50));
-	buildings.emplace_back(new Hopsfield(resources, 4625,4625,50,50));
-	buildings.emplace_back(new City(resources, 4700,4625,20,50));
+	buildings.emplace_back(new Hopsfield(resources, 1625,1625,50,50));
+	buildings.emplace_back(new City(resources, 1700,1625,20,50));
 }
 
 Gamestate::~Gamestate()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
 		delete wagons[iWagon];
+}
+
+
+void Gamestate::addtrainstoorphans()
+{
+	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
+		if(!wagons[iWagon]->train){
+			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
+			trains.back()->route = routes.front().get();
+			std::cout<<"added train automatically"<<std::endl;
+		}
+	}
 }
 
 /*

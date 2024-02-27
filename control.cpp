@@ -34,6 +34,8 @@ void Train::getinput(int ms)
 			loadall();
 		if(keys[unloadbutton])
 			unloadall();
+		if(keys[couplebutton])
+			wantstocouple = true;
 	}
 }
 
@@ -80,8 +82,10 @@ bool Train::perform(int ms)
 			tracksystem->setswitch(specification->node, specification->updown, specification->nodestate); 
 			done = true;
 			break;}
-		//case couple:
-		//	done = checkifcoupled(); break
+		case o_couple:{
+			wantstocouple = true;
+			done = true;
+			break;}
 		case decouple:{
 			Decouple* specification = dynamic_cast<Decouple*>(order);
 			done = split(specification->where, specification->route);
@@ -179,27 +183,13 @@ State Train::backwardstate()
 
 void Train::checkcollision(int ms, Train* train)
 {
-	if(wantstocouple || train->wantstocouple){
-		if(size(wagons) >= 1)
-		if(size(train->wagons) >= 1){
-			float pixels = ms*0.001*speed;/*
-			if(speed>=0){
-				wagons.front()->travel(pixels);
-				if(norm(wagons.front()->frontendstate() - train->wagons.back()->backendstate()) < abs(pixels))
-					couple(*train, false, true);
-				else if(norm(wagons.front()->frontendstate() - train->wagons.front()->frontendstate()) < abs(pixels))
-					couple(*train, false, false);
-				wagons.front()->travel(-pixels);
-			}
-			else{
-				wagons.back()->travel(pixels);
-				if(norm(wagons.back()->backendstate() - train->wagons.back()->backendstate()) < abs(pixels))
-					couple(*train, true, true);
-				else if(norm(wagons.back()->backendstate() - train->wagons.front()->frontendstate()) < abs(pixels))
-					couple(*train, true, false);
-				wagons.back()->travel(-pixels);
-			}*/
-		}
+	if(size(wagons) >= 1)
+	if(size(train->wagons) >= 1){
+		float pixels = ms*0.001*abs(speed);
+		if(tracksystem->distancefromto(forwardstate(), train->forwardstate(), pixels)<pixels)
+			couple(*train, gasisforward, train->gasisforward);
+		else if(tracksystem->distancefromto(forwardstate(), train->backwardstate(), pixels)<pixels)
+			couple(*train, gasisforward, !train->gasisforward);
 	}
 }
 
@@ -283,7 +273,7 @@ bool Train::unloadall()
 	return done;
 }
 
-void Train::couple(Train& train, bool ismyback, bool ishisback)
+void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 {
 	speed = 0;
 	train.speed = 0;
@@ -291,37 +281,44 @@ void Train::couple(Train& train, bool ismyback, bool ishisback)
 	train.go = false;
 	if(wantstocouple || train.wantstocouple){
 		bool flipdirection = false;
-		if(ismyback && !ishisback){
-			std::cout << "couple back front" << std::endl;
-			wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+		bool ismyback = !ismyfront;
+		if(ismyback){
+			if(ishisfront){
+				std::cout << "couple back front" << std::endl;
+				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+			}
+			else{
+				std::cout << "couple back back" << std::endl;
+				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+				flipdirection = true;
+			}
 		}
-		else if(ismyback && ishisback){
-			std::cout << "couple back back" << std::endl;
-			wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
-			flipdirection = 1;
-		}
-		else if(!ismyback && !ishisback){
-			std::cout << "couple front front" << std::endl;
-			std::reverse(wagons.begin(), wagons.end());
-			wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
-			std::reverse(wagons.begin(), wagons.end());
-			flipdirection = 1;
-		}
-		else if(!ismyback && ishisback){
-			std::cout << "couple front back" << std::endl;
-			std::reverse(wagons.begin(), wagons.end());
-			wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
-			std::reverse(wagons.begin(), wagons.end());
+		else{
+			if(ishisfront){
+				std::cout << "couple front front" << std::endl;
+				std::reverse(wagons.begin(), wagons.end());
+				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
+				std::reverse(wagons.begin(), wagons.end());
+				flipdirection = true;
+			}
+			else{
+				std::cout << "couple front back" << std::endl;
+				std::reverse(wagons.begin(), wagons.end());
+				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
+				std::reverse(wagons.begin(), wagons.end());
+			}
 		}
 		if(flipdirection)
 			for(auto w : train.wagons){
-				w->alignedforward = 1 - w->alignedforward;
+				w->alignedforward = !w->alignedforward;
 			}
 		train.wagons = {};
 		for(auto wagon : wagons)
 			wagon->train = this;
 		if(train.selected)
 			selected = true;
+		wantstocouple = false;
+		go = true;
 	}
 }
 
@@ -331,10 +328,20 @@ bool Train::split(int where, Route* assignedroute)
 	if(speed!=0)
 		splitsucceed = false;
 	else if(wagons.size()>where){
-		Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
-		trains.emplace_back(newtrain);
-		newtrain->route = assignedroute;
-		wagons = {wagons.begin(), wagons.begin() + where};
+		if(gasisforward){
+			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
+			wagons = {wagons.begin(), wagons.begin() + where};
+			trains.emplace_back(newtrain);
+			newtrain->route = assignedroute;
+		}
+		else{
+			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()}, speed);
+			std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
+			wagons = {wagons.rbegin(), wagons.rbegin() + where};
+			std::reverse(wagons.begin(), wagons.end());
+			trains.emplace_back(newtrain);
+			newtrain->route = assignedroute;
+		}
 		std::cout << "split" << std::endl;
 	}
 	return splitsucceed;
@@ -565,6 +572,12 @@ Turn::Turn()
 {
 	order = turn;
 	description = "Switch travel direction";
+}
+
+Couple::Couple()
+{
+	order = o_couple;
+	description = "Prepare for coupling";
 }
 
 Loadresource::Loadresource()

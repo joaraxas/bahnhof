@@ -85,12 +85,15 @@ int main(){
 					if(e.key.keysym.sym == SDLK_t)
 						if(gamestate.selectedroute)
 							gamestate.selectedroute->insertorderatselected(new Turn());
-					if(e.key.keysym.sym == SDLK_c)
+					if(e.key.keysym.sym == SDLK_e)
 						if(gamestate.selectedroute)
 							gamestate.selectedroute->insertorderatselected(new Decouple());
 					if(e.key.keysym.sym == SDLK_l)
 						if(gamestate.selectedroute)
 							gamestate.selectedroute->insertorderatselected(new Loadresource());
+					if(e.key.keysym.sym == SDLK_c)
+						if(gamestate.selectedroute)
+							gamestate.selectedroute->insertorderatselected(new Couple());
 					if(e.key.keysym.sym == SDLK_p)
 						for(auto& train : trains)
 							if(train->selected)
@@ -105,6 +108,21 @@ int main(){
 						gamestate.tracksystem->placingsignal = true;
 					if(e.key.keysym.sym == SDLK_n)
 						nicetracks = !nicetracks;
+					if(e.key.keysym.sym == SDLK_o){
+						gamestate.wagons.emplace_back(new Openwagon(*gamestate.tracksystem, gamestate.newwagonstate));
+						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
+						gamestate.addtrainstoorphans();
+					}
+					if(e.key.keysym.sym == SDLK_q){
+						gamestate.wagons.emplace_back(new Tankwagon(*gamestate.tracksystem, gamestate.newwagonstate));
+						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 70);
+						gamestate.addtrainstoorphans();
+					}
+					if(e.key.keysym.sym == SDLK_r){
+						gamestate.wagons.emplace_back(new Locomotive(*gamestate.tracksystem, gamestate.newwagonstate));
+						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
+						gamestate.addtrainstoorphans();
+					}
 					break;
 				}
 				case SDL_MOUSEWHEEL:{
