@@ -28,8 +28,10 @@ void Train::getinput(int ms)
 			brake(ms);
 		if(keys[gearbutton])
 			shiftdirection();
-		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
-			if(keys[numberbuttons[iKey]]) split(iKey);
+		if(keys[routeassignbutton]){}
+		else
+			for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
+				if(keys[numberbuttons[iKey]]) split(iKey);
 		if(keys[loadbutton])
 			loadall();
 		if(keys[unloadbutton])
@@ -134,12 +136,13 @@ void Train::render()
 				int rectw = 10;
 				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
 				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
-				SDL_RenderDrawRect(renderer, &rect);
+				renderfilledrectangle(&rect, false, false);
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 		}
-		else
+		else{
 			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
+		}
 		if(!nicetracks){
 			Vec frontpos = tracksystem->getpos(forwardstate());
 			rendertext("for", frontpos.x, frontpos.y, {0,255,0,255});

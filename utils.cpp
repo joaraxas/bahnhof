@@ -243,13 +243,28 @@ Gamestate::~Gamestate()
 		delete wagons[iWagon];
 }
 
+void Gamestate::renderroutes()
+{
+	int offset = 1;
+	for(auto &route : routes){
+		rendertext("("+std::to_string(offset)+") "+route->name, SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+		offset++;
+	}
+	rendertext("(r) Create new route", SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+}
+
+Route* Gamestate::addroute()
+{
+	Route* newroute = new Route(tracksystem.get(), "Route "+std::to_string(routes.size()+1));
+	routes.emplace_back(newroute);
+}
 
 void Gamestate::addtrainstoorphans()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
 			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
-			trains.back()->route = routes.front().get();
+			//trains.back()->route = routes.front().get();
 			std::cout<<"added train automatically"<<std::endl;
 		}
 	}

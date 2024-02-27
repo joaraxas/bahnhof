@@ -22,6 +22,7 @@ int main(){
 	SDL_Event e;
 
 	while(!quit){
+		keys = SDL_GetKeyboardState(nullptr);
 		while(SDL_PollEvent(&e)){
 			switch(e.type){
 				case SDL_QUIT:{
@@ -73,6 +74,17 @@ int main(){
 					break;
 					}
 				case SDL_KEYDOWN:{
+					if(e.key.keysym.sym == SDLK_r)
+						if(!gamestate.selectedroute)
+							gamestate.addroute();
+					if(keys[routeassignbutton]){
+						if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+gamestate.routes.size())
+							for(auto& train : trains)
+								if(train->selected){
+									gamestate.selectedroute = gamestate.routes[e.key.keysym.sym-SDLK_0-1].get();
+									train->route = gamestate.selectedroute;
+								}
+					}
 					if(e.key.keysym.sym == SDLK_UP)
 						if(gamestate.selectedroute)
 							gamestate.selectedroute->selectedorderid = gamestate.selectedroute->previousorder(gamestate.selectedroute->selectedorderid);
@@ -115,10 +127,10 @@ int main(){
 					}
 					if(e.key.keysym.sym == SDLK_q){
 						gamestate.wagons.emplace_back(new Tankwagon(*gamestate.tracksystem, gamestate.newwagonstate));
-						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 70);
+						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 72);
 						gamestate.addtrainstoorphans();
 					}
-					if(e.key.keysym.sym == SDLK_r){
+					if(e.key.keysym.sym == SDLK_y){
 						gamestate.wagons.emplace_back(new Locomotive(*gamestate.tracksystem, gamestate.newwagonstate));
 						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
 						gamestate.addtrainstoorphans();
@@ -144,7 +156,6 @@ int main(){
 				}
 			}
 		}
-		keys = SDL_GetKeyboardState(nullptr);
 		if(keys[leftpanbutton])
 			cam.x-=int(ms*0.4/scale);
 		if(keys[rightpanbutton])
@@ -190,6 +201,8 @@ int main(){
 			wagon->render();
 		if(gamestate.selectedroute)
 			gamestate.selectedroute->render();
+		else
+			gamestate.renderroutes();
 		for(auto& train : trains)
 			train->render();
 		SDL_GetMouseState(&xMouse, &yMouse);
