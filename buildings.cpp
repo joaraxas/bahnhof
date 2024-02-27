@@ -26,13 +26,18 @@ Building::Building(ResourceManager& resources, int x, int y, int w, int h, resou
 void Building::update(int ms)
 {
 	timeleft = fmax(0,timeleft-ms);
+	if(storage)
 	if(timeleft==0){
 		int got = storage->unloadstorage(wants, 1);
 		if(wants==none) got = 1;
-		int put = storage->loadstorage(makes, got);
-		if(makes==none && got){
-			money+=got; 
-			//std::cout << money << std::endl;
+		if(got){
+			if(makes!=none){
+				int put = storage->loadstorage(makes, got);
+				storage->loadstorage(wants, got-put);
+			}
+			else{
+				money+=got;
+			}
 		}
 		timeleft = 10000;
 	}
@@ -41,7 +46,6 @@ void Building::update(int ms)
 void Building::render()
 {
 	SDL_SetRenderDrawColor(renderer, 63, 127, 63, 255);
-	//SDL_RenderFillRect(renderer, &rect);
 	SDL_Rect drawrect = rect;
 	renderfilledrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -53,7 +57,6 @@ Brewery::Brewery(ResourceManager& resources, int x, int y, int w, int h) : Build
 void Brewery::render()
 {
 	SDL_SetRenderDrawColor(renderer, 63, 63, 127, 255);
-	//SDL_RenderFillRect(renderer, &rect);
 	SDL_Rect drawrect = rect;
 	renderfilledrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

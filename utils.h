@@ -100,7 +100,7 @@ public:
     void render();
     void deleteclick(int xMouse, int yMouse);
     void selectat(Vec pos);
-    void buildat(Vec pos);
+    float buildat(Vec pos);
     bool switchat(Vec pos);
     Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);

@@ -266,8 +266,11 @@ bool Train::unloadall()
 			resourcetype beingunloaded;
 			int unloadedamount = w->unloadwagon(&beingunloaded);
 			if(storage->accepts==beingunloaded){
-				storage->loadstorage(beingunloaded, unloadedamount);
-				done = false;
+				int loadedamount = storage->loadstorage(beingunloaded, unloadedamount);
+				if(loadedamount==unloadedamount)
+					done = false;
+				else
+					w->loadwagon(beingunloaded, unloadedamount-loadedamount);
 			}
 			else
 				w->loadwagon(beingunloaded, unloadedamount);
@@ -720,6 +723,7 @@ int Storage::loadstorage(resourcetype resource, int amount)
 {
 	if(resource!=none){
 		if(storedresources.count(resource)){
+			amount = fmin(amount, 4-storedresources[resource]);
 			storedresources[resource] += amount;
 		}
 		else

@@ -43,8 +43,10 @@ int main(){
 						}
 					}
 					if(e.button.button == SDL_BUTTON_LEFT){
-						if(gamestate.tracksystem->selectednode || gamestate.tracksystem->placingsignal)
-							gamestate.tracksystem->buildat(mousepos);
+						if(gamestate.tracksystem->selectednode || gamestate.tracksystem->placingsignal){
+							if(money>0)
+								money-=gamestate.tracksystem->buildat(mousepos);
+						}
 						else{
 							Train* clickedtrain = nullptr;
 							for(auto& train : trains){
@@ -120,20 +122,25 @@ int main(){
 						gamestate.tracksystem->placingsignal = true;
 					if(e.key.keysym.sym == SDLK_n)
 						nicetracks = !nicetracks;
-					if(e.key.keysym.sym == SDLK_o){
-						gamestate.wagons.emplace_back(new Openwagon(*gamestate.tracksystem, gamestate.newwagonstate));
-						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
-						gamestate.addtrainstoorphans();
-					}
-					if(e.key.keysym.sym == SDLK_q){
-						gamestate.wagons.emplace_back(new Tankwagon(*gamestate.tracksystem, gamestate.newwagonstate));
-						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 72);
-						gamestate.addtrainstoorphans();
-					}
-					if(e.key.keysym.sym == SDLK_y){
-						gamestate.wagons.emplace_back(new Locomotive(*gamestate.tracksystem, gamestate.newwagonstate));
-						gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
-						gamestate.addtrainstoorphans();
+					if(money>0){
+						if(e.key.keysym.sym == SDLK_o){
+							gamestate.wagons.emplace_back(new Openwagon(*gamestate.tracksystem, gamestate.newwagonstate));
+							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
+							gamestate.addtrainstoorphans();
+							money -= 5;
+						}
+						if(e.key.keysym.sym == SDLK_q){
+							gamestate.wagons.emplace_back(new Tankwagon(*gamestate.tracksystem, gamestate.newwagonstate));
+							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 72);
+							gamestate.addtrainstoorphans();
+							money -= 6;
+						}
+						if(e.key.keysym.sym == SDLK_y){
+							gamestate.wagons.emplace_back(new Locomotive(*gamestate.tracksystem, gamestate.newwagonstate));
+							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
+							gamestate.addtrainstoorphans();
+							money -= 15;
+						}
 					}
 					break;
 				}
@@ -157,13 +164,13 @@ int main(){
 			}
 		}
 		if(keys[leftpanbutton])
-			cam.x-=int(ms*0.4/scale);
+			cam.x-=fmax(1,int(ms*0.4/scale));
 		if(keys[rightpanbutton])
-			cam.x+=int(ms*0.4/scale);
+			cam.x+=fmax(1,int(ms*0.4/scale));
 		if(keys[uppanbutton])
-			cam.y-=int(ms*0.4/scale);
+			cam.y-=fmax(1,int(ms*0.4/scale));
 		if(keys[downpanbutton])
-			cam.y+=int(ms*0.4/scale);
+			cam.y+=fmax(1,int(ms*0.4/scale));
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();
@@ -205,6 +212,7 @@ int main(){
 			gamestate.renderroutes();
 		for(auto& train : trains)
 			train->render();
+		rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}

@@ -249,15 +249,18 @@ void Tracksystem::render()
 	}
 }
 
-void Tracksystem::buildat(Vec pos)
+float Tracksystem::buildat(Vec pos)
 {
+	float cost=0;
 	if(placingsignal){
 		trackid clickedtrack = 0;
 		State signalstate = getcloseststate(pos);
 		addsignal(signalstate);
 		placingsignal = false;
+		cost = 1;
 	}
 	else{
+		trackid lasttrackindex = trackcounter;
 		nodeid clickednode = 0;
 		whatdidiclick(pos, nullptr, &clickednode, nullptr, nullptr);
 		if(clickednode){
@@ -266,7 +269,10 @@ void Tracksystem::buildat(Vec pos)
 		}
 		else
 			selectednode = extendtracktopos(selectednode, pos);
+		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+			cost += 0.01*gettrack(id)->getarclength(1);
 	}
+	return cost;
 }
 
 void Tracksystem::selectat(Vec pos)

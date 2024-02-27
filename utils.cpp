@@ -33,9 +33,9 @@ int init(){
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if(window==NULL){
+	if(renderer==NULL){
 		success = false;
-		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
+		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -220,6 +220,7 @@ float truncate(float dir)
 
 Gamestate::Gamestate()
 {
+	money = 100;
 	newwagonstate = State(1, 0.2, true);
 	//initthreetrains();
 	//initcoupling();
@@ -233,8 +234,10 @@ Gamestate::Gamestate()
 	storages.emplace_back(new Storage(resources, 100,300,800,400, hops, beer));
 	storages.emplace_back(new Storage(resources, 1500,1600,800,600, beer, hops));
 	buildings.emplace_back(new Brewery(resources, 150,320,100,50));
+	buildings.emplace_back(new Brewery(resources, 300,320,100,50));
 	buildings.emplace_back(new Hopsfield(resources, 1625,1625,50,50));
 	buildings.emplace_back(new City(resources, 1700,1625,20,50));
+	buildings.emplace_back(new City(resources, 1800,1625,20,50));
 }
 
 Gamestate::~Gamestate()
