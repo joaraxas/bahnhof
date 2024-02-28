@@ -21,6 +21,7 @@ Building::Building(ResourceManager& resources, int x, int y, int w, int h, resou
 	storage = getstorageatpoint(Vec(x+w,y+h));
 	wants = need;
 	makes = production;
+	color = {0,0,0,255};
 }
 
 void Building::update(int ms)
@@ -45,25 +46,23 @@ void Building::update(int ms)
 
 void Building::render()
 {
-	SDL_SetRenderDrawColor(renderer, 63, 127, 63, 255);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_Rect drawrect = rect;
 	renderfilledrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-Brewery::Brewery(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, hops, beer)
-{};
-
-void Brewery::render()
+Brewery::Brewery(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 50, hops, beer)
 {
-	SDL_SetRenderDrawColor(renderer, 63, 63, 127, 255);
-	SDL_Rect drawrect = rect;
-	renderfilledrectangle(&drawrect);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	color = {63, 63, 127, 255};
 }
 
-Hopsfield::Hopsfield(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, none, hops)
-{};
+Hopsfield::Hopsfield(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 200, 200, none, hops)
+{
+	color = {63, 127, 63, 255};
+}
 
-City::City(ResourceManager& resources, int x, int y, int w, int h) : Building(resources, x, y, w, h, beer, none)
-{};
+City::City(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 150, beer, none)
+{
+	color = {63, 63, 31, 255};
+}

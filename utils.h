@@ -56,6 +56,7 @@ void close();
 float norm(Vec v);
 float sign(float a);
 float truncate(float dir);
+int randi(int maxinclusive);
 
 class Node;
 class Track;
@@ -456,9 +457,11 @@ public:
     virtual void render();
     void update(int ms);
     bool containspoint(Vec pos);
-    SDL_Rect rect;
+protected:
+    SDL_Color color;
 private:
     Storage* storage;
+    SDL_Rect rect;
     int timeleft = 3000;
     ResourceManager* allresources;
     resourcetype wants;
@@ -468,20 +471,19 @@ private:
 class Brewery : public Building
 {
 public:
-    Brewery(ResourceManager& resources, int x, int y, int w, int h);
-    void render();
+    Brewery(ResourceManager& resources, Vec pos);
 };
 
 class Hopsfield : public Building
 {
 public:
-    Hopsfield(ResourceManager& resources, int x, int y, int w, int h);
+    Hopsfield(ResourceManager& resources, Vec pos);
 };
 
 class City : public Building
 {
 public:
-    City(ResourceManager& resources, int x, int y, int w, int h);
+    City(ResourceManager& resources, Vec pos);
 };
 
 class Gamestate
@@ -491,6 +493,7 @@ public:
     ~Gamestate();
     void renderroutes();
     Route* addroute();
+    void randommap();
     void initthreetrains();
     void initcoupling();
     void initjusttrack();

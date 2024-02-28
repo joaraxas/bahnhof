@@ -83,7 +83,6 @@ void rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bo
 	int w, h;
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};
-	//SDL_RenderCopy(renderer, tex, NULL, &rect);
 	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
 	SDL_DestroyTexture(tex);
 }
@@ -218,6 +217,16 @@ float truncate(float dir)
 	return dir - pi*floor(dir/pi);
 }
 
+int randint(int maxinclusive)
+{
+	return rand() % (maxinclusive+1);
+}
+
+Vec randpos(int xoffset=0, int yoffset=0)
+{
+	return Vec(randint(MAP_WIDTH-xoffset), randint(MAP_HEIGHT-yoffset));
+};
+
 Gamestate::Gamestate()
 {
 	money = 100;
@@ -230,14 +239,8 @@ Gamestate::Gamestate()
 	tracksystem->selectednode = 0;
 
 	addtrainstoorphans();
-
-	storages.emplace_back(new Storage(resources, 100,300,800,400, hops, beer));
-	storages.emplace_back(new Storage(resources, 1500,1600,800,600, beer, hops));
-	buildings.emplace_back(new Brewery(resources, 150,320,100,50));
-	buildings.emplace_back(new Brewery(resources, 300,320,100,50));
-	buildings.emplace_back(new Hopsfield(resources, 1625,1625,50,50));
-	buildings.emplace_back(new City(resources, 1700,1625,20,50));
-	buildings.emplace_back(new City(resources, 1800,1625,20,50));
+	
+	randommap();
 }
 
 Gamestate::~Gamestate()
@@ -270,6 +273,37 @@ void Gamestate::addtrainstoorphans()
 			//trains.back()->route = routes.front().get();
 			std::cout<<"added train automatically"<<std::endl;
 		}
+	}
+}
+
+void Gamestate::randommap()
+{
+	for(int i=0; i<20; i++){
+		Vec newpos = randpos(100,50);
+		int storageextraw = randint(600);
+		int storageextrah = randint(600);
+		int storagex = newpos.x-randint(storageextraw);
+		int storagey = newpos.y-randint(storageextrah);
+		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+100, storageextrah+50, hops, beer));
+		buildings.emplace_back(new Brewery(resources, newpos));
+	}
+	for(int i=0; i<10; i++){
+		Vec newpos = randpos(200,200);
+		int storageextraw = randint(600);
+		int storageextrah = randint(600);
+		int storagex = newpos.x-randint(storageextraw);
+		int storagey = newpos.y-randint(storageextrah);
+		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+200, storageextrah+200, none, hops));
+		buildings.emplace_back(new Hopsfield(resources, newpos));
+	}
+	for(int i=0; i<20; i++){
+		Vec newpos = randpos(100,150);
+		int storageextraw = randint(600);
+		int storageextrah = randint(600);
+		int storagex = newpos.x-randint(storageextraw);
+		int storagey = newpos.y-randint(storageextrah);
+		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+100, storageextrah+150, beer, none));
+		buildings.emplace_back(new City(resources, newpos));
 	}
 }
 

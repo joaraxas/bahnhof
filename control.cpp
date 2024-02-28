@@ -267,7 +267,7 @@ bool Train::unloadall()
 			int unloadedamount = w->unloadwagon(&beingunloaded);
 			if(storage->accepts==beingunloaded){
 				int loadedamount = storage->loadstorage(beingunloaded, unloadedamount);
-				if(loadedamount==unloadedamount)
+				if(loadedamount==unloadedamount && loadedamount!=0)
 					done = false;
 				else
 					w->loadwagon(beingunloaded, unloadedamount-loadedamount);
@@ -681,10 +681,8 @@ void Resource::render(Vec pos)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
-	//SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), int(w), int(h)};
-	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -0 * 180 / pi, NULL, SDL_FLIP_NONE);
-	rendertexture(tex, &rect);
+	rendertexture(tex, &rect, nullptr, 0, true, false);
 }
 
 Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
@@ -704,7 +702,7 @@ void Storage::render()
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;
-	int sep = 20;
+	int sep = 20/scale;
 	for(auto resourcepair : storedresources){
 		Resource* resource = allresources->get(resourcepair.first);
 		int amount = resourcepair.second;
@@ -723,7 +721,7 @@ int Storage::loadstorage(resourcetype resource, int amount)
 {
 	if(resource!=none){
 		if(storedresources.count(resource)){
-			amount = fmin(amount, 4-storedresources[resource]);
+			amount = fmin(amount, 20-storedresources[resource]);
 			storedresources[resource] += amount;
 		}
 		else
