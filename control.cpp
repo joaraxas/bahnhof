@@ -46,6 +46,18 @@ void Train::update(int ms)
 	if(go)
 		if(perform(ms))
 			proceed();
+	
+	float minradius = INFINITY;
+	for(auto w : wagons)
+		minradius = fmin(minradius, abs(tracksystem->getradius(w->state)));
+	float wagonheight = 2.5;
+	float safetyfactor = 0.5;
+	float minradiusmeter = minradius*150*0.001;
+	float maxspeed = sqrt(safetyfactor*g*minradiusmeter*normalgauge/2/wagonheight)*1000/150;
+	
+	if(abs(speed)>maxspeed)
+		speed = maxspeed*sign(speed);
+		//brake(ms);
 	float pixels = ms*0.001*speed;
 	for(auto& wagon : wagons)
 		wagon->travel(pixels);
@@ -212,6 +224,10 @@ bool Train::gas(int ms)
 		Ptot += w->getpower();
 	float mtot = size(wagons);
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
+	if(gasisforward && !wagons.front()->hasdriver)
+		speed = fmin(50, speed);
+	if(!gasisforward && !wagons.back()->hasdriver)
+		speed = -fmin(50, -speed);
 	return true;
 }
 
@@ -283,8 +299,6 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 {
 	speed = 0;
 	train.speed = 0;
-	go = false;
-	train.go = false;
 	if(wantstocouple || train.wantstocouple){
 		bool flipdirection = false;
 		bool ismyback = !ismyfront;
@@ -325,6 +339,10 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 			selected = true;
 		wantstocouple = false;
 		go = true;
+	}
+	else{
+		go = false;
+		train.go = false;
 	}
 }
 

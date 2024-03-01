@@ -33,7 +33,6 @@ void Wagon::render()
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 	rendertexture(tex, &rect, &srcrect, imageangle);
 	if(loadedresource!=none){
 		Resource* resource = allresources->get(loadedresource);
@@ -82,6 +81,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/loco0.png")
 {
 	h = h/imagenumber;
+	hasdriver = true;
 }
 
 void Locomotive::update(int ms)
@@ -101,7 +101,6 @@ void Locomotive::render()
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-	//SDL_RenderCopyEx(renderer, tex, &srcrect, &rect, -imageangle * 180 / pi, NULL, SDL_FLIP_NONE);
 	rendertexture(tex, &rect, &srcrect, imageangle);
 }
 

@@ -145,32 +145,37 @@ int main(){
 					break;
 				}
 				case SDL_MOUSEWHEEL:{
-					if(e.wheel.y > 0){ // scroll up
-						cam.x+=cam.w/4;
+					SDL_GetMouseState(&xMouse, &yMouse);
+					if(e.wheel.y > 0){ // zoom in
+						cam.x+=cam.w/2*xMouse/SCREEN_WIDTH;
 						cam.w/=2;
-						cam.y+=cam.h/4;
+						cam.y+=cam.h/2*yMouse/SCREEN_HEIGHT;
 						cam.h/=2;
 						scale*=2;
+						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
+						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
 					}
-					if(e.wheel.y < 0){ // scroll down
-						cam.x-=cam.w/2;
+					if(e.wheel.y < 0){ // zoom out
+						cam.x-=cam.w*xMouse/SCREEN_WIDTH;
 						cam.w*=2;
-						cam.y-=cam.h/2;
+						cam.y-=cam.h*yMouse/SCREEN_HEIGHT;
 						cam.h*=2;
 						scale/=2;
+						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
+						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
 					}
 					break;
 				}
 			}
 		}
 		if(keys[leftpanbutton])
-			cam.x-=fmax(1,int(ms*0.4/scale));
+			cam.x = fmax(0, cam.x-fmax(1,int(ms*0.4/scale)));
 		if(keys[rightpanbutton])
-			cam.x+=fmax(1,int(ms*0.4/scale));
+			cam.x = fmin(MAP_WIDTH-cam.w, cam.x+fmax(1,int(ms*0.4/scale)));
 		if(keys[uppanbutton])
-			cam.y-=fmax(1,int(ms*0.4/scale));
+			cam.y = fmax(0, cam.y-fmax(1,int(ms*0.4/scale)));
 		if(keys[downpanbutton])
-			cam.y+=fmax(1,int(ms*0.4/scale));
+			cam.y = fmin(MAP_HEIGHT-cam.h, cam.y+fmax(1,int(ms*0.4/scale)));
 
 		ms = SDL_GetTicks() - lastTime;
 		lastTime = SDL_GetTicks();

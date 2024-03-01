@@ -270,7 +270,7 @@ float Tracksystem::buildat(Vec pos)
 		else
 			selectednode = extendtracktopos(selectednode, pos);
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-			cost += 0.01*gettrack(id)->getarclength(1);
+			cost += 0.003*gettrack(id)->getarclength(1);
 	}
 	return cost;
 }
@@ -666,30 +666,27 @@ void Node::connecttrack(trackid track, bool fromabove){
 void Node::render()
 {
 	if(!nicetracks){
-		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
-		//SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
 		renderline(pos+Vec(-5,-5)/scale, pos+Vec(5,5)/scale);
 		renderline(pos+Vec(-5,5)/scale, pos+Vec(5,-5)/scale);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		//SDL_RenderDrawLine(renderer, pos.x, pos.y, pos.x+12*cos(dir), pos.y-12*sin(dir));
 		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir))/scale);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	}
-	if(size(tracksup)>1){
-		Vec switchpos = getswitchpos(true);
-		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*stateup/(size(tracksup)-1), switchpos.y-5);
-		int diff = stateup/(size(tracksup)-1);
-		renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
-		if(!nicetracks)
-			rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
-	}
-	if(size(tracksdown)>1){
-		Vec switchpos = getswitchpos(false);
-		//SDL_RenderDrawLine(renderer, switchpos.x, switchpos.y+5, switchpos.x-10+20*statedown/(size(tracksdown)-1), switchpos.y-5);
-		int diff = statedown/(size(tracksdown)-1);
-		renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
-		if(!nicetracks)
-			rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
+	if(scale>0.3){
+		if(size(tracksup)>1){
+			Vec switchpos = getswitchpos(true);
+			int diff = stateup/(size(tracksup)-1);
+			renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
+			if(!nicetracks)
+				rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
+		}
+		if(size(tracksdown)>1){
+			Vec switchpos = getswitchpos(false);
+			int diff = statedown/(size(tracksdown)-1);
+			renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
+			if(!nicetracks)
+				rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
+		}
 	}
 }
 
@@ -905,7 +902,7 @@ void Track::render()
 	if(!isinf(radius))
 		nSegments = fmax(1,round(abs(phi/2/pi*4*128*scale)));
 	float gauge = 0;
-	if(nicetracks && scale>0.3) gauge = 1435/150;
+	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
@@ -921,7 +918,7 @@ void Track::render()
 	}
 	if(!nicetracks){
 		Vec radiustextpos = getpos(0.5,15);
-		std::string radiustext = std::to_string(int(round(radius)));
+		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
 		if(isinf(radius))
 			radiustext = std::to_string(radius);
 		rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});

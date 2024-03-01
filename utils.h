@@ -19,9 +19,11 @@ const int downpanbutton = SDL_SCANCODE_S;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
-const int MAP_WIDTH = SCREEN_WIDTH*8;
-const int MAP_HEIGHT = SCREEN_HEIGHT*8;
+const int MAP_WIDTH = SCREEN_WIDTH*32;
+const int MAP_HEIGHT = SCREEN_HEIGHT*32;
 const double pi = 3.141592653589793238;
+const float g = 9.8;
+const float normalgauge = 1.435;
 
 extern float money;
 extern bool nicetracks;
@@ -45,7 +47,7 @@ class Vec
 
 SDL_Texture* loadImage(std::string path);
 SDL_Texture* loadText(std::string text, SDL_Color color);
-void rendertext(std::string text, int x, int y, SDL_Color color, bool ported=true, bool zoomed=false);
+void rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false);
 void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true);
 void renderline(Vec pos1, Vec pos2, bool ported=true);
 void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
@@ -230,6 +232,7 @@ public:
     Train* train;
     Vec pos;
     bool alignedforward = true;
+    bool hasdriver = false;
     int w;
     State state; //should be protected
 protected:
@@ -255,7 +258,7 @@ public:
     float getpower();
 private:
     float P[2] = {0.2,0.2};
-    float maxspeed[2] = {4*40,140};
+    float maxspeed[2] = {90,180};
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;

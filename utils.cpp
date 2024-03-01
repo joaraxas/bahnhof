@@ -229,7 +229,7 @@ Vec randpos(int xoffset=0, int yoffset=0)
 
 Gamestate::Gamestate()
 {
-	money = 100;
+	money = 200;
 	newwagonstate = State(1, 0.2, true);
 	//initthreetrains();
 	//initcoupling();
@@ -278,7 +278,7 @@ void Gamestate::addtrainstoorphans()
 
 void Gamestate::randommap()
 {
-	for(int i=0; i<20; i++){
+	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,50);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
@@ -287,7 +287,7 @@ void Gamestate::randommap()
 		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+100, storageextrah+50, hops, beer));
 		buildings.emplace_back(new Brewery(resources, newpos));
 	}
-	for(int i=0; i<10; i++){
+	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
@@ -296,7 +296,7 @@ void Gamestate::randommap()
 		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+200, storageextrah+200, none, hops));
 		buildings.emplace_back(new Hopsfield(resources, newpos));
 	}
-	for(int i=0; i<20; i++){
+	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
