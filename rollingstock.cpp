@@ -6,12 +6,16 @@
 #include<map>
 #include "utils.h"
 
-Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path)
+Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath)
 {
 	tracksystem = &newtracksystem;
 	allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+	if(iconpath!=""){
+		icontex = loadImage(iconpath);
+		SDL_QueryTexture(icontex, NULL, NULL, &iconw, &iconh);
+	}
 	state = trackstate;
 	pos = tracksystem->getpos(state);
 }
@@ -37,6 +41,11 @@ void Wagon::render()
 	if(loadedresource!=none){
 		Resource* resource = allresources->get(loadedresource);
 		resource->render(pos);
+	}
+	else if(icontex)
+	if(scale<0.3){
+		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
+		rendertexture(icontex, &iconrect, nullptr, 0, true, false);
 	}
 }
 
@@ -78,7 +87,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/loco0.png")
+Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/loco0.png", "assets/iconloco.png")
 {
 	h = h/imagenumber;
 	hasdriver = true;
@@ -99,9 +108,16 @@ void Locomotive::render()
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
-	SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
-	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-	rendertexture(tex, &rect, &srcrect, imageangle);
+	{
+		SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
+		SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
+		rendertexture(tex, &rect, &srcrect, imageangle);
+	}
+	if(icontex)
+	if(scale<0.3){
+		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
+		rendertexture(icontex, &iconrect, nullptr, 0, true, false);
+	}
 }
 
 float Locomotive::getpower()
@@ -125,7 +141,7 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/flakvagn1.png")
+Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/flakvagn1.png", "assets/iconopenwagon.png")
 {}
 
 int Openwagon::loadwagon(resourcetype type, int amount)
@@ -136,7 +152,7 @@ int Openwagon::loadwagon(resourcetype type, int amount)
 	return loadedamount;
 }
 
-Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/train.png")
+Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "assets/kylvagn.png", "assets/iconrefrigeratorcar.png")
 {}
 
 int Tankwagon::loadwagon(resourcetype type, int amount)

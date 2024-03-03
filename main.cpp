@@ -127,19 +127,19 @@ int main(){
 							gamestate.wagons.emplace_back(new Openwagon(*gamestate.tracksystem, gamestate.newwagonstate));
 							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
 							gamestate.addtrainstoorphans();
-							money -= 5;
+							money -= 3;
 						}
 						if(e.key.keysym.sym == SDLK_q){
 							gamestate.wagons.emplace_back(new Tankwagon(*gamestate.tracksystem, gamestate.newwagonstate));
 							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 72);
 							gamestate.addtrainstoorphans();
-							money -= 6;
+							money -= 3;
 						}
 						if(e.key.keysym.sym == SDLK_y){
 							gamestate.wagons.emplace_back(new Locomotive(*gamestate.tracksystem, gamestate.newwagonstate));
 							gamestate.newwagonstate = gamestate.tracksystem->travel(gamestate.newwagonstate, 60);
 							gamestate.addtrainstoorphans();
-							money -= 15;
+							money -= 8;
 						}
 					}
 					break;

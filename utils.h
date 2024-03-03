@@ -220,7 +220,7 @@ private:
 class Wagon
 {
 public:
-    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path);
+    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="");
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render();
@@ -238,8 +238,10 @@ public:
 protected:
     Tracksystem* tracksystem;
     int h;
+    int iconw, iconh;
     float imageangle = 0;
     SDL_Texture* tex;
+    SDL_Texture* icontex;
     ResourceManager* allresources;
 private:
     resourcetype loadedresource = none;

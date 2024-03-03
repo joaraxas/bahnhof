@@ -113,8 +113,8 @@ void renderline(Vec pos1, Vec pos2, bool ported){
 		pos2.x *= scale;
 		pos2.y *= scale;
 	}
-	if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
-		(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
+	//if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
+	//	(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
 		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
@@ -241,6 +241,10 @@ Gamestate::Gamestate()
 	addtrainstoorphans();
 	
 	randommap();
+
+	storages.emplace_back(new Storage(resources, 1400, 1400, 600, 300, none, hops));
+	storages.back()->loadstorage(beer, 108);
+	storages.back()->loadstorage(hops, 18);
 }
 
 Gamestate::~Gamestate()

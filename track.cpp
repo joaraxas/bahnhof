@@ -856,7 +856,7 @@ bool Track::isbelownextnode()
 
 void Track::render()
 {
-	//// badd ////
+	//// banvall ////
 	/*if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 127,127,127,255);
 		float sleeperwidth = 4000/200;
@@ -900,7 +900,7 @@ void Track::render()
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!isinf(radius))
-		nSegments = fmax(1,round(abs(phi/2/pi*4*128*scale)));
+		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
 	float gauge = 0;
 	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
@@ -917,7 +917,7 @@ void Track::render()
 		renderline(drawpos1r, drawpos2r);
 	}
 	if(!nicetracks){
-		Vec radiustextpos = getpos(0.5,15);
+		Vec radiustextpos = getpos(0.5);
 		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
 		if(isinf(radius))
 			radiustext = std::to_string(radius);
