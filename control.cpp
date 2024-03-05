@@ -17,6 +17,9 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
+	lighttex = loadImage("assets/light.png");
+	SDL_QueryTexture(lighttex, NULL, NULL, &lightw, &lighth);
+	lightw = lightw*0.5;
 }
 
 void Train::getinput(int ms)
@@ -155,12 +158,16 @@ void Train::render()
 		else{
 			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
 		}
-		if(!nicetracks){
-			Vec frontpos = tracksystem->getpos(forwardstate());
-			rendertext("for", frontpos.x, frontpos.y, {0,255,0,255});
-			Vec backpos = tracksystem->getpos(backwardstate());
-			rendertext("bac", backpos.x, backpos.y, {255,0,0,255});
-		}
+		Vec frontpos = tracksystem->getpos(forwardstate());
+		float forwarddir = tracksystem->getorientation(forwardstate());
+		SDL_Rect forwardrect = {int(frontpos.x-lightw/2), int(frontpos.y-lighth/2), lightw, lighth};
+		SDL_Rect srcrect = {0, 0, lightw, lighth};
+		rendertexture(lighttex, &forwardrect, &srcrect, forwarddir);
+		Vec backpos = tracksystem->getpos(backwardstate());
+		float backwarddir = tracksystem->getorientation(backwardstate());
+		SDL_Rect backwardrect = {int(backpos.x-lightw/2), int(backpos.y-lighth/2), lightw, lighth};
+		srcrect.x = lightw;
+		rendertexture(lighttex, &backwardrect, &srcrect, backwarddir);
 	}
 }
 
@@ -201,10 +208,20 @@ void Train::checkcollision(int ms, Train* train)
 	if(size(wagons) >= 1)
 	if(size(train->wagons) >= 1){
 		float pixels = ms*0.001*abs(speed);
-		if(tracksystem->distancefromto(forwardstate(), train->forwardstate(), pixels)<pixels)
+		float distance = tracksystem->distancefromto(forwardstate(), flipstate(train->forwardstate()), pixels, true);
+		if(distance<pixels){
+			for(auto wagon: wagons)
+				wagon->travel(distance*sign(speed));
 			couple(*train, gasisforward, train->gasisforward);
-		else if(tracksystem->distancefromto(forwardstate(), train->backwardstate(), pixels)<pixels)
-			couple(*train, gasisforward, !train->gasisforward);
+		}
+		else{
+			distance = tracksystem->distancefromto(forwardstate(), flipstate(train->backwardstate()), pixels, true);
+			if(distance<pixels){
+				for(auto wagon: wagons)
+					wagon->travel(distance*sign(speed));
+				couple(*train, gasisforward, !train->gasisforward);
+			}
+		}
 	}
 }
 

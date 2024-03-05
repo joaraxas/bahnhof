@@ -37,6 +37,9 @@ Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std:
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
 	selectednode = newnode;
+	switchtex = loadImage("assets/switch.png");
+	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
+	switchrect.h = switchrect.h*0.5;
 }
 
 Tracksystem::~Tracksystem()
@@ -676,14 +679,20 @@ void Node::render()
 		if(size(tracksup)>1){
 			Vec switchpos = getswitchpos(true);
 			int diff = stateup/(size(tracksup)-1);
-			renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
+			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
+			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
+			tracksystem->switchrect.y = tracksystem->switchrect.h*stateup;
+			rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, dir-pi/2, true, true);
 			if(!nicetracks)
 				rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
 		if(size(tracksdown)>1){
 			Vec switchpos = getswitchpos(false);
 			int diff = statedown/(size(tracksdown)-1);
-			renderline(switchpos+Vec(0,5)/scale, switchpos+Vec(-10+20*diff,-5)/scale);
+			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
+			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
+			tracksystem->switchrect.y = tracksystem->switchrect.h*statedown;
+			rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, pi+dir-pi/2, true, true);
 			if(!nicetracks)
 				rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
@@ -692,7 +701,7 @@ void Node::render()
 
 Vec Node::getswitchpos(bool updown)
 {
-	float transverseoffset = -(2*updown-1)*20/scale;
+	float transverseoffset = -(2*updown-1)*28;///scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
 }
 

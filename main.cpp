@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include<string>
+#include<format>
 #include<map>
 #include "utils.h"
 
@@ -10,12 +11,14 @@ float money = 0;
 bool nicetracks = true;
 float scale = 1;
 int xMouse, yMouse;
+float gamespeed = 1;
 
 int main(){
 	init();
 	Gamestate gamestate;
 	bool quit = false;
 	int ms = 0;
+	int mslogic = ms*gamespeed;
 	int startTime = SDL_GetTicks();
 	int lastTime = SDL_GetTicks();
 	SDL_Texture* fieldtex = loadImage("assets/field.png");
@@ -51,7 +54,7 @@ int main(){
 							Train* clickedtrain = nullptr;
 							for(auto& train : trains){
 								for(auto& wagon : train->wagons){
-									if(norm(mousepos-wagon->pos)<wagon->w/2){
+									if(norm(mousepos-wagon->pos)<wagon->w/2/scale){
 										gamestate.selectedroute = train->route;
 										clickedtrain = train.get();
 									}
@@ -154,6 +157,7 @@ int main(){
 						scale*=2;
 						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
 						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
+						gamespeed=gamespeed/1.5;
 					}
 					if(e.wheel.y < 0){ // zoom out
 						cam.x-=cam.w*xMouse/SCREEN_WIDTH;
@@ -163,6 +167,7 @@ int main(){
 						scale/=2;
 						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
 						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
+						gamespeed=gamespeed*1.5;
 					}
 					break;
 				}
@@ -178,24 +183,28 @@ int main(){
 			cam.y = fmin(MAP_HEIGHT-cam.h, cam.y+fmax(1,int(ms*0.4/scale)));
 
 		ms = SDL_GetTicks() - lastTime;
+		mslogic = gamespeed*ms;
 		lastTime = SDL_GetTicks();
 
 		for(int iTrain=0; iTrain<trains.size(); iTrain++)
-			trains[iTrain]->getinput(ms);
+			trains[iTrain]->getinput(mslogic);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++)
 			for(int jTrain=0; jTrain<trains.size(); jTrain++)
 				if(iTrain!=jTrain)
-					trains[iTrain]->checkcollision(ms, trains[jTrain].get());
+					trains[iTrain]->checkcollision(mslogic, trains[jTrain].get());
 		for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
 			if(trains[iTrain]->wagons.size() == 0)
 				trains.erase(trains.begin()+iTrain);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++){
-			trains[iTrain]->update(ms);
+			trains[iTrain]->update(mslogic);
 		}
 		for(auto& wagon : gamestate.wagons)
-			wagon->update(ms);
+			wagon->update(mslogic);
+		int lastmoney = money;
 		for(auto& building : buildings)
-			building->update(ms);
+			building->update(mslogic);
+		gamestate.update(mslogic);
+		gamestate.revenue += money-lastmoney;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
@@ -218,6 +227,8 @@ int main(){
 		for(auto& train : trains)
 			train->render();
 		rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
+		rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
+		rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}

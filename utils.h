@@ -19,8 +19,8 @@ const int downpanbutton = SDL_SCANCODE_S;
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
-const int MAP_WIDTH = SCREEN_WIDTH*32;
-const int MAP_HEIGHT = SCREEN_HEIGHT*32;
+const int MAP_WIDTH = SCREEN_WIDTH*64;
+const int MAP_HEIGHT = SCREEN_HEIGHT*64;
 const double pi = 3.141592653589793238;
 const float g = 9.8;
 const float normalgauge = 1.435;
@@ -123,6 +123,8 @@ public:
     int getswitchstate(nodeid node, bool updown);
     nodeid selectednode = 0;
     bool placingsignal = false;
+    SDL_Texture* switchtex;
+    SDL_Rect switchrect;
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
@@ -310,6 +312,8 @@ public:
     bool wantstocouple = false;
 private:
     bool checkifreachedstate(State goalstate, int ms);
+    SDL_Texture* lighttex;
+    int lightw, lighth;
 };
 
 class Route
@@ -496,11 +500,10 @@ class Gamestate
 public:
     Gamestate();
     ~Gamestate();
+    void update(int ms);
     void renderroutes();
     Route* addroute();
     void randommap();
-    void initthreetrains();
-    void initcoupling();
     void initjusttrack();
     void inittrain(State startstate);
     void addtrainstoorphans();
@@ -509,6 +512,8 @@ public:
     std::vector<std::unique_ptr<Route>> routes;
     std::unique_ptr<Tracksystem> tracksystem;
     Route* selectedroute = nullptr;
+    int time = 0;
+    int revenue = 0;
     State newwagonstate;
 };
 

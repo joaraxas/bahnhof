@@ -98,7 +98,6 @@ void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float an
 		rect->w *= scale;
 		rect->h *= scale;
 	}
-	//SDL_RenderCopy(renderer, tex, NULL, rect);
 	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
 }
 
@@ -231,8 +230,6 @@ Gamestate::Gamestate()
 {
 	money = 200;
 	newwagonstate = State(1, 0.2, true);
-	//initthreetrains();
-	//initcoupling();
 	initjusttrack();
 	inittrain(State(7,0.5,1));
 	trains.back()->route = routes.front().get();
@@ -251,6 +248,11 @@ Gamestate::~Gamestate()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
 		delete wagons[iWagon];
+}
+
+void Gamestate::update(int ms)
+{
+	time += ms;
 }
 
 void Gamestate::renderroutes()
@@ -274,7 +276,6 @@ void Gamestate::addtrainstoorphans()
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
 			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
-			//trains.back()->route = routes.front().get();
 			std::cout<<"added train automatically"<<std::endl;
 		}
 	}
@@ -311,170 +312,10 @@ void Gamestate::randommap()
 	}
 }
 
-/*
-void Gamestate::initthreetrains()
-{
-	money = 10;
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
-	tracksystem->buildat(Vec(200, 200));
-	tracksystem->selectat(Vec(800, 500));
-	nodeid firstswitch = tracksystem->selectednode;
-	tracksystem->buildat(Vec(800, 600));
-	tracksystem->buildat(Vec(700, 700));
-	tracksystem->buildat(Vec(200, 700));
-	tracksystem->buildat(Vec(100, 500));//connect
-
-	signalid upperfields = tracksystem->addsignal(State(5,0.9,true));
-	signalid lowerfields = tracksystem->addsignal(State(11,0.9,true));
-	signalid enterupper = tracksystem->addsignal(State(5,0.3,true));
-
-	State trainstart;
-	int nWagons = 0;
-	
-	nWagons = wagons.size();
-	trainstart = State(2,0.5,true);
-	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
-	for(int iWagon=0; iWagon<7; iWagon++){
-		State state = tracksystem->travel(trainstart, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(*tracksystem, state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-
-	nWagons = wagons.size();
-	trainstart = State(4,0.9,true);
-	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
-	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = tracksystem->travel(trainstart, -(53+69)/2-iWagon*69);
-		wagons.emplace_back(new Tankwagon(*tracksystem, state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-
-	nWagons = wagons.size();
-	trainstart = State(13,0.5,true);
-	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
-	for(int iWagon=0; iWagon<2; iWagon++){
-		State state = tracksystem->travel(trainstart, -(53+69)/2-iWagon*69);
-		wagons.emplace_back(new Tankwagon(*tracksystem, state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-	
-	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
-	storages.emplace_back(new Storage(resources, 300,500,600,250, beer, hops));
-	buildings.emplace_back(new Brewery(resources, 150,120,100,50));
-	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
-	buildings.emplace_back(new City(resources, 700,625,20,50));
-
-	routes.emplace_back(new Route("Hops"));
-	int ri = size(routes)-1;
-	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
-	routes[ri]->appendorder(new Setswitch(firstswitch, false, 1));
-	routes[ri]->appendorder(new Gotostate(State(11,0.7,true)));
-	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Setsignal(upperfields, 0));
-	routes[ri]->appendorder(new Gotostate(State(1,0.5,true)));
-	routes[ri]->appendorder(new Setsignal(upperfields, 1));
-	trains[0]->route = routes[ri].get();
-
-	routes.emplace_back(new Route("Beer"));
-	ri = size(routes)-1;
-	routes[ri]->appendorder(new Gotostate(State(3,0.7,true)));
-	routes[ri]->appendorder(new Setswitch(firstswitch, false, 0));
-	routes[ri]->appendorder(new Gotostate(State(5,0.7,true)));
-	routes[ri]->appendorder(new Setsignal(enterupper, 0));
-	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Setsignal(lowerfields, 0));
-	routes[ri]->appendorder(new Gotostate(State(6,0.5,true)));
-	routes[ri]->appendorder(new Setsignal(enterupper, 1));
-	routes[ri]->appendorder(new Gotostate(State(1,0.5,true)));
-	routes[ri]->appendorder(new Setsignal(lowerfields, 1));
-	routes[ri]->appendorder(new Loadresource());
-	trains[1]->route = routes[ri].get();
-	trains[2]->route = routes[ri].get();
-}
-
-void Gamestate::initcoupling()
-{
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,800,800,700,200,100,100}, {200,200,300,500,600,600,500,300}));
-	tracksystem->buildat(Vec(200, 200));
-	tracksystem->selectat(Vec(800, 500));//select
-	nodeid rightswitch = tracksystem->selectednode;
-	tracksystem->buildat(Vec(800, 600));
-	tracksystem->buildat(Vec(700, 700));
-	tracksystem->buildat(Vec(200, 700));
-	tracksystem->buildat(Vec(100, 500));//connect
-	nodeid leftswitch = tracksystem->selectednode;
-	tracksystem->setswitch(rightswitch, 0, 1);
-	tracksystem->setswitch(leftswitch, 0, 0);
-	State topstation(1,0.6,true);
-	State upperstation(5,0.8,true);
-	State lowerstation(11,0.8,true);
-	State turnpoint(7,0.4,true);
-
-	State trainstart;
-	int nWagons = 0;
-	
-	nWagons = wagons.size();
-	trainstart = topstation;
-	wagons.emplace_back(new Locomotive(*tracksystem, trainstart));
-	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = tracksystem->travel(trainstart, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(*tracksystem, state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-	
-	nWagons = wagons.size();
-	trainstart = upperstation;
-	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = tracksystem->travel(trainstart, -iWagon*69);
-		wagons.emplace_back(new Tankwagon(*tracksystem, state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-
-	storages.emplace_back(new Storage(resources, 100,100,400,150, hops, beer));
-	storages.emplace_back(new Storage(resources, 300,500,600,250, beer, hops));
-	buildings.emplace_back(new Brewery(resources, 150,120,100,50));
-	buildings.emplace_back(new Hopsfield(resources, 625,625,50,50));
-	buildings.emplace_back(new City(resources, 700,625,20,50));
-
-	int ri = 0;
-
-	ri = size(routes);
-	Route* loadroute = new Route("Load up");
-	routes.emplace_back(loadroute);
-	routes[ri]->appendorder(new Loadresource());
-
-	ri = size(routes);
-	routes.emplace_back(new Route("Go get"));
-	routes[ri]->appendorder(new Setswitch(rightswitch, false, 1));
-	routes[ri]->appendorder(new Gotostate(lowerstation));
-	routes[ri]->appendorder(new Decouple(loadroute));
-	routes[ri]->appendorder(new Gotostate(turnpoint));
-	routes[ri]->appendorder(new Setswitch(leftswitch, false, 0));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(upperstation));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(topstation));
-	routes[ri]->appendorder(new Loadresource());
-	routes[ri]->appendorder(new Setswitch(rightswitch, false, 0));
-	routes[ri]->appendorder(new Gotostate(upperstation));
-	routes[ri]->appendorder(new Decouple(loadroute));
-	routes[ri]->appendorder(new Gotostate(turnpoint));
-	routes[ri]->appendorder(new Setswitch(leftswitch, false, 1));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(lowerstation));
-	routes[ri]->appendorder(new Turn());
-	routes[ri]->appendorder(new Gotostate(topstation));
-	routes[ri]->appendorder(new Loadresource());
-	trains[0]->route = routes[ri].get();
-}
-*/
-
 void Gamestate::initjusttrack()
 {
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,750,700,200,150,200,700}, {250,250,200,150,150,100,50,50}));
-	//tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {200,200}));
-
+	
 }
 
 void Gamestate::inittrain(State startstate)
