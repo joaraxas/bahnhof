@@ -231,7 +231,7 @@ Gamestate::Gamestate()
 	money = 200;
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
-	inittrain(State(7,0.5,1));
+	inittrain(State(1,0.5,1));
 	trains.back()->route = routes.front().get();
 	tracksystem->selectednode = 0;
 
@@ -314,7 +314,7 @@ void Gamestate::randommap()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,750,700,200,150,200,700}, {250,250,200,150,150,100,50,50}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700}, {250,250}));
 	
 }
 

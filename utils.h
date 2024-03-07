@@ -58,7 +58,7 @@ void close();
 float norm(Vec v);
 float sign(float a);
 float truncate(float dir);
-int randi(int maxinclusive);
+int randint(int maxinclusive);
 
 class Node;
 class Track;
@@ -465,7 +465,6 @@ public:
     Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
     virtual void render();
     void update(int ms);
-    bool containspoint(Vec pos);
 protected:
     SDL_Color color;
 private:

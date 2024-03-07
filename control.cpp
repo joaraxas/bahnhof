@@ -730,7 +730,6 @@ Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourc
 void Storage::render()
 {
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
-	//SDL_RenderDrawRect(renderer, &rect);
 	SDL_Rect drawrect = rect;
 	renderrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
