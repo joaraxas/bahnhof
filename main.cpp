@@ -186,6 +186,7 @@ int main(){
 		mslogic = gamespeed*ms;
 		lastTime = SDL_GetTicks();
 
+		gamestate.tracksystem->update(mslogic);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++)
 			trains[iTrain]->getinput(mslogic);
 		for(int iTrain=0; iTrain<trains.size(); iTrain++)

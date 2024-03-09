@@ -100,6 +100,7 @@ public:
     Tracksystem();
     Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
+    void update(int ms);
     void render();
     void deleteclick(int xMouse, int yMouse);
     void selectat(Vec pos);
@@ -114,13 +115,18 @@ public:
     float getradius(State state);
     State travel(State state, float pixels);
     float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
+    bool isendofline(State state);
     ResourceManager* allresources;
     signalid addsignal(State state);
     void setsignal(signalid signal, int redgreenorflip);
     bool getsignalstate(signalid signal);
-    bool isred(State trainstate);
+    bool isred(Train* train);
     void setswitch(nodeid node, bool updown, int switchstate);
     int getswitchstate(nodeid node, bool updown);
+    bool checkblocks(std::vector<nodeid> switchblocks, Train* fortrain);
+    bool claimblocks(std::vector<nodeid> switchblocks, Train* fortrain);
+    void freeblocks(std::vector<nodeid> switchblocks);
+    void runoverblocks(State state, float pixels, Train* fortrain);
     nodeid selectednode = 0;
     bool placingsignal = false;
     SDL_Texture* switchtex;
@@ -178,6 +184,7 @@ private:
     int statedown = 0;
     std::vector<trackid> tracksup;
     std::vector<trackid> tracksdown;
+    Train* reservedfor=nullptr;
 };
 
 class Track
@@ -211,12 +218,13 @@ friend class Tracksystem;
 public:
     Signal(Tracksystem& newtracksystem, State signalstate);
     void render();
-    bool isred(State trainstate);
+    bool isred(Train* train);
     bool isgreen = true;
 private:
     State state;
     Vec pos;
     Tracksystem* tracksystem;
+    std::vector<nodeid> switchblocks = {2};
 };
 
 class Wagon

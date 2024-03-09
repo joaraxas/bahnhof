@@ -129,14 +129,20 @@ State Tracksystem::tryincrementingtrack(State state)
 		nodeid currentnode = currenttrackpointer->nextnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
 		state.track = nexttrack(state.track);
-		Track* nexttrackpointer = gettrack(state.track);
-		float arclength2 = nexttrackpointer->getarclength(1);
-		if(nexttrackpointer->previousnode==currentnode){
-			state.nodedist = (state.nodedist-1)*arclength1/arclength2;
+		if(state.track){
+			Track* nexttrackpointer = gettrack(state.track);
+			float arclength2 = nexttrackpointer->getarclength(1);
+			if(nexttrackpointer->previousnode==currentnode){
+				state.nodedist = (state.nodedist-1)*arclength1/arclength2;
+			}
+			else{
+				state.nodedist = 1-(state.nodedist-1)*arclength1/arclength2;
+				state.alignedwithtrack = !state.alignedwithtrack;
+			}
 		}
 		else{
-			state.nodedist = 1-(state.nodedist-1)*arclength1/arclength2;
-			state.alignedwithtrack = !state.alignedwithtrack;
+			state.track = currenttrackpointer->id;
+			state.nodedist = 1;
 		}
 	}
 	else if(state.nodedist<0){
@@ -144,14 +150,20 @@ State Tracksystem::tryincrementingtrack(State state)
 		nodeid currentnode = currenttrackpointer->previousnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
 		state.track = previoustrack(state.track);
-		Track* previoustrackpointer = gettrack(state.track);
-		float arclength2 = previoustrackpointer->getarclength(1);
-		if(previoustrackpointer->nextnode==currentnode){
-			state.nodedist = 1-(-state.nodedist)*arclength1/arclength2;
+		if(state.track){
+			Track* previoustrackpointer = gettrack(state.track);
+			float arclength2 = previoustrackpointer->getarclength(1);
+			if(previoustrackpointer->nextnode==currentnode){
+				state.nodedist = 1-(-state.nodedist)*arclength1/arclength2;
+			}
+			else{
+				state.nodedist = (-state.nodedist)*arclength1/arclength2;
+				state.alignedwithtrack = !state.alignedwithtrack;
+			}
 		}
 		else{
-			state.nodedist = (-state.nodedist)*arclength1/arclength2;
-			state.alignedwithtrack = !state.alignedwithtrack;
+			state.track = currenttrackpointer->id;
+			state.nodedist = 0;
 		}
 	}
 	return state;
@@ -209,9 +221,12 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist, boo
 				else
 					distance += gettrack(state.track)->getarclength(1)*(1-state2.nodedist);
 			}
+			else if(state.track==currenttrack){
+				distance = maxdist;
+			}
 			else
 				distance += gettrack(state.track)->getarclength(1);
-			if(abs(distance)>abs(maxdist)){
+			if(abs(distance)>=abs(maxdist)){
 				finishedtrip = true;
 				distance = maxdist;
 			}
@@ -219,6 +234,19 @@ float Tracksystem::distancefromto(State state1, State state2, float maxdist, boo
 	}
 
 	return distance;
+}
+
+bool Tracksystem::isendofline(State state)
+{
+	if(state.nodedist<=0)
+		if(!state.alignedwithtrack)
+			if(previoustrack(state.track)==0)
+				return true;
+	if(state.nodedist>=1)
+		if(state.alignedwithtrack)
+			if(nexttrack(state.track)==0)
+				return true;
+	return false;
 }
 
 void Tracksystem::render()
@@ -588,8 +616,8 @@ trackid Tracksystem::nexttrack(trackid track){
 	}
 	else
 		nexttrack = getnode(trackpointer->nextnode)->gettrackdown();
-	if(nexttrack == 0)
-		nexttrack = track;
+	//if(nexttrack == 0)
+	//	nexttrack = track;
 	return nexttrack;
 }
 
@@ -600,8 +628,8 @@ trackid Tracksystem::previoustrack(trackid track){
 		previoustrack = getnode(trackpointer->previousnode)->gettrackdown();
 	else
 		previoustrack = getnode(trackpointer->previousnode)->gettrackup();
-	if(previoustrack == 0)
-		previoustrack = track;
+	//if(previoustrack == 0)
+	//	previoustrack = track;
 	return previoustrack;
 }
 
@@ -615,11 +643,11 @@ Signal* Tracksystem::getsignal(signalid signal)
 	}
 }
 
-bool Tracksystem::isred(State trainstate)
+bool Tracksystem::isred(Train* fortrain)
 {
 	bool red = false;
 	for(auto const& [id, signal] : signals){
-		if(signal->isred(trainstate))
+		if(signal->isred(fortrain))
 			red = true;
 		if(red)
 			break;
@@ -674,6 +702,11 @@ void Node::render()
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir))/scale);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		rendertext(std::to_string(id), pos.x, pos.y);
+		if(reservedfor)
+			rendertext(reservedfor->route->name, pos.x, pos.y+14);
+		else
+			rendertext("noone", pos.x, pos.y+14);
 	}
 	if(scale>0.3){
 		if(size(tracksup)>1){
@@ -947,18 +980,72 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 void Signal::render()
 {
 	SDL_SetRenderDrawColor(renderer, 255*(!isgreen), 255*(isgreen), 0, 255);
-	//SDL_RenderDrawLine(renderer, pos.x-5, pos.y-5, pos.x+5, pos.y+5);
-	//SDL_RenderDrawLine(renderer, pos.x-5, pos.y+5, pos.x+5, pos.y-5);
 	renderline(pos+Vec(-5,-5), pos+Vec(5,5));
 	renderline(pos+Vec(-5,5), pos+Vec(5,-5));
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-bool Signal::isred(State trainstate)
+bool Signal::isred(Train* fortrain)
 {
-	bool red = false;
-	if(!isgreen)
-		if(tracksystem->distancefromto(trainstate, state, 100, true)<100)
-			red = true;
-	return red;
+	if(tracksystem->distancefromto(fortrain->forwardstate(), state, 100, true)<100){
+		if(tracksystem->claimblocks(switchblocks, fortrain))
+			isgreen=true;
+		if(!isgreen)
+			return true;
+	}
+	return false;
+}
+
+bool Tracksystem::checkblocks(std::vector<nodeid> switchblocks, Train* fortrain)
+{
+	for(auto s : switchblocks){
+		Node* sw = getnode(s);
+		if(sw->reservedfor && sw->reservedfor!=fortrain)
+			return false;
+	}
+	return true;
+}
+
+bool Tracksystem::claimblocks(std::vector<nodeid> switchblocks, Train* fortrain)
+{
+	if(checkblocks(switchblocks, fortrain)){
+		for(auto s : switchblocks){
+			Node* sw = getnode(s);
+			sw->reservedfor = fortrain;
+		}
+		return true;
+	}
+	else return false;
+}
+
+void Tracksystem::freeblocks(std::vector<nodeid> switchblocks)
+{
+	for(auto s : switchblocks){
+		Node* sw = getnode(s);
+		sw->reservedfor = nullptr;
+	}
+}
+
+void Tracksystem::update(int ms)
+{
+	for(auto const& [id, signal] : signals){
+		if(checkblocks(signal->switchblocks, nullptr))
+			signal->isgreen = true;
+		else
+			signal->isgreen = false;
+	}
+}
+
+void Tracksystem::runoverblocks(State state, float pixels, Train* fortrain)
+{
+	State newstate = travel(state, pixels);
+	if(newstate.track==state.track)
+		return;
+	for(auto const& [id, node] : nodes){
+		if(node->tracksdown.size()>1 || node->tracksup.size()>1){
+			if(gettrack(state.track)->previousnode==id || gettrack(state.track)->nextnode==id)
+			if(gettrack(newstate.track)->previousnode==id || gettrack(newstate.track)->nextnode==id)
+				node->reservedfor=fortrain;
+		}
+	}
 }

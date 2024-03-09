@@ -60,10 +60,16 @@ void Train::update(int ms)
 	
 	if(abs(speed)>maxspeed)
 		speed = maxspeed*sign(speed);
-		//brake(ms);
-	float pixels = ms*0.001*speed;
+	float pixels = ms*0.001*abs(speed);
+	State newforwardstate = tracksystem->travel(forwardstate(), pixels);
+	if(tracksystem->isendofline(newforwardstate)){
+		speed = 0;
+		pixels = tracksystem->distancefromto(forwardstate(), newforwardstate, pixels);
+	}
+	tracksystem->runoverblocks(forwardstate(), pixels, this);
+	tracksystem->runoverblocks(flipstate(backwardstate()), pixels, nullptr);
 	for(auto& wagon : wagons)
-		wagon->travel(pixels);
+		wagon->travel(sign(speed)*pixels);
 }
 
 bool Train::perform(int ms)
@@ -82,7 +88,7 @@ bool Train::perform(int ms)
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state, ms);
 			if(!done){
-				if(tracksystem->isred(forwardstate()))
+				if(tracksystem->isred(this))
 					brake(ms);
 				else
 					gas(ms);}
@@ -688,6 +694,7 @@ ResourceManager::ResourceManager()
 {
 	resourcemap[beer] = new Resource(beer, "Beer", "assets/beer.png");
 	resourcemap[hops] = new Resource(hops, "Hops", "assets/hops.png");
+	resourcemap[barley] = new Resource(barley, "Barley", "assets/barley.png");
 }
 
 ResourceManager::~ResourceManager()
