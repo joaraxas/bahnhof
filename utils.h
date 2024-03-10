@@ -127,6 +127,7 @@ public:
     bool claimblocks(std::vector<nodeid> switchblocks, Train* fortrain);
     void freeblocks(std::vector<nodeid> switchblocks);
     void runoverblocks(State state, float pixels, Train* fortrain);
+    void setblocksuptonextsignal(Signal* fromsignal);
     nodeid selectednode = 0;
     bool placingsignal = false;
     SDL_Texture* switchtex;
@@ -210,6 +211,7 @@ private:
     float nextdir;
     Vec previouspos;
     Vec nextpos;
+    std::map<float,signalid> signals;
 };
 
 class Signal
@@ -224,7 +226,7 @@ private:
     State state;
     Vec pos;
     Tracksystem* tracksystem;
-    std::vector<nodeid> switchblocks = {2};
+    std::vector<nodeid> switchblocks;
 };
 
 class Wagon

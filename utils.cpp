@@ -228,7 +228,7 @@ Vec randpos(int xoffset=0, int yoffset=0)
 
 Gamestate::Gamestate()
 {
-	money = 200;
+	money = 600;
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
 	inittrain(State(1,0.4,1));

@@ -77,6 +77,7 @@ trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 signalid Tracksystem::addsignal(State state){
 	signalcounter++;
 	signals[signalcounter] = new Signal(*this, state);
+	gettrack(state.track)->signals[state.nodedist] = signalcounter;
 	return signalcounter;
 }
 
@@ -975,6 +976,7 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 	float orientation = tracksystem->getorientation(state);
 	float transverseoffset = -20;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
+    tracksystem->setblocksuptonextsignal(this);
 }
 
 void Signal::render()
@@ -983,6 +985,55 @@ void Signal::render()
 	renderline(pos+Vec(-5,-5), pos+Vec(5,5));
 	renderline(pos+Vec(-5,5), pos+Vec(5,-5));
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+void Tracksystem::setblocksuptonextsignal(Signal* fromsignal)
+{
+	bool reachedend = false, reachedsignal = false;
+	fromsignal->switchblocks.clear();
+	State goalstate = fromsignal->state;
+	Track* trackpointer = gettrack(goalstate.track);
+	if(goalstate.alignedwithtrack){
+		for(auto const& [nodedist,signal]: trackpointer->signals){
+			if(nodedist>goalstate.nodedist)
+				if(getsignal(signal)->state.alignedwithtrack)
+					reachedsignal = true;
+		}
+	}
+	else{
+		for(auto const& [nodedist,signal]: trackpointer->signals){
+			if(nodedist<goalstate.nodedist)
+				if(!getsignal(signal)->state.alignedwithtrack)
+					reachedsignal = true;
+		}
+	}
+	goalstate.nodedist = (2*goalstate.alignedwithtrack-1)*INFINITY;
+	nodeid passednode = 0;
+	while(!reachedsignal && !reachedend){
+		if(goalstate.alignedwithtrack)
+			passednode = trackpointer->nextnode;
+		else
+			passednode = trackpointer->previousnode;
+		if(getnode(passednode)->tracksup.size()>1 || getnode(passednode)->tracksdown.size()>1){
+			if(std::find(fromsignal->switchblocks.begin(), fromsignal->switchblocks.end(), passednode) != fromsignal->switchblocks.end()){
+				reachedend = true;
+			}
+			else{
+				fromsignal->switchblocks.push_back(passednode);
+			}
+		}
+		State newgoalstate = tryincrementingtrack(goalstate);
+		if(newgoalstate.track==goalstate.track)
+			reachedend = true;
+		else{
+			trackpointer = gettrack(newgoalstate.track);
+			for(auto const& [nodedist,signal]: trackpointer->signals){
+				if(getsignal(signal)->state.alignedwithtrack==newgoalstate.alignedwithtrack)
+					reachedsignal = true;
+			}
+		}
+		goalstate = newgoalstate;
+	}
 }
 
 bool Signal::isred(Train* fortrain)
@@ -1029,6 +1080,7 @@ void Tracksystem::freeblocks(std::vector<nodeid> switchblocks)
 void Tracksystem::update(int ms)
 {
 	for(auto const& [id, signal] : signals){
+    	setblocksuptonextsignal(signal);
 		if(checkblocks(signal->switchblocks, nullptr))
 			signal->isgreen = true;
 		else
