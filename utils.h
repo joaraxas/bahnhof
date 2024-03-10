@@ -102,6 +102,7 @@ public:
     ~Tracksystem();
     void update(int ms);
     void render();
+    void renderabovetrains();
     void deleteclick(int xMouse, int yMouse);
     void selectat(Vec pos);
     float buildat(Vec pos);
@@ -132,6 +133,8 @@ public:
     bool placingsignal = false;
     SDL_Texture* switchtex;
     SDL_Rect switchrect;
+    SDL_Texture* signaltex;
+    SDL_Rect signalrect;
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);

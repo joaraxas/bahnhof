@@ -40,6 +40,9 @@ Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std:
 	switchtex = loadImage("assets/switch.png");
 	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
 	switchrect.h = switchrect.h*0.5;
+	signaltex = loadImage("assets/signal.png");
+	SDL_QueryTexture(signaltex, NULL, NULL, &signalrect.w, &signalrect.h);
+	signalrect.w = signalrect.w*0.5;
 }
 
 Tracksystem::~Tracksystem()
@@ -257,8 +260,6 @@ void Tracksystem::render()
 		track->render();
 	for(auto const& [id, node] : nodes)
 		node->render();
-	for(auto const& [id, signal] : signals)
-		signal->render();
 	
 	if(selectednode){
 		preparingtrack = true;
@@ -279,6 +280,12 @@ void Tracksystem::render()
 		trackcounter = lasttrackindex;
 		preparingtrack = false;
 	}
+}
+
+void Tracksystem::renderabovetrains()
+{
+	for(auto const& [id, signal] : signals)
+		signal->render();
 }
 
 float Tracksystem::buildat(Vec pos)
@@ -712,7 +719,6 @@ void Node::render()
 	if(scale>0.3){
 		if(size(tracksup)>1){
 			Vec switchpos = getswitchpos(true);
-			int diff = stateup/(size(tracksup)-1);
 			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
 			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
 			tracksystem->switchrect.y = tracksystem->switchrect.h*stateup;
@@ -722,7 +728,6 @@ void Node::render()
 		}
 		if(size(tracksdown)>1){
 			Vec switchpos = getswitchpos(false);
-			int diff = statedown/(size(tracksdown)-1);
 			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
 			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
 			tracksystem->switchrect.y = tracksystem->switchrect.h*statedown;
@@ -981,15 +986,17 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 
 void Signal::render()
 {
-	SDL_SetRenderDrawColor(renderer, 255*(!isgreen), 255*(isgreen), 0, 255);
-	renderline(pos+Vec(-5,-5), pos+Vec(5, 5));
-	renderline(pos+Vec(-5, 5), pos+Vec(5,-5));
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	if(!nicetracks){
 		if(reservedfor)
 			rendertext(reservedfor->route->name, pos.x, pos.y+14);
 		else
 			rendertext("noone", pos.x, pos.y+14);
+	}
+	if(scale>0.3){
+			int w = tracksystem->signalrect.w; int h = tracksystem->signalrect.h;
+			SDL_Rect rect = {int(pos.x-w*0.5), int(pos.y-h*0.5), w, h};
+			tracksystem->signalrect.x = tracksystem->signalrect.w*isgreen;
+			rendertexture(tracksystem->signaltex, &rect, &tracksystem->signalrect, 0*tracksystem->getorientation(state)-0*pi/2, true, true);
 	}
 }
 

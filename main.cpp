@@ -227,6 +227,7 @@ int main(){
 			gamestate.renderroutes();
 		for(auto& train : trains)
 			train->render();
+		gamestate.tracksystem->renderabovetrains();
 		rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
 		rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
 		rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
