@@ -238,11 +238,6 @@ Gamestate::Gamestate()
 	addtrainstoorphans();
 	
 	randommap();
-
-	storages.emplace_back(new Storage(resources, 1400, 1400, 600, 300, none, barley));
-	storages.back()->loadstorage(beer, 108);
-	storages.back()->loadstorage(barley, 12);
-	storages.back()->loadstorage(hops, 18);
 }
 
 Gamestate::~Gamestate()

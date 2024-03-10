@@ -123,10 +123,10 @@ public:
     bool isred(Train* train);
     void setswitch(nodeid node, bool updown, int switchstate);
     int getswitchstate(nodeid node, bool updown);
-    bool checkblocks(std::vector<nodeid> switchblocks, Train* fortrain);
-    bool claimblocks(std::vector<nodeid> switchblocks, Train* fortrain);
-    void freeblocks(std::vector<nodeid> switchblocks);
+    bool checkblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
+    bool claimblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
     void runoverblocks(State state, float pixels, Train* fortrain);
+    signalid nextsignalontrack(State state, bool startfromtrackend=false, bool mustalign=true);
     void setblocksuptonextsignal(Signal* fromsignal);
     nodeid selectednode = 0;
     bool placingsignal = false;
@@ -185,7 +185,7 @@ private:
     int statedown = 0;
     std::vector<trackid> tracksup;
     std::vector<trackid> tracksdown;
-    Train* reservedfor=nullptr;
+    Train* reservedfor = nullptr;
 };
 
 class Track
@@ -227,6 +227,8 @@ private:
     Vec pos;
     Tracksystem* tracksystem;
     std::vector<nodeid> switchblocks;
+    std::vector<signalid> signalblocks;
+    Train* reservedfor = nullptr;
 };
 
 class Wagon
