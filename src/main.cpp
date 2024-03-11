@@ -5,7 +5,7 @@
 #include<string>
 #include<format>
 #include<map>
-#include "utils.h"
+#include "../include/bahnhof/utils.h"
 
 float money = 0;
 bool nicetracks = true;
@@ -21,7 +21,7 @@ int main(){
 	int mslogic = ms*gamespeed;
 	int startTime = SDL_GetTicks();
 	int lastTime = SDL_GetTicks();
-	SDL_Texture* fieldtex = loadImage("assets/field.png");
+	SDL_Texture* fieldtex = loadImage("../assets/field.png");
 	SDL_Event e;
 
 	while(!quit){

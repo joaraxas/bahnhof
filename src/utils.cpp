@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "utils.h"
+#include "../include/bahnhof/utils.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -45,7 +45,7 @@ int init(){
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	font = TTF_OpenFont("assets/Georgia.ttf", 12);
+	font = TTF_OpenFont("../assets/Georgia.ttf", 12);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;

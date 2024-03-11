@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "utils.h"
+#include "../include/bahnhof/utils.h"
 
 State::State()
 {
@@ -37,10 +37,10 @@ Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std:
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
 	selectednode = newnode;
-	switchtex = loadImage("assets/switch.png");
+	switchtex = loadImage("../assets/switch.png");
 	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
 	switchrect.h = switchrect.h*0.5;
-	signaltex = loadImage("assets/signal.png");
+	signaltex = loadImage("../assets/signal.png");
 	SDL_QueryTexture(signaltex, NULL, NULL, &signalrect.w, &signalrect.h);
 	signalrect.w = signalrect.w*0.5;
 }

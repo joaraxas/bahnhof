@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "utils.h"
+#include "../include/bahnhof/utils.h"
 
 std::vector<std::unique_ptr<Train>> trains;
 std::vector<std::unique_ptr<Storage>> storages;
@@ -17,7 +17,7 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
-	lighttex = loadImage("assets/light.png");
+	lighttex = loadImage("../assets/light.png");
 	SDL_QueryTexture(lighttex, NULL, NULL, &lightw, &lighth);
 	lightw = lightw*0.5;
 }
@@ -692,9 +692,9 @@ void Setsignal::render(int number)
 
 ResourceManager::ResourceManager()
 {
-	resourcemap[beer] = new Resource(beer, "Beer", "assets/beer.png");
-	resourcemap[hops] = new Resource(hops, "Hops", "assets/hops.png");
-	resourcemap[barley] = new Resource(barley, "Barley", "assets/barley.png");
+	resourcemap[beer] = new Resource(beer, "Beer", "../assets/beer.png");
+	resourcemap[hops] = new Resource(hops, "Hops", "../assets/hops.png");
+	resourcemap[barley] = new Resource(barley, "Barley", "../assets/barley.png");
 }
 
 ResourceManager::~ResourceManager()
