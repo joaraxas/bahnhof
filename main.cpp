@@ -229,8 +229,15 @@ int main(){
 			train->render();
 		gamestate.tracksystem->renderabovetrains();
 		rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
-		rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
-		rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
+		rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
+		rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
+		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+		int scalelinelength = 200;
+		renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
+		renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
+		renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
+		rendertext(std::to_string(int(scalelinelength*0.001*150/scale)) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+		SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);
 	}
