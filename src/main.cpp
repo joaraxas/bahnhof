@@ -5,7 +5,7 @@
 #include<string>
 #include<format>
 #include<map>
-#include "../include/bahnhof/utils.h"
+#include "bahnhof/utils.h"
 
 float money = 0;
 bool nicetracks = true;

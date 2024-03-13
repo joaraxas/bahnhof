@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "../include/bahnhof/utils.h"
+#include "bahnhof/utils.h"
 
 Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath)
 {

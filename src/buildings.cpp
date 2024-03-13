@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "../include/bahnhof/utils.h"
+#include "bahnhof/utils.h"
 
 std::vector<std::unique_ptr<Building>> buildings;
 
