@@ -6,6 +6,9 @@
 #include<format>
 #include<map>
 #include "bahnhof/utils.h"
+#include "bahnhof/common/constants.h"
+#include "bahnhof/routing/routing.h"
+#include "bahnhof/track/track.h"
 
 float money = 0;
 bool nicetracks = true;

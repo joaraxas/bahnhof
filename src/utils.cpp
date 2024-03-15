@@ -5,6 +5,9 @@
 #include<string>
 #include<map>
 #include "bahnhof/utils.h"
+#include "bahnhof/common/constants.h"
+#include "bahnhof/routing/routing.h"
+#include "bahnhof/track/track.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;

@@ -6,9 +6,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 add_executable(bahnhof
     src/utils.cpp
     src/track/track.cpp
+    src/track/tracksystem.cpp
+    src/track/node.cpp
+    src/track/signal.cpp
+    src/routing/route.cpp
+    src/routing/order.cpp
     src/rollingstock.cpp
     src/buildings.cpp
-    src/control.cpp
+    src/resources.cpp
+    src/train.cpp
     src/main.cpp
 )
 

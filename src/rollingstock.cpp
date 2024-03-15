@@ -5,6 +5,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/utils.h"
+#include "bahnhof/track/track.h"
 
 Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath)
 {
