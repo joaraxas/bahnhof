@@ -45,7 +45,7 @@ int init(){
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	font = TTF_OpenFont("../assets/Georgia.ttf", 12);
+	font = TTF_OpenFont("assets/fonts/Georgia.ttf", 12);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
@@ -56,7 +56,7 @@ int init(){
 
 SDL_Texture* loadImage(std::string path){
 	SDL_Texture* tex = NULL;
-	tex = IMG_LoadTexture(renderer, path.c_str());
+	tex = IMG_LoadTexture(renderer, ("assets/png/" + path).c_str());
 	if(tex==NULL){
 		std::cout << "Failed to load texture " << path << ": " << IMG_GetError() << std::endl;
 	}

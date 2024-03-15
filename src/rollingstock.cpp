@@ -87,7 +87,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "../assets/loco0.png", "../assets/iconloco.png")
+Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/loco0.png", "icons/loco.png")
 {
 	h = h/imagenumber;
 	hasdriver = true;
@@ -141,7 +141,7 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "../assets/flakvagn1.png", "../assets/iconopenwagon.png")
+Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/openwagon.png", "icons/openwagon.png")
 {}
 
 int Openwagon::loadwagon(resourcetype type, int amount)
@@ -152,7 +152,7 @@ int Openwagon::loadwagon(resourcetype type, int amount)
 	return loadedamount;
 }
 
-Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "../assets/kylvagn.png", "../assets/iconrefrigeratorcar.png")
+Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/refrigeratorcar.png", "icons/refrigeratorcar.png")
 {}
 
 int Tankwagon::loadwagon(resourcetype type, int amount)

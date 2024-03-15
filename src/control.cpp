@@ -17,7 +17,7 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
-	lighttex = loadImage("../assets/light.png");
+	lighttex = loadImage("effects/light.png");
 	SDL_QueryTexture(lighttex, NULL, NULL, &lightw, &lighth);
 	lightw = lightw*0.5;
 }
@@ -692,9 +692,9 @@ void Setsignal::render(int number)
 
 ResourceManager::ResourceManager()
 {
-	resourcemap[beer] = new Resource(beer, "Beer", "../assets/beer.png");
-	resourcemap[hops] = new Resource(hops, "Hops", "../assets/hops.png");
-	resourcemap[barley] = new Resource(barley, "Barley", "../assets/barley.png");
+	resourcemap[beer] = new Resource(beer, "Beer", "resources/beer.png");
+	resourcemap[hops] = new Resource(hops, "Hops", "resources/hops.png");
+	resourcemap[barley] = new Resource(barley, "Barley", "resources/barley.png");
 }
 
 ResourceManager::~ResourceManager()

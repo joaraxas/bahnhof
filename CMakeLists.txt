@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
     src/utils.cpp
-    src/track.cpp
+    src/track/track.cpp
     src/rollingstock.cpp
     src/buildings.cpp
     src/control.cpp
