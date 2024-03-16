@@ -5,6 +5,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/utils.h"
+#include "bahnhof/resources/storage.h"
 
 std::vector<std::unique_ptr<Storage>> storages;
 

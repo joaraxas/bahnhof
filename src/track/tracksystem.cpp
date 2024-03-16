@@ -32,14 +32,13 @@ State flipstate(State state)
 
 Tracksystem::Tracksystem(){}
 
-Tracksystem::Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys)
+Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
 {
-	allresources = &resources;
 	nodeid newnode = addnode(Vec(xs[0], ys[0]), 0);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
-	selectednode = newnode;
+	selectednode = 0;
 	switchtex = loadImage("track/switch.png");
 	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
 	switchrect.h = switchrect.h*0.5;

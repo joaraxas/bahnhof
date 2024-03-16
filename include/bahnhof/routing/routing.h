@@ -1,4 +1,7 @@
+#include "bahnhof/resources/resources.h"
+
 class Tracksystem;
+class Order;
 
 class Route
 {

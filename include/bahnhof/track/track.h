@@ -1,3 +1,11 @@
+#pragma once
+
+class Order;
+class Node;
+class Track;
+class Signal;
+class Train;
+
 class Tracksystem
 {
 friend class Node;
@@ -5,7 +13,7 @@ friend class Track;
 friend class Gamestate;
 public:
     Tracksystem();
-    Tracksystem(ResourceManager& resources, std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void update(int ms);
     void render();
@@ -24,7 +32,6 @@ public:
     State travel(State state, float pixels);
     float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(State state);
-    ResourceManager* allresources;
     signalid addsignal(State state);
     void setsignal(signalid signal, int redgreenorflip);
     bool getsignalstate(signalid signal);

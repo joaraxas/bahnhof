@@ -7,6 +7,7 @@
 #include "bahnhof/utils.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/resources/resources.h"
 
 
 void Order::assignroute(Route* newroute)

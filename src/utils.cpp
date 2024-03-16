@@ -7,7 +7,8 @@
 #include "bahnhof/utils.h"
 #include "bahnhof/common/constants.h"
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/track/track.h"
+#include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/resources/storage.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -48,7 +49,7 @@ int init(){
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	font = TTF_OpenFont("assets/fonts/Georgia.ttf", 12);
+	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", 12);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
@@ -59,7 +60,7 @@ int init(){
 
 SDL_Texture* loadImage(std::string path){
 	SDL_Texture* tex = NULL;
-	tex = IMG_LoadTexture(renderer, ("assets/png/" + path).c_str());
+	tex = IMG_LoadTexture(renderer, ("../assets/png/" + path).c_str());
 	if(tex==NULL){
 		std::cout << "Failed to load texture " << path << ": " << IMG_GetError() << std::endl;
 	}
@@ -236,7 +237,6 @@ Gamestate::Gamestate()
 	initjusttrack();
 	inittrain(State(1,0.4,1));
 	trains.back()->route = routes.front().get();
-	tracksystem->selectednode = 0;
 
 	addtrainstoorphans();
 	
@@ -313,7 +313,7 @@ void Gamestate::randommap()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(resources, {200,700,1000}, {250,250,550}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem({200,700,1000}, {250,250,550}));
 	
 }
 

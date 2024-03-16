@@ -8,7 +8,8 @@
 #include "bahnhof/utils.h"
 #include "bahnhof/common/constants.h"
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/track/track.h"
+#include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/resources/storage.h"
 
 float money = 0;
 bool nicetracks = true;

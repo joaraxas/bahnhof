@@ -6,11 +6,13 @@
 #include<map>
 #include "bahnhof/utils.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/resources/resources.h"
+#include "bahnhof/rollingstock/rollingstock.h"
 
 Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath)
 {
 	tracksystem = &newtracksystem;
-	allresources = tracksystem->allresources;
+	//allresources = tracksystem->allresources;
 	tex = loadImage(path);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	if(iconpath!=""){
@@ -40,8 +42,8 @@ void Wagon::render()
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
 	rendertexture(tex, &rect, &srcrect, imageangle);
 	if(loadedresource!=none){
-		Resource* resource = allresources->get(loadedresource);
-		resource->render(pos);
+		//Resource* resource = allresources->get(loadedresource);
+		//resource->render(pos);
 	}
 	else if(icontex)
 	if(scale<0.3){

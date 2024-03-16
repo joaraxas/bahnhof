@@ -6,7 +6,7 @@
 #include<map>
 #include "bahnhof/utils.h"
 #include "bahnhof/common/constants.h"
-#include "bahnhof/track/track.h"
+#include "bahnhof/rollingstock/rollingstock.h"
 
 
 Signal::Signal(Tracksystem& newtracksystem, State signalstate)
