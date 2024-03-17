@@ -14,7 +14,7 @@ public:
     Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="");
     void travel(float pixels);
     virtual void update(int ms);
-    virtual void render();
+    virtual void render(Rendering* r);
     virtual State frontendstate();
     virtual State backendstate();
     virtual int loadwagon(resourcetype type, int amount);
@@ -44,7 +44,7 @@ class Locomotive : public Wagon
 {
 public:
     Locomotive(Tracksystem& newtracksystem, State trackstate);
-    void render();
+    void render(Rendering* r);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
@@ -79,7 +79,7 @@ public:
     void getinput(int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
-    void render();
+    void render(Rendering* r);
     bool perform(int ms);
     void proceed();
     bool gas(int ms);

@@ -149,7 +149,7 @@ void Train::proceed()
 	orderid = route->nextorder(orderid);
 }
 
-void Train::render()
+void Train::render(Rendering* r)
 {
 	if(selected){
 		if(route){
@@ -158,23 +158,23 @@ void Train::render()
 				int rectw = 10;
 				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
 				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
-				renderfilledrectangle(&rect, false, false);
+				r->renderfilledrectangle(&rect, false, false);
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 		}
 		else{
-			rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
+			r->rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
 		}
 		Vec frontpos = tracksystem->getpos(forwardstate());
 		float forwarddir = tracksystem->getorientation(forwardstate());
 		SDL_Rect forwardrect = {int(frontpos.x-lightw/2), int(frontpos.y-lighth/2), lightw, lighth};
 		SDL_Rect srcrect = {0, 0, lightw, lighth};
-		rendertexture(lighttex, &forwardrect, &srcrect, forwarddir);
+		r->rendertexture(lighttex, &forwardrect, &srcrect, forwarddir);
 		Vec backpos = tracksystem->getpos(backwardstate());
 		float backwarddir = tracksystem->getorientation(backwardstate());
 		SDL_Rect backwardrect = {int(backpos.x-lightw/2), int(backpos.y-lighth/2), lightw, lighth};
 		srcrect.x = lightw;
-		rendertexture(lighttex, &backwardrect, &srcrect, backwarddir);
+		r->rendertexture(lighttex, &backwardrect, &srcrect, backwarddir);
 	}
 }
 

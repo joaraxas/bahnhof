@@ -5,7 +5,7 @@ class Building
 {
 public:
     Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
-    virtual void render();
+    virtual void render(Rendering* rendering);
     void update(int ms);
 protected:
     SDL_Color color;

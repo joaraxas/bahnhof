@@ -8,6 +8,8 @@
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/input.h"
+#include "bahnhof/common/camera.h"
 
 Gamestate::Gamestate()
 {
@@ -20,12 +22,17 @@ Gamestate::Gamestate()
 	addtrainstoorphans();
 	
 	randommap();
+
+	input = new InputManager(this);
+	cam = new Camera();
+	rendering = new Rendering(this, cam);
 }
 
 Gamestate::~Gamestate()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
 		delete wagons[iWagon];
+	delete input;
 }
 
 void Gamestate::update(int ms)
@@ -37,10 +44,10 @@ void Gamestate::renderroutes()
 {
 	int offset = 1;
 	for(auto &route : routes){
-		rendertext("("+std::to_string(offset)+") "+route->name, SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+		rendering->rendertext("("+std::to_string(offset)+") "+route->name, SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
 		offset++;
 	}
-	rendertext("(r) Create new route", SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+	rendering->rendertext("(r) Create new route", SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
 }
 
 Route* Gamestate::addroute()
@@ -92,7 +99,7 @@ void Gamestate::randommap()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem({200,700,1000}, {250,250,550}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(this, {200,700,1000}, {250,250,550}));
 	
 }
 

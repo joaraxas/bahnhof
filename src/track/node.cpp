@@ -43,20 +43,21 @@ void Node::connecttrack(trackid track, bool fromabove){
 	}
 }
 
-void Node::render()
+void Node::render(Rendering* r)
 {
+	float scale = r->getscale();
 	if(!nicetracks){
-		renderline(pos+Vec(-5,-5)/scale, pos+Vec(5,5)/scale);
-		renderline(pos+Vec(-5,5)/scale, pos+Vec(5,-5)/scale);
+		r->renderline(pos+Vec(-5,-5)/scale, pos+Vec(5,5)/scale);
+		r->renderline(pos+Vec(-5,5)/scale, pos+Vec(5,-5)/scale);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir))/scale);
+		r->renderline(pos, pos+Vec(12*cos(dir),-12*sin(dir))/scale);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		rendertext(std::to_string(id), pos.x, pos.y);
+		r->rendertext(std::to_string(id), pos.x, pos.y);
 		if(reservedfor){
 			//rendertext(reservedfor->route->name, pos.x, pos.y+14);
 		}
 		else
-			rendertext("noone", pos.x, pos.y+14);
+			r->rendertext("noone", pos.x, pos.y+14);
 	}
 	if(scale>0.3){
 		if(size(tracksup)>1){
@@ -64,18 +65,18 @@ void Node::render()
 			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
 			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
 			tracksystem->switchrect.y = tracksystem->switchrect.h*stateup;
-			rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, dir-pi/2, true, true);
+			r->rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, dir-pi/2, true, true);
 			if(!nicetracks)
-				rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
+				r->rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
 		if(size(tracksdown)>1){
 			Vec switchpos = getswitchpos(false);
 			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
 			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
 			tracksystem->switchrect.y = tracksystem->switchrect.h*statedown;
-			rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, pi+dir-pi/2, true, true);
+			r->rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, pi+dir-pi/2, true, true);
 			if(!nicetracks)
-				rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
+				r->rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
 	}
 }

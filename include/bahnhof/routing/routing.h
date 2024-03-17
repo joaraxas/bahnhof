@@ -18,7 +18,7 @@ public:
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
-    void render();
+    void render(Rendering* r);
     int getindex(int orderid);
     std::string name = "New route";
     int selectedorderid = -1;
@@ -40,8 +40,8 @@ struct Order
 {
     virtual ~Order() {};//std::cout<<"del order"<<std::endl;};
     virtual void assignroute(Route* newroute);
-    virtual void render(int number) {};
-    void renderlabel(Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
+    virtual void render(Rendering* r, int number) {};
+    void renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
     Route* route = nullptr; // initialized by route
     ordertype order;
     std::string description;
@@ -50,7 +50,7 @@ struct Order
 struct Gotostate : public Order
 {
     Gotostate(State whichstate, bool mustpass=false);
-    void render(int number);
+    void render(Rendering* r, int number);
     State state;
     bool pass;
 };
@@ -58,7 +58,7 @@ struct Setsignal : public Order
 {
     Setsignal(signalid whichsignal, int redgreenorflip=2);
     void assignroute(Route* newroute);
-    void render(int number);
+    void render(Rendering* r, int number);
     signalid signal;
     int redgreenflip;
 };
@@ -66,7 +66,7 @@ struct Setswitch : public Order
 {
     Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate=-1);
     void assignroute(Route* newroute);
-    void render(int number);
+    void render(Rendering* r, int number);
     nodeid node;
     bool updown;
     bool flip;

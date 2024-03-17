@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/common/rendering.h"
 #include "bahnhof/common/input.h"
+#include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
@@ -12,13 +13,14 @@
 
 float money = 0;
 bool nicetracks = true;
-float scale = 1;
 int xMouse, yMouse;
 float gamespeed = 1;
 
 int main(){
 	init();
 	Gamestate gamestate;
+	InputManager* input = gamestate.input;
+	Rendering* rendering = gamestate.rendering;
 	bool quit = false;
 	int ms = 0;
 	int mslogic = ms*gamespeed;
@@ -34,12 +36,8 @@ int main(){
 				case SDL_QUIT:{
 					quit = true; break;}
 				case SDL_MOUSEBUTTONDOWN:{
-					SDL_GetMouseState(&xMouse, &yMouse);
-					Vec mousepos(xMouse/scale+cam.x, yMouse/scale+cam.y);
-					if(e.button.button == SDL_BUTTON_LEFT && keys[gearbutton]){
-						gamestate.tracksystem->deleteclick(xMouse, yMouse);
-					}
-					else if(e.button.button == SDL_BUTTON_RIGHT){
+					Vec mousepos = input->mapmousepos();
+					if(e.button.button == SDL_BUTTON_RIGHT){
 						gamestate.tracksystem->selectednode = 0;
 						gamestate.tracksystem->placingsignal = false;
 						if(gamestate.selectedroute){
@@ -57,7 +55,7 @@ int main(){
 							Train* clickedtrain = nullptr;
 							for(auto& train : trains){
 								for(auto& wagon : train->wagons){
-									if(norm(mousepos-wagon->pos)<wagon->w/2/scale){
+									if(norm(mousepos-wagon->pos)<wagon->w/2/rendering->getscale()){
 										gamestate.selectedroute = train->route;
 										clickedtrain = train.get();
 									}
@@ -152,24 +150,12 @@ int main(){
 				}
 				case SDL_MOUSEWHEEL:{
 					SDL_GetMouseState(&xMouse, &yMouse);
-					if(e.wheel.y > 0){ // zoom in
-						cam.x+=cam.w/2*xMouse/SCREEN_WIDTH;
-						cam.w/=2;
-						cam.y+=cam.h/2*yMouse/SCREEN_HEIGHT;
-						cam.h/=2;
-						scale*=2;
-						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
-						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
+					if(e.wheel.y > 0){
+						gamestate.cam->zoomin(input->screenmousepos());
 						gamespeed=gamespeed/1.5;
 					}
-					if(e.wheel.y < 0){ // zoom out
-						cam.x-=cam.w*xMouse/SCREEN_WIDTH;
-						cam.w*=2;
-						cam.y-=cam.h*yMouse/SCREEN_HEIGHT;
-						cam.h*=2;
-						scale/=2;
-						cam.x = fmax(0, fmin(MAP_WIDTH-cam.w, cam.x));
-						cam.y = fmax(0, fmin(MAP_HEIGHT-cam.h, cam.y));
+					if(e.wheel.y < 0){
+						gamestate.cam->zoomout(input->screenmousepos());
 						gamespeed=gamespeed*1.5;
 					}
 					break;
@@ -177,13 +163,13 @@ int main(){
 			}
 		}
 		if(keys[leftpanbutton])
-			cam.x = fmax(0, cam.x-fmax(1,int(ms*0.4/scale)));
+			gamestate.cam->pan(Vec(-ms*0.4, 0));
 		if(keys[rightpanbutton])
-			cam.x = fmin(MAP_WIDTH-cam.w, cam.x+fmax(1,int(ms*0.4/scale)));
+			gamestate.cam->pan(Vec(+ms*0.4, 0));
 		if(keys[uppanbutton])
-			cam.y = fmax(0, cam.y-fmax(1,int(ms*0.4/scale)));
+			gamestate.cam->pan(Vec(0, -ms*0.4));
 		if(keys[downpanbutton])
-			cam.y = fmin(MAP_HEIGHT-cam.h, cam.y+fmax(1,int(ms*0.4/scale)));
+			gamestate.cam->pan(Vec(0, +ms*0.4));
 
 		ms = SDL_GetTicks() - lastTime;
 		mslogic = gamespeed*ms;
@@ -215,31 +201,31 @@ int main(){
 		for(int x=0; x<MAP_WIDTH; x+=128){
 		for(int y=0; y<MAP_HEIGHT; y+=128){
 			SDL_Rect rect = {x,y,128,128};
-			rendertexture(fieldtex, &rect);
+			rendering->rendertexture(fieldtex, &rect);
 		}}
 		for(auto& building : buildings)
-			building->render();
+			building->render(rendering);
 		for(auto& storage : storages)
-			storage->render();
-		gamestate.tracksystem->render();
+			storage->render(rendering);
+		gamestate.tracksystem->render(rendering);
 		for(auto& wagon : gamestate.wagons)
-			wagon->render();
+			wagon->render(rendering);
 		if(gamestate.selectedroute)
-			gamestate.selectedroute->render();
+			gamestate.selectedroute->render(rendering);
 		else
 			gamestate.renderroutes();
 		for(auto& train : trains)
-			train->render();
-		gamestate.tracksystem->renderabovetrains();
-		rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
-		rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
-		rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
+			train->render(rendering);
+		gamestate.tracksystem->renderabovetrains(rendering);
+		rendering->rendertext(std::to_string(int(money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(money<0)),static_cast<Uint8>(63*(money>=0)),0,0}, false, false);
+		rendering->rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
+		rendering->rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
 		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 		int scalelinelength = 200;
-		renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
-		renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
-		renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
-		rendertext(std::to_string(int(scalelinelength*0.001*150/scale)) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+		rendering->renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
+		rendering->renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
+		rendering->renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
+		rendering->rendertext(std::to_string(int(scalelinelength*0.001*150/rendering->getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
 		SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 		SDL_GetMouseState(&xMouse, &yMouse);
 		SDL_RenderPresent(renderer);

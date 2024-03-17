@@ -7,6 +7,7 @@ class Node;
 class Track;
 class Signal;
 class Train;
+class Gamestate;
 
 class Tracksystem
 {
@@ -15,11 +16,11 @@ friend class Track;
 friend class Gamestate;
 public:
     Tracksystem();
-    Tracksystem(std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(Gamestate* whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void update(int ms);
-    void render();
-    void renderabovetrains();
+    void render(Rendering* r);
+    void renderabovetrains(Rendering* r);
     void deleteclick(int xMouse, int yMouse);
     void selectat(Vec pos);
     float buildat(Vec pos);
@@ -45,6 +46,7 @@ public:
     void runoverblocks(State state, float pixels, Train* fortrain);
     signalid nextsignalontrack(State state, bool startfromtrackend=false, bool mustalign=true);
     void setblocksuptonextsignal(Signal* fromsignal);
+    Gamestate* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
     SDL_Texture* switchtex;
@@ -91,7 +93,7 @@ friend class Tracksystem;
 private:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
     void connecttrack(trackid track, bool fromupordown);
-    void render();
+    void render(Rendering* r);
     trackid gettrackup();
     trackid gettrackdown();
     Vec getswitchpos(bool updown);
@@ -115,7 +117,7 @@ private:
     ~Track();
     Tracksystem* tracksystem;
     nodeid previousnode, nextnode;
-    void render();
+    void render(Rendering* r);
     Vec getpos(float nodedist);
     Vec getpos(float nodedist, float transverseoffset);
     State getcloseststate(Vec pos);
@@ -138,7 +140,7 @@ class Signal
 friend class Tracksystem;
 public:
     Signal(Tracksystem& newtracksystem, State signalstate);
-    void render();
+    void render(Rendering* r);
     bool isred(Train* train);
     bool isgreen = true;
 private:

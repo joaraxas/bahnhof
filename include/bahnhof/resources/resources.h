@@ -1,6 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
+#include<map>
 #include "bahnhof/common/math.h"
 
 enum resourcetype
@@ -8,11 +9,13 @@ enum resourcetype
     none=-1, beer, hops, barley
 };
 
+class Rendering;
+
 class Resource
 {
 public:
     Resource(resourcetype newtype, std::string newname, std::string pathtotex);
-    void render(Vec pos);
+    void render(Rendering* r, Vec pos);
     resourcetype type;
 private:
     std::string name;

@@ -117,40 +117,42 @@ Wipe::Wipe()
 	description = "Wipe all previous orders";
 }
 
-void Order::renderlabel(Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
+void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
 {
 	int x = int(pos.x); int y = int(pos.y);
 	SDL_Rect rect = {x,y,16,14};
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
-	renderfilledrectangle(&rect, true, false);
-	rendertext(std::to_string(number), x+1, y, textcol);
+	r->renderfilledrectangle(&rect, true, false);
+	r->rendertext(std::to_string(number), x+1, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-void Gotostate::render(int number)
+void Gotostate::render(Rendering* r, int number)
 {
 	Vec posleft = route->tracksystem->getpos(state, 12);
 	Vec posright = route->tracksystem->getpos(state,-12);
-	renderline(posleft, posright);
+	r->renderline(posleft, posright);
 	if(posright.x>=posleft.x){
-		Order::renderlabel(posright, number);
+		Order::renderlabel(r, posright, number);
 	}
 	else{
-		Order::renderlabel(posleft, number);
+		Order::renderlabel(r, posleft, number);
 	}
 }
 
-void Setswitch::render(int number)
+void Setswitch::render(Rendering* r, int number)
 {
+	float scale = r->getscale();
 	Vec pos = route->tracksystem->getswitchpos(node, updown);
 	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
 	Vec inlabel = lineend+Vec(0+10,10)/scale;
-	Order::renderlabel(lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
-	renderline(inlabel + Vec(4-nodestate*4, 0)/scale, inlabel + Vec(nodestate*4, -8)/scale);
+	Order::renderlabel(r, lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
+	r->renderline(inlabel + Vec(4-nodestate*4, 0)/scale, inlabel + Vec(nodestate*4, -8)/scale);
 }
 
-void Setsignal::render(int number)
+void Setsignal::render(Rendering* r, int number)
 {
+	float scale = r->getscale();
 	Vec pos = route->tracksystem->getsignalpos(signal);
 	Vec lineend = pos+Vec(-8,12+16*offset)/scale;
 	SDL_Color bgrcol = {255, 0, 0, 255};
@@ -158,5 +160,5 @@ void Setsignal::render(int number)
 		bgrcol = {0, 255, 0, 255};
 	else if(redgreenflip==2)
 		bgrcol = {255, 255, 0, 255};
-	Order::renderlabel(lineend, number, bgrcol, {0, 0, 0, 255});
+	Order::renderlabel(r, lineend, number, bgrcol, {0, 0, 0, 255});
 }

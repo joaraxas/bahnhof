@@ -134,8 +134,9 @@ bool Track::isbelownextnode()
 	return cos(getorientation(1) - nextdir) > 0;
 }
 
-void Track::render()
+void Track::render(Rendering* r)
 {
+	float scale = r->getscale();
 	//// banvall ////
 	/*if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 127,127,127,255);
@@ -167,7 +168,7 @@ void Track::render()
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
 			Vec drawposl = getpos(nodedist, sleeperwidth/2);
 			Vec drawposr = getpos(nodedist, -sleeperwidth/2);{
-				renderline(drawposl, drawposr);
+				r->renderline(drawposl, drawposr);
 			}
 		}
 	}
@@ -187,21 +188,21 @@ void Track::render()
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
 		Vec drawpos2l = getpos(nodedist+1./nSegments, gauge/2);
-		renderline(drawpos1l, drawpos2l);
+		r->renderline(drawpos1l, drawpos2l);
 	}
 	if(gauge!=0)
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1r = getpos(nodedist, -gauge/2);
 		Vec drawpos2r = getpos(nodedist+1./nSegments, -gauge/2);
-		renderline(drawpos1r, drawpos2r);
+		r->renderline(drawpos1r, drawpos2r);
 	}
 	if(!nicetracks){
 		Vec radiustextpos = getpos(0.5);
 		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
 		if(isinf(radius))
 			radiustext = std::to_string(radius);
-		rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});
+		r->rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }

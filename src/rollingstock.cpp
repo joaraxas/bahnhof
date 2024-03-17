@@ -31,13 +31,14 @@ void Wagon::update(int ms)
 	imageangle = tracksystem->getorientation(state);
 }
 
-void Wagon::render()
+void Wagon::render(Rendering* r)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
 	SDL_Rect srcrect = {0, 0, w, h};
 	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-	rendertexture(tex, &rect, &srcrect, imageangle);
+	r->rendertexture(tex, &rect, &srcrect, imageangle);
+	float scale = r->getscale();
 	if(loadedresource!=none){
 		//Resource* resource = allresources->get(loadedresource);
 		//resource->render(pos);
@@ -45,7 +46,7 @@ void Wagon::render()
 	else if(icontex)
 	if(scale<0.3){
 		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
-		rendertexture(icontex, &iconrect, nullptr, 0, true, false);
+		r->rendertexture(icontex, &iconrect, nullptr, 0, true, false);
 	}
 }
 
@@ -104,19 +105,20 @@ void Locomotive::update(int ms)
 		imageindex += imagenumber;
 }
 
-void Locomotive::render()
+void Locomotive::render(Rendering* r)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
 	{
 		SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
 		SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-		rendertexture(tex, &rect, &srcrect, imageangle);
+		r->rendertexture(tex, &rect, &srcrect, imageangle);
 	}
+	float scale = r->getscale();
 	if(icontex)
 	if(scale<0.3){
 		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
-		rendertexture(icontex, &iconrect, nullptr, 0, true, false);
+		r->rendertexture(icontex, &iconrect, nullptr, 0, true, false);
 	}
 }
 

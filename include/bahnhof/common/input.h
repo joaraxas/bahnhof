@@ -1,4 +1,9 @@
 #pragma once
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
+#include "gamestate.h"
+#include "math.h"
 
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_RIGHT;
@@ -15,3 +20,15 @@ const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
 extern int xMouse, yMouse;
+
+class InputManager
+{
+public:
+    InputManager(Gamestate* whatgame);
+    Vec screenmousepos();
+    Vec mapmousepos();
+    bool keyispressed(const int scancode);
+    Gamestate* game;
+private:
+    const Uint8* keys;
+};

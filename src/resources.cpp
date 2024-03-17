@@ -35,12 +35,13 @@ Resource::Resource(resourcetype newtype, std::string newname, std::string pathto
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 }
 
-void Resource::render(Vec pos)
+void Resource::render(Rendering* r, Vec pos)
 {
+	float scale = r->getscale();
 	int x = int(pos.x - w / 2/scale);
 	int y = int(pos.y - h / 2/scale);
 	SDL_Rect rect = {x, y, w, h};
-	rendertexture(tex, &rect, nullptr, 0, true, false);
+	r->rendertexture(tex, &rect, nullptr, 0, true, false);
 }
 
 Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
@@ -51,14 +52,15 @@ Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourc
 	provides = _provides;
 }
 
-void Storage::render()
+void Storage::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
 	SDL_Rect drawrect = rect;
-	renderrectangle(&drawrect);
+	r->renderrectangle(&drawrect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;
+	float scale = r->getscale();
 	int sep = 20/scale;
 	int frameoffset = fmax(1,int(2/scale));
 	for(auto resourcepair : storedresources){
@@ -70,16 +72,16 @@ void Storage::render()
 				nCols = floor(i/maxrows);
 				int y = frameoffset+rect.y+sep/2+sep*i-nCols*maxrows*sep;
 				int x = frameoffset+xoffset+rect.x+sep/2+sep*nCols;
-				resource->render(Vec(x, y));
+				resource->render(r, Vec(x, y));
 			}
 			xoffset += (1+nCols)*sep;
 		}
 		else{
 			int y = rect.y+frameoffset+sep/2;
 			int x = rect.x+frameoffset+sep/2+xoffset;
-			rendertext(std::to_string(amount), x-sep/2, y-7/scale);
+			r->rendertext(std::to_string(amount), x-sep/2, y-7/scale);
 			int textwidth = 7*(1+(amount>=10)+(amount>=100))/scale;
-			resource->render(Vec(x+textwidth, y));
+			resource->render(r, Vec(x+textwidth, y));
 			xoffset += textwidth+sep;
 		}
 	}

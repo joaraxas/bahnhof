@@ -6,6 +6,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 add_executable(bahnhof
     src/math.cpp
     src/rendering.cpp
+    src/input.cpp
+    src/camera.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/node.cpp

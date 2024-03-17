@@ -2,6 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/input.h"
+#include "bahnhof/common/camera.h"
 #include "bahnhof/common/rendering.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
@@ -29,8 +30,9 @@ State flipstate(State state)
 
 Tracksystem::Tracksystem(){}
 
-Tracksystem::Tracksystem(std::vector<float> xs, std::vector<float> ys)
+Tracksystem::Tracksystem(Gamestate* whatgame, std::vector<float> xs, std::vector<float> ys)
 {
+	game = whatgame;
 	nodeid newnode = addnode(Vec(xs[0], ys[0]), 0);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
@@ -252,25 +254,24 @@ bool Tracksystem::isendofline(State state)
 	return false;
 }
 
-void Tracksystem::render()
+void Tracksystem::render(Rendering* r)
 {
-	Vec mousepos(xMouse/scale+cam.x, yMouse/scale+cam.y);
 	for(auto const& [id, track] : tracks)
-		track->render();
+		track->render(r);
 	for(auto const& [id, node] : nodes)
-		node->render();
+		node->render(r);
 	
 	if(selectednode){
 		preparingtrack = true;
 		nodeid lastnodeindex = nodecounter;
 		trackid lasttrackindex = trackcounter;
 		nodeid lastselectednode = selectednode;
-		buildat(mousepos);
+		buildat(game->input->mapmousepos());
 		selectednode = lastselectednode;
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-			gettrack(id)->render();
+			gettrack(id)->render(r);
 		for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
-			getnode(id)->render();
+			getnode(id)->render(r);
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
 			removetrack(id);
 		for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
@@ -281,10 +282,10 @@ void Tracksystem::render()
 	}
 }
 
-void Tracksystem::renderabovetrains()
+void Tracksystem::renderabovetrains(Rendering* r)
 {
 	for(auto const& [id, signal] : signals)
-		signal->render();
+		signal->render(r);
 }
 
 float Tracksystem::buildat(Vec pos)
@@ -376,7 +377,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	}
 	State returnstate;
 	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
-	if(mindist<20/scale){
+	if(mindist<20/game->cam->getscale()){
 		if(trackdist==mindist){
 			*track = closeststate.track;
 			returnstate = closeststate;

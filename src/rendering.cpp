@@ -2,14 +2,15 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/rendering.h"
+#include "bahnhof/common/camera.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-SDL_Rect cam;
 TTF_Font* font = NULL;
 const Uint8* keys = NULL;
 
-int init(){
+int init()
+{
 	bool success = true;
 	std::srand((unsigned) time(NULL));
 	int sdlflags = SDL_INIT_VIDEO;
@@ -36,7 +37,6 @@ int init(){
 	}
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
 	res = TTF_Init();
 	if(res<0){
 		success = false;
@@ -51,7 +51,8 @@ int init(){
 	return success;
 }
 
-SDL_Texture* loadImage(std::string path){
+SDL_Texture* loadImage(std::string path)
+{
 	SDL_Texture* tex = NULL;
 	tex = IMG_LoadTexture(renderer, ("../assets/png/" + path).c_str());
 	if(tex==NULL){
@@ -60,7 +61,8 @@ SDL_Texture* loadImage(std::string path){
 	return tex;	
 }
 
-SDL_Texture* loadText(std::string text, SDL_Color color){
+SDL_Texture* loadText(std::string text, SDL_Color color)
+{
 	SDL_Surface* surf = nullptr;
 	surf = TTF_RenderUTF8_Solid(font, text.c_str(), color);
 	if(!surf){
@@ -75,74 +77,8 @@ SDL_Texture* loadText(std::string text, SDL_Color color){
 	return tex;	
 }
 
-void rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed){
-	SDL_Texture* tex = loadText(text, color);
-	int w, h;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	SDL_Rect rect = {x, y, w, h};
-	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
-	SDL_DestroyTexture(tex);
-}
-
-void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed){
-	if(ported){
-		rect->x -= cam.x;
-		rect->y -= cam.y;
-		rect->x *= scale;
-		rect->y *= scale;
-	}
-	if(zoomed){
-		rect->w *= scale;
-		rect->h *= scale;
-	}
-	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
-}
-
-void renderline(Vec pos1, Vec pos2, bool ported){
-	if(ported){
-		pos1.x -= cam.x;
-		pos1.y -= cam.y;
-		pos2.x -= cam.x;
-		pos2.y -= cam.y;
-		pos1.x *= scale;
-		pos1.y *= scale;
-		pos2.x *= scale;
-		pos2.y *= scale;
-	}
-	//if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
-	//	(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
-		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
-}
-
-void renderrectangle(SDL_Rect* rect, bool ported, bool zoomed){
-	if(ported){
-		rect->x -= cam.x;
-		rect->y -= cam.y;
-		rect->x *= scale;
-		rect->y *= scale;
-	}
-	if(zoomed){
-		rect->w *= scale;
-		rect->h *= scale;
-	}
-	SDL_RenderDrawRect(renderer, rect);
-}
-
-void renderfilledrectangle(SDL_Rect* rect, bool ported, bool zoomed){
-	if(ported){
-		rect->x -= cam.x;
-		rect->y -= cam.y;
-		rect->x *= scale;
-		rect->y *= scale;
-	}
-	if(zoomed){
-		rect->w *= scale;
-		rect->h *= scale;
-	}
-	SDL_RenderFillRect(renderer, rect);
-}
-
-void close(){
+void close()
+{
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
@@ -156,3 +92,75 @@ Vec randpos(int xoffset, int yoffset)
 {
 	return Vec(randint(MAP_WIDTH-xoffset), randint(MAP_HEIGHT-yoffset));
 };
+
+
+Rendering::Rendering(Gamestate* whatgame, Camera* whatcam)
+{
+	game = whatgame;
+	cam = whatcam;
+}
+
+void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed)
+{
+	SDL_Texture* tex = loadText(text, color);
+	int w, h;
+	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+	SDL_Rect rect = {x, y, w, h};
+	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+	SDL_DestroyTexture(tex);
+}
+
+void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed)
+{
+	if(ported){
+		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
+		rect->x = screenpos.x; rect->y = screenpos.y;
+	}
+	if(zoomed){
+		rect->w *= cam->getscale();
+		rect->h *= cam->getscale();
+	}
+	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
+}
+
+void Rendering::renderline(Vec pos1, Vec pos2, bool ported)
+{
+	if(ported){
+		pos1 = cam->screencoord(pos1);
+		pos2 = cam->screencoord(pos2);
+	}
+	//if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
+	//	(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
+		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
+}
+
+void Rendering::renderrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+{
+	if(ported){
+		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
+		rect->x = screenpos.x; rect->y = screenpos.y;
+	}
+	if(zoomed){
+		rect->w *= cam->getscale();
+		rect->h *= cam->getscale();
+	}
+	SDL_RenderDrawRect(renderer, rect);
+}
+
+void Rendering::renderfilledrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+{
+	if(ported){
+		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
+		rect->x = screenpos.x; rect->y = screenpos.y;
+	}
+	if(zoomed){
+		rect->w *= cam->getscale();
+		rect->h *= cam->getscale();
+	}
+	SDL_RenderFillRect(renderer, rect);
+}
+
+float Rendering::getscale()
+{
+	return cam->getscale();
+}

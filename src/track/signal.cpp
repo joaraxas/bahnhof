@@ -16,20 +16,20 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
     tracksystem->setblocksuptonextsignal(this);
 }
 
-void Signal::render()
+void Signal::render(Rendering* r)
 {
 	if(!nicetracks){
 		if(reservedfor){
 			//rendertext(reservedfor->route->name, pos.x, pos.y+14);
 		}
 		else
-			rendertext("noone", pos.x, pos.y+14);
+			r->rendertext("noone", pos.x, pos.y+14);
 	}
-	if(scale>0.3){
+	if(r->getscale()>0.3){
 			int w = tracksystem->signalrect.w; int h = tracksystem->signalrect.h;
 			SDL_Rect rect = {int(pos.x-w*0.5), int(pos.y-h*0.5), w, h};
 			tracksystem->signalrect.x = tracksystem->signalrect.w*isgreen;
-			rendertexture(tracksystem->signaltex, &rect, &tracksystem->signalrect, 0*tracksystem->getorientation(state)-0*pi/2, true, true);
+			r->rendertexture(tracksystem->signaltex, &rect, &tracksystem->signalrect, 0, true, true);
 	}
 }
 
