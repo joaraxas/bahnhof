@@ -14,6 +14,7 @@ void InputManager::handle(int ms, int mslogic){
 	SDL_Event e;
     Gamestate* gamestate = game->gamestate;
     Tracksystem* tracksystem = gamestate->tracksystem.get();
+    RouteManager* routing = gamestate->routing;
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:{
@@ -25,10 +26,10 @@ void InputManager::handle(int ms, int mslogic){
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     tracksystem->selectednode = 0;
                     tracksystem->placingsignal = false;
-                    if(gamestate->selectedroute){
+                    if(routing->selectedroute){
                         Order* neworder = tracksystem->generateorderat(mousepos);
                         if(neworder)
-                            gamestate->selectedroute->insertorderatselected(neworder);
+                            routing->selectedroute->insertorderatselected(neworder);
                     }
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
@@ -41,7 +42,7 @@ void InputManager::handle(int ms, int mslogic){
                         for(auto& train : trains){
                             for(auto& wagon : train->wagons){
                                 if(norm(mousepos-wagon->pos)<wagon->w/2/game->rendering->getscale()){
-                                    gamestate->selectedroute = train->route;
+                                    routing->selectedroute = train->route;
                                     clickedtrain = train.get();
                                 }
                                 if(clickedtrain) break;
@@ -57,7 +58,7 @@ void InputManager::handle(int ms, int mslogic){
                                 gamestate->tracksystem->selectat(mousepos);
                                 for(auto& train : trains)
                                     train->selected = false;
-                                gamestate->selectedroute = nullptr;
+                                routing->selectedroute = nullptr;
                             }
                         }
                     }
@@ -66,45 +67,45 @@ void InputManager::handle(int ms, int mslogic){
             }
             case SDL_KEYDOWN:{
                 if(e.key.keysym.sym == SDLK_r){
-                    if(!gamestate->selectedroute)
-                        gamestate->addroute();
+                    if(!routing->selectedroute)
+                        routing->addroute();
                 }
                 if(keyispressed(routeassignbutton)){
-                    if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+gamestate->routes.size()){
+                    if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing->routes.size()){
                         for(auto& train : trains)
                             if(train->selected){
-                                gamestate->selectedroute = gamestate->routes[e.key.keysym.sym-SDLK_0-1].get();
-                                train->route = gamestate->selectedroute;
+                                routing->selectedroute = routing->routes[e.key.keysym.sym-SDLK_0-1].get();
+                                train->route = routing->selectedroute;
                             }
                     }
                 }
                 if(e.key.keysym.sym == SDLK_UP){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->selectedorderid = gamestate->selectedroute->previousorder(gamestate->selectedroute->selectedorderid);
+                    if(routing->selectedroute)
+                        routing->selectedroute->selectedorderid = routing->selectedroute->previousorder(routing->selectedroute->selectedorderid);
                 }
                 if(e.key.keysym.sym == SDLK_DOWN){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->selectedorderid = gamestate->selectedroute->nextorder(gamestate->selectedroute->selectedorderid);
+                    if(routing->selectedroute)
+                        routing->selectedroute->selectedorderid = routing->selectedroute->nextorder(routing->selectedroute->selectedorderid);
                 }
                 if(e.key.keysym.sym == SDLK_BACKSPACE){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->removeselectedorder();
+                    if(routing->selectedroute)
+                        routing->selectedroute->removeselectedorder();
                 }
                 if(e.key.keysym.sym == SDLK_t){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->insertorderatselected(new Turn());
+                    if(routing->selectedroute)
+                        routing->selectedroute->insertorderatselected(new Turn());
                 }
                 if(e.key.keysym.sym == SDLK_e){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->insertorderatselected(new Decouple());
+                    if(routing->selectedroute)
+                        routing->selectedroute->insertorderatselected(new Decouple());
                 }
                 if(e.key.keysym.sym == SDLK_l){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->insertorderatselected(new Loadresource());
+                    if(routing->selectedroute)
+                        routing->selectedroute->insertorderatselected(new Loadresource());
                 }
                 if(e.key.keysym.sym == SDLK_c){
-                    if(gamestate->selectedroute)
-                        gamestate->selectedroute->insertorderatselected(new Couple());
+                    if(routing->selectedroute)
+                        routing->selectedroute->insertorderatselected(new Couple());
                 }
                 if(e.key.keysym.sym == SDLK_p){
                     for(auto& train : trains)

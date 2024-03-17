@@ -1,3 +1,5 @@
+#pragma once
+#include<SDL.h>
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 
@@ -7,7 +9,7 @@ class Order;
 class Route
 {
 public:
-    Route(Tracksystem* whattracksystem, std::string routename);
+    Route(Tracksystem* tracks, std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
     int previousorder(int orderid);
@@ -20,9 +22,9 @@ public:
     void removeorders(int orderindexfrom, int orderindexto);
     void render(Rendering* r);
     int getindex(int orderid);
+    Tracksystem* tracksystem;
     std::string name = "New route";
     int selectedorderid = -1;
-    Tracksystem* tracksystem;
     std::vector<signalid> signals;
     std::vector<nodeid> switches;
     std::vector<bool> updowns;
@@ -30,6 +32,17 @@ private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
     std::vector<int> orderids;
+};
+
+class RouteManager
+{
+public:
+    RouteManager(Tracksystem* tracks);
+    void renderroutes(Rendering* r);
+    Route* addroute();
+    Tracksystem* tracksystem;
+    Route* selectedroute = nullptr;
+    std::vector<std::unique_ptr<Route>> routes;
 };
 
 enum ordertype

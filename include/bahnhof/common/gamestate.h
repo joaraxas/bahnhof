@@ -11,6 +11,7 @@ class Building;
 class Camera;
 class Rendering;
 class InputManager;
+class RouteManager;
 class Gamestate;
 
 class Game
@@ -24,7 +25,6 @@ public:
     //TimeManager* timer;
     InputManager* input;
     //Map* map;
-    //RouteManager* routing;
     Rendering* rendering;
     bool quit;
 };
@@ -35,17 +35,13 @@ public:
     Gamestate(Game* whatgame);
     ~Gamestate();
     void update(int ms);
-    void renderroutes();
-    Route* addroute();
     void randommap();
     void initjusttrack();
     void inittrain(State startstate);
     void addtrainstoorphans();
-	ResourceManager resources;
+    RouteManager* routing;
     std::vector<Wagon*> wagons;
-    std::vector<std::unique_ptr<Route>> routes;
     std::unique_ptr<Tracksystem> tracksystem;
-    Route* selectedroute = nullptr;
     int time = 0;
     float money;
     int revenue = 0;
@@ -67,11 +63,6 @@ class Background
 class Map
 {
     Background* background;
-};
-
-class RouteManager
-{
-
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

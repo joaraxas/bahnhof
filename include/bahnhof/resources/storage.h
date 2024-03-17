@@ -3,7 +3,7 @@
 class Storage
 {
 public:
-    Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides);
+    Storage(ResourceManager* resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides);
     void render(Rendering* r);
     int loadstorage(resourcetype type, int amount);
     int unloadstorage(resourcetype type, int amount);

@@ -12,6 +12,7 @@ add_executable(bahnhof
     src/track/tracksystem.cpp
     src/track/node.cpp
     src/track/signal.cpp
+    src/routing/routemanager.cpp
     src/routing/route.cpp
     src/routing/order.cpp
     src/rollingstock.cpp

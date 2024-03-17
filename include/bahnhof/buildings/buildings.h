@@ -4,7 +4,7 @@
 class Building
 {
 public:
-    Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
+    Building(ResourceManager* resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
     virtual void render(Rendering* rendering);
     void update(int ms);
 protected:
@@ -21,18 +21,18 @@ private:
 class Brewery : public Building
 {
 public:
-    Brewery(ResourceManager& resources, Vec pos);
+    Brewery(ResourceManager* resources, Vec pos);
 };
 
 class Hopsfield : public Building
 {
 public:
-    Hopsfield(ResourceManager& resources, Vec pos);
+    Hopsfield(ResourceManager* resources, Vec pos);
 };
 
 class City : public Building
 {
 public:
-    City(ResourceManager& resources, Vec pos);
+    City(ResourceManager* resources, Vec pos);
 };
 

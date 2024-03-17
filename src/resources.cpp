@@ -44,9 +44,9 @@ void Resource::render(Rendering* r, Vec pos)
 	r->rendertexture(tex, &rect, nullptr, 0, true, false);
 }
 
-Storage::Storage(ResourceManager& resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
+Storage::Storage(ResourceManager* resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
 {
-	allresources = &resources;
+	allresources = resources;
 	rect = {x, y, w, h};
 	accepts = _accepts;
 	provides = _provides;

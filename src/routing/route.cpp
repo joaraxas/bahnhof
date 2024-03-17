@@ -5,10 +5,10 @@
 #include "bahnhof/routing/routing.h"
 
 
-Route::Route(Tracksystem* whattracksystem, std::string routename)
+Route::Route(Tracksystem* tracks, std::string routename)
 {
-	tracksystem = whattracksystem;
 	name = routename;
+	tracksystem = tracks;
 }
 
 int Route::getindex(int orderid)

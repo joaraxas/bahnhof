@@ -8,9 +8,9 @@
 
 std::vector<std::unique_ptr<Building>> buildings;
 
-Building::Building(ResourceManager& resources, int x, int y, int w, int h, resourcetype need, resourcetype production)
+Building::Building(ResourceManager* resources, int x, int y, int w, int h, resourcetype need, resourcetype production)
 {
-	allresources = &resources;
+	allresources = resources;
 	rect = {x, y, w, h};
 	storage = getstorageatpoint(Vec(x,y));
 	if(!storage)
@@ -52,17 +52,17 @@ void Building::render(Rendering* rendering)
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
-Brewery::Brewery(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 50, hops, beer)
+Brewery::Brewery(ResourceManager* resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 50, hops, beer)
 {
 	color = {63, 63, 127, 255};
 }
 
-Hopsfield::Hopsfield(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 200, 200, none, hops)
+Hopsfield::Hopsfield(ResourceManager* resources, Vec pos) : Building(resources, pos.x, pos.y, 200, 200, none, hops)
 {
 	color = {63, 127, 63, 255};
 }
 
-City::City(ResourceManager& resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 150, beer, none)
+City::City(ResourceManager* resources, Vec pos) : Building(resources, pos.x, pos.y, 100, 150, beer, none)
 {
 	color = {63, 63, 31, 255};
 }

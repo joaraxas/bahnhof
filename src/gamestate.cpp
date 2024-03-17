@@ -35,8 +35,8 @@ Gamestate::Gamestate(Game* whatgame)
 	money = 600;
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
-	inittrain(State(1,0.4,1));
-	trains.back()->route = routes.front().get();
+	routing = new RouteManager(tracksystem.get());
+	//inittrain(State(1,0.4,1));
 
 	addtrainstoorphans();
 	
@@ -47,6 +47,7 @@ Gamestate::~Gamestate()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
 		delete wagons[iWagon];
+	delete routing;
 }
 
 void Gamestate::update(int ms)
@@ -78,22 +79,6 @@ void Gamestate::update(int ms)
 	time += ms;
 }
 
-void Gamestate::renderroutes()
-{
-	int offset = 1;
-	for(auto &route : routes){
-		game->rendering->rendertext("("+std::to_string(offset)+") "+route->name, SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
-		offset++;
-	}
-	game->rendering->rendertext("(r) Create new route", SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
-}
-
-Route* Gamestate::addroute()
-{
-	Route* newroute = new Route(tracksystem.get(), "Route "+std::to_string(routes.size()+1));
-	routes.emplace_back(newroute);
-}
-
 void Gamestate::addtrainstoorphans()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
@@ -112,8 +97,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+400, storageextrah+400, hops, beer));
-		buildings.emplace_back(new Brewery(resources, newpos));
+		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, hops, beer));
+		buildings.emplace_back(new Brewery(game->resources, newpos));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -121,8 +106,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
-		buildings.emplace_back(new Hopsfield(resources, newpos));
+		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
+		buildings.emplace_back(new Hopsfield(game->resources, newpos));
 	}
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
@@ -130,15 +115,14 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(resources, storagex, storagey, storageextraw+400, storageextrah+400, beer, none));
-		buildings.emplace_back(new City(resources, newpos));
+		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, beer, none));
+		buildings.emplace_back(new City(game->resources, newpos));
 	}
 }
 
 void Gamestate::initjusttrack()
 {
 	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(game, {200,700,1000}, {250,250,550}));
-	
 }
 
 void Gamestate::inittrain(State startstate)
@@ -151,7 +135,6 @@ void Gamestate::inittrain(State startstate)
 	}
 	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
 	
-	Route* loadroute = new Route(tracksystem.get(), "Route 1");
-	routes.emplace_back(loadroute);
+	Route* loadroute = routing->addroute();
 	trains.back()->route = loadroute;
 }

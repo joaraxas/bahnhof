@@ -125,10 +125,10 @@ void Rendering::render()
 	gamestate->tracksystem->render(this);
 	for(auto& wagon : gamestate->wagons)
 		wagon->render(this);
-	if(gamestate->selectedroute)
-		gamestate->selectedroute->render(this);
+	if(gamestate->routing->selectedroute)
+		gamestate->routing->selectedroute->render(this);
 	else
-		gamestate->renderroutes();
+		gamestate->routing->renderroutes(this);
 	for(auto& train : trains)
 		train->render(this);
 	gamestate->tracksystem->renderabovetrains(this);
