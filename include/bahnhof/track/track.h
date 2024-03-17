@@ -1,4 +1,6 @@
 #pragma once
+#include "state.h"
+#include "bahnhof/common/math.h"
 
 class Order;
 class Node;

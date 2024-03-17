@@ -4,13 +4,12 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "bahnhof/utils.h"
+#include "bahnhof/common/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
-#include "bahnhof/common/constants.h"
 #include "bahnhof/common/gamestate.h"
 
 Gamestate::Gamestate()

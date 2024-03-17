@@ -1,5 +1,13 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
+#include "math.h"
+
+const int SCREEN_WIDTH = 1000;
+const int SCREEN_HEIGHT = 800;
+const int MAP_WIDTH = SCREEN_WIDTH*64;
+const int MAP_HEIGHT = SCREEN_HEIGHT*64;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
@@ -9,22 +17,8 @@ extern TTF_Font* font;
 extern float money;
 extern bool nicetracks;
 extern float scale;
-extern int xMouse, yMouse;
 
 int init();
-
-class Vec
-{
-    public:
-    Vec();
-    Vec(float xstart, float ystart);
-    Vec operator+(Vec);
-    Vec operator-(Vec);
-    Vec operator*(float);
-    Vec operator/(float);
-    float x;
-    float y;
-};
 
 SDL_Texture* loadImage(std::string path);
 SDL_Texture* loadText(std::string text, SDL_Color color);
@@ -35,26 +29,3 @@ void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
 void renderfilledrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
 
 void close();
-
-float norm(Vec v);
-float sign(float a);
-float truncate(float dir);
-int randint(int maxinclusive);
-Vec randpos(int xoffset=0, int yoffset=0);
-
-typedef int trackid;
-typedef int nodeid;
-typedef int signalid;
-
-struct State
-{
-    State();
-    State(trackid trackstart, float nodediststart, bool alignedwithtrack);
-    trackid track;
-    float nodedist;
-    bool alignedwithtrack;
-};
-
-State flipstate(State state);
-
-#endif

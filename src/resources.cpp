@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "bahnhof/utils.h"
+#include "bahnhof/common/rendering.h"
 #include "bahnhof/resources/storage.h"
 
 std::vector<std::unique_ptr<Storage>> storages;

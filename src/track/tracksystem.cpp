@@ -4,8 +4,8 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "bahnhof/utils.h"
-#include "bahnhof/common/constants.h"
+#include "bahnhof/common/input.h"
+#include "bahnhof/common/rendering.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
 

@@ -1,3 +1,5 @@
+#pragma once
+
 extern const Uint8* keys;
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -12,10 +14,4 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 800;
-const int MAP_WIDTH = SCREEN_WIDTH*64;
-const int MAP_HEIGHT = SCREEN_HEIGHT*64;
-const double pi = 3.141592653589793238;
-const float g = 9.8;
-const float normalgauge = 1.435;
+extern int xMouse, yMouse;

@@ -1,3 +1,4 @@
+#include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 
 class Tracksystem;

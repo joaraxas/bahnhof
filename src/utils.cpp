@@ -4,8 +4,7 @@
 #include<SDL_ttf.h>
 #include<string>
 #include<map>
-#include "bahnhof/utils.h"
-#include "bahnhof/common/constants.h"
+#include "bahnhof/common/rendering.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;

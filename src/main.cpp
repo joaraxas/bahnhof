@@ -5,9 +5,9 @@
 #include<string>
 #include<format>
 #include<map>
-#include "bahnhof/utils.h"
+#include "bahnhof/common/rendering.h"
 #include "bahnhof/track/track.h"
-#include "bahnhof/common/constants.h"
+#include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/buildings/buildings.h"

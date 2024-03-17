@@ -1,7 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "bahnhof/utils.h"
+#include "bahnhof/common/math.h"
 
 enum resourcetype
 {
