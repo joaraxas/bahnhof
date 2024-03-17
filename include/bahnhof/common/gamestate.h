@@ -12,6 +12,7 @@ class Camera;
 class Rendering;
 class InputManager;
 class RouteManager;
+class TimeManager;
 class Gamestate;
 
 class Game
@@ -23,9 +24,8 @@ public:
     Gamestate* gamestate;
     ResourceManager* resources;
     Camera* cam;
-    //TimeManager* timer;
+    TimeManager* timer;
     InputManager* input;
-    //Map* map;
     Rendering* rendering;
 };
 
@@ -40,6 +40,7 @@ public:
     void inittrain(State startstate);
     void addtrainstoorphans();
     RouteManager* routing;
+    //Map* map;
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building> > buildings;
     std::vector<std::unique_ptr<Train> > trains;
@@ -50,11 +51,6 @@ public:
     State newwagonstate;
 private:
     Game* game;
-};
-
-class TimeManager
-{
-
 };
 
 class Background

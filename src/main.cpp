@@ -4,9 +4,9 @@
 #include "bahnhof/common/rendering.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/timing.h"
 
 bool nicetracks = true;
-float gamespeed = 1;
 
 int main(){
 	init();
@@ -14,19 +14,14 @@ int main(){
 	Gamestate* gamestate = game.gamestate;
 	InputManager* input = game.input;
 	Rendering* rendering = game.rendering;
-	int ms = 0;
-	int mslogic = ms*gamespeed;
-	int startTime = SDL_GetTicks();
-	int lastTime = SDL_GetTicks();
+	TimeManager* timer = game.timer;
 
 	while(!game.quit){
-		ms = SDL_GetTicks() - lastTime;
-		mslogic = gamespeed*ms;
-		lastTime = SDL_GetTicks();
+		timer->tick();
 
-		input->handle(ms, mslogic);
+		input->handle(timer->getms(), timer->getmslogic());
 		
-		gamestate->update(mslogic);
+		gamestate->update(timer->getmslogic());
 
 		rendering->render();
 	}

@@ -8,6 +8,7 @@ add_executable(bahnhof
     src/rendering.cpp
     src/input.cpp
     src/camera.cpp
+    src/timing.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/node.cpp

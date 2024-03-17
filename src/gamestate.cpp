@@ -10,10 +10,12 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
+#include "bahnhof/common/timing.h"
 
 
 Game::Game()
 {
+	timer = new TimeManager();
 	input = new InputManager(this);
 	cam = new Camera();
 	rendering = new Rendering(this, cam);
@@ -24,6 +26,7 @@ Game::Game()
 
 Game::~Game()
 {
+	delete timer;
 	delete input;
 	delete cam;
 	delete rendering;
