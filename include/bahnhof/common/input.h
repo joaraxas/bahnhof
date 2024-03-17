@@ -24,6 +24,7 @@ class InputManager
 {
 public:
     InputManager(Game* whatgame);
+    void handle(int ms, int mslogic);
     Vec screenmousepos();
     Vec mapmousepos();
     bool keyispressed(const int scancode);

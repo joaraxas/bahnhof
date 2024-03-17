@@ -26,6 +26,7 @@ public:
     //Map* map;
     //RouteManager* routing;
     Rendering* rendering;
+    bool quit;
 };
 
 class Gamestate
@@ -46,6 +47,7 @@ public:
     std::unique_ptr<Tracksystem> tracksystem;
     Route* selectedroute = nullptr;
     int time = 0;
+    float money;
     int revenue = 0;
     State newwagonstate;
 private:

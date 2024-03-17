@@ -37,7 +37,7 @@ void Building::update(int ms)
 				storage->loadstorage(wants, got-put);
 			}
 			else{
-				money+=got;
+				//money+=got;
 			}
 		}
 		timeleft = 10000;

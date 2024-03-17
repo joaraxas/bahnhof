@@ -1,8 +1,15 @@
+#pragma once
 #include<iostream>
 #include<string>
 #include<map>
 #include "bahnhof/common/rendering.h"
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
+#include "bahnhof/track/track.h"
+#include "bahnhof/routing/routing.h"
+#include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/buildings/buildings.h"
+#include "bahnhof/resources/storage.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -98,11 +105,44 @@ Rendering::Rendering(Game* whatgame, Camera* whatcam)
 {
 	game = whatgame;
 	cam = whatcam;
+	fieldtex = loadImage("backgrounds/field.png");
 }
 
 void Rendering::render()
 {
-	
+	Gamestate* gamestate = game->gamestate;
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderClear(renderer);
+	for(int x=0; x<MAP_WIDTH; x+=128){
+	for(int y=0; y<MAP_HEIGHT; y+=128){
+		SDL_Rect rect = {x,y,128,128};
+		rendertexture(fieldtex, &rect);
+	}}
+	for(auto& building : buildings)
+		building->render(this);
+	for(auto& storage : storages)
+		storage->render(this);
+	gamestate->tracksystem->render(this);
+	for(auto& wagon : gamestate->wagons)
+		wagon->render(this);
+	if(gamestate->selectedroute)
+		gamestate->selectedroute->render(this);
+	else
+		gamestate->renderroutes();
+	for(auto& train : trains)
+		train->render(this);
+	gamestate->tracksystem->renderabovetrains(this);
+	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
+	rendertext(std::to_string(int(gamestate->time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
+	rendertext(std::to_string(int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	int scalelinelength = 200;
+	renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
+	renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
+	renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
+	rendertext(std::to_string(int(scalelinelength*0.001*150/getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+	SDL_RenderPresent(renderer);
 }
 
 void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed)

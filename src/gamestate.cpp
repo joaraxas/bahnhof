@@ -18,6 +18,7 @@ Game::Game()
 	cam = new Camera();
 	rendering = new Rendering(this, cam);
 	gamestate = new Gamestate(this);
+	quit = false;
 }
 
 Game::~Game()
@@ -50,6 +51,30 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
+	tracksystem->update(ms);
+
+	for(int iTrain=0; iTrain<trains.size(); iTrain++)
+		for(int jTrain=0; jTrain<trains.size(); jTrain++)
+			if(iTrain!=jTrain)
+				trains[iTrain]->checkcollision(ms, trains[jTrain].get());
+
+	for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
+		if(trains[iTrain]->wagons.size() == 0)
+			trains.erase(trains.begin()+iTrain);
+
+	for(int iTrain=0; iTrain<trains.size(); iTrain++)
+		trains[iTrain]->update(ms);
+
+	for(auto& wagon : wagons)
+		wagon->update(ms);
+
+	int lastmoney = money;
+	
+	for(auto& building : buildings)
+		building->update(ms);
+
+	revenue += money-lastmoney;
+
 	time += ms;
 }
 

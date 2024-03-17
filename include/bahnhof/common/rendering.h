@@ -40,6 +40,7 @@ public:
 private:
     Game* game;
     Camera* cam;
+    SDL_Texture* fieldtex;
 };
 
 Vec randpos(int xoffset=0, int yoffset=0);
