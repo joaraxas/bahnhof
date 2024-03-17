@@ -17,6 +17,7 @@ Game::Game()
 	input = new InputManager(this);
 	cam = new Camera();
 	rendering = new Rendering(this, cam);
+	resources = new ResourceManager();
 	gamestate = new Gamestate(this);
 	quit = false;
 }
@@ -27,6 +28,7 @@ Game::~Game()
 	delete cam;
 	delete rendering;
 	delete gamestate;
+	delete resources;
 }
 
 Gamestate::Gamestate(Game* whatgame)

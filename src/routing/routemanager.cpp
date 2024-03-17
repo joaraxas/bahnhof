@@ -20,4 +20,5 @@ Route* RouteManager::addroute()
 {
 	Route* newroute = new Route(tracksystem, "Route "+std::to_string(routes.size()+1));
 	routes.emplace_back(newroute);
+    return newroute;
 }
