@@ -1,8 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-//#include "bahnhof/resources/resources.h"
-
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_Rect cam;
@@ -42,6 +40,7 @@ float norm(Vec v);
 float sign(float a);
 float truncate(float dir);
 int randint(int maxinclusive);
+Vec randpos(int xoffset=0, int yoffset=0);
 
 typedef int trackid;
 typedef int nodeid;

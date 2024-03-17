@@ -15,6 +15,7 @@ add_executable(bahnhof
     src/buildings.cpp
     src/resources.cpp
     src/train.cpp
+    src/gamestate.cpp
     src/main.cpp
 )
 
