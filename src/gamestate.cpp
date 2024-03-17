@@ -38,7 +38,7 @@ Gamestate::Gamestate(Game* whatgame)
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
 	routing = new RouteManager(tracksystem.get());
-	//inittrain(State(1,0.4,1));
+	inittrain(State(1,0.4,1));
 
 	addtrainstoorphans();
 	

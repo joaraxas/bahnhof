@@ -19,6 +19,7 @@ class Game
 public:
     Game();
     ~Game();
+    bool quit;
     Gamestate* gamestate;
     ResourceManager* resources;
     Camera* cam;
@@ -26,7 +27,6 @@ public:
     InputManager* input;
     //Map* map;
     Rendering* rendering;
-    bool quit;
 };
 
 class Gamestate
