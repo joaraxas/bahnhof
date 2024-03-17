@@ -6,6 +6,7 @@
 #include<map>
 #include "bahnhof/utils.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/buildings/buildings.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
 std::vector<std::unique_ptr<Building>> buildings;

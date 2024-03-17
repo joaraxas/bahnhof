@@ -8,6 +8,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/routing/routing.h"
+#include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/common/constants.h"
 #include "bahnhof/common/gamestate.h"
