@@ -1,9 +1,10 @@
+#include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 
-struct State;
 class Route;
 class Wagon;
 class Train;
+class Tracksystem;
 class Building;
 
 class Gamestate

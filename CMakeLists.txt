@@ -4,7 +4,8 @@ project(bahnhof VERSION 1.0)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
-    src/utils.cpp
+    src/math.cpp
+    src/rendering.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/node.cpp

@@ -1,18 +1,14 @@
 #include<iostream>
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
 #include<string>
-#include<format>
 #include<map>
 #include "bahnhof/common/rendering.h"
-#include "bahnhof/track/track.h"
 #include "bahnhof/common/input.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
-#include "bahnhof/common/gamestate.h"
 
 float money = 0;
 bool nicetracks = true;

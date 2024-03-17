@@ -29,3 +29,5 @@ void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
 void renderfilledrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
 
 void close();
+
+Vec randpos(int xoffset=0, int yoffset=0);
