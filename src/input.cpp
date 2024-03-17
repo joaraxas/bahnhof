@@ -1,7 +1,7 @@
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
 
-InputManager::InputManager(Gamestate* whatgame){
+InputManager::InputManager(Game* whatgame){
     game = whatgame;
 }
 

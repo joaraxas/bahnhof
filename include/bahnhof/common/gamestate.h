@@ -11,11 +11,27 @@ class Building;
 class Camera;
 class Rendering;
 class InputManager;
+class Gamestate;
+
+class Game
+{
+public:
+    Game();
+    ~Game();
+    Gamestate* gamestate;
+    ResourceManager* resources;
+    Camera* cam;
+    //TimeManager* timer;
+    InputManager* input;
+    //Map* map;
+    //RouteManager* routing;
+    Rendering* rendering;
+};
 
 class Gamestate
 {
 public:
-    Gamestate();
+    Gamestate(Game* whatgame);
     ~Gamestate();
     void update(int ms);
     void renderroutes();
@@ -32,9 +48,8 @@ public:
     int time = 0;
     int revenue = 0;
     State newwagonstate;
-    InputManager* input;
-    Camera* cam;
-    Rendering* rendering;
+private:
+    Game* game;
 };
 
 class TimeManager
@@ -52,15 +67,9 @@ class Map
     Background* background;
 };
 
-class Game
+class RouteManager
 {
-    Gamestate* gamestate;
-    ResourceManager* resources;
-    Camera* cam;
-    TimeManager* timer;
-    InputManager* input;
-    Map* map;
-    Rendering* rendering;
+
 };
 
 extern std::vector<std::unique_ptr<Train> > trains;

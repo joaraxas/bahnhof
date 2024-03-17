@@ -94,10 +94,15 @@ Vec randpos(int xoffset, int yoffset)
 };
 
 
-Rendering::Rendering(Gamestate* whatgame, Camera* whatcam)
+Rendering::Rendering(Game* whatgame, Camera* whatcam)
 {
 	game = whatgame;
 	cam = whatcam;
+}
+
+void Rendering::render()
+{
+	
 }
 
 void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed)

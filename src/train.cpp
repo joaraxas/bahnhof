@@ -23,24 +23,24 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	lightw = lightw*0.5;
 }
 
-void Train::getinput(int ms)
+void Train::getinput(InputManager* input, int ms)
 {
 	if(selected){
-		if(keys[gasbutton])
+		if(input->keyispressed(gasbutton))
 			gas(ms);
-		if(keys[brakebutton])
+		if(input->keyispressed(brakebutton))
 			brake(ms);
-		if(keys[gearbutton])
+		if(input->keyispressed(gearbutton))
 			shiftdirection();
-		if(keys[routeassignbutton]){}
+		if(input->keyispressed(routeassignbutton)){}
 		else
 			for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
-				if(keys[numberbuttons[iKey]]) split(iKey);
-		if(keys[loadbutton])
+				if(input->keyispressed(numberbuttons[iKey])) split(iKey);
+		if(input->keyispressed(loadbutton))
 			loadall();
-		if(keys[unloadbutton])
+		if(input->keyispressed(unloadbutton))
 			unloadall();
-		if(keys[couplebutton])
+		if(input->keyispressed(couplebutton))
 			wantstocouple = true;
 	}
 }

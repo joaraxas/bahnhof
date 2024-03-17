@@ -7,6 +7,7 @@ class Order;
 
 class Tracksystem;
 class Train;
+class InputManager;
 
 class Wagon
 {
@@ -76,7 +77,7 @@ class Train
 {
 public:
     Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
-    void getinput(int ms);
+    void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
     void render(Rendering* r);

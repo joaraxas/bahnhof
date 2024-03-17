@@ -30,7 +30,7 @@ State flipstate(State state)
 
 Tracksystem::Tracksystem(){}
 
-Tracksystem::Tracksystem(Gamestate* whatgame, std::vector<float> xs, std::vector<float> ys)
+Tracksystem::Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys)
 {
 	game = whatgame;
 	nodeid newnode = addnode(Vec(xs[0], ys[0]), 0);

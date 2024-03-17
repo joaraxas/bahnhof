@@ -16,7 +16,7 @@ friend class Track;
 friend class Gamestate;
 public:
     Tracksystem();
-    Tracksystem(Gamestate* whatgame, std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void update(int ms);
     void render(Rendering* r);
@@ -46,7 +46,7 @@ public:
     void runoverblocks(State state, float pixels, Train* fortrain);
     signalid nextsignalontrack(State state, bool startfromtrackend=false, bool mustalign=true);
     void setblocksuptonextsignal(Signal* fromsignal);
-    Gamestate* game;
+    Game* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
     SDL_Texture* switchtex;
