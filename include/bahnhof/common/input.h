@@ -18,8 +18,6 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-extern int xMouse, yMouse;
-
 class InputManager
 {
 public:

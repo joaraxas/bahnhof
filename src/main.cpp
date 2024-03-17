@@ -6,7 +6,6 @@
 #include "bahnhof/common/gamestate.h"
 
 bool nicetracks = true;
-int xMouse, yMouse;
 float gamespeed = 1;
 
 int main(){

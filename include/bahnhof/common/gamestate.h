@@ -41,6 +41,8 @@ public:
     void addtrainstoorphans();
     RouteManager* routing;
     std::vector<Wagon*> wagons;
+    std::vector<std::unique_ptr<Building> > buildings;
+    std::vector<std::unique_ptr<Train> > trains;
     std::unique_ptr<Tracksystem> tracksystem;
     int time = 0;
     float money;
@@ -64,6 +66,3 @@ class Map
 {
     Background* background;
 };
-
-extern std::vector<std::unique_ptr<Train> > trains;
-extern std::vector<std::unique_ptr<Building> > buildings;

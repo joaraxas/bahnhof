@@ -5,8 +5,6 @@
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/buildings/buildings.h"
 
-std::vector<std::unique_ptr<Building>> buildings;
-
 Building::Building(ResourceManager* resources, int x, int y, int w, int h, resourcetype need, resourcetype production)
 {
 	allresources = resources;

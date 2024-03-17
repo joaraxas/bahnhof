@@ -39,7 +39,7 @@ void InputManager::handle(int ms, int mslogic){
                     }
                     else{
                         Train* clickedtrain = nullptr;
-                        for(auto& train : trains){
+                        for(auto& train : gamestate->trains){
                             for(auto& wagon : train->wagons){
                                 if(norm(mousepos-wagon->pos)<wagon->w/2/game->rendering->getscale()){
                                     routing->selectedroute = train->route;
@@ -49,14 +49,14 @@ void InputManager::handle(int ms, int mslogic){
                             }
                         }
                         if(clickedtrain){
-                            for(auto& train : trains)
+                            for(auto& train : gamestate->trains)
                                 train->selected = false;
                             clickedtrain->selected = true;
                         }
                         else{
                             if(!gamestate->tracksystem->switchat(mousepos)){
                                 gamestate->tracksystem->selectat(mousepos);
-                                for(auto& train : trains)
+                                for(auto& train : gamestate->trains)
                                     train->selected = false;
                                 routing->selectedroute = nullptr;
                             }
@@ -72,7 +72,7 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 if(keyispressed(routeassignbutton)){
                     if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing->routes.size()){
-                        for(auto& train : trains)
+                        for(auto& train : gamestate->trains)
                             if(train->selected){
                                 routing->selectedroute = routing->routes[e.key.keysym.sym-SDLK_0-1].get();
                                 train->route = routing->selectedroute;
@@ -108,12 +108,12 @@ void InputManager::handle(int ms, int mslogic){
                         routing->selectedroute->insertorderatselected(new Couple());
                 }
                 if(e.key.keysym.sym == SDLK_p){
-                    for(auto& train : trains)
+                    for(auto& train : gamestate->trains)
                         if(train->selected)
                             train->proceed();
                 }
                 if(e.key.keysym.sym == SDLK_RETURN){
-                    for(auto& train : trains)
+                    for(auto& train : gamestate->trains)
                         if(train->selected){
                             train->go = !train->go;
                             train->speed = 0;
@@ -168,8 +168,8 @@ void InputManager::handle(int ms, int mslogic){
     if(keyispressed(downpanbutton))
         game->cam->pan(Vec(0, +ms*0.4));
 
-    for(int iTrain=0; iTrain<trains.size(); iTrain++)
-        trains[iTrain]->getinput(this, mslogic);
+    for(int iTrain=0; iTrain<gamestate->trains.size(); iTrain++)
+        gamestate->trains[iTrain]->getinput(this, mslogic);
 }
 
 Vec InputManager::mapmousepos()

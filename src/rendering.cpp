@@ -118,7 +118,7 @@ void Rendering::render()
 		SDL_Rect rect = {x,y,128,128};
 		rendertexture(fieldtex, &rect);
 	}}
-	for(auto& building : buildings)
+	for(auto& building : gamestate->buildings)
 		building->render(this);
 	for(auto& storage : storages)
 		storage->render(this);
@@ -129,7 +129,7 @@ void Rendering::render()
 		gamestate->routing->selectedroute->render(this);
 	else
 		gamestate->routing->renderroutes(this);
-	for(auto& train : trains)
+	for(auto& train : gamestate->trains)
 		train->render(this);
 	gamestate->tracksystem->renderabovetrains(this);
 	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
