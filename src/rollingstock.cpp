@@ -1,21 +1,17 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
-Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath)
+Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath, int nimages) : sprite(path, nimages), icon(iconpath)
 {
 	tracksystem = &newtracksystem;
 	//allresources = tracksystem->allresources;
-	tex = loadImage(path);
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	if(iconpath!=""){
-		icontex = loadImage(iconpath);
-		SDL_QueryTexture(icontex, NULL, NULL, &iconw, &iconh);
-	}
+	w = 50;
 	state = trackstate;
 	pos = tracksystem->getpos(state);
 }
@@ -28,26 +24,21 @@ void Wagon::travel(float pixels)
 void Wagon::update(int ms)
 {
 	pos = tracksystem->getpos(state);
-	imageangle = tracksystem->getorientation(state);
+	sprite.imageangle = tracksystem->getorientation(state);
 }
 
 void Wagon::render(Rendering* r)
 {
-	int x = int(pos.x);
-	int y = int(pos.y);
-	SDL_Rect srcrect = {0, 0, w, h};
-	SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-	r->rendertexture(tex, &rect, &srcrect, imageangle);
 	float scale = r->getscale();
 	if(loadedresource!=none){
 		//Resource* resource = allresources->get(loadedresource);
 		//resource->render(pos);
 	}
-	else if(icontex)
-	if(scale<0.3){
-		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
-		r->rendertexture(icontex, &iconrect, nullptr, 0, true, false);
+	else if(scale<0.3){
+		icon.render(r, pos, true, false);
 	}
+	else
+		sprite.render(r, pos, true, true);
 }
 
 State Wagon::frontendstate()
@@ -88,38 +79,16 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/loco0.png", "icons/loco.png")
+Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/loco0.png", "icons/loco.png", 4)
 {
-	h = h/imagenumber;
 	hasdriver = true;
 }
 
 void Locomotive::update(int ms)
 {
 	Wagon::update(ms);
-	imagespeed = train->speed*0.2*(2*alignedforward-1);
-	imageindex += imagespeed*ms*0.001;
-	if(imageindex>=imagenumber)
-		imageindex -= imagenumber;
-	if(imageindex<0)
-		imageindex += imagenumber;
-}
-
-void Locomotive::render(Rendering* r)
-{
-	int x = int(pos.x);
-	int y = int(pos.y);
-	{
-		SDL_Rect srcrect = {0, int(imageindex)*h, w, h};
-		SDL_Rect rect = {int(x - w / 2), int(y - h / 2), w, h};
-		r->rendertexture(tex, &rect, &srcrect, imageangle);
-	}
-	float scale = r->getscale();
-	if(icontex)
-	if(scale<0.3){
-		SDL_Rect iconrect = {int(x - iconw / 2/scale), int(y - iconh / 2/scale), iconw, iconh};
-		r->rendertexture(icontex, &iconrect, nullptr, 0, true, false);
-	}
+	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
+	sprite.updateframe(ms);
 }
 
 float Locomotive::getpower()

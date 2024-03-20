@@ -1,7 +1,8 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
@@ -18,7 +19,7 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
-	lighttex = loadImage("effects/light.png");
+	lighttex = loadimage("effects/light.png");
 	SDL_QueryTexture(lighttex, NULL, NULL, &lightw, &lighth);
 	lightw = lightw*0.5;
 }

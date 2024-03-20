@@ -4,7 +4,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame){
     game = whatgame;

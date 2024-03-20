@@ -1,7 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 
 Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid)

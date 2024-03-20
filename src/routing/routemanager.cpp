@@ -1,5 +1,5 @@
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 
 RouteManager::RouteManager(Tracksystem* tracks)
 {

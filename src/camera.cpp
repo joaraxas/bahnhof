@@ -1,7 +1,7 @@
 #include<iostream>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 
 Camera::Camera(){
     cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};

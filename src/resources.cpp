@@ -1,7 +1,8 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/resources/storage.h"
 
@@ -32,7 +33,7 @@ Resource::Resource(resourcetype newtype, std::string newname, std::string pathto
 {
     type = newtype;
 	name = newname;
-	tex = loadImage(pathtotex);
+	tex = loadimage(pathtotex);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 }
 

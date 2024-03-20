@@ -3,7 +3,8 @@
 #include<map>
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
 
@@ -38,10 +39,10 @@ Tracksystem::Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<floa
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
 	selectednode = 0;
-	switchtex = loadImage("track/switch.png");
+	switchtex = loadimage("track/switch.png");
 	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
 	switchrect.h = switchrect.h*0.5;
-	signaltex = loadImage("track/signal.png");
+	signaltex = loadimage("track/signal.png");
 	SDL_QueryTexture(signaltex, NULL, NULL, &signalrect.w, &signalrect.h);
 	signalrect.w = signalrect.w*0.5;
 }

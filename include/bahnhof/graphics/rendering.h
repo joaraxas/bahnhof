@@ -3,7 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include<string>
-#include "math.h"
+#include "bahnhof/common/math.h"
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -14,15 +14,7 @@ extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern TTF_Font* font;
 
-extern float money;
 extern bool nicetracks;
-
-int init();
-
-SDL_Texture* loadImage(std::string path);
-SDL_Texture* loadText(std::string text, SDL_Color color);
-
-void close();
 
 class Game; class Camera; class Gamestate;
 

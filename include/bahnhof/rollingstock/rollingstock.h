@@ -1,5 +1,6 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/graphics/graphics.h"
 
 class Storage;
 class Route;
@@ -12,7 +13,7 @@ class InputManager;
 class Wagon
 {
 public:
-    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="");
+    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="", int nimages=1);
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -29,11 +30,8 @@ public:
     State state; //should be protected
 protected:
     Tracksystem* tracksystem;
-    int h;
-    int iconw, iconh;
-    float imageangle = 0;
-    SDL_Texture* tex;
-    SDL_Texture* icontex;
+    Sprite sprite;
+    Sprite icon;
     //ResourceManager* allresources;
 private:
     resourcetype loadedresource = none;
@@ -45,7 +43,6 @@ class Locomotive : public Wagon
 {
 public:
     Locomotive(Tracksystem& newtracksystem, State trackstate);
-    void render(Rendering* r);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
