@@ -108,9 +108,8 @@ Rendering::Rendering(Game* whatgame, Camera* whatcam)
 	fieldtex = loadImage("backgrounds/field.png");
 }
 
-void Rendering::render()
+void Rendering::render(Gamestate* gamestate)
 {
-	Gamestate* gamestate = game->gamestate;
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	for(int x=0; x<MAP_WIDTH; x+=128){

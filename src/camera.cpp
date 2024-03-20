@@ -1,3 +1,4 @@
+#include<iostream>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/rendering.h"
@@ -24,12 +25,17 @@ void Camera::zoomin(Vec centerpoint){
 }
 
 void Camera::zoomout(Vec centerpoint){
-    cam.x-=cam.w*centerpoint.x/SCREEN_WIDTH;
-    cam.w*=2;
-    cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
-    cam.h*=2;
-    scale/=2;
-    restricttomap();
+    if(2*cam.w<=MAP_WIDTH && 2*cam.h<=MAP_HEIGHT){
+        cam.x-=cam.w*centerpoint.x/SCREEN_WIDTH;
+        cam.w*=2;
+        cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
+        cam.h*=2;
+        scale/=2;
+        std::cout<<scale<<std::endl;
+        std::cout<<SCREEN_WIDTH/double(MAP_WIDTH)<<std::endl;
+        std::cout<<SCREEN_HEIGHT/double(MAP_HEIGHT)<<std::endl;
+        restricttomap();
+    }
 }
 
 void Camera::pan(Vec direction){

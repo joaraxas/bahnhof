@@ -2,16 +2,16 @@
 #include "bahnhof/common/timing.h"
 
 TimeManager::TimeManager(){
-    gamespeed = 1;
+    speedfactor = 1;
 	ms = 0;
-	mslogic = ms*gamespeed;
+	mslogic = ms*speedfactor;
 	starttime = SDL_GetTicks();
 	lasttime = SDL_GetTicks();
 }
 
 void TimeManager::tick(){
     ms = SDL_GetTicks() - lasttime;
-    mslogic = gamespeed*ms;
+    mslogic = speedfactor*ms;
     lasttime = SDL_GetTicks();
 }
     

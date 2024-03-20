@@ -24,13 +24,13 @@ SDL_Texture* loadText(std::string text, SDL_Color color);
 
 void close();
 
-class Game; class Camera;
+class Game; class Camera; class Gamestate;
 
 class Rendering
 {
 public:
     Rendering(Game* whatgame, Camera* whatcam);
-    void render();
+    void render(Gamestate* gamestate);
     void rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false);
     void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true);
     void renderline(Vec pos1, Vec pos2, bool ported=true);

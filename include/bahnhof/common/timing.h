@@ -7,7 +7,7 @@ public:
     void tick();
     int getms();
     int getmslogic();
-    float gamespeed;
+    float speedfactor;
 private:
     int ms;
     int mslogic;

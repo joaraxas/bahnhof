@@ -34,6 +34,21 @@ Game::~Game()
 	delete resources;
 }
 
+void Game::play()
+{
+	while(!quit){
+		timer->tick();
+		input->handle(timer->getms(), timer->getmslogic());
+		gamestate->update(timer->getmslogic());
+		rendering->render(gamestate);
+	}
+}
+
+void Game::exit()
+{
+	quit = true;
+}
+
 Gamestate::Gamestate(Game* whatgame)
 {
 	game = whatgame;

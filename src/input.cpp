@@ -18,7 +18,7 @@ void InputManager::handle(int ms, int mslogic){
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:{
-                game->quit = true;
+                game->exit();
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:{

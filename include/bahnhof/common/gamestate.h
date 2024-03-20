@@ -20,13 +20,16 @@ class Game
 public:
     Game();
     ~Game();
-    bool quit;
+    void play();
+    void exit();
     Gamestate* gamestate;
     ResourceManager* resources;
     Camera* cam;
     TimeManager* timer;
     InputManager* input;
     Rendering* rendering;
+private:
+    bool quit;
 };
 
 class Gamestate
@@ -42,8 +45,8 @@ public:
     RouteManager* routing;
     //Map* map;
     std::vector<Wagon*> wagons;
-    std::vector<std::unique_ptr<Building> > buildings;
-    std::vector<std::unique_ptr<Train> > trains;
+    std::vector<std::unique_ptr<Building>> buildings;
+    std::vector<std::unique_ptr<Train>> trains;
     std::unique_ptr<Tracksystem> tracksystem;
     int time = 0;
     float money;
