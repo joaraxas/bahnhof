@@ -1,7 +1,6 @@
 #pragma once
 #include<vector>
 #include "bahnhof/track/state.h"
-#include "bahnhof/resources/resources.h"
 
 class Route;
 class Wagon;
@@ -10,6 +9,8 @@ class Tracksystem;
 class Building;
 class Camera;
 class Rendering;
+class SpriteManager;
+class ResourceManager;
 class InputManager;
 class RouteManager;
 class TimeManager;
@@ -28,6 +29,8 @@ public:
     TimeManager* timer;
     InputManager* input;
     Rendering* rendering;
+    SpriteManager* allsprites;
+    std::string gamename;
 private:
     bool quit;
 };
@@ -49,7 +52,7 @@ public:
     std::vector<std::unique_ptr<Train>> trains;
     std::unique_ptr<Tracksystem> tracksystem;
     int time = 0;
-    float money;
+    float money = 10;
     int revenue = 0;
     State newwagonstate;
 private:

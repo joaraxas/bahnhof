@@ -1,6 +1,6 @@
 #include<iostream>
 #include<string>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
 
 bool nicetracks = true;

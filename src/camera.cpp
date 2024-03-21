@@ -1,7 +1,7 @@
 #include<iostream>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 
 Camera::Camera(){
     cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -31,9 +31,6 @@ void Camera::zoomout(Vec centerpoint){
         cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
         cam.h*=2;
         scale/=2;
-        std::cout<<scale<<std::endl;
-        std::cout<<SCREEN_WIDTH/double(MAP_WIDTH)<<std::endl;
-        std::cout<<SCREEN_HEIGHT/double(MAP_HEIGHT)<<std::endl;
         restricttomap();
     }
 }

@@ -1,5 +1,6 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/graphics/sprite.h"
 
 class Storage;
 class Route;
@@ -12,7 +13,7 @@ class InputManager;
 class Wagon
 {
 public:
-    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="");
+    Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name sprname, sprites::name iconame);
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -28,13 +29,10 @@ public:
     int w;
     State state; //should be protected
 protected:
-    Tracksystem* tracksystem;
-    int h;
-    int iconw, iconh;
-    float imageangle = 0;
-    SDL_Texture* tex;
-    SDL_Texture* icontex;
-    //ResourceManager* allresources;
+    Tracksystem* tracksystem = nullptr;
+    Sprite sprite;
+    Sprite icon;
+    //ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;
     int loadamount = 0;
@@ -44,8 +42,7 @@ private:
 class Locomotive : public Wagon
 {
 public:
-    Locomotive(Tracksystem& newtracksystem, State trackstate);
-    void render(Rendering* r);
+    Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
@@ -61,14 +58,14 @@ private:
 class Openwagon : public Wagon
 {
 public:
-    Openwagon(Tracksystem& newtracksystem, State trackstate);
+    Openwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
-    Tankwagon(Tracksystem& newtracksystem, State trackstate);
+    Tankwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     int loadwagon(resourcetype type, int amount);
 };
 
@@ -103,7 +100,6 @@ public:
     bool wantstocouple = false;
 private:
     bool checkifreachedstate(State goalstate, int ms);
-    SDL_Texture* lighttex;
-    int lightw, lighth;
+    Sprite light;
 };
 

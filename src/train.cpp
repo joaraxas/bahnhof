@@ -1,7 +1,8 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
@@ -18,9 +19,7 @@ Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, 
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
-	lighttex = loadImage("effects/light.png");
-	SDL_QueryTexture(lighttex, NULL, NULL, &lightw, &lighth);
-	lightw = lightw*0.5;
+	light.setspritesheet(tracksystem->game->allsprites, sprites::light);
 }
 
 void Train::getinput(InputManager* input, int ms)
@@ -167,14 +166,14 @@ void Train::render(Rendering* r)
 		}
 		Vec frontpos = tracksystem->getpos(forwardstate());
 		float forwarddir = tracksystem->getorientation(forwardstate());
-		SDL_Rect forwardrect = {int(frontpos.x-lightw/2), int(frontpos.y-lighth/2), lightw, lighth};
-		SDL_Rect srcrect = {0, 0, lightw, lighth};
-		r->rendertexture(lighttex, &forwardrect, &srcrect, forwarddir);
+		light.imagetype = 0;
+		light.imageangle = forwarddir;
+		light.render(r, frontpos);
 		Vec backpos = tracksystem->getpos(backwardstate());
 		float backwarddir = tracksystem->getorientation(backwardstate());
-		SDL_Rect backwardrect = {int(backpos.x-lightw/2), int(backpos.y-lighth/2), lightw, lighth};
-		srcrect.x = lightw;
-		r->rendertexture(lighttex, &backwardrect, &srcrect, backwarddir);
+		light.imagetype = 1;
+		light.imageangle = backwarddir;
+		light.render(r, backpos);
 	}
 }
 

@@ -1,7 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/routing/routing.h"
@@ -15,11 +15,13 @@
 
 Game::Game()
 {
+	gamename = "Name of the game";
 	timer = new TimeManager();
 	input = new InputManager(this);
 	cam = new Camera();
 	rendering = new Rendering(this, cam);
-	resources = new ResourceManager();
+	allsprites = new SpriteManager();
+	resources = new ResourceManager(this);
 	gamestate = new Gamestate(this);
 	quit = false;
 }
@@ -30,6 +32,7 @@ Game::~Game()
 	delete input;
 	delete cam;
 	delete rendering;
+	delete allsprites;
 	delete gamestate;
 	delete resources;
 }
@@ -148,10 +151,10 @@ void Gamestate::initjusttrack()
 void Gamestate::inittrain(State startstate)
 {
 	int nWagons = wagons.size();
-	wagons.emplace_back(new Locomotive(*tracksystem, startstate));
+	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate, game->allsprites));
 	for(int iWagon=0; iWagon<3; iWagon++){
 		State state = tracksystem->travel(startstate, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(*tracksystem, state));
+		wagons.emplace_back(new Openwagon(tracksystem.get(), state, game->allsprites));
 	}
 	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
 	

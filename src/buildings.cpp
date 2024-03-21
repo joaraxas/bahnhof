@@ -1,7 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/buildings/buildings.h"
 

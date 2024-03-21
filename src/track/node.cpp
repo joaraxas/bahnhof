@@ -1,8 +1,9 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/common/gamestate.h"
 
 Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid)
 {
@@ -12,6 +13,8 @@ Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myi
 	dir = truncate(dirstart);
 	stateup = 0;
 	statedown = 0;
+	sprite.setspritesheet(tracksystem->game->allsprites, sprites::switchsprite);
+	sprite.zoomed = false;
 }
 
 void Node::connecttrack(trackid track, bool fromabove){
@@ -59,26 +62,24 @@ void Node::render(Rendering* r)
 		else
 			r->rendertext("noone", pos.x, pos.y+14);
 	}
-	if(scale>0.3){
+	//if(scale>0.3){
 		if(size(tracksup)>1){
 			Vec switchpos = getswitchpos(true);
-			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
-			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
-			tracksystem->switchrect.y = tracksystem->switchrect.h*stateup;
-			r->rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, dir-pi/2, true, true);
+			sprite.imagetype = fmin(1, stateup);
+			sprite.imageangle = dir-pi/2;
+			sprite.render(r, switchpos);
 			if(!nicetracks)
 				r->rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
 		if(size(tracksdown)>1){
 			Vec switchpos = getswitchpos(false);
-			int w = tracksystem->switchrect.w; int h = tracksystem->switchrect.h;
-			SDL_Rect rect = {int(switchpos.x-w*0.5), int(switchpos.y-h*0.5), w, h};
-			tracksystem->switchrect.y = tracksystem->switchrect.h*statedown;
-			r->rendertexture(tracksystem->switchtex, &rect, &tracksystem->switchrect, pi+dir-pi/2, true, true);
+			sprite.imagetype = fmin(1, statedown);
+			sprite.imageangle = pi+dir-pi/2;
+			sprite.render(r, switchpos);
 			if(!nicetracks)
 				r->rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
 		}
-	}
+	//}
 }
 
 Vec Node::getswitchpos(bool updown)

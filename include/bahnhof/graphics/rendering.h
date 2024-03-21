@@ -3,7 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include<string>
-#include "math.h"
+#include "bahnhof/common/math.h"
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -14,15 +14,7 @@ extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern TTF_Font* font;
 
-extern float money;
 extern bool nicetracks;
-
-int init();
-
-SDL_Texture* loadImage(std::string path);
-SDL_Texture* loadText(std::string text, SDL_Color color);
-
-void close();
 
 class Game; class Camera; class Gamestate;
 
@@ -32,7 +24,7 @@ public:
     Rendering(Game* whatgame, Camera* whatcam);
     void render(Gamestate* gamestate);
     void rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false);
-    void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true);
+    void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true, bool originiscenter=true, int centerx=0, int centery=0);
     void renderline(Vec pos1, Vec pos2, bool ported=true);
     void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);

@@ -4,7 +4,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
-#include "bahnhof/common/rendering.h"
+#include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame){
     game = whatgame;
@@ -15,6 +15,7 @@ void InputManager::handle(int ms, int mslogic){
     Gamestate* gamestate = game->gamestate;
     Tracksystem* tracksystem = gamestate->tracksystem.get();
     RouteManager* routing = gamestate->routing;
+    SpriteManager* allsprites = game->allsprites;
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:{
@@ -127,19 +128,19 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 if(gamestate->money>0){
                     if(e.key.keysym.sym == SDLK_o){
-                        gamestate->wagons.emplace_back(new Openwagon(*gamestate->tracksystem, gamestate->newwagonstate));
+                        gamestate->wagons.emplace_back(new Openwagon(gamestate->tracksystem.get(), gamestate->newwagonstate, allsprites));
                         gamestate->newwagonstate = gamestate->tracksystem->travel(gamestate->newwagonstate, 60);
                         gamestate->addtrainstoorphans();
                         gamestate->money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_q){
-                        gamestate->wagons.emplace_back(new Tankwagon(*gamestate->tracksystem, gamestate->newwagonstate));
+                        gamestate->wagons.emplace_back(new Tankwagon(gamestate->tracksystem.get(), gamestate->newwagonstate, allsprites));
                         gamestate->newwagonstate = gamestate->tracksystem->travel(gamestate->newwagonstate, 72);
                         gamestate->addtrainstoorphans();
                         gamestate->money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_y){
-                        gamestate->wagons.emplace_back(new Locomotive(*gamestate->tracksystem, gamestate->newwagonstate));
+                        gamestate->wagons.emplace_back(new Locomotive(gamestate->tracksystem.get(), gamestate->newwagonstate, allsprites));
                         gamestate->newwagonstate = gamestate->tracksystem->travel(gamestate->newwagonstate, 60);
                         gamestate->addtrainstoorphans();
                         gamestate->money -= 8;
