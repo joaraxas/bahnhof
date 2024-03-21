@@ -1,6 +1,5 @@
 #include<iostream>
-#include "bahnhof/graphics/graphics.h"
-#include "bahnhof/graphics/rendering.h"
+#include "bahnhof/graphics/sprite.h"
 
 void Sprite::setspritesheet(SpriteManager* s, sprites::name name)
 {

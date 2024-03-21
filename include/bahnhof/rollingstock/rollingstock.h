@@ -1,6 +1,6 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
-#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/sprite.h"
 
 class Storage;
 class Route;

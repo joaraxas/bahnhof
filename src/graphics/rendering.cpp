@@ -2,8 +2,8 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/track/track.h"

@@ -2,7 +2,7 @@
 #include<map>
 #include "state.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/graphics/sprite.h"
 
 class Order;
 class Node;

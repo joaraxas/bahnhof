@@ -3,7 +3,6 @@
 #include<map>
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
-#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"

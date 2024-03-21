@@ -1,6 +1,7 @@
 #pragma once
 #include<iostream>
 #include<string>
+#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 
 SDL_Window* window = NULL;
