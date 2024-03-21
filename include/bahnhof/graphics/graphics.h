@@ -33,11 +33,11 @@ enum name
 };
 }
 
-class Sprite
+class Spritesheet
 {
 public:
-    Sprite(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
-    ~Sprite();
+    Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
+    ~Spritesheet();
     void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0);
     int getimagenumber();
     int getimagetypes();
@@ -56,15 +56,15 @@ class SpriteManager
 {
 public:
     SpriteManager();
-    Sprite* get(sprites::name);
+    Spritesheet* get(sprites::name);
 private:
-    std::map<sprites::name, std::unique_ptr<Sprite>> spritemap;
+    std::map<sprites::name, std::unique_ptr<Spritesheet>> spritemap;
 };
 
-class Animation
+class Sprite
 {
 public:
-    void setsprite(SpriteManager* s, sprites::name name);
+    void setspritesheet(SpriteManager* s, sprites::name name);
     void updateframe(int ms);
     void render(Rendering* r, Vec pos);
     float imageangle = 0;
@@ -74,7 +74,7 @@ public:
     bool ported = true;
     bool zoomed = true;
 private:
-    Sprite* sprite = nullptr;
+    Spritesheet* spritesheet = nullptr;
     int imagenumber = 0;
     int imagetypes = 0;
 };

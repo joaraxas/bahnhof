@@ -30,8 +30,8 @@ public:
     State state; //should be protected
 protected:
     Tracksystem* tracksystem = nullptr;
-    Animation sprite;
-    Animation icon;
+    Sprite sprite;
+    Sprite icon;
     //ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;

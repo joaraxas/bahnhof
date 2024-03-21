@@ -16,8 +16,8 @@ Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites,
 	state = trackstate;
 	pos = tracksystem->getpos(state);
 	SpriteManager* spritemanager = allsprites;
-	sprite.setsprite(allsprites, spritename);
-	icon.setsprite(allsprites, iconname);
+	sprite.setspritesheet(allsprites, spritename);
+	icon.setspritesheet(allsprites, iconname);
 }
 
 void Wagon::travel(float pixels)
