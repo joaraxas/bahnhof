@@ -16,8 +16,8 @@ Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites,
 	state = trackstate;
 	pos = tracksystem->getpos(state);
 	SpriteManager* spritemanager = allsprites;
-	sprite = spritemanager->get(spritename);
-	icon = spritemanager->get(iconname);
+	sprite.setsprite(allsprites, spritename);
+	icon.setsprite(allsprites, iconname);
 }
 
 void Wagon::travel(float pixels)
@@ -28,7 +28,7 @@ void Wagon::travel(float pixels)
 void Wagon::update(int ms)
 {
 	pos = tracksystem->getpos(state);
-	sprite->imageangle = tracksystem->getorientation(state);
+	sprite.imageangle = tracksystem->getorientation(state);
 }
 
 void Wagon::render(Rendering* r)
@@ -39,10 +39,10 @@ void Wagon::render(Rendering* r)
 		//resource->render(pos);
 	}
 	else if(scale<0.3){
-		icon->render(r, pos, true, false);
+		icon.render(r, pos);
 	}
 	else
-		sprite->render(r, pos, true, true);
+		sprite.render(r, pos);
 }
 
 State Wagon::frontendstate()
@@ -91,8 +91,8 @@ Locomotive::Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* a
 void Locomotive::update(int ms)
 {
 	Wagon::update(ms);
-	sprite->imagespeed = train->speed*0.2*(2*alignedforward-1);
-	sprite->updateframe(ms);
+	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
+	sprite.updateframe(ms);
 }
 
 float Locomotive::getpower()
