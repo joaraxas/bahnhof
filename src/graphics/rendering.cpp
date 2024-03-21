@@ -71,7 +71,7 @@ void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool
 	SDL_DestroyTexture(tex);
 }
 
-void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed)
+void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
 	if(ported){
 		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
@@ -81,7 +81,12 @@ void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrec
 		rect->w *= cam->getscale();
 		rect->h *= cam->getscale();
 	}
-	SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
+	if(originiscenter)
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
+	else{
+		SDL_Point center = {centerx, centery};
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, &center, SDL_FLIP_NONE);
+	}
 }
 
 void Rendering::renderline(Vec pos1, Vec pos2, bool ported)

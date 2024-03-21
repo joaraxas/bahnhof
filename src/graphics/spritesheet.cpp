@@ -11,6 +11,7 @@ Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimag
 	h = h/imagenumber;
     imagetypes = ntypes;
     w = w/ntypes;
+	origin = Vec(int(w/2), int(h/2));
 }
 
 Spritesheet::~Spritesheet()
@@ -26,8 +27,8 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float 
     float scale = 1;
     if(!zoomed)
         scale = r->getscale();
-	rect = {int(x - w/scale/2), int(y - h/scale/2), w, h};
-	r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed);
+	rect = {int(x - origin.x/scale), int(y - origin.y/scale), w, h};
+	r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin.x, origin.y);
 }
 
 int Spritesheet::getimagenumber()
@@ -38,4 +39,14 @@ int Spritesheet::getimagenumber()
 int Spritesheet::getimagetypes()
 {
 	return imagetypes;
+}
+
+void Spritesheet::setoriginx(int neworiginx)
+{
+	origin.x = neworiginx;
+}
+
+void Spritesheet::setoriginy(int neworiginy)
+{
+	origin.y = neworiginy;
 }

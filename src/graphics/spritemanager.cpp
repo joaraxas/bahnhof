@@ -14,7 +14,10 @@ SpriteManager::SpriteManager()
 	addspritesheet(icontankloco, "icons/loco.png");
 
 	addspritesheet(switchsprite, "track/switch.png", 1, 2);
+	get(switchsprite)->setoriginy(15);
 	addspritesheet(sprites::signal, "track/signal.png", 1, 2);
+	get(sprites::signal)->setoriginx(3);
+	get(sprites::signal)->setoriginy(31);
 }
 
 void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes)

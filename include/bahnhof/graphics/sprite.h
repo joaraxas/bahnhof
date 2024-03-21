@@ -33,6 +33,8 @@ public:
     void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0);
     int getimagenumber();
     int getimagetypes();
+    void setoriginx(int);
+    void setoriginy(int);
 private:
     sprites::name name;
     int w;
@@ -42,6 +44,7 @@ private:
     SDL_Rect rect;
     int imagenumber;
     int imagetypes;
+    Vec origin;
 };
 
 class SpriteManager
