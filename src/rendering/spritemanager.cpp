@@ -41,19 +41,29 @@ int Spritesheet::getimagetypes()
 
 SpriteManager::SpriteManager()
 {
-	spritemap[sprites::openwagon] = std::make_unique<Spritesheet>(sprites::openwagon, "rollingstock/openwagon.png");
-	spritemap[sprites::refrigeratorcar] = std::make_unique<Spritesheet>(sprites::refrigeratorcar, "rollingstock/refrigeratorcar.png");
-	spritemap[sprites::tankloco] = std::make_unique<Spritesheet>(sprites::tankloco, "rollingstock/loco0.png", 4);
-	spritemap[sprites::iconopenwagon] = std::make_unique<Spritesheet>(sprites::iconopenwagon, "icons/openwagon.png");
-	spritemap[sprites::iconrefrigeratorcar] = std::make_unique<Spritesheet>(sprites::iconrefrigeratorcar, "icons/refrigeratorcar.png");
-	spritemap[sprites::icontankloco] = std::make_unique<Spritesheet>(sprites::icontankloco, "icons/loco.png");
+	using namespace sprites;
+	addspritesheet(openwagon, "rollingstock/openwagon.png");
+	addspritesheet(refrigeratorcar, "rollingstock/refrigeratorcar.png");
+	addspritesheet(tankloco, "rollingstock/loco0.png", 4);
+
+	addspritesheet(iconopenwagon, "icons/openwagon.png");
+	addspritesheet(iconrefrigeratorcar, "icons/refrigeratorcar.png");
+	addspritesheet(icontankloco, "icons/loco.png");
+
+	addspritesheet(switchsprite, "track/switch.png", 1, 2);
+	addspritesheet(sprites::signal, "track/signal.png", 1, 2);
 }
 
-Spritesheet* SpriteManager::get(sprites::name sprite)
+void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes)
 {
-	auto it = spritemap.find(sprite);
+	spritemap[name] = std::make_unique<Spritesheet>(name, pathtopng, imagenumber, imagetypes);
+}
+
+Spritesheet* SpriteManager::get(sprites::name name)
+{
+	auto it = spritemap.find(name);
 	if(it != spritemap.end())
 		return it->second.get();
 	else
-		std::cout<<"Error: Failed to locate spritesheet with index "<<sprite<<std::endl;
+		std::cout<<"Error: Failed to locate spritesheet with index "<<name<<std::endl;
 }

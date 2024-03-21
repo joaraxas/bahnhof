@@ -39,12 +39,6 @@ Tracksystem::Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<floa
 		newnode = extendtracktopos(newnode, Vec(xs[iNode], ys[iNode]));
 	}
 	selectednode = 0;
-	switchtex = loadimage("track/switch.png");
-	SDL_QueryTexture(switchtex, NULL, NULL, &switchrect.w, &switchrect.h);
-	switchrect.h = switchrect.h*0.5;
-	signaltex = loadimage("track/signal.png");
-	SDL_QueryTexture(signaltex, NULL, NULL, &signalrect.w, &signalrect.h);
-	signalrect.w = signalrect.w*0.5;
 }
 
 Tracksystem::~Tracksystem()

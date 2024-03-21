@@ -18,6 +18,7 @@ Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites,
 	SpriteManager* spritemanager = allsprites;
 	sprite.setspritesheet(allsprites, spritename);
 	icon.setspritesheet(allsprites, iconname);
+	icon.zoomed = false;
 }
 
 void Wagon::travel(float pixels)

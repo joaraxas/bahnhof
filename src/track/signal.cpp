@@ -4,6 +4,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/common/gamestate.h"
 
 
 Signal::Signal(Tracksystem& newtracksystem, State signalstate)
@@ -14,6 +15,8 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 	float transverseoffset = -20;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
     tracksystem->setblocksuptonextsignal(this);
+	sprite.setspritesheet(tracksystem->game->allsprites, sprites::signal);
+	sprite.zoomed = false;
 }
 
 void Signal::render(Rendering* r)
@@ -25,12 +28,8 @@ void Signal::render(Rendering* r)
 		else
 			r->rendertext("noone", pos.x, pos.y+14);
 	}
-	if(r->getscale()>0.3){
-			int w = tracksystem->signalrect.w; int h = tracksystem->signalrect.h;
-			SDL_Rect rect = {int(pos.x-w*0.5), int(pos.y-h*0.5), w, h};
-			tracksystem->signalrect.x = tracksystem->signalrect.w*isgreen;
-			r->rendertexture(tracksystem->signaltex, &rect, &tracksystem->signalrect, 0, true, true);
-	}
+	sprite.imagetype = isgreen;
+	sprite.render(r, pos);
 }
 
 bool Signal::isred(Train* fortrain)

@@ -2,6 +2,7 @@
 #include<map>
 #include "state.h"
 #include "bahnhof/common/math.h"
+#include "bahnhof/graphics/graphics.h"
 
 class Order;
 class Node;
@@ -50,10 +51,6 @@ public:
     Game* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
-    SDL_Texture* switchtex;
-    SDL_Rect switchrect;
-    SDL_Texture* signaltex;
-    SDL_Rect signalrect;
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
@@ -108,6 +105,7 @@ private:
     std::vector<trackid> tracksup;
     std::vector<trackid> tracksdown;
     Train* reservedfor = nullptr;
+    Sprite sprite;
 };
 
 class Track
@@ -151,4 +149,5 @@ private:
     std::vector<nodeid> switchblocks;
     std::vector<signalid> signalblocks;
     Train* reservedfor = nullptr;
+    Sprite sprite;
 };

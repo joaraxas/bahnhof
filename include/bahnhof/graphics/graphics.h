@@ -29,6 +29,7 @@ enum name
     iconopenwagon,
     iconrefrigeratorcar,
     icontankloco,
+    switchsprite,
     signal
 };
 }
@@ -59,6 +60,7 @@ public:
     Spritesheet* get(sprites::name);
 private:
     std::map<sprites::name, std::unique_ptr<Spritesheet>> spritemap;
+    void addspritesheet(sprites::name, std::string path, int imagenumber=1, int imagetypes=1);
 };
 
 class Sprite
