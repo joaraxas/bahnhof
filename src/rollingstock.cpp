@@ -11,7 +11,7 @@
 Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name spritename, sprites::name iconname)
 {
 	tracksystem = mytracks;
-	//allresources = tracksystem->allresources;
+	allresources = tracksystem->game->resources;
 	w = 50;
 	state = trackstate;
 	pos = tracksystem->getpos(state);
@@ -35,15 +35,14 @@ void Wagon::update(int ms)
 void Wagon::render(Rendering* r)
 {
 	float scale = r->getscale();
-	if(loadedresource!=none){
-		//Resource* resource = allresources->get(loadedresource);
-		//resource->render(pos);
-	}
-	else if(scale<0.3){
+	if(scale<0.3)
 		icon.render(r, pos);
-	}
 	else
 		sprite.render(r, pos);
+	if(loadedresource!=none){
+		Resource* resource = allresources->get(loadedresource);
+		resource->render(r, pos);
+	}
 }
 
 State Wagon::frontendstate()

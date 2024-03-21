@@ -28,7 +28,10 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float 
     if(!zoomed)
         scale = r->getscale();
 	rect = {int(x - origin.x/scale), int(y - origin.y/scale), w, h};
-	r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin.x, origin.y);
+	if(origin.x==int(w/2) && origin.y==int(h/2))
+		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed);
+	else
+		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin.x, origin.y);
 }
 
 int Spritesheet::getimagenumber()

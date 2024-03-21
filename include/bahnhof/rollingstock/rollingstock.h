@@ -32,7 +32,7 @@ protected:
     Tracksystem* tracksystem = nullptr;
     Sprite sprite;
     Sprite icon;
-    //ResourceManager* allresources = nullptr;
+    ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;
     int loadamount = 0;
