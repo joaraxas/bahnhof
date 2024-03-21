@@ -21,7 +21,7 @@ Game::Game()
 	cam = new Camera();
 	rendering = new Rendering(this, cam);
 	allsprites = new SpriteManager();
-	resources = new ResourceManager();
+	resources = new ResourceManager(this);
 	gamestate = new Gamestate(this);
 	quit = false;
 }

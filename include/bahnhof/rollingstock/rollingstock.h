@@ -100,7 +100,6 @@ public:
     bool wantstocouple = false;
 private:
     bool checkifreachedstate(State goalstate, int ms);
-    SDL_Texture* lighttex;
-    int lightw, lighth;
+    Sprite light;
 };
 

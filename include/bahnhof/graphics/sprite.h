@@ -19,7 +19,11 @@ enum name
     iconrefrigeratorcar,
     icontankloco,
     switchsprite,
-    signal
+    signal,
+    light,
+    hops,
+    barley,
+    beer
 };
 }
 

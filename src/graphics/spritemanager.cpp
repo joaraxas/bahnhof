@@ -18,6 +18,12 @@ SpriteManager::SpriteManager()
 	addspritesheet(sprites::signal, "track/signal.png", 1, 2);
 	get(sprites::signal)->setoriginx(3);
 	get(sprites::signal)->setoriginy(31);
+
+	addspritesheet(light, "effects/light.png", 1, 2);
+
+	addspritesheet(beer, "resources/beer.png");
+	addspritesheet(hops, "resources/hops.png");
+	addspritesheet(barley, "resources/barley.png");
 }
 
 void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes)

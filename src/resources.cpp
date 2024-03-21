@@ -1,7 +1,8 @@
 #include<iostream>
 #include<string>
 #include<map>
-#include "bahnhof/graphics/graphics.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/graphics/sprite.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/resources/storage.h"
@@ -9,11 +10,13 @@
 std::vector<std::unique_ptr<Storage>> storages;
 
 
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager(Game* whatgame)
 {
-	resourcemap[beer] = new Resource(beer, "Beer", "resources/beer.png");
-	resourcemap[hops] = new Resource(hops, "Hops", "resources/hops.png");
-	resourcemap[barley] = new Resource(barley, "Barley", "resources/barley.png");
+	game = whatgame;
+	SpriteManager* s = game->allsprites;
+	resourcemap[beer] = new Resource(s, beer, "Beer", sprites::beer);
+	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops);
+	resourcemap[barley] = new Resource(s, barley, "Barley", sprites::barley);
 }
 
 ResourceManager::~ResourceManager()
@@ -29,21 +32,17 @@ Resource* ResourceManager::get(resourcetype type)
     return (it != resourcemap.end()) ? it->second : nullptr;
 }
 
-Resource::Resource(resourcetype newtype, std::string newname, std::string pathtotex)
+Resource::Resource(SpriteManager* s, resourcetype newtype, std::string newname, sprites::name spritename)
 {
     type = newtype;
 	name = newname;
-	tex = loadimage(pathtotex);
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+	sprite.setspritesheet(s, spritename);
+	sprite.zoomed = false;
 }
 
 void Resource::render(Rendering* r, Vec pos)
 {
-	float scale = r->getscale();
-	int x = int(pos.x - w / 2/scale);
-	int y = int(pos.y - h / 2/scale);
-	SDL_Rect rect = {x, y, w, h};
-	r->rendertexture(tex, &rect, nullptr, 0, true, false);
+	sprite.render(r, pos);
 }
 
 Storage::Storage(ResourceManager* resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
