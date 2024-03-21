@@ -1,19 +1,23 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
-Wagon::Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath, int nimages) : sprite(path, nimages), icon(iconpath)
+Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name spritename, sprites::name iconname)
 {
-	tracksystem = &newtracksystem;
+	tracksystem = mytracks;
 	//allresources = tracksystem->allresources;
 	w = 50;
 	state = trackstate;
 	pos = tracksystem->getpos(state);
+	SpriteManager* spritemanager = allsprites;
+	sprite = spritemanager->get(spritename);
+	icon = spritemanager->get(iconname);
 }
 
 void Wagon::travel(float pixels)
@@ -24,7 +28,7 @@ void Wagon::travel(float pixels)
 void Wagon::update(int ms)
 {
 	pos = tracksystem->getpos(state);
-	sprite.imageangle = tracksystem->getorientation(state);
+	sprite->imageangle = tracksystem->getorientation(state);
 }
 
 void Wagon::render(Rendering* r)
@@ -35,10 +39,10 @@ void Wagon::render(Rendering* r)
 		//resource->render(pos);
 	}
 	else if(scale<0.3){
-		icon.render(r, pos, true, false);
+		icon->render(r, pos, true, false);
 	}
 	else
-		sprite.render(r, pos, true, true);
+		sprite->render(r, pos, true, true);
 }
 
 State Wagon::frontendstate()
@@ -79,7 +83,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/loco0.png", "icons/loco.png", 4)
+Locomotive::Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::tankloco, sprites::icontankloco)
 {
 	hasdriver = true;
 }
@@ -87,8 +91,8 @@ Locomotive::Locomotive(Tracksystem& newtracksystem, State trackstate) : Wagon(ne
 void Locomotive::update(int ms)
 {
 	Wagon::update(ms);
-	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
-	sprite.updateframe(ms);
+	sprite->imagespeed = train->speed*0.2*(2*alignedforward-1);
+	sprite->updateframe(ms);
 }
 
 float Locomotive::getpower()
@@ -112,7 +116,7 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/openwagon.png", "icons/openwagon.png")
+Openwagon::Openwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::openwagon, sprites::iconopenwagon)
 {}
 
 int Openwagon::loadwagon(resourcetype type, int amount)
@@ -123,7 +127,7 @@ int Openwagon::loadwagon(resourcetype type, int amount)
 	return loadedamount;
 }
 
-Tankwagon::Tankwagon(Tracksystem& newtracksystem, State trackstate) : Wagon(newtracksystem, trackstate, "rollingstock/refrigeratorcar.png", "icons/refrigeratorcar.png")
+Tankwagon::Tankwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::refrigeratorcar, sprites::iconrefrigeratorcar)
 {}
 
 int Tankwagon::loadwagon(resourcetype type, int amount)

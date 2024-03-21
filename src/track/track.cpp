@@ -52,6 +52,7 @@ Vec Track::getpos(float nodedist)
 
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
+	std::cout<<"6"<<std::endl;
 	Vec currentpos;
 	Vec leftnodeoffsetpos = previouspos - Vec(sin(previousdir), cos(previousdir))*transverseoffset;
 	if(isinf(radius)){
@@ -64,6 +65,7 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 		ddy = (radius+transverseoffset)*(1-cos(nodedist*phi));
 		currentpos = Vec(leftnodeoffsetpos.x + cos(previousdir)*ddx+sin(previousdir)*ddy, leftnodeoffsetpos.y - sin(previousdir)*ddx+cos(previousdir)*ddy);
 	}
+	std::cout<<"7"<<std::endl;
 	return currentpos;
 }
 

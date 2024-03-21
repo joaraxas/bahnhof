@@ -106,6 +106,7 @@ void Tracksystem::removesignal(signalid toremove)
 
 Vec Tracksystem::getpos(State state, float transverseoffset)
 {
+	gettrack(state.track);
 	return gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
@@ -609,8 +610,9 @@ float Tracksystem::distancetoswitch(nodeid node, Vec pos, bool updown)
 
 Track* Tracksystem::gettrack(trackid track)
 {
-	if(tracks.contains(track))
+	if(tracks.contains(track)){
 		return tracks[track];
+	}
 	else{
 		std::cout << "Error: failed to find track with id" << track << std::endl;
 		return nullptr;

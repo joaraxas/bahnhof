@@ -13,7 +13,7 @@ class InputManager;
 class Wagon
 {
 public:
-    Wagon(Tracksystem& newtracksystem, State trackstate, std::string path, std::string iconpath="", int nimages=1);
+    Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name sprname, sprites::name iconame);
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -29,10 +29,10 @@ public:
     int w;
     State state; //should be protected
 protected:
-    Tracksystem* tracksystem;
-    Sprite sprite;
-    Sprite icon;
-    //ResourceManager* allresources;
+    Tracksystem* tracksystem = nullptr;
+    Sprite* sprite = nullptr;
+    Sprite* icon = nullptr;
+    //ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;
     int loadamount = 0;
@@ -42,7 +42,7 @@ private:
 class Locomotive : public Wagon
 {
 public:
-    Locomotive(Tracksystem& newtracksystem, State trackstate);
+    Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
@@ -58,14 +58,14 @@ private:
 class Openwagon : public Wagon
 {
 public:
-    Openwagon(Tracksystem& newtracksystem, State trackstate);
+    Openwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
-    Tankwagon(Tracksystem& newtracksystem, State trackstate);
+    Tankwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
     int loadwagon(resourcetype type, int amount);
 };
 
