@@ -7,10 +7,13 @@ public:
     void tick();
     int getms();
     int getmslogic();
-    float speedfactor;
+    void speedup();
+    void speeddown();
+    float speed();
 private:
     int ms;
     int mslogic;
     int starttime;
     int lasttime;
+    int logspeedfactor;
 };

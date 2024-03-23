@@ -1,11 +1,12 @@
 #pragma once
 #include<SDL.h>
+#include "bahnhof/common/gamestate.h"
 #include "math.h"
 
 class Camera
 {
 public:
-    Camera();
+    Camera(Game* whatgame);
     Vec mapcoord(Vec sceenpos);
     Vec screencoord(Vec mappos);
     void zoomin(Vec centerpoint);
@@ -13,6 +14,7 @@ public:
     void pan(Vec direction);
     float getscale();
 private:
+    Game* game;
     void restricttomap();
     SDL_Rect cam;
     float scale = 1;

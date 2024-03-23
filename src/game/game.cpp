@@ -14,7 +14,7 @@ Game::Game()
 	gamename = "Name of the game";
 	timer = new TimeManager();
 	input = new InputManager(this);
-	cam = new Camera();
+	cam = new Camera(this);
 	rendering = new Rendering(this, cam);
 	allsprites = new SpriteManager();
 	resources = new ResourceManager(this);

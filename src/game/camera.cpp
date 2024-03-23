@@ -1,9 +1,11 @@
 #include<iostream>
 #include "bahnhof/common/camera.h"
+#include "bahnhof/common/timing.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/graphics/rendering.h"
 
-Camera::Camera(){
+Camera::Camera(Game* whatgame){
+    game = whatgame;
     cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
 }
 
@@ -21,6 +23,7 @@ void Camera::zoomin(Vec centerpoint){
     cam.y+=cam.h/2*centerpoint.y/SCREEN_HEIGHT;
     cam.h/=2;
     scale*=2;
+    game->gettimemanager().speeddown();
     restricttomap();
 }
 
@@ -31,6 +34,7 @@ void Camera::zoomout(Vec centerpoint){
         cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
         cam.h*=2;
         scale/=2;
+        game->gettimemanager().speedup();
         restricttomap();
     }
 }

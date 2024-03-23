@@ -26,6 +26,7 @@ public:
     std::string gamename;
     ResourceManager& getresources() {return *resources;};
     Camera& getcamera() {return *cam;};
+    TimeManager& gettimemanager() {return *timer;};
     InputManager& getinputmanager() {return *input;};
     Rendering& getrendering() {return *rendering;};
     SpriteManager& getsprites() {return *allsprites;};
