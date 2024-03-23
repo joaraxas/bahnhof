@@ -43,26 +43,24 @@ void Setsignal::assignroute(Route* newroute)
 	newroute->signals.push_back(signal);
 }
 
-Setswitch::Setswitch(nodeid whichnode, bool upordown, int whichnodestate)
+Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
 {
 	order = o_setswitch;
-    node = whichnode;
-    updown = upordown;
-	nodestate = whichnodestate;
+    _switch = whichswitch;
+	switchstate = whichswitchstate;
 	flip = false;
-	std::string switchname = "switch " + std::to_string(node);
-	if(updown) switchname+= " up"; else switchname+= " down";
-	if(nodestate == -1){
+	std::string switchname = "switch " + std::to_string(_switch);
+	if(switchstate == -1){
 		flip = true;
 		description = "Flip " + switchname;
 	}
 	else{
-		if(nodestate==0)
+		if(switchstate==0)
 			description = "Set " + switchname + " to left";
-		else if(nodestate==1)
+		else if(switchstate==1)
 			description = "Set " + switchname + " to right";
 		else
-			description = "Set " + switchname + " to track no. " + std::to_string(nodestate+1) + " counting from left";
+			description = "Set " + switchname + " to track no. " + std::to_string(switchstate+1) + " counting from left";
 	}
 }
 
@@ -71,10 +69,9 @@ void Setswitch::assignroute(Route* newroute)
 	offset = 0;
 	Order::assignroute(newroute);
 	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
-		if(route->switches[iSwitch]==node && route->updowns[iSwitch]==updown)
+		if(route->switches[iSwitch]==_switch)
 			offset++;
-	newroute->switches.push_back(node);
-	newroute->updowns.push_back(updown);
+	newroute->switches.push_back(_switch);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
@@ -143,11 +140,11 @@ void Gotostate::render(Rendering* r, int number)
 void Setswitch::render(Rendering* r, int number)
 {
 	float scale = r->getscale();
-	Vec pos = route->tracksystem->getswitchpos(node, updown);
+	Vec pos = route->tracksystem->getswitchpos(_switch);
 	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
 	Vec inlabel = lineend+Vec(0+10,10)/scale;
 	Order::renderlabel(r, lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
-	r->renderline(inlabel + Vec(4-nodestate*4, 0)/scale, inlabel + Vec(nodestate*4, -8)/scale);
+	r->renderline(inlabel + Vec(4-switchstate*4, 0)/scale, inlabel + Vec(switchstate*4, -8)/scale);
 }
 
 void Setsignal::render(Rendering* r, int number)

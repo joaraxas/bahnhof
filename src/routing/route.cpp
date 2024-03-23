@@ -119,7 +119,6 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 
     signals.clear();
     switches.clear();
-    updowns.clear();
 	for(auto& order: orders)
 		order->assignroute(this);
 }

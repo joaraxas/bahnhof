@@ -99,7 +99,7 @@ bool Train::perform(int ms)
 			break;}
 		case o_setswitch:{
 			Setswitch* specification = dynamic_cast<Setswitch*>(order);
-			tracksystem->setswitch(specification->node, specification->updown, specification->nodestate); 
+			tracksystem->setswitch(specification->_switch, specification->switchstate); 
 			done = true;
 			break;}
 		case o_couple:{

@@ -11,38 +11,26 @@ Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myi
 	id = myid;
 	pos = posstart;
 	dir = truncate(dirstart);
-	stateup = 0;
-	statedown = 0;
-	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::switchsprite);
-	sprite.zoomed = false;
 }
 
 void Node::connecttrack(trackid track, bool fromabove){
 	if(fromabove){
-		int insertionindex = 0;
-		if(tracksup.size()>=1){
-			insertionindex = tracksup.size();
-			float newtrackcurvature = 1./tracksystem->getradiusoriginatingfromnode(id, track);
-			for(int iTrack=0; iTrack<tracksup.size(); iTrack++){
-				if(newtrackcurvature < 1./tracksystem->getradiusoriginatingfromnode(id, tracksup[iTrack]))
-					insertionindex = iTrack;
-				if(insertionindex==iTrack) break;
-			}
-		}
-		tracksup.insert(tracksup.begin()+insertionindex, track);
+		std::cout<<"node"<<id<<"from above"<<std::endl;
+		if(trackup==0)
+			trackup = track;
+		else if(!switchup)
+			switchup = std::unique_ptr<Switch>(new Switch(this, trackup, true));
+		if(switchup)
+			switchup->addtrack(track);
 	}
 	else{
-		int insertionindex = 0;
-		if(tracksdown.size()>=1){
-			insertionindex = tracksdown.size();
-			float newtrackcurvature = 1./tracksystem->getradiusoriginatingfromnode(id, track);
-			for(int iTrack=0; iTrack<tracksdown.size(); iTrack++){
-				if(newtrackcurvature < 1./tracksystem->getradiusoriginatingfromnode(id, tracksdown[iTrack]))
-					insertionindex = iTrack;
-				if(insertionindex==iTrack) break;
-			}
-		}
-		tracksdown.insert(tracksdown.begin()+insertionindex, track);
+		std::cout<<"node"<<id<<"from below"<<std::endl;
+		if(trackdown==0)
+			trackdown = track;
+		else if(!switchdown)
+			switchdown = std::unique_ptr<Switch>(new Switch(this, trackdown, false));
+		if(switchdown)
+			switchdown->addtrack(track);
 	}
 }
 
@@ -62,58 +50,10 @@ void Node::render(Rendering* r)
 		else
 			r->rendertext("noone", pos.x, pos.y+14);
 	}
-	//if(scale>0.3){
-		if(size(tracksup)>1){
-			Vec switchpos = getswitchpos(true);
-			sprite.imagetype = fmin(1, stateup);
-			sprite.imageangle = dir-pi/2;
-			sprite.render(r, switchpos);
-			if(!nicetracks)
-				r->rendertext(std::to_string(stateup), switchpos.x, switchpos.y+7, {0,0,0,0});
-		}
-		if(size(tracksdown)>1){
-			Vec switchpos = getswitchpos(false);
-			sprite.imagetype = fmin(1, statedown);
-			sprite.imageangle = pi+dir-pi/2;
-			sprite.render(r, switchpos);
-			if(!nicetracks)
-				r->rendertext(std::to_string(statedown), switchpos.x, switchpos.y+7, {0,0,0,0});
-		}
-	//}
 }
 
-Vec Node::getswitchpos(bool updown)
+Vec getswitchpos(Vec pos, float dir, bool updown)
 {
 	float transverseoffset = -(2*updown-1)*28;///scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
-}
-
-trackid Node::gettrackdown()
-{
-	trackid trackdown = 0;
-	if(tracksdown.size() > 0)
-		trackdown = tracksdown[statedown];
-	return trackdown;
-}
-
-trackid Node::gettrackup()
-{
-	trackid trackup = 0;
-	if(tracksup.size() > 0)
-		trackup = tracksup[stateup];
-	return trackup;
-}
-
-void Node::incrementswitch(bool updown)
-{
-	if(updown){
-		stateup++;
-		if(stateup>=tracksup.size())
-			stateup = 0;
-	}
-	else{
-		statedown++;
-		if(statedown>=tracksdown.size())
-			statedown = 0;
-	}
 }

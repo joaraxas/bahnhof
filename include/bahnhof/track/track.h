@@ -7,6 +7,7 @@
 class Order;
 class Node;
 class Track;
+class Switch;
 class Signal;
 class Train;
 class Gamestate;
@@ -15,6 +16,7 @@ class Tracksystem
 {
 friend class Node;
 friend class Track;
+friend class Switch;
 friend class Gamestate;
 public:
     Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
@@ -29,7 +31,6 @@ public:
     Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);
     Vec getsignalpos(signalid signal);
-    Vec getswitchpos(nodeid node, bool updown);
     State getcloseststate(Vec pos);
     float getorientation(State state);
     float getradius(State state);
@@ -40,8 +41,8 @@ public:
     void setsignal(signalid signal, int redgreenorflip);
     bool getsignalstate(signalid signal);
     bool isred(Train* train);
-    void setswitch(nodeid node, bool updown, int switchstate);
-    int getswitchstate(nodeid node, bool updown);
+    void setswitch(switchid _switch, int switchstate);
+    Vec getswitchpos(switchid _switch);
     bool checkblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
     bool claimblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
     void runoverblocks(State state, float pixels, Train* fortrain);
@@ -53,6 +54,7 @@ public:
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
+    switchid addswitchtolist(Switch* _switch);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
@@ -60,10 +62,10 @@ private:
     float distancetotrack(trackid track, Vec pos);
     float distancetonode(nodeid node, Vec pos);
     float distancetosignal(signalid node, Vec pos);
-    float distancetoswitch(nodeid node, Vec pos, bool updown);
+    float distancetoswitch(nodeid node, Vec pos);
     nodeid getclosestnode(Vec pos);
     signalid getclosestsignal(Vec pos);
-    nodeid getclosestswitch(Vec pos, bool* updown);
+    nodeid getclosestswitch(Vec pos);
     Node* getnode(nodeid node);
     float getnodedir(nodeid node);
     float getradiusoriginatingfromnode(nodeid node, trackid track);
@@ -74,12 +76,16 @@ private:
     State tryincrementingtrack(State state);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
+    Switch* getswitch(switchid _switch);
+    int getswitchstate(switchid _switch);
     Signal* getsignal(signalid signal);
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
+    std::map<switchid, Switch*> switches;
     std::map<signalid, Signal*> signals;
     nodeid nodecounter = 0;
     trackid trackcounter = 0;
+    switchid switchcounter = 0;
     signalid signalcounter = 0;
     bool preparingtrack = false;
 };
@@ -87,23 +93,40 @@ private:
 class Node
 {
 friend class Tracksystem;
+friend class Switch;
 private:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
     void connecttrack(trackid track, bool fromupordown);
     void render(Rendering* r);
-    trackid gettrackup();
-    trackid gettrackdown();
-    Vec getswitchpos(bool updown);
-    void incrementswitch(bool updown);
     Tracksystem* tracksystem;
+    trackid trackup = 0;
+    trackid trackdown = 0;
+    std::unique_ptr<Switch> switchup = nullptr;
+    std::unique_ptr<Switch> switchdown = nullptr;
+    Train* reservedfor = nullptr;
     nodeid id;
     Vec pos;
     float dir;
-    int stateup = 0;
-    int statedown = 0;
-    std::vector<trackid> tracksup;
-    std::vector<trackid> tracksdown;
-    Train* reservedfor = nullptr;
+};
+
+Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
+
+class Switch
+{
+friend class Tracksystem;
+friend class Node;
+private:
+    Switch(Node* node, trackid track, bool updown);
+    void addtrack(trackid track);
+    void setswitch(int newstate);
+    void render(Rendering* r);
+    Vec pos();
+    Tracksystem* tracksystem;
+    Node* node;
+    bool updown;
+    switchid id;
+    int switchstate = 0;
+    std::vector<trackid> tracks;
     Sprite sprite;
 };
 
