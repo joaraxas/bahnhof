@@ -10,11 +10,11 @@ Camera::Camera(Game* whatgame){
 }
 
 Vec Camera::mapcoord(Vec screenpos){
-    return Vec(screenpos.x/scale+cam.x, screenpos.y/scale+cam.y);
+    return Vec(screenpos.x/getscale()+cam.x, screenpos.y/getscale()+cam.y);
 }
 
 Vec Camera::screencoord(Vec mappos){
-    return Vec((mappos.x-cam.x)*scale, (mappos.y-cam.y)*scale);
+    return Vec((mappos.x-cam.x)*getscale(), (mappos.y-cam.y)*getscale());
 }
 
 void Camera::zoomin(Vec centerpoint){
@@ -22,7 +22,7 @@ void Camera::zoomin(Vec centerpoint){
     cam.w/=2;
     cam.y+=cam.h/2*centerpoint.y/SCREEN_HEIGHT;
     cam.h/=2;
-    scale*=2;
+    logscale++;
     game->gettimemanager().speeddown();
     restricttomap();
 }
@@ -33,15 +33,15 @@ void Camera::zoomout(Vec centerpoint){
         cam.w*=2;
         cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
         cam.h*=2;
-        scale/=2;
+        logscale--;
         game->gettimemanager().speedup();
         restricttomap();
     }
 }
 
 void Camera::pan(Vec direction){
-    direction.x = int(direction.x/scale);
-    direction.y = int(direction.y/scale);
+    direction.x = int(direction.x/getscale());
+    direction.y = int(direction.y/getscale());
 
     cam.x = cam.x + direction.x;
     cam.y = cam.y + direction.y;
@@ -57,5 +57,5 @@ void Camera::restricttomap(){
 }
 
 float Camera::getscale(){
-    return scale;
+    return pow(2, logscale);
 }
