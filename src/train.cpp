@@ -9,17 +9,16 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/resources/storage.h"
 
-std::vector<std::unique_ptr<Train>> trains;
-
 
 Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
 {
 	tracksystem = &newtracksystem;
+	game = tracksystem->game;
 	wagons = newwagons;
 	speed = newspeed;
 	for(auto wagon : wagons)
 		wagon->train = this;
-	light.setspritesheet(tracksystem->game->allsprites, sprites::light);
+	light.setspritesheet(game->getsprites(), sprites::light);
 }
 
 void Train::getinput(InputManager* input, int ms)
@@ -79,8 +78,6 @@ bool Train::perform(int ms)
 	Order* order = route->getorder(orderid);
 	if(!order){//orderid does not exist in route
 	proceed();
-	//if(orderid==-1)//route has no orders
-	//brake(ms);
 	}
 	else{
 	switch(order->order){
@@ -377,7 +374,7 @@ bool Train::split(int where, Route* assignedroute)
 		if(gasisforward){
 			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
 			wagons = {wagons.begin(), wagons.begin() + where};
-			trains.emplace_back(newtrain);
+			game->getgamestate().trains.emplace_back(newtrain);
 			newtrain->route = assignedroute;
 		}
 		else{
@@ -385,7 +382,7 @@ bool Train::split(int where, Route* assignedroute)
 			std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
 			wagons = {wagons.rbegin(), wagons.rbegin() + where};
 			std::reverse(wagons.begin(), wagons.end());
-			trains.emplace_back(newtrain);
+			game->getgamestate().trains.emplace_back(newtrain);
 			newtrain->route = assignedroute;
 		}
 		std::cout << "split" << std::endl;

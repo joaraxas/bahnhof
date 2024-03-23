@@ -13,7 +13,7 @@ Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myi
 	dir = truncate(dirstart);
 	stateup = 0;
 	statedown = 0;
-	sprite.setspritesheet(tracksystem->game->allsprites, sprites::switchsprite);
+	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::switchsprite);
 	sprite.zoomed = false;
 }
 

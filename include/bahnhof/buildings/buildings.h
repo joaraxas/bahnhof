@@ -4,7 +4,7 @@
 class Building
 {
 public:
-    Building(ResourceManager* resources, int x, int y, int w, int h, resourcetype need, resourcetype production);
+    Building(Game* game, int x, int y, int w, int h, resourcetype need, resourcetype production);
     virtual void render(Rendering* rendering);
     void update(int ms);
 protected:
@@ -13,7 +13,7 @@ private:
     Storage* storage;
     SDL_Rect rect;
     int timeleft = 3000;
-    ResourceManager* allresources;
+    Game* game;
     resourcetype wants;
     resourcetype makes;
 };
@@ -21,18 +21,18 @@ private:
 class Brewery : public Building
 {
 public:
-    Brewery(ResourceManager* resources, Vec pos);
+    Brewery(Game* game, Vec pos);
 };
 
 class Hopsfield : public Building
 {
 public:
-    Hopsfield(ResourceManager* resources, Vec pos);
+    Hopsfield(Game* game, Vec pos);
 };
 
 class City : public Building
 {
 public:
-    City(ResourceManager* resources, Vec pos);
+    City(Game* game, Vec pos);
 };
 

@@ -16,7 +16,7 @@ class Rendering;
 class Resource
 {
 public:
-    Resource(SpriteManager* s, resourcetype newtype, std::string newname, sprites::name spritename);
+    Resource(SpriteManager& s, resourcetype newtype, std::string newname, sprites::name spritename);
     void render(Rendering* r, Vec pos);
     resourcetype type;
 private:

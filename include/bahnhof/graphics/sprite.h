@@ -64,7 +64,7 @@ private:
 class Sprite
 {
 public:
-    void setspritesheet(SpriteManager* s, sprites::name name);
+    void setspritesheet(SpriteManager& s, sprites::name name);
     void updateframe(int ms);
     void render(Rendering* r, Vec pos);
     float imageangle = 0;

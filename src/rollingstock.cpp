@@ -8,16 +8,16 @@
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
-Wagon::Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name spritename, sprites::name iconname)
+Wagon::Wagon(Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname)
 {
 	tracksystem = mytracks;
-	allresources = tracksystem->game->resources;
+	allresources = &tracksystem->game->getresources();
 	w = 50;
 	state = trackstate;
 	pos = tracksystem->getpos(state);
-	SpriteManager* spritemanager = allsprites;
-	sprite.setspritesheet(allsprites, spritename);
-	icon.setspritesheet(allsprites, iconname);
+	SpriteManager& spritemanager = tracksystem->game->getsprites();
+	sprite.setspritesheet(spritemanager, spritename);
+	icon.setspritesheet(spritemanager, iconname);
 	icon.zoomed = false;
 }
 
@@ -83,7 +83,7 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::tankloco, sprites::icontankloco)
+Locomotive::Locomotive(Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
 {
 	hasdriver = true;
 }
@@ -116,7 +116,7 @@ int Locomotive::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::openwagon, sprites::iconopenwagon)
+Openwagon::Openwagon(Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::openwagon, sprites::iconopenwagon)
 {}
 
 int Openwagon::loadwagon(resourcetype type, int amount)
@@ -127,7 +127,7 @@ int Openwagon::loadwagon(resourcetype type, int amount)
 	return loadedamount;
 }
 
-Tankwagon::Tankwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites) : Wagon(mytracks, trackstate, allsprites, sprites::refrigeratorcar, sprites::iconrefrigeratorcar)
+Tankwagon::Tankwagon(Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::refrigeratorcar, sprites::iconrefrigeratorcar)
 {}
 
 int Tankwagon::loadwagon(resourcetype type, int amount)

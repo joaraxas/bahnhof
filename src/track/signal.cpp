@@ -15,7 +15,7 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate)
 	float transverseoffset = -20;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
     tracksystem->setblocksuptonextsignal(this);
-	sprite.setspritesheet(tracksystem->game->allsprites, sprites::signal);
+	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::signal);
 	sprite.zoomed = false;
 }
 

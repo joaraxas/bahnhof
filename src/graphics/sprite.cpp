@@ -1,9 +1,9 @@
 #include<iostream>
 #include "bahnhof/graphics/sprite.h"
 
-void Sprite::setspritesheet(SpriteManager* s, sprites::name name)
+void Sprite::setspritesheet(SpriteManager& s, sprites::name name)
 {
-	spritesheet = s->get(name);
+	spritesheet = s.get(name);
 	imagenumber = spritesheet->getimagenumber();
 	if(imagenumber<1) std::cout<<"Error: sprite's image number is nonpositive"<<std::endl; 
 	imagetypes = spritesheet->getimagetypes();

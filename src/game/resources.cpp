@@ -13,7 +13,7 @@ std::vector<std::unique_ptr<Storage>> storages;
 ResourceManager::ResourceManager(Game* whatgame)
 {
 	game = whatgame;
-	SpriteManager* s = game->allsprites;
+	SpriteManager& s = game->getsprites();
 	resourcemap[beer] = new Resource(s, beer, "Beer", sprites::beer);
 	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops);
 	resourcemap[barley] = new Resource(s, barley, "Barley", sprites::barley);
@@ -32,7 +32,7 @@ Resource* ResourceManager::get(resourcetype type)
     return (it != resourcemap.end()) ? it->second : nullptr;
 }
 
-Resource::Resource(SpriteManager* s, resourcetype newtype, std::string newname, sprites::name spritename)
+Resource::Resource(SpriteManager& s, resourcetype newtype, std::string newname, sprites::name spritename)
 {
     type = newtype;
 	name = newname;
@@ -45,9 +45,9 @@ void Resource::render(Rendering* r, Vec pos)
 	sprite.render(r, pos);
 }
 
-Storage::Storage(ResourceManager* resources, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
+Storage::Storage(Game* whatgame, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
 {
-	allresources = resources;
+	game = whatgame;
 	rect = {x, y, w, h};
 	accepts = _accepts;
 	provides = _provides;
@@ -55,6 +55,7 @@ Storage::Storage(ResourceManager* resources, int x, int y, int w, int h, resourc
 
 void Storage::render(Rendering* r)
 {
+	ResourceManager& allresources = game->getresources();
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
 	SDL_Rect drawrect = rect;
 	r->renderrectangle(&drawrect);
@@ -65,7 +66,7 @@ void Storage::render(Rendering* r)
 	int sep = 20/scale;
 	int frameoffset = fmax(1,int(2/scale));
 	for(auto resourcepair : storedresources){
-		Resource* resource = allresources->get(resourcepair.first);
+		Resource* resource = allresources.get(resourcepair.first);
 		int amount = resourcepair.second;
 		if(amount*sep*sep<rect.w*rect.h*0.6){
 			for(int i=0; i<amount; i++){

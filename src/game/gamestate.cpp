@@ -78,8 +78,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, hops, beer));
-		buildings.emplace_back(new Brewery(game->resources, newpos));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, hops, beer));
+		buildings.emplace_back(new Brewery(game, newpos));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -87,8 +87,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
-		buildings.emplace_back(new Hopsfield(game->resources, newpos));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
+		buildings.emplace_back(new Hopsfield(game, newpos));
 	}
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
@@ -96,8 +96,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game->resources, storagex, storagey, storageextraw+400, storageextrah+400, beer, none));
-		buildings.emplace_back(new City(game->resources, newpos));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, beer, none));
+		buildings.emplace_back(new City(game, newpos));
 	}
 }
 
@@ -109,10 +109,10 @@ void Gamestate::initjusttrack()
 void Gamestate::inittrain(State startstate)
 {
 	int nWagons = wagons.size();
-	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate, game->allsprites));
+	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate));
 	for(int iWagon=0; iWagon<3; iWagon++){
 		State state = tracksystem->travel(startstate, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(tracksystem.get(), state, game->allsprites));
+		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
 	}
 	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
 	

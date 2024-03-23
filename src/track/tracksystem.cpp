@@ -259,7 +259,7 @@ void Tracksystem::render(Rendering* r)
 		nodeid lastnodeindex = nodecounter;
 		trackid lasttrackindex = trackcounter;
 		nodeid lastselectednode = selectednode;
-		buildat(game->input->mapmousepos());
+		buildat(game->getinputmanager().mapmousepos());
 		selectednode = lastselectednode;
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
 			gettrack(id)->render(r);
@@ -370,7 +370,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	}
 	State returnstate;
 	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
-	if(mindist<20/game->cam->getscale()){
+	if(mindist<20/game->getcamera().getscale()){
 		if(trackdist==mindist){
 			*track = closeststate.track;
 			returnstate = closeststate;

@@ -23,15 +23,21 @@ public:
     ~Game();
     void play();
     void exit();
-    Gamestate* gamestate;
+    std::string gamename;
+    ResourceManager& getresources() {return *resources;};
+    Camera& getcamera() {return *cam;};
+    InputManager& getinputmanager() {return *input;};
+    Rendering& getrendering() {return *rendering;};
+    SpriteManager& getsprites() {return *allsprites;};
+    Gamestate& getgamestate() {return *gamestate;};
+private:
     ResourceManager* resources;
     Camera* cam;
     TimeManager* timer;
     InputManager* input;
     Rendering* rendering;
     SpriteManager* allsprites;
-    std::string gamename;
-private:
+    Gamestate* gamestate;
     bool quit;
 };
 
@@ -45,18 +51,20 @@ public:
     void initjusttrack();
     void inittrain(State startstate);
     void addtrainstoorphans();
-    RouteManager* routing;
-    //Map* map;
+    Tracksystem& gettracksystems() {return *tracksystem;};
+    RouteManager& getrouting() {return *routing;};
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building>> buildings;
     std::vector<std::unique_ptr<Train>> trains;
-    std::unique_ptr<Tracksystem> tracksystem;
     int time = 0;
     float money = 10;
     int revenue = 0;
     State newwagonstate;
 private:
     Game* game;
+    RouteManager* routing;
+    std::unique_ptr<Tracksystem> tracksystem;
+    //Map* map;
 };
 
 class Background

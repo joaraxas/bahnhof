@@ -27,6 +27,7 @@ Rendering::Rendering(Game* whatgame, Camera* whatcam)
 
 void Rendering::render(Gamestate* gamestate)
 {
+	Tracksystem& tracksystem = gamestate->gettracksystems();
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderClear(renderer);
 	for(int x=0; x<MAP_WIDTH; x+=128){
@@ -38,16 +39,16 @@ void Rendering::render(Gamestate* gamestate)
 		building->render(this);
 	for(auto& storage : storages)
 		storage->render(this);
-	gamestate->tracksystem->render(this);
+	tracksystem.render(this);
 	for(auto& wagon : gamestate->wagons)
 		wagon->render(this);
-	if(gamestate->routing->selectedroute)
-		gamestate->routing->selectedroute->render(this);
+	if(gamestate->getrouting().selectedroute)
+		gamestate->getrouting().selectedroute->render(this);
 	else
-		gamestate->routing->renderroutes(this);
+		gamestate->getrouting().renderroutes(this);
 	for(auto& train : gamestate->trains)
 		train->render(this);
-	gamestate->tracksystem->renderabovetrains(this);
+	tracksystem.renderabovetrains(this);
 	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
 	rendertext(std::to_string(int(gamestate->time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
 	rendertext(std::to_string(int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);

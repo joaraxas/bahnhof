@@ -13,7 +13,7 @@ class InputManager;
 class Wagon
 {
 public:
-    Wagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites, sprites::name sprname, sprites::name iconame);
+    Wagon(Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -42,7 +42,7 @@ private:
 class Locomotive : public Wagon
 {
 public:
-    Locomotive(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
+    Locomotive(Tracksystem* mytracks, State trackstate);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
@@ -58,14 +58,14 @@ private:
 class Openwagon : public Wagon
 {
 public:
-    Openwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
+    Openwagon(Tracksystem* mytracks, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
-    Tankwagon(Tracksystem* mytracks, State trackstate, SpriteManager* allsprites);
+    Tankwagon(Tracksystem* mytracks, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 
@@ -101,5 +101,6 @@ public:
 private:
     bool checkifreachedstate(State goalstate, int ms);
     Sprite light;
+    Game* game;
 };
 
