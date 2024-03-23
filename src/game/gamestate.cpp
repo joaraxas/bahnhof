@@ -119,3 +119,18 @@ void Gamestate::inittrain(State startstate)
 	Route* loadroute = routing->addroute();
 	trains.back()->route = loadroute;
 }
+
+void Gamestate::selecttrain(Train* whattrain)
+{
+	for(auto& train: trains){
+		train->selected = false;
+	}
+	if(whattrain)
+		whattrain->selected = true;
+	selectedtrain = whattrain;
+}
+
+Train* Gamestate::getselectedtrain()
+{
+	return selectedtrain;
+}

@@ -90,7 +90,6 @@ public:
     bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
     Tracksystem* tracksystem;
-    bool selected = false;
     float speed;
     bool gasisforward = true;
     std::vector<Wagon*> wagons;
@@ -98,6 +97,7 @@ public:
     int orderid = 0;
     bool go = false;
     bool wantstocouple = false;
+    bool selected = false;
 private:
     bool checkifreachedstate(State goalstate, int ms);
     Sprite light;

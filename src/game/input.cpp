@@ -51,15 +51,12 @@ void InputManager::handle(int ms, int mslogic){
                             }
                         }
                         if(clickedtrain){
-                            for(auto& train : gamestate.trains)
-                                train->selected = false;
-                            clickedtrain->selected = true;
+                            gamestate.selecttrain(clickedtrain);
                         }
                         else{
                             if(!tracksystem.switchat(mousepos)){
                                 tracksystem.selectat(mousepos);
-                                for(auto& train : gamestate.trains)
-                                    train->selected = false;
+                                gamestate.selecttrain(nullptr);
                                 routing.selectedroute = nullptr;
                             }
                         }
@@ -71,15 +68,6 @@ void InputManager::handle(int ms, int mslogic){
                 if(e.key.keysym.sym == SDLK_r){
                     if(!routing.selectedroute)
                         routing.addroute();
-                }
-                if(keyispressed(routeassignbutton)){
-                    if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
-                        for(auto& train : gamestate.trains)
-                            if(train->selected){
-                                routing.selectedroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
-                                train->route = routing.selectedroute;
-                            }
-                    }
                 }
                 if(e.key.keysym.sym == SDLK_UP){
                     if(routing.selectedroute)
@@ -109,17 +97,21 @@ void InputManager::handle(int ms, int mslogic){
                     if(routing.selectedroute)
                         routing.selectedroute->insertorderatselected(new Couple());
                 }
-                if(e.key.keysym.sym == SDLK_p){
-                    for(auto& train : gamestate.trains)
-                        if(train->selected)
-                            train->proceed();
-                }
-                if(e.key.keysym.sym == SDLK_RETURN){
-                    for(auto& train : gamestate.trains)
-                        if(train->selected){
-                            train->go = !train->go;
-                            train->speed = 0;
+                Train* selectedtrain = gamestate.getselectedtrain();
+                if(selectedtrain){
+                    if(keyispressed(routeassignbutton)){
+                        if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
+                            routing.selectedroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
+                            selectedtrain->route = routing.selectedroute;
                         }
+                    }
+                    if(e.key.keysym.sym == SDLK_p){
+                        selectedtrain->proceed();
+                    }
+                    if(e.key.keysym.sym == SDLK_RETURN){
+                        selectedtrain->go = !selectedtrain->go;
+                        selectedtrain->speed = 0;
+                    }
                 }
                 if(e.key.keysym.sym == SDLK_z){
                     tracksystem.placingsignal = true;
