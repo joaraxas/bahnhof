@@ -10,9 +10,12 @@ add_executable(bahnhof
     src/graphics/sprite.cpp
     src/graphics/spritesheet.cpp
     src/graphics/spritemanager.cpp
-    src/input.cpp
-    src/camera.cpp
-    src/timing.cpp
+    src/game/input.cpp
+    src/game/camera.cpp
+    src/game/timing.cpp
+    src/game/gamestate.cpp
+    src/game/game.cpp
+    src/game/main.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/node.cpp
@@ -22,10 +25,8 @@ add_executable(bahnhof
     src/routing/order.cpp
     src/rollingstock.cpp
     src/buildings.cpp
-    src/resources.cpp
+    src/game/resources.cpp
     src/train.cpp
-    src/gamestate.cpp
-    src/main.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)

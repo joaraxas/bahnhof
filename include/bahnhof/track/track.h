@@ -17,7 +17,6 @@ friend class Node;
 friend class Track;
 friend class Gamestate;
 public:
-    Tracksystem();
     Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
     void update(int ms);

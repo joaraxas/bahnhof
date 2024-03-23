@@ -28,8 +28,6 @@ State flipstate(State state)
 	return outstate;
 }
 
-Tracksystem::Tracksystem(){}
-
 Tracksystem::Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys)
 {
 	game = whatgame;
