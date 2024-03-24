@@ -59,7 +59,7 @@ class Track
 {
 public:
     Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
-    void render(Rendering* r);
+    void render(Rendering* r, int mode);
     Vec getpos(float nodedist);
     Vec getpos(float nodedist, float transverseoffset);
     State getcloseststate(Vec pos);

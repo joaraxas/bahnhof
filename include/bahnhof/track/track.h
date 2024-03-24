@@ -14,9 +14,6 @@ struct Trackblock;
 
 class Tracksystem
 {
-friend class Node;
-friend class Track;
-friend class Switch;
 public:
     Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
@@ -30,6 +27,7 @@ public:
     Order* generateorderat(Vec pos);
     Vec getpos(State state, float transverseoffset=0);
     Vec getsignalpos(signalid signal);
+    State getsignalstate(signalid signal);
     State getcloseststate(Vec pos);
     float getorientation(State state);
     float getradius(State state);
@@ -47,10 +45,13 @@ public:
     Game* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
+    switchid addswitchtolist(Switch* _switch);
+    float getradiusoriginatingfromnode(nodeid node, trackid track);
+    float getnodedir(nodeid node);
+    Vec getnodepos(nodeid node);
 private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
-    switchid addswitchtolist(Switch* _switch);
     signalid addsignal(State state);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
@@ -64,9 +65,6 @@ private:
     signalid getclosestsignal(Vec pos);
     nodeid getclosestswitch(Vec pos);
     Node* getnode(nodeid node);
-    float getnodedir(nodeid node);
-    float getradiusoriginatingfromnode(nodeid node, trackid track);
-    Vec getnodepos(nodeid node);
     Track* gettrack(trackid track);
     trackid nexttrack(trackid track);
     trackid previoustrack(trackid track);

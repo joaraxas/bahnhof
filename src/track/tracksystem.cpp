@@ -258,7 +258,7 @@ bool Tracksystem::isendofline(State state)
 void Tracksystem::render(Rendering* r)
 {
 	for(auto const& [id, track] : tracks)
-		track->render(r);
+		track->render(r, 0);
 	for(auto const& [id, node] : nodes)
 		node->render(r);
 	
@@ -270,7 +270,7 @@ void Tracksystem::render(Rendering* r)
 		buildat(game->getinputmanager().mapmousepos());
 		selectednode = lastselectednode;
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-			gettrack(id)->render(r);
+			gettrack(id)->render(r, 1);
 		for(nodeid id = lastnodeindex+1; id<=nodecounter; id++)
 			getnode(id)->render(r);
 		for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
@@ -569,6 +569,11 @@ Vec Tracksystem::getsignalpos(signalid signal)
 	return getsignal(signal)->getpos();
 }
 
+State Tracksystem::getsignalstate(signalid signal)
+{
+	return getsignal(signal)->state;
+}
+
 float Tracksystem::distancetotrack(trackid track, Vec pos)
 {
 	return norm(getpos(gettrack(track)->getcloseststate(pos))-pos);
@@ -675,6 +680,7 @@ Trackblock Tracksystem::getblocksuptonextsignal(State state)
 			reachedsignal = gettrack(newgoalstate.track)->nextsignal(newgoalstate, true);
 		}
 		goalstate = newgoalstate;
+		std::cout<<goalstate.track<<std::endl;
 	}
 	if(reachedsignal)
 		blocks.signalblocks.push_back(reachedsignal);

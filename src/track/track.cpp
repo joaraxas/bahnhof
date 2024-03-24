@@ -130,7 +130,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	if(state.alignedwithtrack){
 		for(auto const& [nodedist,signal]: signals){
 			if(nodedist>state.nodedist){
-				if(tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign){
+				if(tracksystem->getsignalstate(signal).alignedwithtrack || !mustalign){
 					reachedsignal = signal;
 				}
 			}
@@ -140,14 +140,14 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	else{
 		for(auto const& [nodedist,signal]: signals){
 			if(nodedist<state.nodedist)
-				if(!tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign)
+				if(!tracksystem->getsignalstate(signal).alignedwithtrack || !mustalign)
 					reachedsignal = signal;
 		}
 	}
 	return reachedsignal;
 }
 
-void Track::render(Rendering* r)
+void Track::render(Rendering* r, int mode)
 {
 	float scale = r->getscale();
 	//// banvall ////
@@ -171,7 +171,7 @@ void Track::render(Rendering* r)
 	//// syllar ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
-		if(tracksystem->preparingtrack)
+		if(mode==1)
 			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 		float sleeperwidth = 2600/150;
 		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
@@ -188,7 +188,7 @@ void Track::render(Rendering* r)
 	//// rals ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-		if(tracksystem->preparingtrack)
+		if(mode==1)
 			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);

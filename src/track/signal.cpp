@@ -13,7 +13,6 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate, signalid myid) : 
 	float orientation = tracksystem->getorientation(state);
 	float transverseoffset = -20;
 	pos = tracksystem->getpos(state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
-    blocks = tracksystem->getblocksuptonextsignal(state);
 	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::signal);
 	sprite.zoomed = false;
 }
