@@ -2,7 +2,6 @@
 #include<map>
 #include "state.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/graphics/sprite.h"
 
 class Order;
 class Node;
@@ -11,13 +10,13 @@ class Switch;
 class Signal;
 class Train;
 class Gamestate;
+struct Trackblock;
 
 class Tracksystem
 {
 friend class Node;
 friend class Track;
 friend class Switch;
-friend class Gamestate;
 public:
     Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
@@ -38,15 +37,13 @@ public:
     float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(State state);
     void setsignal(signalid signal, int redgreenorflip);
-    bool getsignalstate(signalid signal);
     bool isred(Train* train);
     void setswitch(switchid _switch, int switchstate);
     Vec getswitchpos(switchid _switch);
-    bool checkblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
-    bool claimblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
+    bool checkblocks(Trackblock blocks, Train* fortrain);
+    bool claimblocks(Trackblock blocks, Train* fortrain);
     void runoverblocks(State state, float pixels, Train* fortrain);
-    signalid nextsignalontrack(State state, bool startfromtrackend=false, bool mustalign=true);
-    void setblocksuptonextsignal(Signal* fromsignal);
+    Trackblock getblocksuptonextsignal(State state);
     Game* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
@@ -90,85 +87,4 @@ private:
     bool preparingtrack = false;
 };
 
-class Node
-{
-friend class Tracksystem;
-friend class Switch;
-private:
-    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
-    void connecttrack(trackid track, bool fromupordown);
-    void render(Rendering* r);
-    Tracksystem* tracksystem;
-    trackid trackup = 0;
-    trackid trackdown = 0;
-    std::unique_ptr<Switch> switchup = nullptr;
-    std::unique_ptr<Switch> switchdown = nullptr;
-    Train* reservedfor = nullptr;
-    nodeid id;
-    Vec pos;
-    float dir;
-};
-
 Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
-
-class Switch
-{
-friend class Tracksystem;
-friend class Node;
-private:
-    Switch(Node* node, trackid track, bool updown);
-    void addtrack(trackid track);
-    void setswitch(int newstate);
-    void render(Rendering* r);
-    Vec pos();
-    Tracksystem* tracksystem;
-    Node* node;
-    bool updown;
-    switchid id;
-    int switchstate = 0;
-    std::vector<trackid> tracks;
-    Sprite sprite;
-};
-
-class Track
-{
-friend class Tracksystem;
-private:
-    Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
-    ~Track();
-    Tracksystem* tracksystem;
-    nodeid previousnode, nextnode;
-    void render(Rendering* r);
-    Vec getpos(float nodedist);
-    Vec getpos(float nodedist, float transverseoffset);
-    State getcloseststate(Vec pos);
-    float getarclength(float nodedist);
-    float getorientation(float nodedist);
-    bool isabovepreviousnode();
-    bool isbelownextnode();
-    trackid id;
-    float phi;
-    float radius;
-    float previousdir;
-    float nextdir;
-    Vec previouspos;
-    Vec nextpos;
-    std::map<float,signalid> signals;
-};
-
-class Signal
-{
-friend class Tracksystem;
-private:
-    Signal(Tracksystem& newtracksystem, State signalstate);
-    void render(Rendering* r);
-    bool isred(Train* train);
-    bool isgreen = true;
-    State state;
-    Vec pos;
-    Tracksystem* tracksystem;
-    std::vector<nodeid> switchblocks;
-    std::vector<signalid> signalblocks;
-    Train* reservedfor = nullptr;
-    Sprite sprite;
-};

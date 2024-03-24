@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/track/trackinternal.h"
 #include "bahnhof/common/gamestate.h"
 
 Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
@@ -47,6 +48,21 @@ void Node::render(Rendering* r)
 		r->rendertext("track down: "+std::to_string(trackdown), pos.x, pos.y+2*14);
 		r->rendertext("track up: "+std::to_string(trackup), pos.x, pos.y+3*14);
 	}
+}
+
+Vec Node::getpos()
+{
+	return pos;
+}
+
+float Node::getdir()
+{
+	return dir;
+}
+
+bool Node::hasswitch()
+{
+	return switchup || switchdown;
 }
 
 Vec getswitchpos(Vec pos, float dir, bool updown)

@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/track/trackinternal.h"
 
 
 
@@ -25,24 +26,6 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
-}
-
-Track::~Track()
-{
-	//std::cout << "deleted: " << id << std::endl;
-	/*if(isrightofleftnode())
-		nodeleft->tracksright.erase(find(nodeleft->tracksright.begin(),nodeleft->tracksright.end(),this));
-	else
-		nodeleft->tracksleft.erase(find(nodeleft->tracksleft.begin(),nodeleft->tracksleft.end(),this));
-	nodeleft->incrementswitch();
-	if(nodeleft->tracksleft.size()+nodeleft->tracksright.size() == 0)
-		
-
-	if(isleftofrightnode())
-		noderight->tracksleft.erase(find(noderight->tracksleft.begin(),noderight->tracksleft.end(),this));
-	else
-		noderight->tracksright.erase(find(noderight->tracksright.begin(),noderight->tracksright.end(),this));
-	noderight->incrementswitch();*/
 }
 
 Vec Track::getpos(float nodedist)
@@ -132,6 +115,36 @@ bool Track::isabovepreviousnode()
 bool Track::isbelownextnode()
 {
 	return cos(getorientation(1) - nextdir) > 0;
+}
+
+void Track::addsignal(State signalstate, signalid signal)
+{
+	signals[signalstate.nodedist] = signal;
+}
+
+signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
+{
+	if(state.track!=id) std::cout<<"Error in Track::nextsignal: called for incorrect track"<<std::endl;
+	if(startfromtrackend) state.nodedist = 1-state.alignedwithtrack;
+	signalid reachedsignal = 0;
+	if(state.alignedwithtrack){
+		for(auto const& [nodedist,signal]: signals){
+			if(nodedist>state.nodedist){
+				if(tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign){
+					reachedsignal = signal;
+				}
+			}
+			if(reachedsignal) break;
+		}
+	}
+	else{
+		for(auto const& [nodedist,signal]: signals){
+			if(nodedist<state.nodedist)
+				if(!tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign)
+					reachedsignal = signal;
+		}
+	}
+	return reachedsignal;
 }
 
 void Track::render(Rendering* r)

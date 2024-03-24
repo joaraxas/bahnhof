@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/track/trackinternal.h"
 #include "bahnhof/common/gamestate.h"
 
 Switch::Switch(Node* mynode, trackid track, bool isupordown) : node(mynode), updown(isupordown)
@@ -36,6 +37,10 @@ void Switch::addtrack(trackid track){
 
 Vec Switch::pos(){
     return getswitchpos(node->pos, node->dir, updown);
+}
+
+int Switch::getstate(){
+    return switchstate;
 }
 
 void Switch::render(Rendering* r)
