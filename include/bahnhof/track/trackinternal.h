@@ -43,7 +43,7 @@ public:
     void render(Rendering* r);
     void setswitch(int newstate);
     Vec pos();
-    int getstate();
+    int getstateforordergeneration();
 private:
     void addtrack(trackid track);
     Tracksystem* tracksystem;

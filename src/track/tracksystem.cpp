@@ -104,7 +104,6 @@ void Tracksystem::removesignal(signalid toremove)
 
 Vec Tracksystem::getpos(State state, float transverseoffset)
 {
-	gettrack(state.track);
 	return gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
@@ -118,13 +117,6 @@ float Tracksystem::getradius(State state)
 	Track* trackpointer = gettrack(state.track);
 	float radd = trackpointer->radius*(2*state.alignedwithtrack-1)*(2*trackpointer->isabovepreviousnode()-1);
 	return radd;
-}
-
-float getradiusoriginatingfromnode(Tracksystem& t, nodeid node, trackid track)
-{
-	Track* trackpointer = t.gettrack(track);
-	State state(track, 0.5, trackpointer->previousnode==node);
-	return t.getradius(state);
 }
 
 State Tracksystem::tryincrementingtrack(State oldstate)
@@ -344,7 +336,7 @@ Order* Tracksystem::generateorderat(Vec pos)
 	if(clickedsignal)
 		neworder = new Setsignal(clickedsignal, getsignal(clickedsignal)->getcolorforordergeneration());
 	if(clickedswitch)
-		neworder = new Setswitch(clickedswitch, getswitchstate(clickedswitch));
+		neworder = new Setswitch(clickedswitch, getswitch(clickedswitch)->getstateforordergeneration());
 	return neworder;
 }
 
@@ -357,25 +349,25 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 		*track = 0;
 		closeststate = getcloseststate(mousepos);
 		if(closeststate.track)
-			trackdist = distancetotrack(closeststate.track, mousepos);
+			trackdist = distancebetween(getpos(closeststate), mousepos);
 	}
 	if(node){
 		*node = 0;
 		closestnode = getclosestnode(mousepos);
 		if(closestnode)
-			nodedist = distancetonode(closestnode, mousepos);
+			nodedist = distancebetween(getnode(closestnode)->getpos(), mousepos);
 	}
 	if(signal){
 		*signal = 0;
 		closestsignal = getclosestsignal(mousepos);
 		if(closestsignal)
-			signaldist = distancetosignal(closestsignal, mousepos);
+			signaldist = distancebetween(getsignal(closestsignal)->getpos(), mousepos);
 	}
 	if(_switch){
 		*_switch = 0;
 		closestswitch = getclosestswitch(mousepos);
 		if(closestswitch)
-			switchdist = distancetoswitch(closestswitch, mousepos);
+			switchdist = distancebetween(getswitch(closestswitch)->pos(), mousepos);
 	}
 	State returnstate;
 	float mindist = std::min({trackdist, nodedist, signaldist, switchdist});
@@ -403,12 +395,6 @@ void Tracksystem::setswitch(switchid _switch, int switchstate)
 	switchptr->setswitch(switchstate);
 }
 
-int Tracksystem::getswitchstate(switchid _switch)
-{
-	Switch* switchptr = getswitch(_switch);
-	return switchptr->getstate();
-}
-
 Vec Tracksystem::getswitchpos(switchid _switch)
 {
 	Switch* switchptr = getswitch(_switch);
@@ -425,10 +411,6 @@ void Tracksystem::deleteclick(int x, int y)
 {
 	selectednode = 0;
 	Vec mousepos(x,y);
-	nodeid clickednode = getclosestnode(mousepos);
-	if(distancetonode(clickednode, mousepos)<=30){
-		//removenode(clickednode);
-	}
 }
 
 State Tracksystem::getcloseststate(Vec pos)
@@ -436,9 +418,10 @@ State Tracksystem::getcloseststate(Vec pos)
 	float mindist = INFINITY;
 	State closeststate;
 	for(auto const& [id,track]: tracks){
-		float dist = distancetotrack(id, pos);
+		State state = track->getcloseststate(pos);
+		float dist = distancebetween(getpos(state), pos);
 		if(dist < mindist){
-			closeststate = track->getcloseststate(pos);
+			closeststate = state;
 			mindist = dist;
 		}
 	}
@@ -478,7 +461,7 @@ nodeid Tracksystem::getclosestswitch(Vec pos)
 	float mindist = INFINITY;
 	switchid closestswitch = 0;
 	for(auto const& [id,_switch]: switches){
-		float dist = distancetoswitch(id, pos);
+		float dist = distancebetween(_switch->pos(), pos);
 		if(dist < mindist){
 			closestswitch = id;
 			mindist = dist;
@@ -525,13 +508,13 @@ void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 		intersecty = -(y2 + (intersectx - x2)*tanth2);
 	}
 	Vec tangentintersection(intersectx, intersecty);
-	float disttointersect1 = distancetonode(node1, tangentintersection);
-	float disttointersect2 = distancetonode(node2, tangentintersection);
+	float disttointersect1 = distancebetween(pos1, tangentintersection);
+	float disttointersect2 = distancebetween(pos2, tangentintersection);
 	if(disttointersect1 > disttointersect2)
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
 	else
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-	if(distancetonode(node1, newnodepoint)> 10 && distancetonode(node2, newnodepoint)> 10){ //TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
+	if(distancebetween(pos1, newnodepoint)> 10 && distancebetween(pos2, newnodepoint)> 10){ //TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
 		nodeid newnode = extendtracktopos(node1, newnodepoint);
 		addtrack(newnode, node2);
 	}
@@ -564,29 +547,9 @@ Vec Tracksystem::getsignalpos(signalid signal)
 	return getsignal(signal)->getpos();
 }
 
-State Tracksystem::getsignalstate(signalid signal)
+float distancebetween(Vec pos1, Vec pos2)
 {
-	return getsignal(signal)->state;
-}
-
-float Tracksystem::distancetotrack(trackid track, Vec pos)
-{
-	return norm(getpos(gettrack(track)->getcloseststate(pos))-pos);
-}
-
-float Tracksystem::distancetonode(nodeid node, Vec pos)
-{
-	return norm(getnode(node)->getpos()-pos);
-}
-
-float Tracksystem::distancetosignal(signalid signal, Vec pos)
-{
-	return norm(getsignalpos(signal)-pos);
-}
-
-float Tracksystem::distancetoswitch(switchid _switch, Vec pos)
-{
-	return norm(getswitchpos(_switch)-pos);
+	return norm(pos1 - pos2);
 }
 
 Track* Tracksystem::gettrack(trackid track)
@@ -608,8 +571,6 @@ trackid Tracksystem::nexttrack(trackid track){
 	}
 	else
 		nexttrack = getnode(trackpointer->nextnode)->trackdown;
-	//if(nexttrack == 0)
-	//	nexttrack = track;
 	return nexttrack;
 }
 
@@ -620,8 +581,6 @@ trackid Tracksystem::previoustrack(trackid track){
 		previoustrack = getnode(trackpointer->previousnode)->trackdown;
 	else
 		previoustrack = getnode(trackpointer->previousnode)->trackup;
-	//if(previoustrack == 0)
-	//	previoustrack = track;
 	return previoustrack;
 }
 

@@ -132,7 +132,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	if(state.alignedwithtrack){
 		for(auto const& [nodedist,signal]: signals){
 			if(nodedist>state.nodedist){
-				if(tracksystem->getsignalstate(signal).alignedwithtrack || !mustalign){
+				if(tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign){
 					reachedsignal = signal;
 				}
 			}
@@ -142,7 +142,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	else{
 		for(auto const& [nodedist,signal]: signals){
 			if(nodedist<state.nodedist)
-				if(!tracksystem->getsignalstate(signal).alignedwithtrack || !mustalign)
+				if(!tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign)
 					reachedsignal = signal;
 		}
 	}

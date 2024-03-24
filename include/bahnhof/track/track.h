@@ -25,7 +25,6 @@ public:
     float buildat(Vec pos);
     bool switchat(Vec pos);
     Order* generateorderat(Vec pos);
-    State getcloseststate(Vec pos);
     State travel(State state, float pixels);
     float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(State state);
@@ -42,7 +41,6 @@ public:
 
     Vec getpos(State state, float transverseoffset=0);
     Vec getsignalpos(signalid signal);
-    State getsignalstate(signalid signal);
     float getradius(State state);
     float getorientation(State state);
     void setsignal(signalid signal, int redgreenorflip);
@@ -59,10 +57,7 @@ private:
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
     State whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    float distancetotrack(trackid track, Vec pos);
-    float distancetonode(nodeid node, Vec pos);
-    float distancetosignal(signalid node, Vec pos);
-    float distancetoswitch(nodeid node, Vec pos);
+    State getcloseststate(Vec pos);
     nodeid getclosestnode(Vec pos);
     signalid getclosestsignal(Vec pos);
     nodeid getclosestswitch(Vec pos);
@@ -71,7 +66,6 @@ private:
     State tryincrementingtrack(State state);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
-    int getswitchstate(switchid _switch);
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
     std::map<switchid, Switch*> switches;
@@ -84,3 +78,4 @@ private:
 };
 
 Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
+float distancebetween(Vec, Vec);

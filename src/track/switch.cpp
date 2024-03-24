@@ -35,11 +35,18 @@ void Switch::addtrack(trackid track){
         node->trackdown = tracks[switchstate];
 }
 
+float getradiusoriginatingfromnode(Tracksystem& t, nodeid node, trackid track)
+{
+	Track* trackpointer = t.gettrack(track);
+	State state(track, 0.5, trackpointer->previousnode==node);
+	return t.getradius(state);
+}
+
 Vec Switch::pos(){
     return getswitchpos(node->pos, node->dir, updown);
 }
 
-int Switch::getstate(){
+int Switch::getstateforordergeneration(){
     return switchstate;
 }
 
