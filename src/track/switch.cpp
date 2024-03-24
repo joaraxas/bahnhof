@@ -5,13 +5,11 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
 
-Switch::Switch(Node* mynode, trackid track, bool isupordown)
+Switch::Switch(Node* mynode, trackid track, bool isupordown) : node(mynode), updown(isupordown)
 {
-    node = mynode;
 	tracksystem = node->tracksystem;
     id = tracksystem->addswitchtolist(this);
     addtrack(track);
-    updown = isupordown;
 	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::switchsprite);
 	sprite.zoomed = false;
 	sprite.imageangle = node->dir - pi/2;

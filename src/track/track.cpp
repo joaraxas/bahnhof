@@ -198,11 +198,12 @@ void Track::render(Rendering* r)
 		r->renderline(drawpos1r, drawpos2r);
 	}
 	if(!nicetracks){
-		Vec radiustextpos = getpos(0.5);
+		Vec midpoint = getpos(0.5);
 		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
 		if(isinf(radius))
 			radiustext = std::to_string(radius);
-		r->rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});
+		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
+		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }

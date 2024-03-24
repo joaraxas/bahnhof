@@ -5,17 +5,13 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
 
-Node::Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid)
+Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
 {
-	tracksystem = &newtracksystem;
-	id = myid;
-	pos = posstart;
 	dir = truncate(dirstart);
 }
 
 void Node::connecttrack(trackid track, bool fromabove){
 	if(fromabove){
-		std::cout<<"node"<<id<<"from above"<<std::endl;
 		if(trackup==0)
 			trackup = track;
 		else if(!switchup)
@@ -24,7 +20,6 @@ void Node::connecttrack(trackid track, bool fromabove){
 			switchup->addtrack(track);
 	}
 	else{
-		std::cout<<"node"<<id<<"from below"<<std::endl;
 		if(trackdown==0)
 			trackdown = track;
 		else if(!switchdown)
@@ -49,6 +44,8 @@ void Node::render(Rendering* r)
 		}
 		else
 			r->rendertext("noone", pos.x, pos.y+14);
+		r->rendertext("track down: "+std::to_string(trackdown), pos.x, pos.y+2*14);
+		r->rendertext("track up: "+std::to_string(trackup), pos.x, pos.y+3*14);
 	}
 }
 
