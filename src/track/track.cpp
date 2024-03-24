@@ -13,11 +13,13 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 	nextnode = next;
 	tracksystem = &newtracksystem;
 	id = myid;
+	Node* previousnodepointer = tracksystem->getnode(previousnode);
+	Node* nextnodepointer = tracksystem->getnode(nextnode);
 
-	previousdir = tracksystem->getnodedir(previousnode);
-	previouspos = tracksystem->getnodepos(previousnode);
-	nextdir = tracksystem->getnodedir(nextnode);
-	nextpos = tracksystem->getnodepos(nextnode);
+	previousdir = previousnodepointer->getdir();
+	previouspos = tracksystem->getnode(previousnode)->getpos();
+	nextdir = nextnodepointer->getdir();
+	nextpos = tracksystem->getnode(nextnode)->getpos();
 	float dx = cos(previousdir)*(nextpos.x - previouspos.x) - sin(previousdir)*(nextpos.y - previouspos.y);
 	float dy = sin(previousdir)*(nextpos.x - previouspos.x) + cos(previousdir)*(nextpos.y - previouspos.y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
@@ -103,7 +105,7 @@ bool Track::isabovepreviousnode()
 		if(abs(previouspos.y - nextpos.y)>1)
 			return previouspos.y >= nextpos.y;
 		else
-			if(cos(tracksystem->getnodedir(previousnode)) > 0)
+			if(cos(tracksystem->getnode(previousnode)->getdir()) > 0)
 				return (nextpos.x >= previouspos.x);
 			else
 				return (nextpos.x <= previouspos.x);

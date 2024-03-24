@@ -120,11 +120,11 @@ float Tracksystem::getradius(State state)
 	return radd;
 }
 
-float Tracksystem::getradiusoriginatingfromnode(nodeid node, trackid track)
+float getradiusoriginatingfromnode(Tracksystem& t, nodeid node, trackid track)
 {
-	Track* trackpointer = gettrack(track);
+	Track* trackpointer = t.gettrack(track);
 	State state(track, 0.5, trackpointer->previousnode==node);
-	return getradius(state);
+	return t.getradius(state);
 }
 
 State Tracksystem::tryincrementingtrack(State oldstate)
@@ -489,8 +489,8 @@ nodeid Tracksystem::getclosestswitch(Vec pos)
 
 nodeid Tracksystem::extendtracktopos(nodeid fromnode, Vec pos)
 {
-	Vec posdiff = pos - getnodepos(fromnode);
-	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - getnodedir(fromnode));
+	Vec posdiff = pos - getnode(fromnode)->getpos();
+	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - getnode(fromnode)->getdir());
 	nodeid newnode = addnode(pos, dir);
 	addtrack(fromnode, newnode);
 	return newnode;
@@ -507,12 +507,17 @@ void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 	//	if(track->nodeleft==node2 || track->noderight==node2)
 	//		return;
 	Vec newnodepoint;
-	float y1 = -getnodepos(node1).y;
-	float y2 = -getnodepos(node2).y;
-	float x1 = getnodepos(node1).x;
-	float x2 = getnodepos(node2).x;
-	float tanth1 = tan(getnodedir(node1));
-	float tanth2 = tan(getnodedir(node2));
+	Node* node1pointer = getnode(node1);
+	Node* node2pointer = getnode(node2);
+	Vec pos1 = node1pointer->getpos();
+	Vec pos2 = node2pointer->getpos();
+	float y1 = -pos1.y;
+	float y2 = -pos2.y;
+	float x1 = pos1.x;
+	float x2 = pos2.x;
+	float tanth1 = tan(node1pointer->getdir());
+	float tanth2 = tan(node2pointer->getdir());
+
 	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
 	float intersecty = -(y1 + (intersectx - x1)*tanth1);
 	if(abs(tanth1)>1e5){
@@ -523,9 +528,9 @@ void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 	float disttointersect1 = distancetonode(node1, tangentintersection);
 	float disttointersect2 = distancetonode(node2, tangentintersection);
 	if(disttointersect1 > disttointersect2)
-		newnodepoint = tangentintersection + (getnodepos(node1) - tangentintersection)/disttointersect1*disttointersect2;
+		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
 	else
-		newnodepoint = tangentintersection + (getnodepos(node2) - tangentintersection)/disttointersect2*disttointersect1;
+		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
 	if(distancetonode(node1, newnodepoint)> 10 && distancetonode(node2, newnodepoint)> 10){ //TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
 		nodeid newnode = extendtracktopos(node1, newnodepoint);
 		addtrack(newnode, node2);
@@ -554,16 +559,6 @@ Switch* Tracksystem::getswitch(switchid _switch)
 	}
 }
 
-float Tracksystem::getnodedir(nodeid node)
-{
-	return getnode(node)->getdir();
-}
-
-Vec Tracksystem::getnodepos(nodeid node)
-{
-	return getnode(node)->getpos();
-}
-
 Vec Tracksystem::getsignalpos(signalid signal)
 {
 	return getsignal(signal)->getpos();
@@ -581,7 +576,7 @@ float Tracksystem::distancetotrack(trackid track, Vec pos)
 
 float Tracksystem::distancetonode(nodeid node, Vec pos)
 {
-	return norm(getnodepos(node)-pos);
+	return norm(getnode(node)->getpos()-pos);
 }
 
 float Tracksystem::distancetosignal(signalid signal, Vec pos)
@@ -680,7 +675,6 @@ Trackblock Tracksystem::getblocksuptonextsignal(State state)
 			reachedsignal = gettrack(newgoalstate.track)->nextsignal(newgoalstate, true);
 		}
 		goalstate = newgoalstate;
-		std::cout<<goalstate.track<<std::endl;
 	}
 	if(reachedsignal)
 		blocks.signalblocks.push_back(reachedsignal);

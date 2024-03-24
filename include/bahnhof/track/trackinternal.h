@@ -55,6 +55,8 @@ private:
     Sprite sprite;
 };
 
+float getradiusoriginatingfromnode(Tracksystem&, nodeid node, trackid track);
+
 class Track
 {
 public:
