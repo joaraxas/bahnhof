@@ -37,7 +37,6 @@ public:
     State travel(State state, float pixels);
     float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(State state);
-    signalid addsignal(State state);
     void setsignal(signalid signal, int redgreenorflip);
     bool getsignalstate(signalid signal);
     bool isred(Train* train);
@@ -55,6 +54,7 @@ private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
     switchid addswitchtolist(Switch* _switch);
+    signalid addsignal(State state);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
@@ -159,12 +159,11 @@ private:
 class Signal
 {
 friend class Tracksystem;
-public:
+private:
     Signal(Tracksystem& newtracksystem, State signalstate);
     void render(Rendering* r);
     bool isred(Train* train);
     bool isgreen = true;
-private:
     State state;
     Vec pos;
     Tracksystem* tracksystem;
