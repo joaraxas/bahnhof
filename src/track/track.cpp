@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/track/trackinternal.h"
 
 
 
@@ -12,11 +13,13 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 	nextnode = next;
 	tracksystem = &newtracksystem;
 	id = myid;
+	Node* previousnodepointer = tracksystem->getnode(previousnode);
+	Node* nextnodepointer = tracksystem->getnode(nextnode);
 
-	previousdir = tracksystem->getnodedir(previousnode);
-	previouspos = tracksystem->getnodepos(previousnode);
-	nextdir = tracksystem->getnodedir(nextnode);
-	nextpos = tracksystem->getnodepos(nextnode);
+	previousdir = previousnodepointer->getdir();
+	previouspos = tracksystem->getnode(previousnode)->getpos();
+	nextdir = nextnodepointer->getdir();
+	nextpos = tracksystem->getnode(nextnode)->getpos();
 	float dx = cos(previousdir)*(nextpos.x - previouspos.x) - sin(previousdir)*(nextpos.y - previouspos.y);
 	float dy = sin(previousdir)*(nextpos.x - previouspos.x) + cos(previousdir)*(nextpos.y - previouspos.y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
@@ -25,24 +28,11 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
-}
 
-Track::~Track()
-{
-	//std::cout << "deleted: " << id << std::endl;
-	/*if(isrightofleftnode())
-		nodeleft->tracksright.erase(find(nodeleft->tracksright.begin(),nodeleft->tracksright.end(),this));
-	else
-		nodeleft->tracksleft.erase(find(nodeleft->tracksleft.begin(),nodeleft->tracksleft.end(),this));
-	nodeleft->incrementswitch();
-	if(nodeleft->tracksleft.size()+nodeleft->tracksright.size() == 0)
-		
-
-	if(isleftofrightnode())
-		noderight->tracksleft.erase(find(noderight->tracksleft.begin(),noderight->tracksleft.end(),this));
-	else
-		noderight->tracksright.erase(find(noderight->tracksright.begin(),noderight->tracksright.end(),this));
-	noderight->incrementswitch();*/
+	if(!tracksystem->preparingtrack){
+		previousnodepointer->connecttrack(this, isabovepreviousnode());
+		nextnodepointer->connecttrack(this, !isbelownextnode());
+	}
 }
 
 Vec Track::getpos(float nodedist)
@@ -114,13 +104,37 @@ float Track::getorientation(float nodedist)
 	return previousdir - nodedist*phi + pi*!isabovepreviousnode();
 }
 
+float Track::getradius(State state)
+{
+	return radius*(2*state.alignedwithtrack-1)*(2*isabovepreviousnode()-1);
+}
+
+trackid Track::nexttrack(){
+	trackid nexttrack;
+	if(isbelownextnode()){
+		nexttrack = tracksystem->getnode(nextnode)->trackup;
+	}
+	else
+		nexttrack = tracksystem->getnode(nextnode)->trackdown;
+	return nexttrack;
+}
+
+trackid Track::previoustrack(){
+	trackid previoustrack;
+	if(isabovepreviousnode())
+		previoustrack = tracksystem->getnode(previousnode)->trackdown;
+	else
+		previoustrack = tracksystem->getnode(previousnode)->trackup;
+	return previoustrack;
+}
+
 bool Track::isabovepreviousnode()
 {
 	if(isinf(radius)){
 		if(abs(previouspos.y - nextpos.y)>1)
 			return previouspos.y >= nextpos.y;
 		else
-			if(cos(tracksystem->getnodedir(previousnode)) > 0)
+			if(cos(tracksystem->getnode(previousnode)->getdir()) > 0)
 				return (nextpos.x >= previouspos.x);
 			else
 				return (nextpos.x <= previouspos.x);
@@ -134,7 +148,37 @@ bool Track::isbelownextnode()
 	return cos(getorientation(1) - nextdir) > 0;
 }
 
-void Track::render(Rendering* r)
+void Track::addsignal(State signalstate, signalid signal)
+{
+	signals[signalstate.nodedist] = signal;
+}
+
+signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
+{
+	if(state.track!=id) std::cout<<"Error in Track::nextsignal: called for incorrect track"<<std::endl;
+	if(startfromtrackend) state.nodedist = 1-state.alignedwithtrack;
+	signalid reachedsignal = 0;
+	if(state.alignedwithtrack){
+		for(auto const& [nodedist,signal]: signals){
+			if(nodedist>state.nodedist){
+				if(tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign){
+					reachedsignal = signal;
+				}
+			}
+			if(reachedsignal) break;
+		}
+	}
+	else{
+		for(auto const& [nodedist,signal]: signals){
+			if(nodedist<state.nodedist)
+				if(!tracksystem->getsignal(signal)->state.alignedwithtrack || !mustalign)
+					reachedsignal = signal;
+		}
+	}
+	return reachedsignal;
+}
+
+void Track::render(Rendering* r, int mode)
 {
 	float scale = r->getscale();
 	//// banvall ////
@@ -158,7 +202,7 @@ void Track::render(Rendering* r)
 	//// syllar ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
-		if(tracksystem->preparingtrack)
+		if(mode==1)
 			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 		float sleeperwidth = 2600/150;
 		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
@@ -175,7 +219,7 @@ void Track::render(Rendering* r)
 	//// rals ////
 	if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-		if(tracksystem->preparingtrack)
+		if(mode==1)
 			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
@@ -198,11 +242,12 @@ void Track::render(Rendering* r)
 		r->renderline(drawpos1r, drawpos2r);
 	}
 	if(!nicetracks){
-		Vec radiustextpos = getpos(0.5);
+		Vec midpoint = getpos(0.5);
 		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
 		if(isinf(radius))
 			radiustext = std::to_string(radius);
-		r->rendertext(radiustext, radiustextpos.x, radiustextpos.y, {255,255,255,255});
+		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
+		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }

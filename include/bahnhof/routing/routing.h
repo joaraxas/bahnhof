@@ -26,8 +26,7 @@ public:
     std::string name = "New route";
     int selectedorderid = -1;
     std::vector<signalid> signals;
-    std::vector<nodeid> switches;
-    std::vector<bool> updowns;
+    std::vector<switchid> switches;
 private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
@@ -77,13 +76,12 @@ struct Setsignal : public Order
 };
 struct Setswitch : public Order
 {
-    Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate=-1);
+    Setswitch(switchid whichswitch, int whichnodestate=-1);
     void assignroute(Route* newroute);
     void render(Rendering* r, int number);
-    nodeid node;
-    bool updown;
+    switchid _switch;
     bool flip;
-    int nodestate;
+    int switchstate;
 };
 struct Couple : public Order
 {

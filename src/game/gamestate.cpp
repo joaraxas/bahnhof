@@ -103,7 +103,7 @@ void Gamestate::randommap()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(game, {200,700,1000}, {250,250,550}));
+	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(game, {200,700}, {250,250}));
 }
 
 void Gamestate::inittrain(State startstate)
