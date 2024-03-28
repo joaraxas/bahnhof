@@ -7,21 +7,15 @@
 
 
 
-Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid)
+Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid)
 {
-	previousnode = previous;
-	nextnode = next;
 	tracksystem = &newtracksystem;
+	previousnode = &previous;
+	nextnode = &next;
 	id = myid;
-	Node* previousnodepointer = tracksystem->getnode(previousnode);
-	Node* nextnodepointer = tracksystem->getnode(nextnode);
 
-	previousdir = previousnodepointer->getdir();
-	previouspos = tracksystem->getnode(previousnode)->getpos();
-	nextdir = nextnodepointer->getdir();
-	nextpos = tracksystem->getnode(nextnode)->getpos();
-	float dx = cos(previousdir)*(nextpos.x - previouspos.x) - sin(previousdir)*(nextpos.y - previouspos.y);
-	float dy = sin(previousdir)*(nextpos.x - previouspos.x) + cos(previousdir)*(nextpos.y - previouspos.y);
+	float dx = cos(previous.getdir())*(next.getpos().x - previous.getpos().x) - sin(previous.getdir())*(next.getpos().y - previous.getpos().y);
+	float dy = sin(previous.getdir())*(next.getpos().x - previous.getpos().x) + cos(previous.getdir())*(next.getpos().y - previous.getpos().y);
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
 	if(abs(radius)>1e5){
@@ -30,8 +24,8 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 	}
 
 	if(!tracksystem->preparingtrack){
-		previousnodepointer->connecttrack(this, isabovepreviousnode());
-		nextnodepointer->connecttrack(this, !isbelownextnode());
+		previousnode->connecttrack(this, isabovepreviousnode());
+		nextnode->connecttrack(this, !isbelownextnode());
 	}
 }
 
@@ -43,16 +37,16 @@ Vec Track::getpos(float nodedist)
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec leftnodeoffsetpos = previouspos - Vec(sin(previousdir), cos(previousdir))*transverseoffset;
+	Vec leftnodeoffsetpos = previousnode->getpos() - Vec(sin(previousnode->getdir()), cos(previousnode->getdir()))*transverseoffset;
 	if(isinf(radius)){
-		Vec rightnodeoffsetpos = nextpos - Vec(sin(previousdir), cos(previousdir))*transverseoffset;
+		Vec rightnodeoffsetpos = nextnode->getpos() - Vec(sin(previousnode->getdir()), cos(previousnode->getdir()))*transverseoffset;
 		currentpos = leftnodeoffsetpos + (rightnodeoffsetpos-leftnodeoffsetpos)*nodedist;
 	}
 	else{
 		float ddx, ddy;
 		ddx = (radius+transverseoffset)*sin(nodedist*phi);
 		ddy = (radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = Vec(leftnodeoffsetpos.x + cos(previousdir)*ddx+sin(previousdir)*ddy, leftnodeoffsetpos.y - sin(previousdir)*ddx+cos(previousdir)*ddy);
+		currentpos = Vec(leftnodeoffsetpos.x + cos(previousnode->getdir())*ddx+sin(previousnode->getdir())*ddy, leftnodeoffsetpos.y - sin(previousnode->getdir())*ddx+cos(previousnode->getdir())*ddy);
 	}
 	return currentpos;
 }
@@ -60,8 +54,8 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	float dx = cos(previousdir)*(pos.x - previouspos.x) - sin(previousdir)*(pos.y - previouspos.y);
-	float dy = sin(previousdir)*(pos.x - previouspos.x) + cos(previousdir)*(pos.y - previouspos.y);
+	float dx = cos(previousnode->getdir())*(pos.x - previousnode->getpos().x) - sin(previousnode->getdir())*(pos.y - previousnode->getpos().y);
+	float dy = sin(previousnode->getdir())*(pos.x - previousnode->getpos().x) + cos(previousnode->getdir())*(pos.y - previousnode->getpos().y);
 	if(isinf(radius)){
 		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
@@ -91,7 +85,7 @@ float Track::getarclength(float nodedist)
 {
 	float arclength;
 	if(isinf(radius)){
-		arclength = nodedist*norm(previouspos - nextpos);
+		arclength = nodedist*norm(previousnode->getpos() - nextnode->getpos());
 	}
 	else{
 		arclength = nodedist*abs(radius*phi);
@@ -101,7 +95,7 @@ float Track::getarclength(float nodedist)
 
 float Track::getorientation(float nodedist)
 {
-	return previousdir - nodedist*phi + pi*!isabovepreviousnode();
+	return previousnode->getdir() - nodedist*phi + pi*!isabovepreviousnode();
 }
 
 float Track::getradius(State state)
@@ -112,32 +106,32 @@ float Track::getradius(State state)
 trackid Track::nexttrack(){
 	trackid nexttrack;
 	if(isbelownextnode()){
-		nexttrack = tracksystem->getnode(nextnode)->trackup;
+		nexttrack = nextnode->trackup;
 	}
 	else
-		nexttrack = tracksystem->getnode(nextnode)->trackdown;
+		nexttrack = nextnode->trackdown;
 	return nexttrack;
 }
 
 trackid Track::previoustrack(){
 	trackid previoustrack;
 	if(isabovepreviousnode())
-		previoustrack = tracksystem->getnode(previousnode)->trackdown;
+		previoustrack = previousnode->trackdown;
 	else
-		previoustrack = tracksystem->getnode(previousnode)->trackup;
+		previoustrack = previousnode->trackup;
 	return previoustrack;
 }
 
 bool Track::isabovepreviousnode()
 {
 	if(isinf(radius)){
-		if(abs(previouspos.y - nextpos.y)>1)
-			return previouspos.y >= nextpos.y;
+		if(abs(previousnode->getpos().y - nextnode->getpos().y)>1)
+			return previousnode->getpos().y >= nextnode->getpos().y;
 		else
-			if(cos(tracksystem->getnode(previousnode)->getdir()) > 0)
-				return (nextpos.x >= previouspos.x);
+			if(cos(previousnode->getdir()) > 0)
+				return (nextnode->getpos().x >= previousnode->getpos().x);
 			else
-				return (nextpos.x <= previouspos.x);
+				return (nextnode->getpos().x <= previousnode->getpos().x);
 	}
 	else
 		return radius*phi >= 0;
@@ -145,7 +139,7 @@ bool Track::isabovepreviousnode()
 
 bool Track::isbelownextnode()
 {
-	return cos(getorientation(1) - nextdir) > 0;
+	return cos(getorientation(1) - nextnode->getdir()) > 0;
 }
 
 void Track::addsignal(State signalstate, signalid signal)

@@ -67,7 +67,7 @@ nodeid Tracksystem::addnode(Vec pos, float dir){
 
 trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	trackcounter++;
-	tracks[trackcounter] = new Track(*this, previousnode, nextnode, trackcounter);
+	tracks[trackcounter] = new Track(*this, *getnode(previousnode), *getnode(nextnode), trackcounter);
 	return trackcounter;
 }
 
@@ -107,7 +107,7 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 	State state = oldstate;
 	if(state.nodedist>=1){
 		Track* currenttrackpointer = gettrack(state.track);
-		nodeid currentnode = currenttrackpointer->nextnode;
+		Node* currentnode = currenttrackpointer->nextnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
 		state.track = currenttrackpointer->nexttrack();
 		if(state.track){
@@ -128,7 +128,7 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 	}
 	else if(state.nodedist<0){
 		Track* currenttrackpointer = gettrack(state.track);
-		nodeid currentnode = currenttrackpointer->previousnode;
+		Node* currentnode = currenttrackpointer->previousnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
 		state.track = currenttrackpointer->previoustrack();
 		if(state.track){
@@ -555,9 +555,9 @@ Trackblock Tracksystem::getblocksuptonextsignal(State state)
 	nodeid passednode = 0;
 	while(!reachedsignal && !reachedend){
 		if(goalstate.alignedwithtrack)
-			passednode = gettrack(goalstate.track)->nextnode;
+			passednode = gettrack(goalstate.track)->nextnode->id;
 		else
-			passednode = gettrack(goalstate.track)->previousnode;
+			passednode = gettrack(goalstate.track)->previousnode->id;
 		if(getnode(passednode)->hasswitch()){
 			if(std::find(blocks.switchblocks.begin(), blocks.switchblocks.end(), passednode) != blocks.switchblocks.end()){
 				reachedend = true;
@@ -592,8 +592,8 @@ void Tracksystem::runoverblocks(State state, float pixels, Train* fortrain)
 		return;
 	for(auto const& [id, node] : nodes){
 		if(node->hasswitch()){
-			if(gettrack(state.track)->previousnode==id || gettrack(state.track)->nextnode==id)
-			if(gettrack(newstate.track)->previousnode==id || gettrack(newstate.track)->nextnode==id)
+			if(gettrack(state.track)->previousnode==node || gettrack(state.track)->nextnode==node)
+			if(gettrack(newstate.track)->previousnode==node || gettrack(newstate.track)->nextnode==node)
 				node->reservedfor=fortrain;
 		}
 	}

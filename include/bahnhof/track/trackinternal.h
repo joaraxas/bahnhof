@@ -26,11 +26,11 @@ public:
     trackid trackup = 0;
     trackid trackdown = 0;
     Train* reservedfor = nullptr;
+    nodeid id;
 private:
     Tracksystem* tracksystem;
     std::unique_ptr<Switch> switchup = nullptr;
     std::unique_ptr<Switch> switchdown = nullptr;
-    nodeid id;
     Vec pos;
     float dir;
 };
@@ -44,12 +44,12 @@ public:
     void setswitch(int newstate);
     Vec pos();
     int getstateforordergeneration();
+    switchid id;
 private:
     void addtrack(Track* track);
     Tracksystem* tracksystem;
     Node* node;
     bool updown;
-    switchid id;
     int switchstate = 0;
     std::vector<trackid> tracks;
     Sprite sprite;
@@ -60,7 +60,7 @@ float getradiusoriginatingfromnode(Track* track, nodeid node);
 class Track
 {
 public:
-    Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
+    Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid);
     void render(Rendering* r, int mode);
     Vec getpos(float nodedist);
     Vec getpos(float nodedist, float transverseoffset);
@@ -72,7 +72,8 @@ public:
     trackid previoustrack();
     void addsignal(State signalstate, signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
-    nodeid previousnode, nextnode;
+    Node* previousnode;
+    Node* nextnode;
     trackid id;
 private:
     bool isabovepreviousnode();
@@ -80,10 +81,6 @@ private:
     Tracksystem* tracksystem;
     float phi;
     float radius;
-    float previousdir;
-    float nextdir;
-    Vec previouspos;
-    Vec nextpos;
     std::map<float,signalid> signals;
 };
 
@@ -105,8 +102,8 @@ public:
     bool isred(Train* train);
     State state;
     Train* reservedfor = nullptr;
-private:
     signalid id;
+private:
     Tracksystem* tracksystem;
     bool isgreen = true;
     Trackblock blocks;
