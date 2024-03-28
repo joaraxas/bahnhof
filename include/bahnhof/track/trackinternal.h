@@ -23,8 +23,8 @@ public:
     Vec getpos();
     float getdir();
     bool hasswitch();
-    trackid trackup = 0;
-    trackid trackdown = 0;
+    Track* trackup = nullptr;
+    Track* trackdown = nullptr;
     Train* reservedfor = nullptr;
     nodeid id;
 private:
@@ -51,7 +51,7 @@ private:
     Node* node;
     bool updown;
     int switchstate = 0;
-    std::vector<trackid> tracks;
+    std::vector<Track*> tracks;
     Sprite sprite;
 };
 
@@ -68,8 +68,8 @@ public:
     float getarclength(float nodedist);
     float getorientation(float nodedist);
     float getradius(State state);
-    trackid nexttrack();
-    trackid previoustrack();
+    Track* nexttrack();
+    Track* previoustrack();
     void addsignal(State signalstate, signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
     Node* previousnode;

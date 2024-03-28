@@ -109,9 +109,9 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 		Track* currenttrackpointer = gettrack(state.track);
 		Node* currentnode = currenttrackpointer->nextnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
-		state.track = currenttrackpointer->nexttrack();
-		if(state.track){
-			Track* nexttrackpointer = gettrack(state.track);
+		Track* nexttrackpointer = currenttrackpointer->nexttrack();
+		if(nexttrackpointer){
+			state.track = nexttrackpointer->id;
 			float arclength2 = nexttrackpointer->getarclength(1);
 			if(nexttrackpointer->previousnode==currentnode){
 				state.nodedist = (state.nodedist-1)*arclength1/arclength2;
@@ -130,9 +130,9 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 		Track* currenttrackpointer = gettrack(state.track);
 		Node* currentnode = currenttrackpointer->previousnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
-		state.track = currenttrackpointer->previoustrack();
+		Track* previoustrackpointer = currenttrackpointer->previoustrack();
 		if(state.track){
-			Track* previoustrackpointer = gettrack(state.track);
+			state.track = previoustrackpointer->id;
 			float arclength2 = previoustrackpointer->getarclength(1);
 			if(previoustrackpointer->nextnode==currentnode){
 				state.nodedist = 1-(-state.nodedist)*arclength1/arclength2;

@@ -14,17 +14,17 @@ Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), 
 void Node::connecttrack(Track* track, bool fromabove){
 	if(fromabove){
 		if(trackup==0)
-			trackup = track->id;
+			trackup = track;
 		else if(!switchup)
-			switchup = std::unique_ptr<Switch>(new Switch(this, tracksystem->gettrack(trackup), true));
+			switchup = std::unique_ptr<Switch>(new Switch(this, trackup, true));
 		if(switchup)
 			switchup->addtrack(track);
 	}
 	else{
 		if(trackdown==0)
-			trackdown = track->id;
+			trackdown = track;
 		else if(!switchdown)
-			switchdown = std::unique_ptr<Switch>(new Switch(this, tracksystem->gettrack(trackdown), false));
+			switchdown = std::unique_ptr<Switch>(new Switch(this, trackdown, false));
 		if(switchdown)
 			switchdown->addtrack(track);
 	}
@@ -45,8 +45,10 @@ void Node::render(Rendering* r)
 		}
 		else
 			r->rendertext("noone", pos.x, pos.y+14);
-		r->rendertext("track down: "+std::to_string(trackdown), pos.x, pos.y+2*14);
-		r->rendertext("track up: "+std::to_string(trackup), pos.x, pos.y+3*14);
+		if(trackdown)
+			r->rendertext("track down: "+std::to_string(trackdown->id), pos.x, pos.y+2*14);
+		if(trackup)
+			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14);
 	}
 }
 

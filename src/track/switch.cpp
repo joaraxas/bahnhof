@@ -23,12 +23,12 @@ void Switch::addtrack(Track* track){
         insertionindex = tracks.size();
         float newtrackcurvature = 1./getradiusoriginatingfromnode(track, node->id);
         for(int iTrack=0; iTrack<tracks.size(); iTrack++){
-            if(newtrackcurvature < 1./getradiusoriginatingfromnode(tracksystem->gettrack(tracks[iTrack]), node->id))
+            if(newtrackcurvature < 1./getradiusoriginatingfromnode(tracks[iTrack], node->id))
                 insertionindex = iTrack;
             if(insertionindex==iTrack) break;
         }
     }
-    tracks.insert(tracks.begin()+insertionindex, track->id);
+    tracks.insert(tracks.begin()+insertionindex, track);
     if(updown)
         node->trackup = tracks[switchstate];
     else

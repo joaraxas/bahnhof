@@ -103,8 +103,8 @@ float Track::getradius(State state)
 	return radius*(2*state.alignedwithtrack-1)*(2*isabovepreviousnode()-1);
 }
 
-trackid Track::nexttrack(){
-	trackid nexttrack;
+Track* Track::nexttrack(){
+	Track* nexttrack;
 	if(isbelownextnode()){
 		nexttrack = nextnode->trackup;
 	}
@@ -113,8 +113,8 @@ trackid Track::nexttrack(){
 	return nexttrack;
 }
 
-trackid Track::previoustrack(){
-	trackid previoustrack;
+Track* Track::previoustrack(){
+	Track* previoustrack;
 	if(isabovepreviousnode())
 		previoustrack = previousnode->trackdown;
 	else
