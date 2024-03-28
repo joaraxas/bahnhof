@@ -11,20 +11,20 @@ Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), 
 	dir = truncate(dirstart);
 }
 
-void Node::connecttrack(trackid track, bool fromabove){
+void Node::connecttrack(Track* track, bool fromabove){
 	if(fromabove){
 		if(trackup==0)
-			trackup = track;
+			trackup = track->id;
 		else if(!switchup)
-			switchup = std::unique_ptr<Switch>(new Switch(this, trackup, true));
+			switchup = std::unique_ptr<Switch>(new Switch(this, tracksystem->gettrack(trackup), true));
 		if(switchup)
 			switchup->addtrack(track);
 	}
 	else{
 		if(trackdown==0)
-			trackdown = track;
+			trackdown = track->id;
 		else if(!switchdown)
-			switchdown = std::unique_ptr<Switch>(new Switch(this, trackdown, false));
+			switchdown = std::unique_ptr<Switch>(new Switch(this, tracksystem->gettrack(trackdown), false));
 		if(switchdown)
 			switchdown->addtrack(track);
 	}

@@ -28,6 +28,11 @@ Track::Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid 
 		radius = INFINITY;
 		phi = 0;
 	}
+
+	if(!tracksystem->preparingtrack){
+		previousnodepointer->connecttrack(this, isabovepreviousnode());
+		nextnodepointer->connecttrack(this, !isbelownextnode());
+	}
 }
 
 Vec Track::getpos(float nodedist)
@@ -97,6 +102,30 @@ float Track::getarclength(float nodedist)
 float Track::getorientation(float nodedist)
 {
 	return previousdir - nodedist*phi + pi*!isabovepreviousnode();
+}
+
+float Track::getradius(State state)
+{
+	return radius*(2*state.alignedwithtrack-1)*(2*isabovepreviousnode()-1);
+}
+
+trackid Track::nexttrack(){
+	trackid nexttrack;
+	if(isbelownextnode()){
+		nexttrack = tracksystem->getnode(nextnode)->trackup;
+	}
+	else
+		nexttrack = tracksystem->getnode(nextnode)->trackdown;
+	return nexttrack;
+}
+
+trackid Track::previoustrack(){
+	trackid previoustrack;
+	if(isabovepreviousnode())
+		previoustrack = tracksystem->getnode(previousnode)->trackdown;
+	else
+		previoustrack = tracksystem->getnode(previousnode)->trackup;
+	return previoustrack;
 }
 
 bool Track::isabovepreviousnode()

@@ -126,8 +126,8 @@ void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL
 
 void Gotostate::render(Rendering* r, int number)
 {
-	Vec posleft = route->tracksystem->getpos(state, 12);
-	Vec posright = route->tracksystem->getpos(state,-12);
+	Vec posleft = getpos(*route->tracksystem, state, 12);
+	Vec posright = getpos(*route->tracksystem, state,-12);
 	r->renderline(posleft, posright);
 	if(posright.x>=posleft.x){
 		Order::renderlabel(r, posright, number);
@@ -140,7 +140,7 @@ void Gotostate::render(Rendering* r, int number)
 void Setswitch::render(Rendering* r, int number)
 {
 	float scale = r->getscale();
-	Vec pos = route->tracksystem->getswitchpos(_switch);
+	Vec pos = getswitchpos(*route->tracksystem, _switch);
 	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
 	Vec inlabel = lineend+Vec(0+10,10)/scale;
 	Order::renderlabel(r, lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
@@ -150,7 +150,7 @@ void Setswitch::render(Rendering* r, int number)
 void Setsignal::render(Rendering* r, int number)
 {
 	float scale = r->getscale();
-	Vec pos = route->tracksystem->getsignalpos(signal);
+	Vec pos = getsignalpos(*route->tracksystem, signal);
 	Vec lineend = pos+Vec(-8,12+16*offset)/scale;
 	SDL_Color bgrcol = {255, 0, 0, 255};
 	if(redgreenflip==1)

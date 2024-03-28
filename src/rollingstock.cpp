@@ -14,7 +14,7 @@ Wagon::Wagon(Tracksystem* mytracks, State trackstate, sprites::name spritename, 
 	allresources = &tracksystem->game->getresources();
 	w = 50;
 	state = trackstate;
-	pos = tracksystem->getpos(state);
+	pos = getpos(*tracksystem, state);
 	SpriteManager& spritemanager = tracksystem->game->getsprites();
 	sprite.setspritesheet(spritemanager, spritename);
 	icon.setspritesheet(spritemanager, iconname);
@@ -28,8 +28,8 @@ void Wagon::travel(float pixels)
 
 void Wagon::update(int ms)
 {
-	pos = tracksystem->getpos(state);
-	sprite.imageangle = tracksystem->getorientation(state);
+	pos = getpos(*tracksystem, state);
+	sprite.imageangle = getorientation(*tracksystem, state);
 }
 
 void Wagon::render(Rendering* r)

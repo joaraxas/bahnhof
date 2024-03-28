@@ -52,6 +52,13 @@ Tracksystem::~Tracksystem()
 		removesignal(id);
 }
 
+void Tracksystem::update(int ms)
+{
+	for(auto const& [id, signal] : signals){
+		signal->update();
+	}
+}
+
 nodeid Tracksystem::addnode(Vec pos, float dir){
 	nodecounter++;
 	nodes[nodecounter] = new Node(*this, pos, dir, nodecounter);
@@ -60,15 +67,8 @@ nodeid Tracksystem::addnode(Vec pos, float dir){
 
 trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
 	trackcounter++;
-	trackid newtrack = trackcounter;
-	tracks[newtrack] = new Track(*this, previousnode, nextnode, newtrack);
-
-	if(!preparingtrack){
-		getnode(previousnode)->connecttrack(newtrack, gettrack(newtrack)->isabovepreviousnode());
-		getnode(nextnode)->connecttrack(newtrack, !gettrack(newtrack)->isbelownextnode());
-	}
-
-	return newtrack;
+	tracks[trackcounter] = new Track(*this, previousnode, nextnode, trackcounter);
+	return trackcounter;
 }
 
 switchid Tracksystem::addswitchtolist(Switch* _switch){
@@ -102,23 +102,6 @@ void Tracksystem::removesignal(signalid toremove)
 	signals.erase(toremove);
 }
 
-Vec Tracksystem::getpos(State state, float transverseoffset)
-{
-	return gettrack(state.track)->getpos(state.nodedist, transverseoffset);
-}
-
-float Tracksystem::getorientation(State state)
-{
-	return gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
-}
-
-float Tracksystem::getradius(State state)
-{
-	Track* trackpointer = gettrack(state.track);
-	float radd = trackpointer->radius*(2*state.alignedwithtrack-1)*(2*trackpointer->isabovepreviousnode()-1);
-	return radd;
-}
-
 State Tracksystem::tryincrementingtrack(State oldstate)
 {
 	State state = oldstate;
@@ -126,7 +109,7 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 		Track* currenttrackpointer = gettrack(state.track);
 		nodeid currentnode = currenttrackpointer->nextnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
-		state.track = nexttrack(state.track);
+		state.track = currenttrackpointer->nexttrack();
 		if(state.track){
 			Track* nexttrackpointer = gettrack(state.track);
 			float arclength2 = nexttrackpointer->getarclength(1);
@@ -147,7 +130,7 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 		Track* currenttrackpointer = gettrack(state.track);
 		nodeid currentnode = currenttrackpointer->previousnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
-		state.track = previoustrack(state.track);
+		state.track = currenttrackpointer->previoustrack();
 		if(state.track){
 			Track* previoustrackpointer = gettrack(state.track);
 			float arclength2 = previoustrackpointer->getarclength(1);
@@ -238,11 +221,11 @@ bool Tracksystem::isendofline(State state)
 {
 	if(state.nodedist<=0)
 		if(!state.alignedwithtrack)
-			if(previoustrack(state.track)==0)
+			if(gettrack(state.track)->previoustrack()==0)
 				return true;
 	if(state.nodedist>=1)
 		if(state.alignedwithtrack)
-			if(nexttrack(state.track)==0)
+			if(gettrack(state.track)->nexttrack()==0)
 				return true;
 	return false;
 }
@@ -320,9 +303,9 @@ bool Tracksystem::switchat(Vec pos)
 	signalid clickedsignal=0; switchid clickedswitch=0;
 	State clickedstate = whatdidiclick(pos, nullptr, nullptr, &clickedsignal, &clickedswitch);
 	if(clickedsignal)
-		setsignal(clickedsignal, 2);
+		setsignal(*this, clickedsignal, 2);
 	if(clickedswitch)
-		setswitch(clickedswitch, -1);
+		setswitch(*this, clickedswitch, -1);
 	return(clickedsignal||clickedswitch);
 }
 
@@ -349,7 +332,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 		*track = 0;
 		closeststate = getcloseststate(mousepos);
 		if(closeststate.track)
-			trackdist = distancebetween(getpos(closeststate), mousepos);
+			trackdist = distancebetween(getpos(*this, closeststate), mousepos);
 	}
 	if(node){
 		*node = 0;
@@ -361,7 +344,7 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 		*signal = 0;
 		closestsignal = getclosestsignal(mousepos);
 		if(closestsignal)
-			signaldist = distancebetween(getsignal(closestsignal)->getpos(), mousepos);
+			signaldist = distancebetween(getsignal(closestsignal)->pos(), mousepos);
 	}
 	if(_switch){
 		*_switch = 0;
@@ -389,24 +372,6 @@ State Tracksystem::whatdidiclick(Vec mousepos, trackid* track, nodeid* node, sig
 	return returnstate;
 }
 
-void Tracksystem::setswitch(switchid _switch, int switchstate)
-{
-	Switch* switchptr = getswitch(_switch);
-	switchptr->setswitch(switchstate);
-}
-
-Vec Tracksystem::getswitchpos(switchid _switch)
-{
-	Switch* switchptr = getswitch(_switch);
-	return switchptr->pos();
-}
-
-void Tracksystem::setsignal(signalid signal, int redgreenorflip)
-{
-	Signal* signalpointer = getsignal(signal);
-	signalpointer->set(redgreenorflip);
-}
-
 void Tracksystem::deleteclick(int x, int y)
 {
 	selectednode = 0;
@@ -419,7 +384,7 @@ State Tracksystem::getcloseststate(Vec pos)
 	State closeststate;
 	for(auto const& [id,track]: tracks){
 		State state = track->getcloseststate(pos);
-		float dist = distancebetween(getpos(state), pos);
+		float dist = distancebetween(track->getpos(state.nodedist), pos);
 		if(dist < mindist){
 			closeststate = state;
 			mindist = dist;
@@ -447,7 +412,7 @@ signalid Tracksystem::getclosestsignal(Vec pos)
 	float mindistsquared = INFINITY;
 	signalid closestsignal = 0;
 	for(auto const& [id,signal]: signals){
-		float distsquared = pow(signal->getpos().x-pos.x, 2) + pow(signal->getpos().y-pos.y, 2);
+		float distsquared = pow(signal->pos().x-pos.x, 2) + pow(signal->pos().y-pos.y, 2);
 		if(distsquared < mindistsquared){
 			closestsignal = id;
 			mindistsquared = distsquared;
@@ -542,11 +507,6 @@ Switch* Tracksystem::getswitch(switchid _switch)
 	}
 }
 
-Vec Tracksystem::getsignalpos(signalid signal)
-{
-	return getsignal(signal)->getpos();
-}
-
 float distancebetween(Vec pos1, Vec pos2)
 {
 	return norm(pos1 - pos2);
@@ -561,27 +521,6 @@ Track* Tracksystem::gettrack(trackid track)
 		std::cout << "Error: failed to find track with id" << track << std::endl;
 		return nullptr;
 	}
-}
-
-trackid Tracksystem::nexttrack(trackid track){
-	trackid nexttrack;
-	Track* trackpointer = gettrack(track);
-	if(trackpointer->isbelownextnode()){
-		nexttrack = getnode(trackpointer->nextnode)->trackup;
-	}
-	else
-		nexttrack = getnode(trackpointer->nextnode)->trackdown;
-	return nexttrack;
-}
-
-trackid Tracksystem::previoustrack(trackid track){
-	trackid previoustrack;
-	Track* trackpointer = gettrack(track);
-	if(trackpointer->isabovepreviousnode())
-		previoustrack = getnode(trackpointer->previousnode)->trackdown;
-	else
-		previoustrack = getnode(trackpointer->previousnode)->trackup;
-	return previoustrack;
 }
 
 Signal* Tracksystem::getsignal(signalid signal)
@@ -638,46 +577,6 @@ Trackblock Tracksystem::getblocksuptonextsignal(State state)
 	if(reachedsignal)
 		blocks.signalblocks.push_back(reachedsignal);
 	return blocks;
-}
-
-bool Tracksystem::checkblocks(Trackblock blocks, Train* fortrain)
-{
-	// TODO: Move this to Signal?
-	for(auto s : blocks.switchblocks){
-		Node* sw = getnode(s);
-		if(sw->reservedfor && sw->reservedfor!=fortrain)
-			return false;
-	}
-	for(auto s : blocks.signalblocks){
-		Signal* si = getsignal(s);
-		if(si->reservedfor && si->reservedfor!=fortrain)
-			return false;
-	}
-	return true;
-}
-
-bool Tracksystem::claimblocks(Trackblock blocks, Train* fortrain)
-{
-	// TODO: Move this to Signal?
-	if(checkblocks(blocks, fortrain)){
-		for(auto s : blocks.switchblocks){
-			Node* sw = getnode(s);
-			sw->reservedfor = fortrain;
-		}
-		for(auto s : blocks.signalblocks){
-			Signal* si = getsignal(s);
-			si->reservedfor = fortrain;
-		}
-		return true;
-	}
-	else return false;
-}
-
-void Tracksystem::update(int ms)
-{
-	for(auto const& [id, signal] : signals){
-		signal->update();
-	}
 }
 
 void Tracksystem::runoverblocks(State state, float pixels, Train* fortrain)

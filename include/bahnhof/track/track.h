@@ -33,21 +33,12 @@ public:
     Game* game;
     nodeid selectednode = 0;
     bool placingsignal = false;
+    bool preparingtrack = false;
     Node* getnode(nodeid node);
     Track* gettrack(trackid track);
     Switch* getswitch(switchid _switch);
     Signal* getsignal(signalid signal);
     switchid addswitchtolist(Switch* _switch);
-
-    Vec getpos(State state, float transverseoffset=0);
-    Vec getsignalpos(signalid signal);
-    float getradius(State state);
-    float getorientation(State state);
-    void setsignal(signalid signal, int redgreenorflip);
-    void setswitch(switchid _switch, int switchstate);
-    Vec getswitchpos(switchid _switch);
-    bool checkblocks(Trackblock blocks, Train* fortrain);
-    bool claimblocks(Trackblock blocks, Train* fortrain);
     void runoverblocks(State state, float pixels, Train* fortrain);
 private:
     nodeid addnode(Vec pos, float dir);
@@ -61,8 +52,6 @@ private:
     nodeid getclosestnode(Vec pos);
     signalid getclosestsignal(Vec pos);
     nodeid getclosestswitch(Vec pos);
-    trackid nexttrack(trackid track);
-    trackid previoustrack(trackid track);
     State tryincrementingtrack(State state);
     nodeid extendtracktopos(nodeid fromnode, Vec pos);
     void connecttwonodes(nodeid node1, nodeid node2);
@@ -74,8 +63,17 @@ private:
     trackid trackcounter = 0;
     switchid switchcounter = 0;
     signalid signalcounter = 0;
-    bool preparingtrack = false;
 };
 
 Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
 float distancebetween(Vec, Vec);
+
+Vec getpos(Tracksystem&, State state, float transverseoffset=0);
+Vec getsignalpos(Tracksystem&, signalid signal);
+float getradius(Tracksystem&, State state);
+float getorientation(Tracksystem&, State state);
+void setsignal(Tracksystem&, signalid signal, int redgreenorflip);
+void setswitch(Tracksystem&, switchid _switch, int switchstate);
+Vec getswitchpos(Tracksystem&, switchid _switch);
+bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);

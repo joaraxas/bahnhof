@@ -51,7 +51,7 @@ void Train::update(int ms)
 	
 	float minradius = INFINITY;
 	for(auto w : wagons)
-		minradius = fmin(minradius, abs(tracksystem->getradius(w->state)));
+		minradius = fmin(minradius, abs(getradius(*tracksystem, w->state)));
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
 	float minradiusmeter = minradius*150*0.001;
@@ -94,12 +94,12 @@ bool Train::perform(int ms)
 		//	done = checkifleftstate(state); break;
 		case o_setsignal:{
 			Setsignal* specification = dynamic_cast<Setsignal*>(order);
-			tracksystem->setsignal(specification->signal, specification->redgreenflip);
+			setsignal(*tracksystem, specification->signal, specification->redgreenflip);
 			done = true;
 			break;}
 		case o_setswitch:{
 			Setswitch* specification = dynamic_cast<Setswitch*>(order);
-			tracksystem->setswitch(specification->_switch, specification->switchstate); 
+			setswitch(*tracksystem, specification->_switch, specification->switchstate); 
 			done = true;
 			break;}
 		case o_couple:{
@@ -161,13 +161,13 @@ void Train::render(Rendering* r)
 		else{
 			r->rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
 		}
-		Vec frontpos = tracksystem->getpos(forwardstate());
-		float forwarddir = tracksystem->getorientation(forwardstate());
+		Vec frontpos = getpos(*tracksystem, forwardstate());
+		float forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;
 		light.imageangle = forwarddir;
 		light.render(r, frontpos);
-		Vec backpos = tracksystem->getpos(backwardstate());
-		float backwarddir = tracksystem->getorientation(backwardstate());
+		Vec backpos = getpos(*tracksystem, backwardstate());
+		float backwarddir = getorientation(*tracksystem, backwardstate());
 		light.imagetype = 1;
 		light.imageangle = backwarddir;
 		light.render(r, backpos);

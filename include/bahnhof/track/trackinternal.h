@@ -18,7 +18,7 @@ class Node
 friend class Switch;
 public:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
-    void connecttrack(trackid track, bool fromupordown);
+    void connecttrack(Track* track, bool fromupordown);
     void render(Rendering* r);
     Vec getpos();
     float getdir();
@@ -39,13 +39,13 @@ class Switch
 {
 friend class Node;
 public:
-    Switch(Node* node, trackid track, bool updown);
+    Switch(Node* node, Track* track, bool updown);
     void render(Rendering* r);
     void setswitch(int newstate);
     Vec pos();
     int getstateforordergeneration();
 private:
-    void addtrack(trackid track);
+    void addtrack(Track* track);
     Tracksystem* tracksystem;
     Node* node;
     bool updown;
@@ -55,7 +55,7 @@ private:
     Sprite sprite;
 };
 
-float getradiusoriginatingfromnode(Tracksystem&, nodeid node, trackid track);
+float getradiusoriginatingfromnode(Track* track, nodeid node);
 
 class Track
 {
@@ -67,16 +67,19 @@ public:
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);
     float getorientation(float nodedist);
-    bool isabovepreviousnode();
-    bool isbelownextnode();
+    float getradius(State state);
+    trackid nexttrack();
+    trackid previoustrack();
     void addsignal(State signalstate, signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
-    float radius;
     nodeid previousnode, nextnode;
-private:
-    Tracksystem* tracksystem;
     trackid id;
+private:
+    bool isabovepreviousnode();
+    bool isbelownextnode();
+    Tracksystem* tracksystem;
     float phi;
+    float radius;
     float previousdir;
     float nextdir;
     Vec previouspos;
@@ -98,12 +101,11 @@ public:
     void update();
     void set(int redgreenorflip);
     int getcolorforordergeneration();
-    Vec getpos();
+    Vec pos();
     bool isred(Train* train);
     State state;
     Train* reservedfor = nullptr;
 private:
-    Vec pos;
     signalid id;
     Tracksystem* tracksystem;
     bool isgreen = true;
