@@ -109,3 +109,7 @@ private:
     Trackblock blocks;
     Sprite sprite;
 };
+
+
+bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);

@@ -131,7 +131,7 @@ State Tracksystem::tryincrementingtrack(State oldstate)
 		Node* currentnode = currenttrackpointer->previousnode;
 		float arclength1 = currenttrackpointer->getarclength(1);
 		Track* previoustrackpointer = currenttrackpointer->previoustrack();
-		if(state.track){
+		if(previoustrackpointer){
 			state.track = previoustrackpointer->id;
 			float arclength2 = previoustrackpointer->getarclength(1);
 			if(previoustrackpointer->nextnode==currentnode){
@@ -447,13 +447,7 @@ nodeid Tracksystem::extendtracktopos(nodeid fromnode, Vec pos)
 void Tracksystem::connecttwonodes(nodeid node1, nodeid node2)
 {
 	if(node1==node2)
-		return;
-	//for(auto& track : node1->tracksleft)
-	//	if(track->nodeleft==node2 || track->noderight==node2)
-	//		return;
-	//for(auto& track : node1->tracksright)
-	//	if(track->nodeleft==node2 || track->noderight==node2)
-	//		return;
+		return; // TODO: Also stop other illegal connections, like where track already exists
 	Vec newnodepoint;
 	Node* node1pointer = getnode(node1);
 	Node* node2pointer = getnode(node2);

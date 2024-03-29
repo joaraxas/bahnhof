@@ -14,8 +14,8 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	nextnode = &next;
 	id = myid;
 
-	float dx = cos(previous.getdir())*(next.getpos().x - previous.getpos().x) - sin(previous.getdir())*(next.getpos().y - previous.getpos().y);
-	float dy = sin(previous.getdir())*(next.getpos().x - previous.getpos().x) + cos(previous.getdir())*(next.getpos().y - previous.getpos().y);
+	Vec d = localcoords(nextnode->getpos(), previousnode->getdir(), previousnode->getpos());
+	float dx = d.x; float dy = -d.y;
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
 	if(abs(radius)>1e5){
@@ -37,16 +37,16 @@ Vec Track::getpos(float nodedist)
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec leftnodeoffsetpos = previousnode->getpos() - Vec(sin(previousnode->getdir()), cos(previousnode->getdir()))*transverseoffset;
+	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir(), previousnode->getpos());
 	if(isinf(radius)){
-		Vec rightnodeoffsetpos = nextnode->getpos() - Vec(sin(previousnode->getdir()), cos(previousnode->getdir()))*transverseoffset;
-		currentpos = leftnodeoffsetpos + (rightnodeoffsetpos-leftnodeoffsetpos)*nodedist;
+		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir(), nextnode->getpos());
+		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
-		float ddx, ddy;
-		ddx = (radius+transverseoffset)*sin(nodedist*phi);
-		ddy = (radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = Vec(leftnodeoffsetpos.x + cos(previousnode->getdir())*ddx+sin(previousnode->getdir())*ddy, leftnodeoffsetpos.y - sin(previousnode->getdir())*ddx+cos(previousnode->getdir())*ddy);
+		Vec localpos;
+		localpos.x = (radius+transverseoffset)*sin(nodedist*phi);
+		localpos.y =-(radius+transverseoffset)*(1-cos(nodedist*phi));
+		currentpos = globalcoords(localpos, previousnode->getdir(), previousoffsetpos);	
 	}
 	return currentpos;
 }
@@ -54,28 +54,28 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	float dx = cos(previousnode->getdir())*(pos.x - previousnode->getpos().x) - sin(previousnode->getdir())*(pos.y - previousnode->getpos().y);
-	float dy = sin(previousnode->getdir())*(pos.x - previousnode->getpos().x) + cos(previousnode->getdir())*(pos.y - previousnode->getpos().y);
+	Vec d = localcoords(pos, previousnode->getdir(), previousnode->getpos());
+	float dx = d.x; float dy = d.y;
 	if(isinf(radius)){
 		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy>=0);
+			closeststate.alignedwithtrack = (dy<=0);
 		}
 		else{
 			closeststate.nodedist = fmax(fmin(1, -dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy<=0);
+			closeststate.alignedwithtrack = (dy>=0);
 		}
 	}
 	else{
 		if(isabovepreviousnode()){
-			float angle = atan2(dx, sign(radius)*(radius-dy));
+			float angle = atan2(dx, sign(radius)*(radius+dy));
 			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius-dy, 2) + pow(dx, 2))) <= sign(radius)*pow(radius,2);
+			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) <= sign(radius)*pow(radius,2);
 		}
 		else{
-			float angle = atan2(-dx, sign(radius)*(radius-dy));
+			float angle = atan2(-dx, sign(radius)*(radius+dy));
 			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius-dy, 2) + pow(dx, 2))) >= sign(radius)*pow(radius,2);
+			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) >= sign(radius)*pow(radius,2);
 		}
 	}
 	return closeststate;

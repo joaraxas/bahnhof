@@ -49,6 +49,7 @@ void Node::render(Rendering* r)
 			r->rendertext("track down: "+std::to_string(trackdown->id), pos.x, pos.y+2*14);
 		if(trackup)
 			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14);
+		r->rendertext(std::to_string(dir), pos.x, pos.y+4*14);
 	}
 }
 

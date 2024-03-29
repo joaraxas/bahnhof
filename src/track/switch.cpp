@@ -37,8 +37,8 @@ void Switch::addtrack(Track* track){
 
 float getradiusoriginatingfromnode(Track* track, nodeid node)
 {
-	State state(0, 0.5, true);
-	return (2*track->previousnode->id==node-1)*track->getradius(state);
+	State state(0, 0.5, track->previousnode->id==node);
+	return track->getradius(state);
 }
 
 Vec Switch::pos(){

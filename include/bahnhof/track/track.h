@@ -67,13 +67,10 @@ private:
 
 Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
 float distancebetween(Vec, Vec);
-
 Vec getpos(Tracksystem&, State state, float transverseoffset=0);
+Vec getswitchpos(Tracksystem&, switchid _switch);
 Vec getsignalpos(Tracksystem&, signalid signal);
 float getradius(Tracksystem&, State state);
 float getorientation(Tracksystem&, State state);
 void setsignal(Tracksystem&, signalid signal, int redgreenorflip);
 void setswitch(Tracksystem&, switchid _switch, int switchstate);
-Vec getswitchpos(Tracksystem&, switchid _switch);
-bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
-bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
