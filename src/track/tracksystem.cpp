@@ -33,11 +33,12 @@ namespace Tracks{
 Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys)
 {
 	game = &whatgame;
-	nodeid newnode = addnode(Vec(xs[0], ys[0]), 0);
+	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), 0, -1);
+	addnode(*newnode);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		newnode = Construction::extendtracktopos(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		Tracksection section = Input::buildat(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		newnode = section.nodes.back();
 	}
-	//selectednode = 0;
 }
 
 Tracksystem::~Tracksystem()
@@ -53,15 +54,18 @@ Tracksystem::~Tracksystem()
 		removesignal(id);
 }
 
-nodeid Tracksystem::addnode(Vec pos, float dir){
+nodeid Tracksystem::addnode(Node& node){
 	nodecounter++;
-	nodes[nodecounter] = new Node(*this, pos, dir, nodecounter);
+	nodes[nodecounter] = &node;
+	node.id = nodecounter;
 	return nodecounter;
 }
 
-trackid Tracksystem::addtrack(nodeid previousnode, nodeid nextnode){
+trackid Tracksystem::addtrack(Track& track){
 	trackcounter++;
-	tracks[trackcounter] = new Track(*this, *getnode(previousnode), *getnode(nextnode), trackcounter);
+	tracks[trackcounter] = &track;
+	track.id = trackcounter;
+	track.initnodes();
 	return trackcounter;
 }
 
@@ -96,34 +100,17 @@ void Tracksystem::removesignal(signalid toremove)
 	signals.erase(toremove);
 }
 
-
-
 void render(Tracksystem& tracksystem, Rendering* r)
 {
-	for(auto const track : tracksystem.alltracks())
-		track->render(r, 0);
-	for(auto const node : tracksystem.allnodes())
+	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
+}
+
+void render(Tracksection section, Rendering* r, int mode)
+{
+	for(auto const track : section.tracks)
+		track->render(r, mode);
+	for(auto const node : section.nodes)
 		node->render(r);
-	
-	if(tracksystem.selectednode){
-		tracksystem.preparingtrack = true;
-		nodeid lastnodeindex = tracksystem.nodecounter;
-		trackid lasttrackindex = tracksystem.trackcounter;
-		nodeid lastselectednode = tracksystem.selectednode;
-		Input::buildat(tracksystem, tracksystem.game->getinputmanager().mapmousepos());
-		tracksystem.selectednode = lastselectednode;
-		for(trackid id = lasttrackindex+1; id<=tracksystem.trackcounter; id++)
-			tracksystem.gettrack(id)->render(r, 1);
-		for(nodeid id = lastnodeindex+1; id<=tracksystem.nodecounter; id++)
-			tracksystem.getnode(id)->render(r);
-		for(trackid id = lasttrackindex+1; id<=tracksystem.trackcounter; id++)
-			tracksystem.removetrack(id);
-		for(nodeid id = lastnodeindex+1; id<=tracksystem.nodecounter; id++)
-			tracksystem.removenode(id);
-		tracksystem.nodecounter = lastnodeindex;
-		tracksystem.trackcounter = lasttrackindex;
-		tracksystem.preparingtrack = false;
-	}
 }
 
 void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
@@ -133,7 +120,6 @@ void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
 	for(auto const& signal : tracksystem.allsignals())
 		signal->render(r);
 }
-
 
 
 Node* Tracksystem::getnode(nodeid node)

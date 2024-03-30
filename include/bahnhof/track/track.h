@@ -14,6 +14,12 @@ class Track;
 class Switch;
 class Signal;
 struct Trackblock;
+struct Tracksection
+{
+    Tracksection(std::vector<Track*> t, std::vector<Node*> n) : tracks(t), nodes(n) {};
+    std::vector<Track*> tracks;
+    std::vector<Node*> nodes;
+};
 
 struct Tracksystem
 {
@@ -24,8 +30,8 @@ public:
     Track* gettrack(trackid track);
     Switch* getswitch(switchid _switch);
     Signal* getsignal(signalid signal);
-    nodeid addnode(Vec pos, float dir);
-    trackid addtrack(nodeid leftnode, nodeid rightnode);
+    nodeid addnode(Node& node);
+    trackid addtrack(Track& track);
     switchid addswitchtolist(Switch* _switch);
     signalid addsignal(State state);
     void removenode(nodeid toremove);
@@ -36,17 +42,13 @@ public:
     std::vector<Switch*> allswitches();
     std::vector<Signal*> allsignals();
     Game* game;
-    //TODO: place these in appropriate classes
-    bool preparingtrack = false;
-    nodeid selectednode = 0;
-    //TODO: make private when proper build rendering is assigned
-    nodeid nodecounter = 0;
-    trackid trackcounter = 0;
 private:
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
     std::map<switchid, Switch*> switches;
     std::map<signalid, Signal*> signals;
+    nodeid nodecounter = 0;
+    trackid trackcounter = 0;
     switchid switchcounter = 0;
     signalid signalcounter = 0;
 };
@@ -54,11 +56,12 @@ private:
 namespace Input
 {
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    float buildat(Tracksystem& tracksystem, Vec pos);
-    void selectat(Tracksystem& tracksystem, Vec pos);
+    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    nodeid selectat(Tracksystem& tracksystem, Vec pos);
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
-    void deleteclick(Tracksystem& tracksystem, int xMouse, int yMouse);
+    float getcostoftracks(Tracksection);
 };
 
 namespace Signaling
@@ -71,7 +74,14 @@ namespace Signaling
     bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
 };
 
+namespace Construction
+{
+    Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
+};
+
     void render(Tracksystem&, Rendering* r);
+    void render(Tracksection section, Rendering* r, int mode=0);
     void renderabovetrains(Tracksystem&, Rendering* r);
 
     State travel(Tracksystem&, State state, float pixels);

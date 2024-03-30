@@ -18,27 +18,33 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-float buildat(Tracksystem& tracksystem, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
-	float cost=0;
-	//trackid lasttrackindex = trackcounter;
 	nodeid clickednode = 0;
 	whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
-	if(clickednode){
-		Construction::connecttwonodes(tracksystem, tracksystem.selectednode, clickednode);
-		tracksystem.selectednode = clickednode;
-	}
-	else
-		tracksystem.selectednode = Construction::extendtracktopos(tracksystem, tracksystem.selectednode, pos);
-	//for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-	//	cost += 0.003*tracksystem.gettrack(id)->getarclength(1);
-	return cost;
+	if(clickednode)
+		return Construction::connecttwonodes(tracksystem, fromnode, tracksystem.getnode(clickednode));
+	return Construction::extendtracktopos(tracksystem, fromnode, pos);
 }
 
-void selectat(Tracksystem& tracksystem, Vec pos)
+Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
-	tracksystem.selectednode = 0;
-	whatdidiclick(tracksystem, pos, nullptr, &tracksystem.selectednode, nullptr, nullptr);
+	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
+	
+	for(auto node : section.nodes){
+		tracksystem.addnode(*node);
+	}
+	for(auto track : section.tracks)
+		tracksystem.addtrack(*track);
+
+	return section;
+}
+
+nodeid selectat(Tracksystem& tracksystem, Vec pos)
+{
+	nodeid selectednode = 0;
+	whatdidiclick(tracksystem, pos, nullptr, &selectednode, nullptr, nullptr);
+	return selectednode;
 }
 
 bool switchat(Tracksystem& tracks, Vec pos)
@@ -64,6 +70,13 @@ Order* generateorderat(Tracksystem& tracks, Vec pos)
 	if(clickedswitch)
 		neworder = new Setswitch(clickedswitch, tracks.getswitch(clickedswitch)->getstateforordergeneration());
 	return neworder;
+}
+
+float getcostoftracks(Tracksection section){
+	float cost = 0;
+	for(auto track : section.tracks)
+		cost += 0.003*track->getarclength(1);
+	return cost;
 }
 
 State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, switchid* _switch)
@@ -113,12 +126,6 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 		}
 	}
 	return returnstate;
-}
-
-void deleteclick(Tracksystem& tracksystem, int x, int y)
-{
-	tracksystem.selectednode = 0;
-	Vec mousepos(x,y);
 }
 
 State getcloseststate(Tracksystem& tracksystem, Vec pos)

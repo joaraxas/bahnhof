@@ -26,7 +26,7 @@ void InputManager::handle(int ms, int mslogic){
             case SDL_MOUSEBUTTONDOWN:{
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
-                    tracksystem.selectednode = 0;
+                    selectednode = 0;
                     placingsignal = false;
                     if(routing.selectedroute){
                         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
@@ -42,9 +42,12 @@ void InputManager::handle(int ms, int mslogic){
                         }
                         placingsignal = false;
                     }
-                    else if(tracksystem.selectednode){
-                        if(gamestate.money>0)
-                            gamestate.money-=Tracks::Input::buildat(tracksystem, mousepos);
+                    else if(selectednode){
+                        if(gamestate.money>0){
+                            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
+	                        selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                            gamestate.money-=Tracks::Input::getcostoftracks(newsection);
+                        }
                     }
                     else{
                         Train* clickedtrain = nullptr;
@@ -62,7 +65,7 @@ void InputManager::handle(int ms, int mslogic){
                         }
                         else{
                             if(!Tracks::Input::switchat(tracksystem, mousepos)){
-                                Tracks::Input::selectat(tracksystem, mousepos);
+                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
                                 selecttrain(nullptr);
                                 routing.selectedroute = nullptr;
                             }
@@ -170,6 +173,20 @@ void InputManager::handle(int ms, int mslogic){
 
     for(int iTrain=0; iTrain<gamestate.trains.size(); iTrain++)
         gamestate.trains[iTrain]->getinput(this, mslogic);
+}
+
+void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
+{
+    if(selectednode){
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), mapmousepos());
+        Tracks::render(section, r, 1);
+        int cost = -ceil(Tracks::Input::getcostoftracks(section));
+        r->rendertext(std::to_string(cost), screenmousepos().x, screenmousepos().y-18, {127, 0, 0}, false, false);
+        for(auto track: section.tracks)
+            delete track;
+        for(auto node: section.nodes)
+            delete node;
+    }
 }
 
 Vec InputManager::mapmousepos()

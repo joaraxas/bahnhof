@@ -5,6 +5,9 @@
 #include "gamestate.h"
 #include "math.h"
 
+namespace Tracks{
+    class Tracksystem;}
+
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
 const int gearbutton = SDL_SCANCODE_LSHIFT;
@@ -23,6 +26,7 @@ class InputManager
 public:
     InputManager(Game* whatgame);
     void handle(int ms, int mslogic);
+    void render(Rendering*, Tracks::Tracksystem&);
     Vec screenmousepos();
     Vec mapmousepos();
     bool keyispressed(const int scancode);
@@ -32,4 +36,5 @@ private:
     const Uint8* keys;
     bool placingsignal = false;
     Train* selectedtrain = nullptr;
+    nodeid selectednode = 0;
 };

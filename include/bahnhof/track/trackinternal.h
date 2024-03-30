@@ -66,9 +66,9 @@ class Track
 {
 public:
     Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid);
+    void initnodes();
     void render(Rendering* r, int mode);
-    Vec getpos(float nodedist);
-    Vec getpos(float nodedist, float transverseoffset);
+    Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);
     float getorientation(float nodedist);
@@ -126,12 +126,5 @@ namespace Input
     signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
     nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);
 }
-
-
-namespace Construction
-{
-    nodeid extendtracktopos(Tracksystem& tracksystem, nodeid fromnode, Vec pos);
-    void connecttwonodes(Tracksystem& tracksystem, nodeid node1, nodeid node2);
-};
 
 }

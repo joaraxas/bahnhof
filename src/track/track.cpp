@@ -23,16 +23,12 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 		radius = INFINITY;
 		phi = 0;
 	}
-
-	if(!tracksystem->preparingtrack){
-		previousnode->connecttrack(this, isabovepreviousnode());
-		nextnode->connecttrack(this, !isbelownextnode());
-	}
 }
 
-Vec Track::getpos(float nodedist)
+void Track::initnodes()
 {
-	return getpos(nodedist, 0);
+	previousnode->connecttrack(this, isabovepreviousnode());
+	nextnode->connecttrack(this, !isbelownextnode());
 }
 
 Vec Track::getpos(float nodedist, float transverseoffset)
