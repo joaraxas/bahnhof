@@ -6,6 +6,7 @@
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/common/gamestate.h"
 
+namespace Tracks{
 Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
 {
 	dir = truncate(dirstart);
@@ -72,4 +73,5 @@ Vec getswitchpos(Vec pos, float dir, bool updown)
 {
 	float transverseoffset = -(2*updown-1)*28;///scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
+}
 }

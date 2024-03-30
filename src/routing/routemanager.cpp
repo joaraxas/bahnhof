@@ -1,7 +1,8 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/graphics/rendering.h"
 
-RouteManager::RouteManager(Tracksystem* tracks)
+
+RouteManager::RouteManager(Tracks::Tracksystem* tracks)
 {
     tracksystem = tracks;
 }

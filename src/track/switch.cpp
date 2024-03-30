@@ -6,6 +6,8 @@
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/common/gamestate.h"
 
+namespace Tracks
+{
 Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), updown(isupordown)
 {
 	tracksystem = node->tracksystem;
@@ -78,4 +80,5 @@ void Switch::setswitch(int newstate)
         node->trackup = tracks[switchstate];
     else
         node->trackdown = tracks[switchstate];
+}
 }

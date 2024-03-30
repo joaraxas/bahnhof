@@ -13,7 +13,7 @@ InputManager::InputManager(Game* whatgame){
 void InputManager::handle(int ms, int mslogic){
 	SDL_Event e;
     Gamestate& gamestate = game->getgamestate();
-    Tracksystem& tracksystem = gamestate.gettracksystems();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     RouteManager& routing = gamestate.getrouting();
     SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
@@ -29,7 +29,7 @@ void InputManager::handle(int ms, int mslogic){
                     tracksystem.selectednode = 0;
                     tracksystem.placingsignal = false;
                     if(routing.selectedroute){
-                        Order* neworder = tracksystem.generateorderat(mousepos);
+                        Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
                         if(neworder)
                             routing.selectedroute->insertorderatselected(neworder);
                     }
@@ -37,7 +37,7 @@ void InputManager::handle(int ms, int mslogic){
                 if(e.button.button == SDL_BUTTON_LEFT){
                     if(tracksystem.selectednode || tracksystem.placingsignal){
                         if(gamestate.money>0)
-                            gamestate.money-=tracksystem.buildat(mousepos);
+                            gamestate.money-=Tracks::Input::buildat(tracksystem, mousepos);
                     }
                     else{
                         Train* clickedtrain = nullptr;
@@ -54,8 +54,8 @@ void InputManager::handle(int ms, int mslogic){
                             gamestate.selecttrain(clickedtrain);
                         }
                         else{
-                            if(!tracksystem.switchat(mousepos)){
-                                tracksystem.selectat(mousepos);
+                            if(!Tracks::Input::switchat(tracksystem, mousepos)){
+                                Tracks::Input::selectat(tracksystem, mousepos);
                                 gamestate.selecttrain(nullptr);
                                 routing.selectedroute = nullptr;
                             }
@@ -122,19 +122,19 @@ void InputManager::handle(int ms, int mslogic){
                 if(gamestate.money>0){
                     if(e.key.keysym.sym == SDLK_o){
                         gamestate.wagons.emplace_back(new Openwagon(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = tracksystem.travel(gamestate.newwagonstate, 60);
+                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
                         gamestate.addtrainstoorphans();
                         gamestate.money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_q){
                         gamestate.wagons.emplace_back(new Tankwagon(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = tracksystem.travel(gamestate.newwagonstate, 72);
+                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
                         gamestate.addtrainstoorphans();
                         gamestate.money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_y){
                         gamestate.wagons.emplace_back(new Locomotive(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = tracksystem.travel(gamestate.newwagonstate, 60);
+                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
                         gamestate.addtrainstoorphans();
                         gamestate.money -= 8;
                     }

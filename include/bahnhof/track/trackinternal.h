@@ -6,12 +6,15 @@
 
 class Rendering;
 class Train;
+class Game;
 
-class Tracksystem;
+namespace Tracks
+{
 class Node;
 class Track;
 class Switch;
 class Signal;
+struct Tracksystem;
 
 class Node
 {
@@ -34,6 +37,8 @@ private:
     Vec pos;
     float dir;
 };
+
+Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
 
 class Switch
 {
@@ -110,6 +115,23 @@ private:
     Sprite sprite;
 };
 
+    State tryincrementingtrack(Tracksystem&, State state);
+    float distancebetween(Vec, Vec);
 
-bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
-bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+namespace Input
+{
+    State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
+    State getcloseststate(Tracksystem& tracksystem, Vec pos);
+    nodeid getclosestnode(Tracksystem& tracksystem, Vec pos);
+    signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
+    nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);
+}
+
+
+namespace Construction
+{
+    nodeid extendtracktopos(Tracksystem& tracksystem, nodeid fromnode, Vec pos);
+    void connecttwonodes(Tracksystem& tracksystem, nodeid node1, nodeid node2);
+};
+
+}

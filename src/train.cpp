@@ -10,7 +10,7 @@
 #include "bahnhof/resources/storage.h"
 
 
-Train::Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
+Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
 {
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
@@ -60,13 +60,13 @@ void Train::update(int ms)
 	if(abs(speed)>maxspeed)
 		speed = maxspeed*sign(speed);
 	float pixels = ms*0.001*abs(speed);
-	State newforwardstate = tracksystem->travel(forwardstate(), pixels);
-	if(tracksystem->isendofline(newforwardstate)){
+	State newforwardstate = Tracks::travel(*tracksystem, forwardstate(), pixels);
+	if(Tracks::isendofline(*tracksystem, newforwardstate)){
 		speed = 0;
-		pixels = tracksystem->distancefromto(forwardstate(), newforwardstate, pixels);
+		pixels = Tracks::distancefromto(*tracksystem, forwardstate(), newforwardstate, pixels);
 	}
-	tracksystem->runoverblocks(forwardstate(), pixels, this);
-	tracksystem->runoverblocks(flipstate(backwardstate()), pixels, nullptr);
+	Tracks::Signaling::runoverblocks(*tracksystem, forwardstate(), pixels, this);
+	Tracks::Signaling::runoverblocks(*tracksystem, flipstate(backwardstate()), pixels, nullptr);
 	for(auto& wagon : wagons)
 		wagon->travel(sign(speed)*pixels);
 }
@@ -85,7 +85,7 @@ bool Train::perform(int ms)
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state, ms);
 			if(!done){
-				if(tracksystem->isred(this))
+				if(Tracks::Signaling::isred(*tracksystem, this))
 					brake(ms);
 				else
 					gas(ms);}
@@ -211,14 +211,14 @@ void Train::checkcollision(int ms, Train* train)
 	if(size(wagons) >= 1)
 	if(size(train->wagons) >= 1){
 		float pixels = ms*0.001*abs(speed);
-		float distance = tracksystem->distancefromto(forwardstate(), flipstate(train->forwardstate()), pixels, true);
+		float distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->forwardstate()), pixels, true);
 		if(distance<pixels){
 			for(auto wagon: wagons)
 				wagon->travel(distance*sign(speed));
 			couple(*train, gasisforward, train->gasisforward);
 		}
 		else{
-			distance = tracksystem->distancefromto(forwardstate(), flipstate(train->backwardstate()), pixels, true);
+			distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->backwardstate()), pixels, true);
 			if(distance<pixels){
 				for(auto wagon: wagons)
 					wagon->travel(distance*sign(speed));
@@ -231,7 +231,7 @@ void Train::checkcollision(int ms, Train* train)
 bool Train::checkifreachedstate(State goalstate, int ms)
 {
 	float pixels = 4*abs(speed)*ms*0.001;
-	if(tracksystem->distancefromto(flipstate(forwardstate()), goalstate, pixels)<pixels)
+	if(Tracks::distancefromto(*tracksystem, flipstate(forwardstate()), goalstate, pixels)<pixels)
 		return true;
 	else
 		return false;

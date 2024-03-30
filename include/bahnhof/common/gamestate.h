@@ -5,7 +5,6 @@
 class Route;
 class Wagon;
 class Train;
-class Tracksystem;
 class Building;
 class Camera;
 class Rendering;
@@ -15,6 +14,9 @@ class InputManager;
 class RouteManager;
 class TimeManager;
 class Gamestate;
+namespace Tracks{
+    class Tracksystem;
+}
 
 class Game
 {
@@ -52,7 +54,7 @@ public:
     void initjusttrack();
     void inittrain(State startstate);
     void addtrainstoorphans();
-    Tracksystem& gettracksystems() {return *tracksystem;};
+    Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
     void selecttrain(Train* train);
     Train* getselectedtrain();
@@ -66,7 +68,7 @@ public:
 private:
     Game* game;
     RouteManager* routing;
-    std::unique_ptr<Tracksystem> tracksystem;
+    std::unique_ptr<Tracks::Tracksystem> tracksystem;
     Train* selectedtrain = nullptr;
     //Map* map;
 };

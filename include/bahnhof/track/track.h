@@ -4,73 +4,86 @@
 #include "bahnhof/common/math.h"
 
 class Order;
+class Train;
+class Gamestate;
+
+namespace Tracks
+{
 class Node;
 class Track;
 class Switch;
 class Signal;
-class Train;
-class Gamestate;
 struct Trackblock;
 
-class Tracksystem
+struct Tracksystem
 {
 public:
-    Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
-    void update(int ms);
-    void render(Rendering* r);
-    void renderabovetrains(Rendering* r);
-    void deleteclick(int xMouse, int yMouse);
-    void selectat(Vec pos);
-    float buildat(Vec pos);
-    bool switchat(Vec pos);
-    Order* generateorderat(Vec pos);
-    State travel(State state, float pixels);
-    float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
-    bool isendofline(State state);
-    bool isred(Train* train);
-    Trackblock getblocksuptonextsignal(State state);
-    Game* game;
-    nodeid selectednode = 0;
-    bool placingsignal = false;
-    bool preparingtrack = false;
     Node* getnode(nodeid node);
     Track* gettrack(trackid track);
     Switch* getswitch(switchid _switch);
     Signal* getsignal(signalid signal);
-    switchid addswitchtolist(Switch* _switch);
-    void runoverblocks(State state, float pixels, Train* fortrain);
-private:
     nodeid addnode(Vec pos, float dir);
     trackid addtrack(nodeid leftnode, nodeid rightnode);
+    switchid addswitchtolist(Switch* _switch);
     signalid addsignal(State state);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
     void removesignal(signalid toremove);
-    State whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    State getcloseststate(Vec pos);
-    nodeid getclosestnode(Vec pos);
-    signalid getclosestsignal(Vec pos);
-    nodeid getclosestswitch(Vec pos);
-    State tryincrementingtrack(State state);
-    nodeid extendtracktopos(nodeid fromnode, Vec pos);
-    void connecttwonodes(nodeid node1, nodeid node2);
+    std::vector<Track*> alltracks();
+    std::vector<Node*> allnodes();
+    std::vector<Switch*> allswitches();
+    std::vector<Signal*> allsignals();
+    Game* game;
+    //TODO: place these in appropriate classes
+    bool placingsignal = false;
+    bool preparingtrack = false;
+    nodeid selectednode = 0;
+    //TODO: make private when proper build rendering is assigned
+    nodeid nodecounter = 0;
+    trackid trackcounter = 0;
+private:
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
     std::map<switchid, Switch*> switches;
     std::map<signalid, Signal*> signals;
-    nodeid nodecounter = 0;
-    trackid trackcounter = 0;
     switchid switchcounter = 0;
     signalid signalcounter = 0;
 };
 
-Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
-float distancebetween(Vec, Vec);
-Vec getpos(Tracksystem&, State state, float transverseoffset=0);
-Vec getswitchpos(Tracksystem&, switchid _switch);
-Vec getsignalpos(Tracksystem&, signalid signal);
-float getradius(Tracksystem&, State state);
-float getorientation(Tracksystem&, State state);
-void setsignal(Tracksystem&, signalid signal, int redgreenorflip);
-void setswitch(Tracksystem&, switchid _switch, int switchstate);
+namespace Input
+{
+    float buildat(Tracksystem& tracksystem, Vec pos);
+    void selectat(Tracksystem& tracksystem, Vec pos);
+    bool switchat(Tracksystem& tracksystem, Vec pos);
+    Order* generateorderat(Tracksystem& tracksystem, Vec pos);
+    void deleteclick(Tracksystem& tracksystem, int xMouse, int yMouse);
+};
+
+namespace Signaling
+{
+    void update(Tracksystem& tracksystem, int ms);
+    bool isred(Tracksystem& tracksystem, Train* train);
+    Trackblock getblocksuptonextsignal(Tracksystem& tracksystem, State state);
+    void runoverblocks(Tracksystem& tracksystem, State state, float pixels, Train* fortrain);
+    bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+    bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+};
+
+    void render(Tracksystem&, Rendering* r);
+    void renderabovetrains(Tracksystem&, Rendering* r);
+
+    State travel(Tracksystem&, State state, float pixels);
+    float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
+    bool isendofline(Tracksystem&, State state);
+
+    Vec getpos(Tracksystem&, State state, float transverseoffset=0);
+    float getradius(Tracksystem&, State state);
+    float getorientation(Tracksystem&, State state);
+
+    Vec getswitchpos(Tracksystem&, switchid _switch);
+    Vec getsignalpos(Tracksystem&, signalid signal);
+    void setsignal(Tracksystem&, signalid signal, int redgreenorflip);
+    void setswitch(Tracksystem&, switchid _switch, int switchstate);
+};

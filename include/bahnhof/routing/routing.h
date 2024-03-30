@@ -3,13 +3,15 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 
-class Tracksystem;
+namespace Tracks{
+    class Tracksystem;
+}
 class Order;
 
 class Route
 {
 public:
-    Route(Tracksystem* tracks, std::string routename);
+    Route(Tracks::Tracksystem* tracks, std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
     int previousorder(int orderid);
@@ -22,7 +24,7 @@ public:
     void removeorders(int orderindexfrom, int orderindexto);
     void render(Rendering* r);
     int getindex(int orderid);
-    Tracksystem* tracksystem;
+    Tracks::Tracksystem* tracksystem;
     std::string name = "New route";
     int selectedorderid = -1;
     std::vector<signalid> signals;
@@ -36,10 +38,10 @@ private:
 class RouteManager
 {
 public:
-    RouteManager(Tracksystem* tracks);
+    RouteManager(Tracks::Tracksystem* tracks);
     void renderroutes(Rendering* r);
     Route* addroute();
-    Tracksystem* tracksystem;
+    Tracks::Tracksystem* tracksystem;
     Route* selectedroute = nullptr;
     std::vector<std::unique_ptr<Route>> routes;
 };

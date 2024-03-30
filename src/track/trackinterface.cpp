@@ -5,74 +5,171 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/track/trackinternal.h"
 
-
-Vec getpos(Tracksystem& tracks, State state, float transverseoffset)
+namespace Tracks{
+Vec getpos(Tracksystem& tracksystem, State state, float transverseoffset)
 {
-	return tracks.gettrack(state.track)->getpos(state.nodedist, transverseoffset);
+	return tracksystem.gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
-float getorientation(Tracksystem& tracks, State state)
+float getorientation(Tracksystem& tracksystem, State state)
 {
-	return tracks.gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
+	return tracksystem.gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
 }
 
-float getradius(Tracksystem& tracks, State state)
+float getradius(Tracksystem& tracksystem, State state)
 {
-	return tracks.gettrack(state.track)->getradius(state);
+	return tracksystem.gettrack(state.track)->getradius(state);
 }
 
-void setswitch(Tracksystem& tracks, switchid _switch, int switchstate)
+void setswitch(Tracksystem& tracksystem, switchid _switch, int switchstate)
 {
-	Switch* switchptr = tracks.getswitch(_switch);
+	Switch* switchptr = tracksystem.getswitch(_switch);
 	switchptr->setswitch(switchstate);
 }
 
-Vec getswitchpos(Tracksystem& tracks, switchid _switch)
+Vec getswitchpos(Tracksystem& tracksystem, switchid _switch)
 {
-	Switch* switchptr = tracks.getswitch(_switch);
+	Switch* switchptr = tracksystem.getswitch(_switch);
 	return switchptr->pos();
 }
 
-void setsignal(Tracksystem& tracks, signalid signal, int redgreenorflip)
+void setsignal(Tracksystem& tracksystem, signalid signal, int redgreenorflip)
 {
-	Signal* signalpointer = tracks.getsignal(signal);
+	Signal* signalpointer = tracksystem.getsignal(signal);
 	signalpointer->set(redgreenorflip);
 }
 
-Vec getsignalpos(Tracksystem& tracks, signalid signal)
+Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
 {
-	return tracks.getsignal(signal)->pos();
+	return tracksystem.getsignal(signal)->pos();
 }
 
-bool checkblocks(Tracksystem& tracks, Trackblock blocks, Train* fortrain)
+State tryincrementingtrack(Tracksystem& tracks, State oldstate)
 {
-	// TODO: Move this to Signal?
-	for(auto s : blocks.switchblocks){
-		Node* sw = tracks.getnode(s);
-		if(sw->reservedfor && sw->reservedfor!=fortrain)
-			return false;
+	State state = oldstate;
+	if(state.nodedist>=1){
+		Track* currenttrackpointer = tracks.gettrack(state.track);
+		Node* currentnode = currenttrackpointer->nextnode;
+		float arclength1 = currenttrackpointer->getarclength(1);
+		Track* nexttrackpointer = currenttrackpointer->nexttrack();
+		if(nexttrackpointer){
+			state.track = nexttrackpointer->id;
+			float arclength2 = nexttrackpointer->getarclength(1);
+			if(nexttrackpointer->previousnode==currentnode){
+				state.nodedist = (state.nodedist-1)*arclength1/arclength2;
+			}
+			else{
+				state.nodedist = 1-(state.nodedist-1)*arclength1/arclength2;
+				state.alignedwithtrack = !state.alignedwithtrack;
+			}
+		}
+		else{
+			state.track = oldstate.track;
+			state.nodedist = 1;
+		}
 	}
-	for(auto s : blocks.signalblocks){
-		Signal* si = tracks.getsignal(s);
-		if(si->reservedfor && si->reservedfor!=fortrain)
-			return false;
+	else if(state.nodedist<0){
+		Track* currenttrackpointer = tracks.gettrack(state.track);
+		Node* currentnode = currenttrackpointer->previousnode;
+		float arclength1 = currenttrackpointer->getarclength(1);
+		Track* previoustrackpointer = currenttrackpointer->previoustrack();
+		if(previoustrackpointer){
+			state.track = previoustrackpointer->id;
+			float arclength2 = previoustrackpointer->getarclength(1);
+			if(previoustrackpointer->nextnode==currentnode){
+				state.nodedist = 1-(-state.nodedist)*arclength1/arclength2;
+			}
+			else{
+				state.nodedist = (-state.nodedist)*arclength1/arclength2;
+				state.alignedwithtrack = !state.alignedwithtrack;
+			}
+		}
+		else{
+			state.track = oldstate.track;
+			state.nodedist = 0;
+		}
 	}
-	return true;
+	return state;
 }
 
-bool claimblocks(Tracksystem& tracks, Trackblock blocks, Train* fortrain)
+State travel(Tracksystem& tracks, State state, float pixels)
 {
-	// TODO: Move this to Signal?
-	if(checkblocks(tracks, blocks, fortrain)){
-		for(auto s : blocks.switchblocks){
-			Node* sw = tracks.getnode(s);
-			sw->reservedfor = fortrain;
-		}
-		for(auto s : blocks.signalblocks){
-			Signal* si = tracks.getsignal(s);
-			si->reservedfor = fortrain;
-		}
-		return true;
+	bool finishedtrip = false;
+
+	float arclength1 = tracks.gettrack(state.track)->getarclength(1);
+	state.nodedist += pixels*((state.alignedwithtrack)*2-1)/arclength1;
+
+	while(!finishedtrip){
+		trackid currenttrack = state.track;
+		state = tryincrementingtrack(tracks, state);
+		if(state.track==currenttrack) finishedtrip = true;
 	}
-	else return false;
+
+	return state;
+}
+
+float distancefromto(Tracksystem& tracks, State state1, State state2, float maxdist, bool mustalign)
+{
+	State state = state1;
+	float arclength = tracks.gettrack(state.track)->getarclength(1);
+	bool movingalongtrack = (maxdist>0)==state1.alignedwithtrack;
+	if(state1.track==state2.track && (!mustalign || state1.alignedwithtrack==state2.alignedwithtrack)){
+		if(movingalongtrack){
+			if(state2.nodedist>=state1.nodedist)
+				return arclength*(state2.nodedist-state1.nodedist);
+		}
+		else
+			if(state2.nodedist<=state1.nodedist)
+				return arclength*(state1.nodedist-state2.nodedist);
+	}
+
+	float distance = 0;
+	if(movingalongtrack)
+		distance = arclength*(1-state.nodedist);
+	else
+		distance = arclength*state.nodedist;
+	state.nodedist += maxdist*((state.alignedwithtrack)*2-1)/arclength;
+	if(state.nodedist>=0 && state.nodedist<=1)
+		distance = maxdist;
+	else{
+		bool finishedtrip = false;
+		while(!finishedtrip){
+			trackid currenttrack = state.track;
+			state = tryincrementingtrack(tracks, state);
+			if(state.track==state2.track && (!mustalign || state.alignedwithtrack==state2.alignedwithtrack)){
+				finishedtrip = true;
+				movingalongtrack = (maxdist>0)==state.alignedwithtrack;
+				if(movingalongtrack)
+					distance += tracks.gettrack(state.track)->getarclength(1)*state2.nodedist;
+				else
+					distance += tracks.gettrack(state.track)->getarclength(1)*(1-state2.nodedist);
+			}
+			else if(state.track==currenttrack){
+				distance = maxdist;
+			}
+			else
+				distance += tracks.gettrack(state.track)->getarclength(1);
+			if(abs(distance)>=abs(maxdist)){
+				finishedtrip = true;
+				distance = maxdist;
+			}
+		}
+	}
+
+	return distance;
+}
+
+bool isendofline(Tracksystem& tracksystem, State state)
+{
+	if(state.nodedist<=0)
+		if(!state.alignedwithtrack)
+			if(tracksystem.gettrack(state.track)->previoustrack()==nullptr)
+				return true;
+	if(state.nodedist>=1)
+		if(state.alignedwithtrack)
+			if(tracksystem.gettrack(state.track)->nexttrack()==nullptr)
+				return true;
+	return false;
+}
+
 }

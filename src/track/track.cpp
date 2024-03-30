@@ -6,7 +6,8 @@
 #include "bahnhof/track/trackinternal.h"
 
 
-
+namespace Tracks
+{
 Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid)
 {
 	tracksystem = &newtracksystem;
@@ -244,4 +245,5 @@ void Track::render(Rendering* r, int mode)
 		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+}
 }

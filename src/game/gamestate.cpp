@@ -33,7 +33,7 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	tracksystem->update(ms);
+	Tracks::Signaling::update(*tracksystem, ms);
 
 	for(int iTrain=0; iTrain<trains.size(); iTrain++)
 		for(int jTrain=0; jTrain<trains.size(); jTrain++)
@@ -103,7 +103,7 @@ void Gamestate::randommap()
 
 void Gamestate::initjusttrack()
 {
-	tracksystem = std::unique_ptr<Tracksystem>(new Tracksystem(game, {200,700}, {250,250}));
+	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {200,700,900}, {250,250,450}));
 }
 
 void Gamestate::inittrain(State startstate)
@@ -111,7 +111,7 @@ void Gamestate::inittrain(State startstate)
 	int nWagons = wagons.size();
 	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate));
 	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = tracksystem->travel(startstate, -(53+49)/2-iWagon*49);
+		State state = Tracks::travel(*tracksystem, startstate, -(53+49)/2-iWagon*49);
 		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
 	}
 	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));

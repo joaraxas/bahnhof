@@ -5,7 +5,7 @@
 #include "bahnhof/routing/routing.h"
 
 
-Route::Route(Tracksystem* tracks, std::string routename)
+Route::Route(Tracks::Tracksystem* tracks, std::string routename)
 {
 	std::cout<<routename<<" created"<<std::endl;
 	name = routename;
