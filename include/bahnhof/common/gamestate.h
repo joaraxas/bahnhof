@@ -56,8 +56,6 @@ public:
     void addtrainstoorphans();
     Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
-    void selecttrain(Train* train);
-    Train* getselectedtrain();
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building>> buildings;
     std::vector<std::unique_ptr<Train>> trains;
@@ -69,7 +67,6 @@ private:
     Game* game;
     RouteManager* routing;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
-    Train* selectedtrain = nullptr;
     //Map* map;
 };
 

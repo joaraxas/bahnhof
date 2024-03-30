@@ -27,7 +27,7 @@ void InputManager::handle(int ms, int mslogic){
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     tracksystem.selectednode = 0;
-                    tracksystem.placingsignal = false;
+                    placingsignal = false;
                     if(routing.selectedroute){
                         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
                         if(neworder)
@@ -35,7 +35,14 @@ void InputManager::handle(int ms, int mslogic){
                     }
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
-                    if(tracksystem.selectednode || tracksystem.placingsignal){
+                    if(placingsignal){
+                        if(gamestate.money>0){
+                            Tracks::Input::buildsignalat(tracksystem, mousepos);
+                            gamestate.money-=1;
+                        }
+                        placingsignal = false;
+                    }
+                    else if(tracksystem.selectednode){
                         if(gamestate.money>0)
                             gamestate.money-=Tracks::Input::buildat(tracksystem, mousepos);
                     }
@@ -51,12 +58,12 @@ void InputManager::handle(int ms, int mslogic){
                             }
                         }
                         if(clickedtrain){
-                            gamestate.selecttrain(clickedtrain);
+                            selecttrain(clickedtrain);
                         }
                         else{
                             if(!Tracks::Input::switchat(tracksystem, mousepos)){
                                 Tracks::Input::selectat(tracksystem, mousepos);
-                                gamestate.selecttrain(nullptr);
+                                selecttrain(nullptr);
                                 routing.selectedroute = nullptr;
                             }
                         }
@@ -97,7 +104,6 @@ void InputManager::handle(int ms, int mslogic){
                     if(routing.selectedroute)
                         routing.selectedroute->insertorderatselected(new Couple());
                 }
-                Train* selectedtrain = gamestate.getselectedtrain();
                 if(selectedtrain){
                     if(keyispressed(routeassignbutton)){
                         if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
@@ -114,7 +120,7 @@ void InputManager::handle(int ms, int mslogic){
                     }
                 }
                 if(e.key.keysym.sym == SDLK_z){
-                    tracksystem.placingsignal = true;
+                    placingsignal = true;
                 }
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
@@ -183,4 +189,14 @@ bool InputManager::keyispressed(const int scancode)
 {
 	keys = SDL_GetKeyboardState(nullptr);
     return keys[scancode];
+}
+
+void InputManager::selecttrain(Train* whattrain)
+{
+	for(auto& train: game->getgamestate().trains){
+		train->selected = false;
+	}
+	if(whattrain)
+		whattrain->selected = true;
+	selectedtrain = whattrain;
 }

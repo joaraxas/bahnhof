@@ -11,29 +11,27 @@ namespace Tracks
 {
 namespace Input
 {
+signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
+{
+	trackid clickedtrack = 0;
+	State signalstate = getcloseststate(tracksystem, pos);
+	return tracksystem.addsignal(signalstate);
+}
+
 float buildat(Tracksystem& tracksystem, Vec pos)
 {
 	float cost=0;
-	if(tracksystem.placingsignal){
-		trackid clickedtrack = 0;
-		State signalstate = getcloseststate(tracksystem, pos);
-		tracksystem.addsignal(signalstate);
-		tracksystem.placingsignal = false;
-		cost = 1;
+	//trackid lasttrackindex = trackcounter;
+	nodeid clickednode = 0;
+	whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+	if(clickednode){
+		Construction::connecttwonodes(tracksystem, tracksystem.selectednode, clickednode);
+		tracksystem.selectednode = clickednode;
 	}
-	else{
-		//trackid lasttrackindex = trackcounter;
-		nodeid clickednode = 0;
-		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
-		if(clickednode){
-			Construction::connecttwonodes(tracksystem, tracksystem.selectednode, clickednode);
-			tracksystem.selectednode = clickednode;
-		}
-		else
-			tracksystem.selectednode = Construction::extendtracktopos(tracksystem, tracksystem.selectednode, pos);
-		//for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
-		//	cost += 0.003*tracksystem.gettrack(id)->getarclength(1);
-	}
+	else
+		tracksystem.selectednode = Construction::extendtracktopos(tracksystem, tracksystem.selectednode, pos);
+	//for(trackid id = lasttrackindex+1; id<=trackcounter; id++)
+	//	cost += 0.003*tracksystem.gettrack(id)->getarclength(1);
 	return cost;
 }
 

@@ -37,7 +37,6 @@ public:
     std::vector<Signal*> allsignals();
     Game* game;
     //TODO: place these in appropriate classes
-    bool placingsignal = false;
     bool preparingtrack = false;
     nodeid selectednode = 0;
     //TODO: make private when proper build rendering is assigned
@@ -54,6 +53,7 @@ private:
 
 namespace Input
 {
+    signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     float buildat(Tracksystem& tracksystem, Vec pos);
     void selectat(Tracksystem& tracksystem, Vec pos);
     bool switchat(Tracksystem& tracksystem, Vec pos);

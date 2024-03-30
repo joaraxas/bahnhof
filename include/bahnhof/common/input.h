@@ -26,7 +26,10 @@ public:
     Vec screenmousepos();
     Vec mapmousepos();
     bool keyispressed(const int scancode);
+    void selecttrain(Train* train);
 private:
     Game* game;
     const Uint8* keys;
+    bool placingsignal = false;
+    Train* selectedtrain = nullptr;
 };
