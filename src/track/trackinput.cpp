@@ -21,9 +21,23 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	nodeid clickednode = 0;
-	whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
-	if(clickednode)
-		return Construction::connecttwonodes(tracksystem, fromnode, tracksystem.getnode(clickednode));
+	trackid clickedtrack = 0;
+	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	if(clickedtrack){
+		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		Node* tonode;
+		if(!clickednode){
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+		}
+		else
+			tonode = tracksystem.getnode(clickednode);
+		Tracksection section = Construction::connecttwonodes(tracksystem, fromnode, tonode);
+		if(!clickednode){
+			section.nodes.push_back(tonode);
+			section.tracksplits[tonode] = clickedstate;
+		}
+		return section;
+	}
 	return Construction::extendtracktopos(tracksystem, fromnode, pos);
 }
 
@@ -31,11 +45,13 @@ Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
 	
-	for(auto node : section.nodes){
+	for(auto node : section.nodes)
 		tracksystem.addnode(*node);
-	}
 	for(auto track : section.tracks)
 		tracksystem.addtrack(*track);
+	for(auto [node, state] : section.tracksplits){
+		Construction::splittrack(tracksystem, node, state);
+	}
 
 	return section;
 }

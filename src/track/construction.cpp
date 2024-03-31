@@ -6,8 +6,8 @@
 
 
 namespace Tracks{
-
 namespace Construction{
+
 Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	Vec posdiff = pos - fromnode->getpos();
@@ -53,5 +53,22 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 	Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
 	return Tracksection({newtrack},{});
 }
+
+void splittrack(Tracksystem& tracksystem, Node* node, State state)
+{
+	Track* trackpointer = tracksystem.gettrack(state.track);
+	Node* previousnode = trackpointer->previousnode;
+	Node* nextnode = trackpointer->nextnode;
+	Tracksection section1 = connecttwonodes(tracksystem, previousnode, node);
+	Tracksection section2 = connecttwonodes(tracksystem, node, nextnode);
+	Track* track1 = section1.tracks[0];
+	Track* track2 = section2.tracks[0];
+	tracksystem.addtrack(*track1);
+	tracksystem.addtrack(*track2);
+	trackpointer->split(*track1, *track2, state);
+	tracksystem.removetrack(state.track);
+}	
+
+
 }
 }

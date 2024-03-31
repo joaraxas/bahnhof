@@ -25,6 +25,12 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	}
 }
 
+Track::~Track()
+{
+	previousnode->disconnecttrack(this, isabovepreviousnode());
+	nextnode->disconnecttrack(this, !isbelownextnode());
+}
+
 void Track::initnodes()
 {
 	previousnode->connecttrack(this, isabovepreviousnode());
@@ -143,6 +149,12 @@ void Track::addsignal(State signalstate, signalid signal)
 {
 	signals[signalstate.nodedist] = signal;
 }
+
+void Track::split(Track& track1, Track& track2, State where)
+{
+	std::cout<<"split"<<std::endl;
+}	
+
 
 signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 {

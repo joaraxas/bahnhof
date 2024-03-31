@@ -19,6 +19,11 @@ Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), updo
     if(!updown) sprite.imageangle+=pi;
 }
 
+Switch::~Switch()
+{
+    tracksystem->removeswitch(id);
+}
+
 void Switch::addtrack(Track* track){
     int insertionindex = 0;
     if(tracks.size()>=1){
@@ -31,6 +36,18 @@ void Switch::addtrack(Track* track){
         }
     }
     tracks.insert(tracks.begin()+insertionindex, track);
+    if(updown)
+        node->trackup = tracks[switchstate];
+    else
+        node->trackdown = tracks[switchstate];
+}
+
+void Switch::removetrack(Track* track){
+    if(tracks[switchstate]==track)
+        switchstate = 0;
+    auto it = find(tracks.begin(), tracks.end(), track);
+    if (it != tracks.end())
+        tracks.erase(it);
     if(updown)
         node->trackup = tracks[switchstate];
     else

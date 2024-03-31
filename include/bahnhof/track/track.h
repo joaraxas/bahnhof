@@ -16,9 +16,11 @@ class Signal;
 struct Trackblock;
 struct Tracksection
 {
+    Tracksection() {};
     Tracksection(std::vector<Track*> t, std::vector<Node*> n) : tracks(t), nodes(n) {};
     std::vector<Track*> tracks;
     std::vector<Node*> nodes;
+    std::unordered_map<Node*,State> tracksplits;
 };
 
 struct Tracksystem
@@ -36,6 +38,7 @@ public:
     signalid addsignal(State state);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
+    void removeswitch(switchid toremove);
     void removesignal(signalid toremove);
     std::vector<Track*> alltracks();
     std::vector<Node*> allnodes();
@@ -78,6 +81,7 @@ namespace Construction
 {
     Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
+    void splittrack(Tracksystem&, Node* node, State state);
 };
 
     void render(Tracksystem&, Rendering* r);

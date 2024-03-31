@@ -15,6 +15,7 @@ class Track;
 class Switch;
 class Signal;
 struct Tracksystem;
+struct Tracksection;
 
 class Node
 {
@@ -22,6 +23,7 @@ friend class Switch;
 public:
     Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
     void connecttrack(Track* track, bool fromupordown);
+    void disconnecttrack(Track* track, bool fromupordown);
     void render(Rendering* r);
     Vec getpos();
     float getdir();
@@ -45,6 +47,7 @@ class Switch
 friend class Node;
 public:
     Switch(Node* node, Track* track, bool updown);
+    ~Switch();
     void render(Rendering* r);
     void setswitch(int newstate);
     Vec pos();
@@ -52,6 +55,7 @@ public:
     switchid id;
 private:
     void addtrack(Track* track);
+    void removetrack(Track* track);
     Tracksystem* tracksystem;
     Node* node;
     bool updown;
@@ -66,6 +70,7 @@ class Track
 {
 public:
     Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid);
+    ~Track();
     void initnodes();
     void render(Rendering* r, int mode);
     Vec getpos(float nodedist, float transverseoffset=0);
@@ -75,6 +80,7 @@ public:
     float getradius(State state);
     Track* nexttrack();
     Track* previoustrack();
+    void split(Track& track1, Track& track2, State where);
     void addsignal(State signalstate, signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
     Node* previousnode;

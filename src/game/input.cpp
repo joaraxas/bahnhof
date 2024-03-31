@@ -1,3 +1,4 @@
+#include<iostream>
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"

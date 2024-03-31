@@ -7,7 +7,6 @@
 
 Route::Route(Tracks::Tracksystem* tracks, std::string routename)
 {
-	std::cout<<routename<<" created"<<std::endl;
 	name = routename;
 	tracksystem = tracks;
 }
