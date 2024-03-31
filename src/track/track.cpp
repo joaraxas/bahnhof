@@ -27,6 +27,8 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 
 Track::~Track()
 {
+	for(auto [state, signal]: signals)
+		tracksystem->removesignal(signal);
 	previousnode->disconnecttrack(this, isabovepreviousnode());
 	nextnode->disconnecttrack(this, !isbelownextnode());
 }
@@ -145,16 +147,15 @@ bool Track::isbelownextnode()
 	return cos(getorientation(1) - nextnode->getdir()) > 0;
 }
 
+void Track::split(Track& track1, Track& track2, State where)
+{
+	std::cout<<"split"<<std::endl;
+}
+
 void Track::addsignal(State signalstate, signalid signal)
 {
 	signals[signalstate.nodedist] = signal;
 }
-
-void Track::split(Track& track1, Track& track2, State where)
-{
-	std::cout<<"split"<<std::endl;
-}	
-
 
 signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 {

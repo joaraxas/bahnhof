@@ -38,7 +38,7 @@ public:
     signalid addsignal(State state);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
-    void removeswitch(switchid toremove);
+    void removeswitchfromlist(switchid toremove);
     void removesignal(signalid toremove);
     std::vector<Track*> alltracks();
     std::vector<Node*> allnodes();

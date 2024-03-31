@@ -94,7 +94,7 @@ void Tracksystem::removetrack(trackid toremove)
 	tracks.erase(toremove);
 }
 
-void Tracksystem::removeswitch(switchid toremove)
+void Tracksystem::removeswitchfromlist(switchid toremove)
 {
 	switches.erase(toremove);
 }

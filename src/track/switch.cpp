@@ -21,7 +21,7 @@ Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), updo
 
 Switch::~Switch()
 {
-    tracksystem->removeswitch(id);
+    tracksystem->removeswitchfromlist(id);
 }
 
 void Switch::addtrack(Track* track){
