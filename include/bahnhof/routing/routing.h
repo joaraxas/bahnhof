@@ -64,6 +64,8 @@ struct Order
 struct Gotostate : public Order
 {
     Gotostate(State whichstate, bool mustpass=false);
+    ~Gotostate();
+    void assignroute(Route* newroute);
     void render(Rendering* r, int number);
     State state;
     bool pass;

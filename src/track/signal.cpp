@@ -15,6 +15,11 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate, signalid myid) : 
 	sprite.zoomed = false;
 }
 
+void Signal::addtotrack()
+{
+	tracksystem->gettrack(state.track)->addsignal(state, id);
+}
+
 void Signal::render(Rendering* r)
 {
 	if(!nicetracks){

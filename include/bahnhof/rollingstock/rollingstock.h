@@ -17,11 +17,13 @@ class Wagon
 {
 public:
     Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
+    ~Wagon();
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
     virtual State frontendstate();
     virtual State backendstate();
+    virtual std::vector<State*> getstates();
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
@@ -30,9 +32,9 @@ public:
     bool alignedforward = true;
     bool hasdriver = false;
     int w;
-    State state; //should be protected
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;
+    State state; //should be protected
     Sprite sprite;
     Sprite icon;
     ResourceManager* allresources = nullptr;

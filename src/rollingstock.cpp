@@ -19,6 +19,12 @@ Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spri
 	sprite.setspritesheet(spritemanager, spritename);
 	icon.setspritesheet(spritemanager, iconname);
 	icon.zoomed = false;
+	tracksystem->references->wagons.push_back(this);
+}
+
+Wagon::~Wagon()
+{
+	tracksystem->references->removewagonreference(this);
 }
 
 void Wagon::travel(float pixels)
@@ -55,6 +61,11 @@ State Wagon::backendstate()
 {
 	State backstate = state;
 	return Tracks::travel(*tracksystem, backstate, (-1)*w/2);
+}
+
+std::vector<State*> Wagon::getstates()
+{
+	return std::vector<State*>({&state});
 }
 
 float Wagon::getpower()

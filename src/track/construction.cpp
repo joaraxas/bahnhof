@@ -3,6 +3,8 @@
 #include<map>
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/routing/routing.h"
+#include "bahnhof/rollingstock/rollingstock.h"
 
 
 namespace Tracks{
@@ -66,6 +68,17 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	tracksystem.addtrack(*track1);
 	tracksystem.addtrack(*track2);
 	trackpointer->split(*track1, *track2, state);
+	for(auto order: tracksystem.references->trackorders){
+		if(order->state.track == state.track){
+			order->state = trackpointer->getsplitstate(*track1, *track2, state, order->state);
+		}
+	}
+	for(auto wagon: tracksystem.references->wagons){
+		for(State* stateptr: wagon->getstates()){
+			if(stateptr->track == state.track)
+				*stateptr = trackpointer->getsplitstate(*track1, *track2, state, *stateptr);
+		}
+	}
 	tracksystem.removetrack(state.track);
 }	
 

@@ -4,7 +4,9 @@
 #include "bahnhof/common/math.h"
 
 class Order;
+class Gotostate;
 class Train;
+class Wagon;
 class Gamestate;
 
 namespace Tracks
@@ -21,6 +23,14 @@ struct Tracksection
     std::vector<Track*> tracks;
     std::vector<Node*> nodes;
     std::unordered_map<Node*,State> tracksplits;
+};
+struct Referencehandler
+{
+    void removewagonreference(Wagon*);
+    void removeorderreference(Gotostate*);
+    std::vector<Wagon*> wagons;
+    std::vector<Gotostate*> trackorders;
+    int mynum = 3;
 };
 
 struct Tracksystem
@@ -45,6 +55,7 @@ public:
     std::vector<Switch*> allswitches();
     std::vector<Signal*> allsignals();
     Game* game;
+    std::unique_ptr<Referencehandler> references;
 private:
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;

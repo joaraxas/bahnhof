@@ -39,6 +39,7 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 		Tracksection section = Input::buildat(*this, newnode, Vec(xs[iNode], ys[iNode]));
 		newnode = section.nodes.back();
 	}
+	references = std::make_unique<Referencehandler>();
 }
 
 Tracksystem::~Tracksystem()
@@ -78,7 +79,7 @@ switchid Tracksystem::addswitchtolist(Switch* _switch){
 signalid Tracksystem::addsignal(State state){
 	signalcounter++;
 	signals[signalcounter] = new Signal(*this, state, signalcounter);
-	gettrack(state.track)->addsignal(state, signalcounter);
+	signals[signalcounter]->addtotrack();
 	return signalcounter;
 }
 
@@ -105,27 +106,6 @@ void Tracksystem::removesignal(signalid toremove)
 	signals.erase(toremove);
 }
 
-void render(Tracksystem& tracksystem, Rendering* r)
-{
-	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
-}
-
-void render(Tracksection section, Rendering* r, int mode)
-{
-	for(auto const track : section.tracks)
-		track->render(r, mode);
-	for(auto const node : section.nodes)
-		node->render(r);
-}
-
-void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
-{
-	for(auto const& _switch : tracksystem.allswitches())
-		_switch->render(r);
-	for(auto const& signal : tracksystem.allsignals())
-		signal->render(r);
-}
-
 
 Node* Tracksystem::getnode(nodeid node)
 {
@@ -133,6 +113,37 @@ Node* Tracksystem::getnode(nodeid node)
 		return nodes[node];
 	else{
 		std::cout << "Error: failed to find node with id" << node << std::endl;
+		return nullptr;
+	}
+}
+
+Switch* Tracksystem::getswitch(switchid _switch)
+{
+	if(switches.contains(_switch))
+		return switches[_switch];
+	else{
+		std::cout << "Error: failed to find switch with id" << _switch << std::endl;
+		return nullptr;
+	}
+}
+
+Track* Tracksystem::gettrack(trackid track)
+{
+	if(tracks.contains(track)){
+		return tracks[track];
+	}
+	else{
+		std::cout << "Error: failed to find track with id" << track << std::endl;
+		return nullptr;
+	}
+}
+
+Signal* Tracksystem::getsignal(signalid signal)
+{
+	if(signals.contains(signal))
+		return signals[signal];
+	else{
+		std::cout << "Error: failed to find signal with id" << signal << std::endl;
 		return nullptr;
 	}
 }
@@ -169,39 +180,9 @@ std::vector<Signal*> Tracksystem::allsignals()
 	return refs;
 }
 
-Switch* Tracksystem::getswitch(switchid _switch)
-{
-	if(switches.contains(_switch))
-		return switches[_switch];
-	else{
-		std::cout << "Error: failed to find switch with id" << _switch << std::endl;
-		return nullptr;
-	}
-}
-
 float distancebetween(Vec pos1, Vec pos2)
 {
 	return norm(pos1 - pos2);
 }
 
-Track* Tracksystem::gettrack(trackid track)
-{
-	if(tracks.contains(track)){
-		return tracks[track];
-	}
-	else{
-		std::cout << "Error: failed to find track with id" << track << std::endl;
-		return nullptr;
-	}
-}
-
-Signal* Tracksystem::getsignal(signalid signal)
-{
-	if(signals.contains(signal))
-		return signals[signal];
-	else{
-		std::cout << "Error: failed to find signal with id" << signal << std::endl;
-		return nullptr;
-	}
-}
 }

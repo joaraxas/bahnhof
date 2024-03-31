@@ -44,6 +44,27 @@ Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
 	return tracksystem.getsignal(signal)->pos();
 }
 
+void render(Tracksystem& tracksystem, Rendering* r)
+{
+	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
+}
+
+void render(Tracksection section, Rendering* r, int mode)
+{
+	for(auto const track : section.tracks)
+		track->render(r, mode);
+	for(auto const node : section.nodes)
+		node->render(r);
+}
+
+void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
+{
+	for(auto const& _switch : tracksystem.allswitches())
+		_switch->render(r);
+	for(auto const& signal : tracksystem.allsignals())
+		signal->render(r);
+}
+
 State tryincrementingtrack(Tracksystem& tracks, State oldstate)
 {
 	State state = oldstate;

@@ -149,7 +149,27 @@ bool Track::isbelownextnode()
 
 void Track::split(Track& track1, Track& track2, State where)
 {
-	std::cout<<"split"<<std::endl;
+	for(auto& [nodedist, signal]: signals){
+		Signal* signalptr = tracksystem->getsignal(signal);
+		signalptr->state = getsplitstate(track1, track2, where, signalptr->state);
+		signalptr->addtotrack();
+	}
+	signals.clear();
+}
+
+State Track::getsplitstate(Track& track1, Track& track2, State wheresplit, State oldstate)
+{
+	if(oldstate.track == id){
+		if(oldstate.nodedist<wheresplit.nodedist){
+			oldstate.track = track1.id;
+			oldstate.nodedist = oldstate.nodedist/wheresplit.nodedist;
+		}
+		else{
+			oldstate.track = track2.id;
+			oldstate.nodedist = (oldstate.nodedist-wheresplit.nodedist)/(1-wheresplit.nodedist);
+		}
+	}
+	return oldstate;
 }
 
 void Track::addsignal(State signalstate, signalid signal)

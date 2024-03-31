@@ -18,6 +18,7 @@ add_executable(bahnhof
     src/game/main.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
+    src/track/trackreferencing.cpp
     src/track/trackinterface.cpp
     src/track/trackinput.cpp
     src/track/construction.cpp

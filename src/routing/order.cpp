@@ -20,6 +20,17 @@ Gotostate::Gotostate(State whichstate, bool mustpass)
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
 }
 
+void Gotostate::assignroute(Route* newroute)
+{
+	Order::assignroute(newroute);
+	route->tracksystem->references->trackorders.push_back(this);
+}
+
+Gotostate::~Gotostate()
+{
+	route->tracksystem->references->removeorderreference(this);
+}
+
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 {
 	order = o_setsignal;
