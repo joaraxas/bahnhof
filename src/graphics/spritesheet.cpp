@@ -53,3 +53,8 @@ void Spritesheet::setoriginy(int neworiginy)
 {
 	origin.y = neworiginy;
 }
+
+Vec Spritesheet::getsize()
+{
+	return Vec(w, h);
+}

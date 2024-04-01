@@ -12,11 +12,11 @@ Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spri
 {
 	tracksystem = mytracks;
 	allresources = &tracksystem->game->getresources();
-	w = 50;
 	state = trackstate;
 	pos = getpos(*tracksystem, state);
 	SpriteManager& spritemanager = tracksystem->game->getsprites();
 	sprite.setspritesheet(spritemanager, spritename);
+	w = sprite.getsize().x;
 	icon.setspritesheet(spritemanager, iconname);
 	icon.zoomed = false;
 	tracksystem->references->wagons.push_back(this);
