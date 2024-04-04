@@ -1,5 +1,6 @@
 # Bahnhof
 In this railway system simulator, your task is to build a logistics system to optimize the production, distribution and consumption of beer.
+![Title picture](assets/png/backgrounds/bahnhoftitle0.png)
 
 Features include an automated signaling system, advanced switching including coupling and decoupling, a routing system basically constituting a programming language of its own, and fully simulated rail dynamics. More will follow.
 
