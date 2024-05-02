@@ -75,6 +75,7 @@ namespace Input
     nodeid selectat(Tracksystem& tracksystem, Vec pos);
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
+    void deleteat(Tracksystem& tracksystem, Vec pos);
     float getcostoftracks(Tracksection);
 };
 

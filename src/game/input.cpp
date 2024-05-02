@@ -35,6 +35,9 @@ void InputManager::handle(int ms, int mslogic){
                             routing.selectedroute->insertorderatselected(neworder);
                     }
                 }
+                if(e.button.button == SDL_BUTTON_MIDDLE){
+                    Tracks::Input::deleteat(tracksystem, mousepos);
+                }
                 if(e.button.button == SDL_BUTTON_LEFT){
                     if(placingsignal){
                         if(gamestate.money>0){

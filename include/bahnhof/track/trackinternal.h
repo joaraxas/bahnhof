@@ -82,7 +82,8 @@ public:
     Track* previoustrack();
     void split(Track& track1, Track& track2, State where);
     State getsplitstate(Track& track1, Track& track2, State where, State oldstate);
-    void addsignal(State signalstate, signalid signal);
+    void connectsignal(State signalstate, signalid signal);
+    void disconnectsignal(signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
     Node* previousnode;
     Node* nextnode;
@@ -107,6 +108,7 @@ class Signal
 public:
     Signal(Tracksystem& newtracksystem, State signalstate, signalid myid);
     void addtotrack();
+    void disconnectfromtrack();
     void render(Rendering* r);
     void update();
     void set(int redgreenorflip);

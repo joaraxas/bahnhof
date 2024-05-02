@@ -172,9 +172,21 @@ State Track::getsplitstate(Track& track1, Track& track2, State wheresplit, State
 	return oldstate;
 }
 
-void Track::addsignal(State signalstate, signalid signal)
+void Track::connectsignal(State signalstate, signalid signal)
 {
 	signals[signalstate.nodedist] = signal;
+}
+
+void Track::disconnectsignal(signalid signal)
+{
+	for(auto it = signals.begin(); it != signals.end(); it++)
+	{
+		if((it->second) == signal)
+		{
+			signals.erase(it);
+			break;
+		}
+	}
 }
 
 signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)

@@ -15,9 +15,14 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate, signalid myid) : 
 	sprite.zoomed = false;
 }
 
+void Signal::disconnectfromtrack()
+{
+	tracksystem->gettrack(state.track)->disconnectsignal(id);
+}
+
 void Signal::addtotrack()
 {
-	tracksystem->gettrack(state.track)->addsignal(state, id);
+	tracksystem->gettrack(state.track)->connectsignal(state, id);
 }
 
 void Signal::render(Rendering* r)

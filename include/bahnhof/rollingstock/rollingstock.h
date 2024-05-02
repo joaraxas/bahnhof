@@ -17,7 +17,7 @@ class Wagon
 {
 public:
     Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
-    ~Wagon();
+    ~Wagon(); //TODO: should be virtual
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
