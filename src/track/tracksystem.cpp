@@ -45,13 +45,13 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 Tracksystem::~Tracksystem()
 {
 	auto trackscopy = tracks;
-	for(auto & [id, track] : trackscopy)
+	for(auto& [id, track] : trackscopy)
 		removetrack(id);
 	auto nodescopy = nodes;
-	for(auto & [id, node] : nodescopy)
+	for(auto& [id, node] : nodescopy)
 		removenode(id);
 	auto signalscopy = signals;
-	for(auto & [id, signal] : signalscopy)
+	for(auto& [id, signal] : signalscopy)
 		removesignal(id);
 }
 
