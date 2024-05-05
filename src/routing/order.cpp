@@ -14,6 +14,7 @@ void Order::assignroute(Route* newroute)
 
 void Order::invalidate()
 {
+	std::cout<<"Order invalidated"<<std::endl;
 	if(valid){
 		valid = false;
 		description = "Invalid: " + description;
@@ -154,7 +155,7 @@ void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL
 	int x = int(pos.x); int y = int(pos.y);
 	SDL_Rect rect = {x,y,16,14};
 	if(!valid)
-		bgrcol.a /= 2;
+		bgrcol.a *= 0.4;
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
 	r->renderfilledrectangle(&rect, true, false);
 	r->rendertext(std::to_string(number), x+1, y, textcol);

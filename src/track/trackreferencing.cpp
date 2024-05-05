@@ -51,16 +51,19 @@ void Referencehandler::validatereferences()
 		trackid track = order->state.track;
 		if(!tracksystem->gettrack(track)){
 			order->invalidate();
+			removetrackorderreference(order);
 		}
 	}
 	for(auto order: signalorders){
 		if(!tracksystem->getsignal(order->signal)){
 			order->invalidate();
+			removesignalorderreference(order);
 		}
 	}
 	for(auto order: switchorders){
 		if(!tracksystem->getswitch(order->_switch)){
 			order->invalidate();
+			removeswitchorderreference(order);
 		}
 	}
 }
