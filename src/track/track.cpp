@@ -29,8 +29,10 @@ Track::~Track()
 {
 	for(auto [state, signal]: signals)
 		tracksystem->removesignal(signal);
-	previousnode->disconnecttrack(this, isabovepreviousnode());
-	nextnode->disconnecttrack(this, !isbelownextnode());
+	bool aboveprevious = isabovepreviousnode();
+	bool abovenext = !isbelownextnode();
+	previousnode->disconnecttrack(this, aboveprevious);
+	nextnode->disconnecttrack(this, abovenext);
 }
 
 void Track::initnodes()

@@ -77,7 +77,10 @@ bool Train::perform(int ms)
 	if(route){
 	Order* order = route->getorder(orderid);
 	if(!order){//orderid does not exist in route
-	proceed();
+		proceed();
+	}
+	else if(!order->valid){
+		proceed();
 	}
 	else{
 	switch(order->order){

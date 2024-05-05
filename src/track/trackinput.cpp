@@ -6,6 +6,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
+#include "bahnhof/rollingstock/rollingstock.h"
 
 namespace Tracks
 {
@@ -92,13 +93,24 @@ void deleteat(Tracksystem& tracks, Vec pos)
 {
 	trackid clickedtrack=0; signalid clickedsignal=0;
 	State clickedstate = whatdidiclick(tracks, pos, &clickedtrack, nullptr, &clickedsignal, nullptr);
-	if(clickedtrack)
-		tracks.removetrack(clickedtrack);
+	if(clickedtrack){
+		bool mayremove = true;
+		for(auto wagon: tracks.references->wagons){
+			for(State* stateptr: wagon->getstates()){
+				if(stateptr->track==clickedtrack)
+					mayremove = false;
+			}
+		}
+		if(mayremove){
+			tracks.removetrack(clickedtrack);
+		}
+	}
 	if(clickedsignal){
 		Signal* signalptr = tracks.getsignal(clickedsignal);
 		signalptr->disconnectfromtrack();
 		tracks.removesignal(clickedsignal);
 	}
+	tracks.references->validatereferences();
 }
 
 float getcostoftracks(Tracksection section){

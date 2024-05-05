@@ -5,6 +5,8 @@
 
 class Order;
 class Gotostate;
+class Setsignal;
+class Setswitch;
 class Train;
 class Wagon;
 class Gamestate;
@@ -16,6 +18,8 @@ class Track;
 class Switch;
 class Signal;
 struct Trackblock;
+struct Tracksystem;
+
 struct Tracksection
 {
     Tracksection() {};
@@ -24,13 +28,20 @@ struct Tracksection
     std::vector<Node*> nodes;
     std::unordered_map<Node*,State> tracksplits;
 };
+
 struct Referencehandler
 {
+    Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
     void removewagonreference(Wagon*);
-    void removeorderreference(Gotostate*);
+    void removetrackorderreference(Gotostate*);
+    void removesignalorderreference(Setsignal*);
+    void removeswitchorderreference(Setswitch*);
+    void validatereferences();
     std::vector<Wagon*> wagons;
     std::vector<Gotostate*> trackorders;
-    int mynum = 3;
+    std::vector<Setsignal*> signalorders;
+    std::vector<Setswitch*> switchorders;
+    Tracksystem* tracksystem = nullptr;
 };
 
 struct Tracksystem

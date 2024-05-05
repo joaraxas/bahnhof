@@ -6,7 +6,7 @@
 namespace Tracks{
     class Tracksystem;
 }
-class Order;
+struct Order;
 
 class Route
 {
@@ -56,10 +56,12 @@ struct Order
     virtual void assignroute(Route* newroute);
     virtual void render(Rendering* r, int number) {};
     void renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
+    void invalidate();
     Route* route = nullptr; // initialized by route
     ordertype order;
     std::string description;
     int offset = 0;
+    bool valid = true;
 };
 struct Gotostate : public Order
 {
@@ -69,23 +71,29 @@ struct Gotostate : public Order
     void render(Rendering* r, int number);
     State state;
     bool pass;
+	Vec posleft;
+	Vec posright;
 };
 struct Setsignal : public Order
 {
     Setsignal(signalid whichsignal, int redgreenorflip=2);
+    ~Setsignal();
     void assignroute(Route* newroute);
     void render(Rendering* r, int number);
     signalid signal;
     int redgreenflip;
+	Vec pos;
 };
 struct Setswitch : public Order
 {
     Setswitch(switchid whichswitch, int whichnodestate=-1);
+    ~Setswitch();
     void assignroute(Route* newroute);
     void render(Rendering* r, int number);
     switchid _switch;
     bool flip;
     int switchstate;
+	Vec pos;
 };
 struct Couple : public Order
 {

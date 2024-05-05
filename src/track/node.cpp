@@ -34,6 +34,7 @@ void Node::connecttrack(Track* track, bool fromabove){
 void Node::disconnecttrack(Track* track, bool fromabove)
 {
 	if(fromabove){
+		std::cout<<"disc from above from node "<<id<<std::endl;
 		if(switchup){
 			switchup->removetrack(track);
 			if(switchup->tracks.size()<=1)

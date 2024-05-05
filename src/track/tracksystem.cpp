@@ -39,7 +39,7 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 		Tracksection section = Input::buildat(*this, newnode, Vec(xs[iNode], ys[iNode]));
 		newnode = section.nodes.back();
 	}
-	references = std::make_unique<Referencehandler>();
+	references = std::make_unique<Referencehandler>(this);
 }
 
 Tracksystem::~Tracksystem()
