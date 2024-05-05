@@ -35,7 +35,7 @@ void Building::update(int ms)
 				storage->loadstorage(wants, got-put);
 			}
 			else{
-				//money+=got;
+				game->getgamestate().money+=got;
 			}
 		}
 		timeleft = 10000;

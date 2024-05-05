@@ -5,7 +5,6 @@
 class Route;
 class Wagon;
 class Train;
-class Tracksystem;
 class Building;
 class Camera;
 class Rendering;
@@ -15,6 +14,9 @@ class InputManager;
 class RouteManager;
 class TimeManager;
 class Gamestate;
+namespace Tracks{
+    class Tracksystem;
+}
 
 class Game
 {
@@ -52,22 +54,19 @@ public:
     void initjusttrack();
     void inittrain(State startstate);
     void addtrainstoorphans();
-    Tracksystem& gettracksystems() {return *tracksystem;};
+    Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
-    void selecttrain(Train* train);
-    Train* getselectedtrain();
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building>> buildings;
     std::vector<std::unique_ptr<Train>> trains;
     int time = 0;
     float money = 10;
     int revenue = 0;
-    State newwagonstate;
+    State newwagonstate; //TODO: remove this as it is not protected from track splitting
 private:
     Game* game;
     RouteManager* routing;
-    std::unique_ptr<Tracksystem> tracksystem;
-    Train* selectedtrain = nullptr;
+    std::unique_ptr<Tracks::Tracksystem> tracksystem;
     //Map* map;
 };
 

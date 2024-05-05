@@ -39,6 +39,7 @@ public:
     int getimagetypes();
     void setoriginx(int);
     void setoriginy(int);
+    Vec getsize();
 private:
     sprites::name name;
     int w;
@@ -67,6 +68,7 @@ public:
     void setspritesheet(SpriteManager& s, sprites::name name);
     void updateframe(int ms);
     void render(Rendering* r, Vec pos);
+    Vec getsize();
     float imageangle = 0;
     float imagespeed = 0;
     float imageindex = 0;

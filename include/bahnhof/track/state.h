@@ -2,6 +2,7 @@
 
 typedef int trackid;
 typedef int nodeid;
+typedef int switchid;
 typedef int signalid;
 
 struct State

@@ -2,151 +2,125 @@
 #include<map>
 #include "state.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/graphics/sprite.h"
 
 class Order;
-class Node;
-class Track;
-class Signal;
+class Gotostate;
+class Setsignal;
+class Setswitch;
 class Train;
+class Wagon;
 class Gamestate;
 
-class Tracksystem
+namespace Tracks
 {
-friend class Node;
-friend class Track;
-friend class Gamestate;
+class Node;
+class Track;
+class Switch;
+class Signal;
+struct Trackblock;
+struct Tracksystem;
+
+struct Tracksection
+{
+    Tracksection() {};
+    Tracksection(std::vector<Track*> t, std::vector<Node*> n) : tracks(t), nodes(n) {};
+    std::vector<Track*> tracks;
+    std::vector<Node*> nodes;
+    std::unordered_map<Node*,State> tracksplits;
+};
+
+struct Referencehandler
+{
+    Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
+    void removewagonreference(Wagon*);
+    void removetrackorderreference(Gotostate*);
+    void removesignalorderreference(Setsignal*);
+    void removeswitchorderreference(Setswitch*);
+    void validatereferences();
+    std::vector<Wagon*> wagons;
+    std::vector<Gotostate*> trackorders;
+    std::vector<Setsignal*> signalorders;
+    std::vector<Setswitch*> switchorders;
+    Tracksystem* tracksystem = nullptr;
+};
+
+struct Tracksystem
+{
 public:
-    Tracksystem(Game* whatgame, std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys);
     ~Tracksystem();
-    void update(int ms);
-    void render(Rendering* r);
-    void renderabovetrains(Rendering* r);
-    void deleteclick(int xMouse, int yMouse);
-    void selectat(Vec pos);
-    float buildat(Vec pos);
-    bool switchat(Vec pos);
-    Order* generateorderat(Vec pos);
-    Vec getpos(State state, float transverseoffset=0);
-    Vec getsignalpos(signalid signal);
-    Vec getswitchpos(nodeid node, bool updown);
-    State getcloseststate(Vec pos);
-    float getorientation(State state);
-    float getradius(State state);
-    State travel(State state, float pixels);
-    float distancefromto(State state1, State state2, float maxdist, bool mustalign=false);
-    bool isendofline(State state);
+    Node* getnode(nodeid node);
+    Track* gettrack(trackid track);
+    Switch* getswitch(switchid _switch);
+    Signal* getsignal(signalid signal);
+    nodeid addnode(Node& node);
+    trackid addtrack(Track& track);
+    switchid addswitchtolist(Switch* _switch);
     signalid addsignal(State state);
-    void setsignal(signalid signal, int redgreenorflip);
-    bool getsignalstate(signalid signal);
-    bool isred(Train* train);
-    void setswitch(nodeid node, bool updown, int switchstate);
-    int getswitchstate(nodeid node, bool updown);
-    bool checkblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
-    bool claimblocks(std::vector<nodeid> switchblocks, std::vector<signalid> signalblocks, Train* fortrain);
-    void runoverblocks(State state, float pixels, Train* fortrain);
-    signalid nextsignalontrack(State state, bool startfromtrackend=false, bool mustalign=true);
-    void setblocksuptonextsignal(Signal* fromsignal);
-    Game* game;
-    nodeid selectednode = 0;
-    bool placingsignal = false;
-private:
-    nodeid addnode(Vec pos, float dir);
-    trackid addtrack(nodeid leftnode, nodeid rightnode);
     void removenode(nodeid toremove);
     void removetrack(trackid toremove);
+    void removeswitchfromlist(switchid toremove);
     void removesignal(signalid toremove);
-    State whatdidiclick(Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    float distancetotrack(trackid track, Vec pos);
-    float distancetonode(nodeid node, Vec pos);
-    float distancetosignal(signalid node, Vec pos);
-    float distancetoswitch(nodeid node, Vec pos, bool updown);
-    nodeid getclosestnode(Vec pos);
-    signalid getclosestsignal(Vec pos);
-    nodeid getclosestswitch(Vec pos, bool* updown);
-    Node* getnode(nodeid node);
-    float getnodedir(nodeid node);
-    float getradiusoriginatingfromnode(nodeid node, trackid track);
-    Vec getnodepos(nodeid node);
-    Track* gettrack(trackid track);
-    trackid nexttrack(trackid track);
-    trackid previoustrack(trackid track);
-    State tryincrementingtrack(State state);
-    nodeid extendtracktopos(nodeid fromnode, Vec pos);
-    void connecttwonodes(nodeid node1, nodeid node2);
-    Signal* getsignal(signalid signal);
+    std::vector<Track*> alltracks();
+    std::vector<Node*> allnodes();
+    std::vector<Switch*> allswitches();
+    std::vector<Signal*> allsignals();
+    Game* game;
+    std::unique_ptr<Referencehandler> references;
+private:
     std::map<nodeid, Node*> nodes;
     std::map<trackid, Track*> tracks;
+    std::map<switchid, Switch*> switches;
     std::map<signalid, Signal*> signals;
     nodeid nodecounter = 0;
     trackid trackcounter = 0;
+    switchid switchcounter = 0;
     signalid signalcounter = 0;
-    bool preparingtrack = false;
 };
 
-class Node
+namespace Input
 {
-friend class Tracksystem;
-private:
-    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
-    void connecttrack(trackid track, bool fromupordown);
-    void render(Rendering* r);
-    trackid gettrackup();
-    trackid gettrackdown();
-    Vec getswitchpos(bool updown);
-    void incrementswitch(bool updown);
-    Tracksystem* tracksystem;
-    nodeid id;
-    Vec pos;
-    float dir;
-    int stateup = 0;
-    int statedown = 0;
-    std::vector<trackid> tracksup;
-    std::vector<trackid> tracksdown;
-    Train* reservedfor = nullptr;
-    Sprite sprite;
+    signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
+    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    nodeid selectat(Tracksystem& tracksystem, Vec pos);
+    bool switchat(Tracksystem& tracksystem, Vec pos);
+    Order* generateorderat(Tracksystem& tracksystem, Vec pos);
+    void deleteat(Tracksystem& tracksystem, Vec pos);
+    float getcostoftracks(Tracksection);
 };
 
-class Track
+namespace Signaling
 {
-friend class Tracksystem;
-private:
-    Track(Tracksystem& newtracksystem, nodeid previous, nodeid next, trackid myid);
-    ~Track();
-    Tracksystem* tracksystem;
-    nodeid previousnode, nextnode;
-    void render(Rendering* r);
-    Vec getpos(float nodedist);
-    Vec getpos(float nodedist, float transverseoffset);
-    State getcloseststate(Vec pos);
-    float getarclength(float nodedist);
-    float getorientation(float nodedist);
-    bool isabovepreviousnode();
-    bool isbelownextnode();
-    trackid id;
-    float phi;
-    float radius;
-    float previousdir;
-    float nextdir;
-    Vec previouspos;
-    Vec nextpos;
-    std::map<float,signalid> signals;
+    void update(Tracksystem& tracksystem, int ms);
+    bool isred(Tracksystem& tracksystem, Train* train);
+    Trackblock getblocksuptonextsignal(Tracksystem& tracksystem, State state);
+    void runoverblocks(Tracksystem& tracksystem, State state, float pixels, Train* fortrain);
+    bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
+    bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
 };
 
-class Signal
+namespace Construction
 {
-friend class Tracksystem;
-public:
-    Signal(Tracksystem& newtracksystem, State signalstate);
-    void render(Rendering* r);
-    bool isred(Train* train);
-    bool isgreen = true;
-private:
-    State state;
-    Vec pos;
-    Tracksystem* tracksystem;
-    std::vector<nodeid> switchblocks;
-    std::vector<signalid> signalblocks;
-    Train* reservedfor = nullptr;
-    Sprite sprite;
+    Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
+    void splittrack(Tracksystem&, Node* node, State state);
+};
+
+    void render(Tracksystem&, Rendering* r);
+    void render(Tracksection section, Rendering* r, int mode=0);
+    void renderabovetrains(Tracksystem&, Rendering* r);
+
+    State travel(Tracksystem&, State state, float pixels);
+    float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
+    bool isendofline(Tracksystem&, State state);
+
+    Vec getpos(Tracksystem&, State state, float transverseoffset=0);
+    float getradius(Tracksystem&, State state);
+    float getorientation(Tracksystem&, State state);
+
+    Vec getswitchpos(Tracksystem&, switchid _switch);
+    Vec getsignalpos(Tracksystem&, signalid signal);
+    void setsignal(Tracksystem&, signalid signal, int redgreenorflip);
+    void setswitch(Tracksystem&, switchid _switch, int switchstate);
 };

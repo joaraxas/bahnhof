@@ -3,13 +3,15 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 
-class Tracksystem;
-class Order;
+namespace Tracks{
+    class Tracksystem;
+}
+struct Order;
 
 class Route
 {
 public:
-    Route(Tracksystem* tracks, std::string routename);
+    Route(Tracks::Tracksystem* tracks, std::string routename);
     Order* getorder(int orderid);
     int nextorder(int orderid);
     int previousorder(int orderid);
@@ -22,12 +24,11 @@ public:
     void removeorders(int orderindexfrom, int orderindexto);
     void render(Rendering* r);
     int getindex(int orderid);
-    Tracksystem* tracksystem;
+    Tracks::Tracksystem* tracksystem;
     std::string name = "New route";
     int selectedorderid = -1;
     std::vector<signalid> signals;
-    std::vector<nodeid> switches;
-    std::vector<bool> updowns;
+    std::vector<switchid> switches;
 private:
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
@@ -37,10 +38,10 @@ private:
 class RouteManager
 {
 public:
-    RouteManager(Tracksystem* tracks);
+    RouteManager(Tracks::Tracksystem* tracks);
     void renderroutes(Rendering* r);
     Route* addroute();
-    Tracksystem* tracksystem;
+    Tracks::Tracksystem* tracksystem;
     Route* selectedroute = nullptr;
     std::vector<std::unique_ptr<Route>> routes;
 };
@@ -55,35 +56,44 @@ struct Order
     virtual void assignroute(Route* newroute);
     virtual void render(Rendering* r, int number) {};
     void renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
+    void invalidate();
     Route* route = nullptr; // initialized by route
     ordertype order;
     std::string description;
     int offset = 0;
+    bool valid = true;
 };
 struct Gotostate : public Order
 {
     Gotostate(State whichstate, bool mustpass=false);
+    ~Gotostate();
+    void assignroute(Route* newroute);
     void render(Rendering* r, int number);
     State state;
     bool pass;
+	Vec posleft;
+	Vec posright;
 };
 struct Setsignal : public Order
 {
     Setsignal(signalid whichsignal, int redgreenorflip=2);
+    ~Setsignal();
     void assignroute(Route* newroute);
     void render(Rendering* r, int number);
     signalid signal;
     int redgreenflip;
+	Vec pos;
 };
 struct Setswitch : public Order
 {
-    Setswitch(nodeid whichnode, bool ispointingup, int whichnodestate=-1);
+    Setswitch(switchid whichswitch, int whichnodestate=-1);
+    ~Setswitch();
     void assignroute(Route* newroute);
     void render(Rendering* r, int number);
-    nodeid node;
-    bool updown;
+    switchid _switch;
     bool flip;
-    int nodestate;
+    int switchstate;
+	Vec pos;
 };
 struct Couple : public Order
 {

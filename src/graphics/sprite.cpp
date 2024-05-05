@@ -26,3 +26,9 @@ void Sprite::render(Rendering* r, Vec pos)
 	else
 		std::cout<<"Error: sprite tried rendering nonexisting spritesheet, did you forget to call setsprite?"<<std::endl;
 }
+
+Vec Sprite::getsize()
+{
+	Vec sheetsize = spritesheet->getsize();
+	return Vec(sheetsize.x/imagetypes, sheetsize.y/imagenumber);
+}

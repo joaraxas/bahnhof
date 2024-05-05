@@ -14,6 +14,9 @@ class Vec
 };
 
 float norm(Vec v);
+Vec localcoords(Vec globalvec, float angle, Vec origin);
+Vec globalcoords(Vec localvec, float angle, Vec origin);
+
 float sign(float a);
 float truncate(float dir);
 int randint(int maxinclusive);

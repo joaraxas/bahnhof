@@ -5,9 +5,8 @@
 #include "bahnhof/routing/routing.h"
 
 
-Route::Route(Tracksystem* tracks, std::string routename)
+Route::Route(Tracks::Tracksystem* tracks, std::string routename)
 {
-	std::cout<<routename<<" created"<<std::endl;
 	name = routename;
 	tracksystem = tracks;
 }
@@ -119,9 +118,9 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 
     signals.clear();
     switches.clear();
-    updowns.clear();
 	for(auto& order: orders)
-		order->assignroute(this);
+		if(order->valid)
+			order->assignroute(this);
 }
 
 void Route::render(Rendering* r)

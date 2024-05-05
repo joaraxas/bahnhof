@@ -6,19 +6,24 @@ class Storage;
 class Route;
 class Order;
 
-class Tracksystem;
 class Train;
 class InputManager;
+
+namespace Tracks{
+    class Tracksystem;
+}
 
 class Wagon
 {
 public:
-    Wagon(Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
+    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
+    ~Wagon(); //TODO: should be virtual
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
     virtual State frontendstate();
     virtual State backendstate();
+    virtual std::vector<State*> getstates();
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
@@ -27,9 +32,9 @@ public:
     bool alignedforward = true;
     bool hasdriver = false;
     int w;
-    State state; //should be protected
 protected:
-    Tracksystem* tracksystem = nullptr;
+    Tracks::Tracksystem* tracksystem = nullptr;
+    State state; //should be protected
     Sprite sprite;
     Sprite icon;
     ResourceManager* allresources = nullptr;
@@ -42,7 +47,7 @@ private:
 class Locomotive : public Wagon
 {
 public:
-    Locomotive(Tracksystem* mytracks, State trackstate);
+    Locomotive(Tracks::Tracksystem* mytracks, State trackstate);
     void update(int ms);
     int loadwagon(resourcetype type, int amount);
     int unloadwagon(resourcetype* type);
@@ -58,14 +63,14 @@ private:
 class Openwagon : public Wagon
 {
 public:
-    Openwagon(Tracksystem* mytracks, State trackstate);
+    Openwagon(Tracks::Tracksystem* mytracks, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
-    Tankwagon(Tracksystem* mytracks, State trackstate);
+    Tankwagon(Tracks::Tracksystem* mytracks, State trackstate);
     int loadwagon(resourcetype type, int amount);
 };
 
@@ -73,7 +78,7 @@ public:
 class Train
 {
 public:
-    Train(Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
+    Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
     void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
@@ -89,7 +94,7 @@ public:
     State backwardstate();
     bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
-    Tracksystem* tracksystem;
+    Tracks::Tracksystem* tracksystem;
     float speed;
     bool gasisforward = true;
     std::vector<Wagon*> wagons;
