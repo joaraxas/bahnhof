@@ -66,15 +66,15 @@ void Node::render(Rendering* r)
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		r->rendertext(std::to_string(id), pos.x, pos.y);
 		if(reservedfor){
-			//rendertext(reservedfor->route->name, pos.x, pos.y+14);
+			//rendertext(reservedfor->route->name, pos.x, pos.y+14/scale);
 		}
 		else
-			r->rendertext("noone", pos.x, pos.y+14);
+			r->rendertext("noone", pos.x, pos.y+14/scale);
 		if(trackdown)
-			r->rendertext("track down: "+std::to_string(trackdown->id), pos.x, pos.y+2*14);
+			r->rendertext("track down: "+std::to_string(trackdown->id), pos.x, pos.y+2*14/scale);
 		if(trackup)
-			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14);
-		r->rendertext(std::to_string(dir), pos.x, pos.y+4*14);
+			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14/scale);
+		r->rendertext(std::to_string(dir), pos.x, pos.y+4*14/scale);
 	}
 }
 
