@@ -7,6 +7,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/input.h"
+#include "bahnhof/common/timing.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
@@ -56,6 +57,7 @@ void Rendering::render(Gamestate* gamestate)
 	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
 	rendertext(std::to_string(int(gamestate->time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
 	rendertext(std::to_string(int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
+	rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 20, 5*14, {0,0,0,0}, false, false);
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	int scalelinelength = 200;
 	renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);

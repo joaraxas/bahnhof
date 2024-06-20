@@ -10,10 +10,12 @@ public:
     void speedup();
     void speeddown();
     float speed();
+    int getfps();
 private:
     int ms;
     int mslogic;
     int starttime;
     int lasttime;
     int logspeedfactor;
+    float fps=0;
 };
