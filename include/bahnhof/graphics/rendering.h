@@ -5,7 +5,7 @@
 #include<string>
 #include "bahnhof/common/math.h"
 
-const int SCREEN_WIDTH = 1000;
+const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
 const int MAP_WIDTH = SCREEN_WIDTH*64;
 const int MAP_HEIGHT = SCREEN_HEIGHT*64;

@@ -8,7 +8,7 @@
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
-    panels.emplace_back(new Panel(this, {300,200,100,50}));
+    new Panel(this, {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT});
 }
 
 void InterfaceManager::render(Rendering* r)
@@ -33,7 +33,6 @@ void InterfaceManager::render(Rendering* r)
 	r->renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
 	r->renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
 	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
-	
 }
 
 int InterfaceManager::leftclick(Vec mousepos)
@@ -42,4 +41,19 @@ int InterfaceManager::leftclick(Vec mousepos)
         if(panel->click(mousepos, SDL_BUTTON_LEFT))
             return 1;
     return 0;
+}
+
+void InterfaceManager::addpanel(Panel* panel)
+{
+    panels.emplace_back(panel);
+}
+
+void InterfaceManager::removepanel(Panel* panel)
+{
+    auto it = std::find_if(panels.begin(), panels.end(), 
+        [panel](const std::unique_ptr<Panel>& ptr){
+            return ptr.get() == panel;
+        });
+    if(it!=panels.end())
+        panels.erase(it);
 }

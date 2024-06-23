@@ -19,6 +19,7 @@ add_executable(bahnhof
     src/game/resources.cpp
     src/ui/ui.cpp
     src/ui/panel.cpp
+    src/ui/button.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/trackreferencing.cpp
