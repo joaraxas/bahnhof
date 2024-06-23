@@ -16,6 +16,8 @@ add_executable(bahnhof
     src/game/gamestate.cpp
     src/game/game.cpp
     src/game/main.cpp
+    src/game/resources.cpp
+    src/ui/ui.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/trackreferencing.cpp
@@ -30,7 +32,6 @@ add_executable(bahnhof
     src/routing/order.cpp
     src/rollingstock.cpp
     src/buildings.cpp
-    src/game/resources.cpp
     src/train.cpp
 )
 

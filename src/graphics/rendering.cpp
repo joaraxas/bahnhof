@@ -7,9 +7,8 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/input.h"
-#include "bahnhof/common/timing.h"
+#include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
@@ -46,24 +45,13 @@ void Rendering::render(Gamestate* gamestate)
 	game->getinputmanager().render(this, tracksystem);
 	for(auto& wagon : gamestate->wagons)
 		wagon->render(this);
-	if(gamestate->getrouting().selectedroute)
-		gamestate->getrouting().selectedroute->render(this);
-	else
-		gamestate->getrouting().renderroutes(this);
 	for(auto& train : gamestate->trains)
 		train->render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 
-	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
-	rendertext(std::to_string(int(gamestate->time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
-	rendertext(std::to_string(int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
-	rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 20, 5*14, {0,0,0,0}, false, false);
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	int scalelinelength = 200;
-	renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
-	renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
-	renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
-	rendertext(std::to_string(int(scalelinelength*0.001*150/getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+	InterfaceManager& ui = game->getui();
+	ui.render(this);
+
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderPresent(renderer);
 }

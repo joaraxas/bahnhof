@@ -2,11 +2,15 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<SDL_ttf.h>
-#include "gamestate.h"
 #include "math.h"
+#include "bahnhof/track/state.h"
 
 namespace Tracks{
     class Tracksystem;}
+
+class Game;
+class Rendering;
+class Train;
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;

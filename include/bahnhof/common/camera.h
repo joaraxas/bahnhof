@@ -1,7 +1,8 @@
 #pragma once
 #include<SDL.h>
-#include "bahnhof/common/gamestate.h"
 #include "math.h"
+
+class Game;
 
 class Camera
 {

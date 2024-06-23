@@ -7,6 +7,7 @@
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/timing.h"
+#include "bahnhof/ui/ui.h"
 
 
 Game::Game()
@@ -18,6 +19,7 @@ Game::Game()
 	rendering = new Rendering(this, cam);
 	allsprites = new SpriteManager();
 	resources = new ResourceManager(this);
+	ui = new InterfaceManager(this);
 	gamestate = new Gamestate(this);
 	quit = false;
 }
@@ -30,6 +32,7 @@ Game::~Game()
 	delete rendering;
 	delete allsprites;
 	delete resources;
+	delete ui;
 	delete gamestate;
 }
 

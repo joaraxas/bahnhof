@@ -13,6 +13,7 @@ class ResourceManager;
 class InputManager;
 class RouteManager;
 class TimeManager;
+class InterfaceManager;
 class Gamestate;
 namespace Tracks{
     class Tracksystem;
@@ -32,6 +33,7 @@ public:
     InputManager& getinputmanager() {return *input;};
     Rendering& getrendering() {return *rendering;};
     SpriteManager& getsprites() {return *allsprites;};
+    InterfaceManager& getui() {return *ui;};
     Gamestate& getgamestate() {return *gamestate;};
 private:
     ResourceManager* resources;
@@ -40,6 +42,7 @@ private:
     InputManager* input;
     Rendering* rendering;
     SpriteManager* allsprites;
+    InterfaceManager* ui;
     Gamestate* gamestate;
     bool quit;
 };

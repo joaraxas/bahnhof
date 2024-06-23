@@ -2,6 +2,7 @@
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
@@ -18,6 +19,7 @@ void InputManager::handle(int ms, int mslogic){
     RouteManager& routing = gamestate.getrouting();
     SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
+    InterfaceManager& ui = game->getui();
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:{
@@ -39,7 +41,8 @@ void InputManager::handle(int ms, int mslogic){
                     Tracks::Input::deleteat(tracksystem, mousepos);
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
-                    if(placingsignal){
+                    if(ui.leftclick(mousepos)){}
+                    else if(placingsignal){
                         if(gamestate.money>0){
                             Tracks::Input::buildsignalat(tracksystem, mousepos);
                             gamestate.money-=1;
