@@ -26,8 +26,8 @@ public:
     void rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false);
     void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true, bool originiscenter=true, int centerx=0, int centery=0);
     void renderline(Vec pos1, Vec pos2, bool ported=true);
-    void renderrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
-    void renderfilledrectangle(SDL_Rect* rect, bool ported=true, bool zoomed=true);
+    void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
+    void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     float getscale();
 private:
     Game* game;

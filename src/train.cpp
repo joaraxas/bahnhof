@@ -158,7 +158,7 @@ void Train::render(Rendering* r)
 				int rectw = 10;
 				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
 				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
-				r->renderfilledrectangle(&rect, false, false);
+				r->renderfilledrectangle(rect, false, false);
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 		}

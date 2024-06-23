@@ -6,18 +6,25 @@
 #include "bahnhof/common/math.h"
 
 class Panel;
+class InterfaceManager;
 class Game;
 class Gamestate;
 class Rendering;
 
 class Button{
-    Button();
+    Button(Panel&, Vec newpos);
     Panel* panel;
     Vec pos;
 };
 
 class Panel{
-    Panel();
+public:
+    Panel(InterfaceManager* newui, SDL_Rect newrect);
+    bool click(Vec pos, int type);
+    void render(Rendering*);
+private:
+    InterfaceManager* ui;
+    SDL_Rect rect;
     std::vector<std::unique_ptr<Button>> buttons;
 };
 

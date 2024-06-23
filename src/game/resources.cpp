@@ -57,8 +57,7 @@ void Storage::render(Rendering* r)
 {
 	ResourceManager& allresources = game->getresources();
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
-	SDL_Rect drawrect = rect;
-	r->renderrectangle(&drawrect);
+	r->renderrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;

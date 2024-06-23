@@ -157,7 +157,7 @@ void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL
 	if(!valid)
 		bgrcol.a *= 0.4;
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
-	r->renderfilledrectangle(&rect, true, false);
+	r->renderfilledrectangle(rect, true, false);
 	r->rendertext(std::to_string(number), x+1, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }

@@ -8,11 +8,15 @@
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
+    panels.emplace_back(new Panel(this, {300,200,100,50}));
 }
 
 void InterfaceManager::render(Rendering* r)
 {
     Gamestate& gamestate = game->getgamestate();
+
+    for(auto& panel: panels)
+        panel->render(r);
 
 	if(gamestate.getrouting().selectedroute)
 		gamestate.getrouting().selectedroute->render(r);
@@ -34,5 +38,8 @@ void InterfaceManager::render(Rendering* r)
 
 int InterfaceManager::leftclick(Vec mousepos)
 {
+    for(auto& panel: panels)
+        if(panel->click(mousepos, SDL_BUTTON_LEFT))
+            return 1;
     return 0;
 }

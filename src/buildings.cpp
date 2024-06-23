@@ -45,8 +45,7 @@ void Building::update(int ms)
 void Building::render(Rendering* rendering)
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	SDL_Rect drawrect = rect;
-	rendering->renderfilledrectangle(&drawrect);
+	rendering->renderfilledrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 

@@ -95,30 +95,30 @@ void Rendering::renderline(Vec pos1, Vec pos2, bool ported)
 		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
-void Rendering::renderrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+void Rendering::renderrectangle(SDL_Rect rect, bool ported, bool zoomed)
 {
 	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+		Vec screenpos = cam->screencoord(Vec(rect.x, rect.y));
+		rect.x = screenpos.x; rect.y = screenpos.y;
 	}
 	if(zoomed){
-		rect->w *= cam->getscale();
-		rect->h *= cam->getscale();
+		rect.w *= cam->getscale();
+		rect.h *= cam->getscale();
 	}
-	SDL_RenderDrawRect(renderer, rect);
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Rendering::renderfilledrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 {
 	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+		Vec screenpos = cam->screencoord(Vec(rect.x, rect.y));
+		rect.x = screenpos.x; rect.y = screenpos.y;
 	}
 	if(zoomed){
-		rect->w *= cam->getscale();
-		rect->h *= cam->getscale();
+		rect.w *= cam->getscale();
+		rect.h *= cam->getscale();
 	}
-	SDL_RenderFillRect(renderer, rect);
+	SDL_RenderFillRect(renderer, &rect);
 }
 
 float Rendering::getscale()
