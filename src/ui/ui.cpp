@@ -1,14 +1,16 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/routing/routing.h"
 
+
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
-    new Panel(this, {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT});
+    new UI::Panel(this, {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT});
 }
 
 void InterfaceManager::render(Rendering* r)
@@ -43,17 +45,22 @@ int InterfaceManager::leftclick(Vec mousepos)
     return 0;
 }
 
-void InterfaceManager::addpanel(Panel* panel)
+void InterfaceManager::addpanel(UI::Panel* panel)
 {
     panels.emplace_back(panel);
 }
 
-void InterfaceManager::removepanel(Panel* panel)
+void InterfaceManager::removepanel(UI::Panel* panel)
 {
     auto it = std::find_if(panels.begin(), panels.end(), 
-        [panel](const std::unique_ptr<Panel>& ptr){
+        [panel](const std::unique_ptr<UI::Panel>& ptr){
             return ptr.get() == panel;
         });
     if(it!=panels.end())
         panels.erase(it);
+}
+
+Game& InterfaceManager::getgame()
+{
+    return *game;
 }

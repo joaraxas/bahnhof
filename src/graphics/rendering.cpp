@@ -56,9 +56,9 @@ void Rendering::render(Gamestate* gamestate)
 	SDL_RenderPresent(renderer);
 }
 
-void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed)
+void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
 {
-	SDL_Texture* tex = loadtext(text, color);
+	SDL_Texture* tex = loadtext(text, color, maxwidth);
 	int w, h;
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};

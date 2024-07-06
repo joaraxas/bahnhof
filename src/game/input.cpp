@@ -129,9 +129,6 @@ void InputManager::handle(int ms, int mslogic){
                         selectedtrain->speed = 0;
                     }
                 }
-                if(e.key.keysym.sym == SDLK_z){
-                    placingsignal = true;
-                }
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
                 }

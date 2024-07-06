@@ -5,37 +5,31 @@
 #include<vector>
 #include "bahnhof/common/math.h"
 
-class Panel;
-class InterfaceManager;
 class Game;
 class Gamestate;
 class Rendering;
+class InterfaceManager;
 
-class Button{
-public:
-    Button(Panel*, Vec newpos);
-    bool click(Vec pos, int type);
-    void render(Rendering*);
-    SDL_Rect getabsrect();
-private:
-    Vec pos;
-    Panel* panel;
-    SDL_Rect rect;
-    //InterfaceManager* ui;
-};
+namespace UI{
+
+class Button;
 
 class Panel{
 public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
+    ~Panel();
     void erase();
     bool click(Vec pos, int type);
     void render(Rendering*);
     Vec topcorner();
+    InterfaceManager& getui();
 private:
     SDL_Rect rect;
     InterfaceManager* ui;
     std::vector<std::unique_ptr<Button>> buttons;
 };
+
+}
 
 class InterfaceManager{
 public:
@@ -43,9 +37,10 @@ public:
     void update(int ms);
     int leftclick(Vec pos);
     void render(Rendering*);
-    void addpanel(Panel*);
-    void removepanel(Panel*);
+    void addpanel(UI::Panel*);
+    void removepanel(UI::Panel*);
+    Game& getgame();
 private:
-    std::vector<std::unique_ptr<Panel>> panels;
+    std::vector<std::unique_ptr<UI::Panel>> panels;
     Game* game;
 };

@@ -1,13 +1,24 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
+
+namespace UI{
 
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 {
     ui = newui;
 	rect = newrect;
     ui->addpanel(this);
-	buttons.emplace_back(new Button(this, Vec(20,20)));
+	buttons.emplace_back(new Close(this, Vec(20,200)));
+	buttons.emplace_back(new PlaceSignal(this, Vec(20,200+30)));
+}
+
+Panel::~Panel() = default;
+
+InterfaceManager& Panel::getui()
+{
+    return *ui;
 }
 
 void Panel::erase()
@@ -32,9 +43,10 @@ bool Panel::click(Vec mousepos, int type)
 	if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
 		std::cout<<"clicked"<<std::endl;
 		for(auto& button: buttons)
-			if(button->click(mousepos, type))
+			if(button->checkclick(mousepos, type))
 				break;
 		return true;
 	}
     return false;
+}
 }

@@ -35,6 +35,7 @@ public:
     Vec mapmousepos();
     bool keyispressed(const int scancode);
     void selecttrain(Train* train);
+    void placesignal() {placingsignal = true;};
 private:
     Game* game;
     const Uint8* keys;

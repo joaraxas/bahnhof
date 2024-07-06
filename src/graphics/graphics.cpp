@@ -60,10 +60,10 @@ SDL_Texture* loadimage(std::string path)
 	return tex;	
 }
 
-SDL_Texture* loadtext(std::string text, SDL_Color color)
+SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 {
 	SDL_Surface* surf = nullptr;
-	surf = TTF_RenderUTF8_Solid(font, text.c_str(), color);
+	surf = TTF_RenderUTF8_Solid_Wrapped(font, text.c_str(), color, maxwidth);
 	if(!surf){
 		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
 	}
