@@ -35,11 +35,13 @@ public:
     Vec mapmousepos();
     bool keyispressed(const int scancode);
     void selecttrain(Train* train);
-    void placesignal() {placingsignal = true;};
+    void placesignal();
+    void placetrack();
 private:
     Game* game;
     const Uint8* keys;
     bool placingsignal = false;
+    bool placingtrack = false;
     Train* selectedtrain = nullptr;
     nodeid selectednode = 0;
 };

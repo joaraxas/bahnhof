@@ -57,4 +57,20 @@ protected:
     virtual void click();
 };
 
+class PlaceTrack : public TextButton
+{
+public:
+    PlaceTrack(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {}
+protected:
+    virtual void click();
+};
+
+class BuildWagon : public TextButton
+{
+public:
+    BuildWagon(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
+protected:
+    virtual void click();
+};
+
 }

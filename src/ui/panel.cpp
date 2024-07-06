@@ -11,7 +11,8 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 	rect = newrect;
     ui->addpanel(this);
 	buttons.emplace_back(new Close(this, Vec(20,200)));
-	buttons.emplace_back(new PlaceSignal(this, Vec(20,200+30)));
+	buttons.emplace_back(new PlaceTrack(this, Vec(20,200+30)));
+	buttons.emplace_back(new PlaceSignal(this, Vec(20,200+30*2)));
 }
 
 Panel::~Panel() = default;

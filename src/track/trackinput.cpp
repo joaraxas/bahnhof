@@ -22,10 +22,10 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 
 Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
-	nodeid clickednode = 0;
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
 	if(clickedtrack){
+		nodeid clickednode = 0;
 		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){

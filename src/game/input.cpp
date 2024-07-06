@@ -30,6 +30,7 @@ void InputManager::handle(int ms, int mslogic){
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     selectednode = 0;
+                    placingtrack = false;
                     placingsignal = false;
                     if(routing.selectedroute){
                         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
@@ -49,11 +50,16 @@ void InputManager::handle(int ms, int mslogic){
                         }
                         placingsignal = false;
                     }
-                    else if(selectednode){
-                        if(gamestate.money>0){
-                            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
-	                        selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                            gamestate.money-=Tracks::Input::getcostoftracks(newsection);
+                    else if(placingtrack){
+                        if(selectednode){
+                            if(gamestate.money>0){
+                                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
+                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+                            }
+                        }
+                        else{
+                            selectednode = Tracks::Input::selectat(tracksystem, mousepos);
                         }
                     }
                     else{
@@ -72,7 +78,6 @@ void InputManager::handle(int ms, int mslogic){
                         }
                         else{
                             if(!Tracks::Input::switchat(tracksystem, mousepos)){
-                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
                                 selecttrain(nullptr);
                                 routing.selectedroute = nullptr;
                             }
@@ -181,6 +186,7 @@ void InputManager::handle(int ms, int mslogic){
 
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
 {
+    if(placingtrack)
     if(selectednode){
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), mapmousepos());
         Tracks::render(section, r, 1);
@@ -221,3 +227,18 @@ void InputManager::selecttrain(Train* whattrain)
 		whattrain->selected = true;
 	selectedtrain = whattrain;
 }
+
+void InputManager::placesignal()
+{
+    placingsignal = true;
+    placingtrack = false;
+    selecttrain(nullptr);
+}
+
+
+void InputManager::placetrack()
+{
+    placingtrack = true;
+    placingsignal = false;
+    selecttrain(nullptr);
+};

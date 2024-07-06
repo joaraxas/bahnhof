@@ -74,4 +74,9 @@ void PlaceSignal::click()
     game->getinputmanager().placesignal();
 }
 
+void PlaceTrack::click()
+{
+    game->getinputmanager().placetrack();
+}
+
 } //end namespace UI

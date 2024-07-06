@@ -34,7 +34,7 @@ public:
     int w;
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;
-    State state; //should be protected
+    State state;
     Sprite sprite;
     Sprite icon;
     ResourceManager* allresources = nullptr;
