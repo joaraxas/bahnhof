@@ -30,6 +30,14 @@ State flipstate(State state)
 
 namespace Tracks{
 
+Tracksection& Tracksection::operator+=(const Tracksection& rhs)
+{
+	tracks.insert(tracks.end(), rhs.tracks.begin(), rhs.tracks.end());
+	nodes.insert(nodes.end(), rhs.nodes.begin(), rhs.nodes.end());
+	tracksplits.insert(rhs.tracksplits.begin(), rhs.tracksplits.end());
+	return *this;
+}
+
 Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys)
 {
 	game = &whatgame;
