@@ -7,14 +7,14 @@ RouteManager::RouteManager(Tracks::Tracksystem* tracks)
     tracksystem = tracks;
 }
 
-void RouteManager::renderroutes(Rendering* r)
+void RouteManager::renderroutes(Rendering* r, int xoffset, int yoffset)
 {
-	int offset = 1;
+	int offset = 0;
 	for(auto &route : routes){
-		r->rendertext("("+std::to_string(offset)+") "+route->name, SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+		r->rendertext("("+std::to_string(offset+1)+") "+route->name, xoffset, yoffset + (offset)*14, {0,0,0,0}, false);
 		offset++;
 	}
-	r->rendertext("(r) Create new route", SCREEN_WIDTH-300, (offset+1)*14, {0,0,0,0}, false);
+	r->rendertext("(r) Create new route", xoffset, yoffset + (offset)*14, {0,0,0,0}, false);
 }
 
 Route* RouteManager::addroute()

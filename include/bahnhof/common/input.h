@@ -35,6 +35,7 @@ public:
     Vec mapmousepos();
     bool keyispressed(const int scancode);
     void selecttrain(Train* train);
+    Train* getselectedtrain() {return selectedtrain;};
     void placesignal();
     void placetrack();
 private:

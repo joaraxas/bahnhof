@@ -123,22 +123,22 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 			order->assignroute(this);
 }
 
-void Route::render(Rendering* r)
+void Route::render(Rendering* r, int xoffset, int yoffset)
 {
 	if(orderids.empty())
-		r->rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0}, false);
+		r->rendertext("Route has no orders yet", xoffset, yoffset, {0,0,0,0}, false);
 	else{
 		int renderordernr = 1;
 		if(orders[0]->order==gotostate)
 			renderordernr = 0;
 		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
 			int oid = orderids[iOrder];
-			int x = SCREEN_WIDTH-300;
-			int y = (iOrder+1)*14;
-			Uint8 intsty = (oid==selectedorderid)*255;
+			int x = xoffset;
+			int y = yoffset + iOrder*14;
+			Uint8 intensity = (oid==selectedorderid)*255;
 			if(orders[iOrder]->order==gotostate)
 				renderordernr++;
-			r->rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intsty,intsty,intsty,0}, false);
+			r->rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intensity,intensity,intensity,0}, false);
 			orders[iOrder]->render(r, renderordernr);
 		}
 	}

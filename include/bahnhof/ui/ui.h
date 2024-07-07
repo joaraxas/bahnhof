@@ -17,16 +17,40 @@ class Button;
 class Panel{
 public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
-    ~Panel();
+    virtual ~Panel();
     void erase();
     bool click(Vec pos, int type);
-    void render(Rendering*);
+    virtual void render(Rendering*);
     Vec topcorner();
     InterfaceManager& getui();
-private:
+protected:
     SDL_Rect rect;
     InterfaceManager* ui;
+    Game* game;
     std::vector<std::unique_ptr<Button>> buttons;
+};
+
+class MainPanel : public Panel
+{
+public:
+    MainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    ~MainPanel();
+};
+
+class RoutePanel : public Panel
+{
+public:
+    RoutePanel(InterfaceManager* newui, SDL_Rect newrect);
+    ~RoutePanel();
+    void render(Rendering*);
+};
+
+class TrainPanel : public Panel
+{
+public:
+    TrainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    ~TrainPanel();
+    void render(Rendering*);
 };
 
 }

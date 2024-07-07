@@ -37,7 +37,6 @@ bool Button::checkclick(Vec mousepos, int type)
 {
     SDL_Rect absrect = getglobalrect();
 	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
-		std::cout<<"clicked button"<<std::endl;
         if(type==SDL_BUTTON_LEFT)
             click();
 		return true;
@@ -77,6 +76,18 @@ void PlaceSignal::click()
 void PlaceTrack::click()
 {
     game->getinputmanager().placetrack();
+}
+
+void ManageRoutes::click()
+{
+    SDL_Rect routepanelrect = {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT};
+    new RoutePanel(ui, routepanelrect);
+}
+
+void ManageTrains::click()
+{
+    SDL_Rect trainpanelrect = {300,SCREEN_HEIGHT-200,400,200};
+    new TrainPanel(ui, trainpanelrect);
 }
 
 } //end namespace UI

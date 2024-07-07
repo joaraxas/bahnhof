@@ -164,6 +164,7 @@ void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL
 
 void Gotostate::render(Rendering* r, int number)
 {
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	r->renderline(posleft, posright);
 	if(posright.x>=posleft.x){
 		Order::renderlabel(r, posright, number);

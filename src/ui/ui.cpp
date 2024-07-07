@@ -4,13 +4,12 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
-#include "bahnhof/routing/routing.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
-    new UI::Panel(this, {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT});
+    new UI::MainPanel(this, {0,0,200,200});
 }
 
 void InterfaceManager::render(Rendering* r)
@@ -20,15 +19,10 @@ void InterfaceManager::render(Rendering* r)
     for(auto& panel: panels)
         panel->render(r);
 
-	if(gamestate.getrouting().selectedroute)
-		gamestate.getrouting().selectedroute->render(r);
-	else
-		gamestate.getrouting().renderroutes(r);
-
-    r->rendertext(std::to_string(int(gamestate.money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate.money<0)),static_cast<Uint8>(63*(gamestate.money>=0)),0,0}, false, false);
-	r->rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
-	r->rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
-	r->rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 20, 5*14, {0,0,0,0}, false, false);
+    r->rendertext(std::to_string(int(gamestate.money)) + " Fr", 220, 2*14, {static_cast<Uint8>(127*(gamestate.money<0)),static_cast<Uint8>(63*(gamestate.money>=0)),0,0}, false, false);
+	r->rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 220, 3*14, {0,0,0,0}, false, false);
+	r->rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 220, 4*14, {0,0,0,0}, false, false);
+	r->rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 220, 5*14, {0,0,0,0}, false, false);
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	int scalelinelength = 200;
 	r->renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);

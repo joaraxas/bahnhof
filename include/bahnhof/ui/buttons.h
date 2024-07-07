@@ -17,6 +17,7 @@ class Button
 {
 public:
     Button(Panel*, Vec newpos);
+    virtual ~Button() {};
     bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
     SDL_Rect getglobalrect();
@@ -33,6 +34,7 @@ class TextButton : public Button
 {
 public:
     TextButton(Panel*, Vec newpos, std::string text);
+    virtual ~TextButton() {};
     virtual void render(Rendering*);
 private:
     int textheight;
@@ -46,7 +48,7 @@ class Close : public TextButton
 public:
     Close(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Close") {}
 protected:
-    virtual void click();
+    void click();
 };
 
 class PlaceSignal : public TextButton
@@ -54,7 +56,7 @@ class PlaceSignal : public TextButton
 public:
     PlaceSignal(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
 protected:
-    virtual void click();
+    void click();
 };
 
 class PlaceTrack : public TextButton
@@ -62,7 +64,7 @@ class PlaceTrack : public TextButton
 public:
     PlaceTrack(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {}
 protected:
-    virtual void click();
+    void click();
 };
 
 class BuildWagon : public TextButton
@@ -70,7 +72,23 @@ class BuildWagon : public TextButton
 public:
     BuildWagon(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
 protected:
-    virtual void click();
+    void click();
+};
+
+class ManageRoutes : public TextButton
+{
+public:
+    ManageRoutes(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage routes") {}
+protected:
+    void click();
+};
+
+class ManageTrains : public TextButton
+{
+public:
+    ManageTrains(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage trains") {}
+protected:
+    void click();
 };
 
 }

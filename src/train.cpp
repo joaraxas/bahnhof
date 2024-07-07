@@ -162,9 +162,6 @@ void Train::render(Rendering* r)
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 		}
-		else{
-			r->rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
-		}
 		Vec frontpos = getpos(*tracksystem, forwardstate());
 		float forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;

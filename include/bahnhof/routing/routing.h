@@ -22,7 +22,7 @@ public:
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
-    void render(Rendering* r);
+    void render(Rendering* r, int xoffset=0, int yoffset=0);
     int getindex(int orderid);
     Tracks::Tracksystem* tracksystem;
     std::string name = "New route";
@@ -39,7 +39,7 @@ class RouteManager
 {
 public:
     RouteManager(Tracks::Tracksystem* tracks);
-    void renderroutes(Rendering* r);
+    void renderroutes(Rendering* r, int xoffset=0, int yoffset=0);
     Route* addroute();
     Tracks::Tracksystem* tracksystem;
     Route* selectedroute = nullptr;
