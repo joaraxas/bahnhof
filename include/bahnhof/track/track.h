@@ -84,7 +84,9 @@ namespace Input
 {
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
     nodeid selectat(Tracksystem& tracksystem, Vec pos);
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);

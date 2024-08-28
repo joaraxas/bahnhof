@@ -110,7 +110,7 @@ void Gamestate::inittrain(State startstate)
 {
 	int nWagons = wagons.size();
 	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate));
-	for(int iWagon=0; iWagon<3; iWagon++){
+	for(int iWagon=0; iWagon<1; iWagon++){
 		State state = Tracks::travel(*tracksystem, startstate, -(53+49)/2-iWagon*49);
 		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
 	}

@@ -43,9 +43,52 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 	return Construction::extendtracktopos(tracksystem, fromnode, pos);
 }
 
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
+{
+	trackid clickedtrack = 0;
+	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	if(clickedtrack){
+		nodeid clickednode = 0;
+		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		Node* tonode;
+		if(!clickednode){
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+		}
+		else
+			tonode = tracksystem.getnode(clickednode);
+		Tracksection section = Construction::extendtracktopos(tracksystem, tonode, frompos);
+		if(!clickednode){
+			section.nodes.push_back(tonode);
+			section.tracksplits[tonode] = clickedstate;
+		}
+		return section;
+	}
+	Vec posdiff = pos - frompos;
+	float dir = atan2(-posdiff.y,posdiff.x);
+	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
+	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
+	newsection = newsection + Tracksection({},{fromnode});
+	return newsection;
+}
+
 Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
+	
+	for(auto node : section.nodes)
+		tracksystem.addnode(*node);
+	for(auto track : section.tracks)
+		tracksystem.addtrack(*track);
+	for(auto [node, state] : section.tracksplits){
+		Construction::splittrack(tracksystem, node, state);
+	}
+
+	return section;
+}
+
+Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec topos)
+{
+	Tracksection section = planconstructionto(tracksystem, frompos, topos);
 	
 	for(auto node : section.nodes)
 		tracksystem.addnode(*node);

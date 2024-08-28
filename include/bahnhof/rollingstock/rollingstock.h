@@ -54,7 +54,8 @@ public:
     float getpower();
 private:
     float P[2] = {0.2,0.2};
-    float maxspeed[2] = {90,180};
+    float maxspeed[2] = {180,180};
+    //float maxspeed[2] = {90,180}; //backwards, forwards
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;

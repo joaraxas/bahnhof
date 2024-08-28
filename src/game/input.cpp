@@ -30,6 +30,7 @@ void InputManager::handle(int ms, int mslogic){
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     selectednode = 0;
+                    trackorigin = Vec(0,0);
                     placingtrack = false;
                     placingsignal = false;
                     if(routing.selectedroute){
@@ -51,7 +52,15 @@ void InputManager::handle(int ms, int mslogic){
                         placingsignal = false;
                     }
                     else if(placingtrack){
-                        if(selectednode){
+                        if(trackorigin.x!=0 || trackorigin.y!=0){
+                            if(gamestate.money>0){
+                                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mousepos);
+                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+                            }
+                            trackorigin = Vec(0,0);
+                        }
+                        else if(selectednode){
                             if(gamestate.money>0){
                                 Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
                                 selectednode = Tracks::Input::selectat(tracksystem, mousepos);
@@ -60,6 +69,9 @@ void InputManager::handle(int ms, int mslogic){
                         }
                         else{
                             selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                            if(!selectednode){
+                                trackorigin = mousepos;
+                            }
                         }
                     }
                     else{
@@ -187,8 +199,12 @@ void InputManager::handle(int ms, int mslogic){
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
 {
     if(placingtrack)
-    if(selectednode){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), mapmousepos());
+    if(selectednode || trackorigin.x!=0){
+        Tracks::Tracksection section;
+        if(selectednode)
+            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), mapmousepos());
+        else
+            section = Tracks::Input::planconstructionto(tracksystem, trackorigin, mapmousepos());
         Tracks::render(section, r, 1);
         int cost = -ceil(Tracks::Input::getcostoftracks(section));
         r->rendertext(std::to_string(cost), screenmousepos().x, screenmousepos().y-18, {127, 0, 0}, false, false);

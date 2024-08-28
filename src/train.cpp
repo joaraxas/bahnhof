@@ -51,8 +51,11 @@ void Train::update(int ms)
 			proceed();
 	
 	float minradius = INFINITY;
+	// uncomment to remove radius speed restriction
+	/*
 	for(auto w : wagons)
 		minradius = fmin(minradius, abs(getradius(*tracksystem, w->frontendstate())));
+	*/
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
 	float minradiusmeter = minradius*150*0.001;
@@ -245,10 +248,13 @@ bool Train::gas(int ms)
 		Ptot += w->getpower();
 	float mtot = size(wagons);
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
+	// uncomment to remove train backwards speed restriction
+	/*
 	if(gasisforward && !wagons.front()->hasdriver)
 		speed = fmin(50, speed);
 	if(!gasisforward && !wagons.back()->hasdriver)
 		speed = -fmin(50, -speed);
+	*/
 	return true;
 }
 

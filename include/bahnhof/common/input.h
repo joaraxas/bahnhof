@@ -45,4 +45,5 @@ private:
     bool placingtrack = false;
     Train* selectedtrain = nullptr;
     nodeid selectednode = 0;
+    Vec trackorigin;
 };
