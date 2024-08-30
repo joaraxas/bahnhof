@@ -47,14 +47,18 @@ private:
 class TrainManager
 {
 public:
-    TrainManager(Game& newgame);
-    Gamestate* gamestate;
+    TrainManager(Tracks::Tracksystem* newtracks);
     void update(int ms);
     void getinput(InputManager* input, int mslogic); 
     void render(Rendering* r);
+    void addwagon(Wagon* wagon);
     void addtrain(Train* train);
     void deselectall();
+    Train* gettrainatpos(Vec pos);
+    void inittrain(State startstate);
+    void addtrainstoorphans();
 private:
+    std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<std::unique_ptr<Train>> trains;
-    Tracks::Tracksystem* tracks;
+    Tracks::Tracksystem* tracks = nullptr;
 };

@@ -44,8 +44,6 @@ void Rendering::render(Gamestate* gamestate)
 		storage->render(this);
 	Tracks::render(tracksystem, this);
 	game->getinputmanager().render(this, tracksystem);
-	for(auto& wagon : gamestate->wagons)
-		wagon->render(this);
 	gamestate->gettrains().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 

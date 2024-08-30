@@ -18,18 +18,14 @@ Gamestate::Gamestate(Game* whatgame)
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
 	routing = new RouteManager(tracksystem.get());
-	trainmanager = new TrainManager(*game);
-	inittrain(State(1,0.4,1));
+	trainmanager = new TrainManager(tracksystem.get());
+	trainmanager->inittrain(State(1,0.4,1));
 
-	addtrainstoorphans();
-	
 	randommap();
 }
 
 Gamestate::~Gamestate()
 {
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
-		delete wagons[iWagon];
 	delete routing;
 	delete trainmanager;
 }
@@ -39,9 +35,6 @@ void Gamestate::update(int ms)
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);
 
-	for(auto& wagon : wagons)
-		wagon->update(ms);
-
 	int lastmoney = money;
 	
 	for(auto& building : buildings)
@@ -50,16 +43,6 @@ void Gamestate::update(int ms)
 	revenue += money-lastmoney;
 
 	time += ms;
-}
-
-void Gamestate::addtrainstoorphans()
-{
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
-		if(!wagons[iWagon]->train){
-			trainmanager->addtrain(new Train(*tracksystem, {wagons[iWagon]}, 0));
-			std::cout<<"added train automatically"<<std::endl;
-		}
-	}
 }
 
 void Gamestate::randommap()
@@ -96,19 +79,4 @@ void Gamestate::randommap()
 void Gamestate::initjusttrack()
 {
 	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {200,700,900}, {250,250,450}));
-}
-
-void Gamestate::inittrain(State startstate)
-{
-	int nWagons = wagons.size();
-	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate));
-	for(int iWagon=0; iWagon<1; iWagon++){
-		State state = Tracks::travel(*tracksystem, startstate, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
-	}
-	Train* newtrain = new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0);
-	trainmanager->addtrain(newtrain);
-	
-	Route* loadroute = routing->addroute();
-	newtrain->route = loadroute;
 }

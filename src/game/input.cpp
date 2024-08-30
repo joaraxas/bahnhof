@@ -77,21 +77,13 @@ void InputManager::handle(int ms, int mslogic){
                         }
                     }
                     else{
-                        Train* clickedtrain = nullptr;
-                        for(auto& wagon : gamestate.wagons){
-                            if(norm(mousepos-wagon->pos)<wagon->w/2/game->getrendering().getscale()){
-                                routing.selectedroute = wagon->train->route;
-                                clickedtrain = wagon->train;
-                            }
-                            if(clickedtrain) break;
-                        }
+                        Train* clickedtrain = gamestate.gettrains().gettrainatpos(mousepos);
                         if(clickedtrain){
                             selecttrain(clickedtrain);
                         }
                         else{
                             if(!Tracks::Input::switchat(tracksystem, mousepos)){
                                 selecttrain(nullptr);
-                                routing.selectedroute = nullptr;
                             }
                         }
                     }
@@ -150,22 +142,23 @@ void InputManager::handle(int ms, int mslogic){
                     nicetracks = !nicetracks;
                 }
                 if(gamestate.money>0){
+                    TrainManager& trainmanager = gamestate.gettrains();
                     if(e.key.keysym.sym == SDLK_o){
-                        gamestate.wagons.emplace_back(new Openwagon(&tracksystem, gamestate.newwagonstate));
+                        trainmanager.addwagon(new Openwagon(&tracksystem, gamestate.newwagonstate));
                         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-                        gamestate.addtrainstoorphans();
+                        trainmanager.addtrainstoorphans();
                         gamestate.money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_q){
-                        gamestate.wagons.emplace_back(new Tankwagon(&tracksystem, gamestate.newwagonstate));
+                        trainmanager.addwagon(new Tankwagon(&tracksystem, gamestate.newwagonstate));
                         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
-                        gamestate.addtrainstoorphans();
+                        trainmanager.addtrainstoorphans();
                         gamestate.money -= 3;
                     }
                     if(e.key.keysym.sym == SDLK_y){
-                        gamestate.wagons.emplace_back(new Locomotive(&tracksystem, gamestate.newwagonstate));
+                        trainmanager.addwagon(new Locomotive(&tracksystem, gamestate.newwagonstate));
                         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-                        gamestate.addtrainstoorphans();
+                        trainmanager.addtrainstoorphans();
                         gamestate.money -= 8;
                     }
                 }
@@ -235,9 +228,14 @@ bool InputManager::keyispressed(const int scancode)
 
 void InputManager::selecttrain(Train* whattrain)
 {
-	game->getgamestate().gettrains().deselectall();
-	if(whattrain)
+    Gamestate& gamestate = game->getgamestate();
+    RouteManager& routing = gamestate.getrouting();
+	gamestate.gettrains().deselectall();
+    routing.selectedroute = nullptr;
+	if(whattrain){
 		whattrain->selected = true;
+        routing.selectedroute = whattrain->route;
+    }
 	selectedtrain = whattrain;
 }
 
