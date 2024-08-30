@@ -12,6 +12,7 @@ class SpriteManager;
 class ResourceManager;
 class InputManager;
 class RouteManager;
+class TrainManager;
 class TimeManager;
 class InterfaceManager;
 class Gamestate;
@@ -59,9 +60,10 @@ public:
     void addtrainstoorphans();
     Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
+    TrainManager& gettrains() {return *trainmanager;};
     std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building>> buildings;
-    std::vector<std::unique_ptr<Train>> trains;
+    //std::vector<std::unique_ptr<Train>> trains;
     int time = 0;
     float money = 10;
     int revenue = 0;
@@ -69,6 +71,7 @@ public:
 private:
     Game* game;
     RouteManager* routing;
+    TrainManager* trainmanager;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
     //Map* map;
 };

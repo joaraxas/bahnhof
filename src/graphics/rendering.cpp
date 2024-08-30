@@ -46,8 +46,7 @@ void Rendering::render(Gamestate* gamestate)
 	game->getinputmanager().render(this, tracksystem);
 	for(auto& wagon : gamestate->wagons)
 		wagon->render(this);
-	for(auto& train : gamestate->trains)
-		train->render(this);
+	gamestate->gettrains().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 
 	InterfaceManager& ui = game->getui();

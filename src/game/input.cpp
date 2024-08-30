@@ -18,6 +18,7 @@ void InputManager::handle(int ms, int mslogic){
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     RouteManager& routing = gamestate.getrouting();
+    TrainManager& trainmanager = gamestate.gettrains();
     SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
     InterfaceManager& ui = game->getui();
@@ -77,14 +78,12 @@ void InputManager::handle(int ms, int mslogic){
                     }
                     else{
                         Train* clickedtrain = nullptr;
-                        for(auto& train : gamestate.trains){
-                            for(auto& wagon : train->wagons){
-                                if(norm(mousepos-wagon->pos)<wagon->w/2/game->getrendering().getscale()){
-                                    routing.selectedroute = train->route;
-                                    clickedtrain = train.get();
-                                }
-                                if(clickedtrain) break;
+                        for(auto& wagon : gamestate.wagons){
+                            if(norm(mousepos-wagon->pos)<wagon->w/2/game->getrendering().getscale()){
+                                routing.selectedroute = wagon->train->route;
+                                clickedtrain = wagon->train;
                             }
+                            if(clickedtrain) break;
                         }
                         if(clickedtrain){
                             selecttrain(clickedtrain);
@@ -193,8 +192,7 @@ void InputManager::handle(int ms, int mslogic){
     if(keyispressed(downpanbutton))
         cam.pan(Vec(0, +ms*0.4));
 
-    for(int iTrain=0; iTrain<gamestate.trains.size(); iTrain++)
-        gamestate.trains[iTrain]->getinput(this, mslogic);
+    trainmanager.getinput(this, mslogic);
 }
 
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
@@ -237,9 +235,7 @@ bool InputManager::keyispressed(const int scancode)
 
 void InputManager::selecttrain(Train* whattrain)
 {
-	for(auto& train: game->getgamestate().trains){
-		train->selected = false;
-	}
+	game->getgamestate().gettrains().deselectall();
 	if(whattrain)
 		whattrain->selected = true;
 	selectedtrain = whattrain;

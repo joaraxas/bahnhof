@@ -10,6 +10,8 @@ class Setswitch;
 class Train;
 class Wagon;
 class Gamestate;
+class Game;
+class Rendering;
 
 namespace Tracks
 {

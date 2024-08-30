@@ -44,3 +44,17 @@ private:
     Game* game = nullptr;
 };
 
+class TrainManager
+{
+public:
+    TrainManager(Game& newgame);
+    Gamestate* gamestate;
+    void update(int ms);
+    void getinput(InputManager* input, int mslogic); 
+    void render(Rendering* r);
+    void addtrain(Train* train);
+    void deselectall();
+private:
+    std::vector<std::unique_ptr<Train>> trains;
+    Tracks::Tracksystem* tracks;
+};

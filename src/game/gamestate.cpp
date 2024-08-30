@@ -18,6 +18,7 @@ Gamestate::Gamestate(Game* whatgame)
 	newwagonstate = State(1, 0.2, true);
 	initjusttrack();
 	routing = new RouteManager(tracksystem.get());
+	trainmanager = new TrainManager(*game);
 	inittrain(State(1,0.4,1));
 
 	addtrainstoorphans();
@@ -30,23 +31,13 @@ Gamestate::~Gamestate()
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
 		delete wagons[iWagon];
 	delete routing;
+	delete trainmanager;
 }
 
 void Gamestate::update(int ms)
 {
 	Tracks::Signaling::update(*tracksystem, ms);
-
-	for(int iTrain=0; iTrain<trains.size(); iTrain++)
-		for(int jTrain=0; jTrain<trains.size(); jTrain++)
-			if(iTrain!=jTrain)
-				trains[iTrain]->checkcollision(ms, trains[jTrain].get());
-
-	for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
-		if(trains[iTrain]->wagons.size() == 0)
-			trains.erase(trains.begin()+iTrain);
-
-	for(int iTrain=0; iTrain<trains.size(); iTrain++)
-		trains[iTrain]->update(ms);
+	trainmanager->update(ms);
 
 	for(auto& wagon : wagons)
 		wagon->update(ms);
@@ -65,7 +56,7 @@ void Gamestate::addtrainstoorphans()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
-			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
+			trainmanager->addtrain(new Train(*tracksystem, {wagons[iWagon]}, 0));
 			std::cout<<"added train automatically"<<std::endl;
 		}
 	}
@@ -115,8 +106,9 @@ void Gamestate::inittrain(State startstate)
 		State state = Tracks::travel(*tracksystem, startstate, -(53+49)/2-iWagon*49);
 		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
 	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
+	Train* newtrain = new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0);
+	trainmanager->addtrain(newtrain);
 	
 	Route* loadroute = routing->addroute();
-	trains.back()->route = loadroute;
+	newtrain->route = loadroute;
 }

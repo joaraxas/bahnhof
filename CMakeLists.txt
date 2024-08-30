@@ -32,9 +32,10 @@ add_executable(bahnhof
     src/routing/routemanager.cpp
     src/routing/route.cpp
     src/routing/order.cpp
-    src/rollingstock.cpp
+    src/rollingstock/rollingstock.cpp
+    src/rollingstock/train.cpp
+    src/rollingstock/trainmanager.cpp
     src/buildings.cpp
-    src/train.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)
