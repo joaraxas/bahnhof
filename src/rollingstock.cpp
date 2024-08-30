@@ -7,6 +7,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
 
 Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname)
 {

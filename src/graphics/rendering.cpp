@@ -10,6 +10,7 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
 

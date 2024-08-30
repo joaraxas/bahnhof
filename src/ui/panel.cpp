@@ -5,7 +5,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
 
 namespace UI{
 

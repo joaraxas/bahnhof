@@ -2,7 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/graphics/rendering.h"
