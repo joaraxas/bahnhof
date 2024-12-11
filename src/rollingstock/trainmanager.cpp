@@ -77,9 +77,8 @@ void TrainManager::deselectall()
 Train* TrainManager::gettrainatpos(Vec pos)
 {
     Train* clickedtrain = nullptr;
-	float scale = tracks->game->getrendering().getscale();
     for(auto& wagon : wagons){
-        if(norm(pos-wagon->pos) < wagon->w/2/scale){
+        if(norm(pos-wagon->pos) < wagon->w/2){
             clickedtrain = wagon->train;
         }
         if(clickedtrain) break;

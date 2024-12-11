@@ -216,8 +216,12 @@ Vec InputManager::mapmousepos()
 Vec InputManager::screenmousepos()
 {
     int currentmousex, currentmousey;
+    float logicalmousex, logicalmousey;
 	SDL_GetMouseState(&currentmousex, &currentmousey);
-    return Vec(currentmousex, currentmousey);
+    SDL_RenderWindowToLogical(renderer, currentmousex, currentmousey, &logicalmousex, &logicalmousey);
+    std::cout<<currentmousex<<std::endl;
+    std::cout<<logicalmousex<<std::endl;
+    return Vec(logicalmousex, logicalmousey);
 }
 
 bool InputManager::keyispressed(const int scancode)
