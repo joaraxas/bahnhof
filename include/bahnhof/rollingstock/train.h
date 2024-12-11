@@ -13,7 +13,7 @@ namespace Tracks{
 class Train
 {
 public:
-    Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
+    Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons);
     void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
@@ -38,6 +38,7 @@ public:
     bool go = false;
     bool wantstocouple = false;
     bool selected = false;
+    std::string name = "no name";
 private:
     bool checkifreachedstate(State goalstate, int ms);
     Sprite light;
@@ -58,6 +59,7 @@ public:
     void inittrain(State startstate);
     void addtrainstoorphans();
 private:
+    std::string generatetrainname();
     std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<std::unique_ptr<Train>> trains;
     Tracks::Tracksystem* tracks = nullptr;

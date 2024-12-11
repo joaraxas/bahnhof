@@ -12,12 +12,12 @@
 #include "bahnhof/resources/storage.h"
 
 
-Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
+Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons)
 {
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
-	speed = newspeed;
+	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;
 	light.setspritesheet(game->getsprites(), sprites::light);
@@ -381,13 +381,13 @@ bool Train::split(int where, Route* assignedroute)
 	else if(wagons.size()>where){
 		TrainManager& trainmanager = game->getgamestate().gettrains();
 		if(gasisforward){
-			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
+			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
 			wagons = {wagons.begin(), wagons.begin() + where};
 			trainmanager.addtrain(newtrain);
 			newtrain->route = assignedroute;
 		}
 		else{
-			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()}, speed);
+			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()});
 			std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
 			wagons = {wagons.rbegin(), wagons.rbegin() + where};
 			std::reverse(wagons.begin(), wagons.end());

@@ -54,14 +54,15 @@ void TrainManager::addwagon(Wagon* newwagon)
 void TrainManager::addtrain(Train* newtrain)
 {
     trains.emplace_back(newtrain);
+	newtrain->name = generatetrainname();
+	std::cout<<newtrain->name<<" added"<<std::endl;
 }
 
 void TrainManager::addtrainstoorphans()
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
-			addtrain(new Train(*tracks, {wagons[iWagon].get()}, 0));
-			std::cout<<"added train automatically"<<std::endl;
+			addtrain(new Train(*tracks, {wagons[iWagon].get()}));
 		}
 	}
 }
@@ -76,8 +77,9 @@ void TrainManager::deselectall()
 Train* TrainManager::gettrainatpos(Vec pos)
 {
     Train* clickedtrain = nullptr;
+	float scale = tracks->game->getrendering().getscale();
     for(auto& wagon : wagons){
-        if(norm(pos-wagon->pos)<wagon->w/2/tracks->game->getrendering().getscale()){
+        if(norm(pos-wagon->pos) < wagon->w/2/scale){
             clickedtrain = wagon->train;
         }
         if(clickedtrain) break;
@@ -97,6 +99,13 @@ void TrainManager::inittrain(State startstate)
     for(auto it = wagons.begin()+nWagons; it!=wagons.end(); ++it){
         newwagonset.push_back(it->get());
     }
-	Train* newtrain = new Train(*tracks, newwagonset, 0);
+	Train* newtrain = new Train(*tracks, newwagonset);
 	addtrain(newtrain);
+}
+
+std::string TrainManager::generatetrainname()
+{
+	std::string name = "Train ";
+	name += std::to_string(size(trains));
+	return name;
 }
