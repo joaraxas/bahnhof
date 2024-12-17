@@ -119,6 +119,14 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
+Vec Rendering::getviewsize()
+{
+	// Returns window size in logical pixels
+	int windowwidthinpixels, windowheightinpixels;
+    SDL_GetRendererOutputSize(renderer, &windowwidthinpixels, &windowheightinpixels);
+	return Vec(windowwidthinpixels, windowheightinpixels);
+}
+
 float Rendering::getscale()
 {
 	return cam->getscale();

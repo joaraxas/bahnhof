@@ -219,9 +219,7 @@ Vec InputManager::screenmousepos()
     float logicalmousex, logicalmousey;
 	SDL_GetMouseState(&currentmousex, &currentmousey);
     SDL_RenderWindowToLogical(renderer, currentmousex, currentmousey, &logicalmousex, &logicalmousey);
-    std::cout<<currentmousex<<std::endl;
-    std::cout<<logicalmousex<<std::endl;
-    return Vec(logicalmousex, logicalmousey);
+    return Vec(int(logicalmousex), int(logicalmousey));
 }
 
 bool InputManager::keyispressed(const int scancode)

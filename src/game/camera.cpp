@@ -7,7 +7,8 @@
 
 Camera::Camera(Game* whatgame){
     game = whatgame;
-    cam = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
+    Vec viewsize = game->getrendering().getviewsize();
+    cam = {0,0,int(viewsize.x), int(viewsize.y)};
 }
 
 Vec Camera::mapcoord(Vec screenpos){
@@ -19,9 +20,10 @@ Vec Camera::screencoord(Vec mappos){
 }
 
 void Camera::zoomin(Vec centerpoint){
-    cam.x+=cam.w/2*centerpoint.x/SCREEN_WIDTH;
+    Vec viewsize = game->getrendering().getviewsize();
+    cam.x+=cam.w/2*centerpoint.x/viewsize.x;
     cam.w/=2;
-    cam.y+=cam.h/2*centerpoint.y/SCREEN_HEIGHT;
+    cam.y+=cam.h/2*centerpoint.y/viewsize.y;
     cam.h/=2;
     logscale++;
     game->gettimemanager().speeddown();
@@ -30,9 +32,10 @@ void Camera::zoomin(Vec centerpoint){
 
 void Camera::zoomout(Vec centerpoint){
     if(2*cam.w<=MAP_WIDTH && 2*cam.h<=MAP_HEIGHT){
-        cam.x-=cam.w*centerpoint.x/SCREEN_WIDTH;
+        Vec viewsize = game->getrendering().getviewsize();
+        cam.x-=cam.w*centerpoint.x/viewsize.x;
         cam.w*=2;
-        cam.y-=cam.h*centerpoint.y/SCREEN_HEIGHT;
+        cam.y-=cam.h*centerpoint.y/viewsize.y;
         cam.h*=2;
         logscale--;
         game->gettimemanager().speedup();

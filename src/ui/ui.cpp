@@ -25,10 +25,11 @@ void InterfaceManager::render(Rendering* r)
 	r->rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 220, 5*14, {0,0,0,0}, false, false);
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	int scalelinelength = 200;
-	r->renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
-	r->renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
-	r->renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
-	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+    int viewheight = r->getviewsize().y;
+	r->renderline(Vec(20,viewheight-20), Vec(20+scalelinelength,viewheight-20), false);
+	r->renderline(Vec(20,viewheight-20-2), Vec(20,viewheight-20+2), false);
+	r->renderline(Vec(20+scalelinelength,viewheight-20-2), Vec(20+scalelinelength,viewheight-20+2), false);
+	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getscale())) + " m", 20+scalelinelength*0.5-20, viewheight-20-14, {0,0,0,0}, false, false);
 }
 
 int InterfaceManager::leftclick(Vec mousepos)

@@ -80,13 +80,15 @@ void PlaceTrack::click()
 
 void ManageRoutes::click()
 {
-    SDL_Rect routepanelrect = {SCREEN_WIDTH-300,0,300,SCREEN_HEIGHT};
+    Vec viewsize = game->getrendering().getviewsize();
+    SDL_Rect routepanelrect = {int(viewsize.x)-300,0,300,int(viewsize.y)};
     new RoutePanel(ui, routepanelrect);
 }
 
 void ManageTrains::click()
 {
-    SDL_Rect trainpanelrect = {300,SCREEN_HEIGHT-200,400,200};
+    Vec viewsize = game->getrendering().getviewsize();
+    SDL_Rect trainpanelrect = {300,int(viewsize.y)-200,400,200};
     new TrainPanel(ui, trainpanelrect);
 }
 
