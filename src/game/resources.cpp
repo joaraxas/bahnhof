@@ -61,7 +61,7 @@ void Storage::render(Rendering* r)
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	int sep = 20/scale;
 	int frameoffset = fmax(1,int(2/scale));
 	for(auto resourcepair : storedresources){

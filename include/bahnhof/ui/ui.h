@@ -64,6 +64,7 @@ public:
     void addpanel(UI::Panel*);
     void removepanel(UI::Panel*);
     Game& getgame();
+    int getlogicalscale();
 private:
     std::vector<std::unique_ptr<UI::Panel>> panels;
     Game* game;

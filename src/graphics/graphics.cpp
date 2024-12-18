@@ -11,6 +11,7 @@ TTF_Font* font = NULL;
 int init()
 {
 	bool success = true;
+	bool retina = true;
 	std::srand((unsigned) time(NULL));
 	int sdlflags = SDL_INIT_VIDEO;
 	int res = SDL_Init(sdlflags);
@@ -24,7 +25,12 @@ int init()
 		success = false;
 		std::cout << "Failed to open SDL_Image, error code: " << res << ", error: " << IMG_GetError() << std::endl;
 	}
-	window = SDL_CreateWindow("train", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	int windowflags;
+	if(retina)
+		windowflags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+	else
+		windowflags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+	window = SDL_CreateWindow("train", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, windowflags);
 	if(window==NULL){
 		success = false;
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
@@ -35,21 +41,6 @@ int init()
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
 
-	// int rw = 0, rh = 0;
-	// SDL_GetRendererOutputSize(renderer, &rw, &rh);
-	// std::cout<<rw<<" "<<SCREEN_WIDTH<<std::endl;
-	// if(rw != SCREEN_WIDTH) {
-	// 	float widthScale = (float)rw / (float) SCREEN_WIDTH;
-	// 	float heightScale = (float)rh / (float) SCREEN_HEIGHT;
-
-	// 	if(widthScale != heightScale) {
-	// 		fprintf(stderr, "WARNING: width scale != height scale\n");
-	// 	}
-
-	// 	SDL_RenderSetScale(renderer, widthScale, heightScale);
-	// }
-	// SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
-
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	res = TTF_Init();
@@ -57,7 +48,12 @@ int init()
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", 12);
+	int fontsize;
+	if(retina)
+		fontsize = 24;
+	else
+		fontsize = 12;
+	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", fontsize);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;

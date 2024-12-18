@@ -121,13 +121,26 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 
 Vec Rendering::getviewsize()
 {
-	// Returns window size in logical pixels
+	// Returns renderer size in logical pixels
 	int windowwidthinpixels, windowheightinpixels;
     SDL_GetRendererOutputSize(renderer, &windowwidthinpixels, &windowheightinpixels);
 	return Vec(windowwidthinpixels, windowheightinpixels);
 }
 
-float Rendering::getscale()
+int Rendering::getlogicalscale()
+{
+	int windowwidth, windowheight;
+	SDL_GetWindowSize(window, &windowwidth, &windowheight);
+	int windowwidthinpixels, windowheightinpixels;
+	SDL_GetWindowSizeInPixels(window, &windowwidthinpixels, &windowheightinpixels);
+	int xscale = windowwidthinpixels/windowwidth;
+	int yscale = windowheightinpixels/windowheight;
+	if(xscale!=yscale)
+		std::cout<<"warning: Rendering::getlogicalsize() returns different yscale from xscale"<<std::endl;
+	return xscale;
+}
+
+float Rendering::getcamscale()
 {
 	return cam->getscale();
 }

@@ -26,7 +26,7 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float 
 	srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
     float scale = 1;
     if(!zoomed)
-        scale = r->getscale();
+        scale = r->getcamscale();
 	rect = {int(x - origin.x/scale), int(y - origin.y/scale), w, h};
 	if(origin.x==int(w/2) && origin.y==int(h/2))
 		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed);

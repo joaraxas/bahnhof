@@ -29,7 +29,8 @@ public:
     void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     Vec getviewsize();
-    float getscale();
+    int getlogicalscale();
+    float getcamscale();
 private:
     Game* game;
     Camera* cam;

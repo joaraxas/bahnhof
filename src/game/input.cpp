@@ -177,13 +177,13 @@ void InputManager::handle(int ms, int mslogic){
     }
 
     if(keyispressed(leftpanbutton))
-        cam.pan(Vec(-ms*0.4, 0));
+        cam.pan(Vec(-ms, 0));
     if(keyispressed(rightpanbutton))
-        cam.pan(Vec(+ms*0.4, 0));
+        cam.pan(Vec(+ms, 0));
     if(keyispressed(uppanbutton))
-        cam.pan(Vec(0, -ms*0.4));
+        cam.pan(Vec(0, -ms));
     if(keyispressed(downpanbutton))
-        cam.pan(Vec(0, +ms*0.4));
+        cam.pan(Vec(0, +ms));
 
     trainmanager.getinput(this, mslogic);
 }

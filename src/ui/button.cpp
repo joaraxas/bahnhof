@@ -13,7 +13,8 @@ Button::Button(Panel* newpanel, Vec newpos)
     panel = newpanel;
     ui = &panel->getui();
     game = &ui->getgame();
-    rect = {int(newpos.x), int(newpos.y), 100, 40};
+    int scale = ui->getlogicalscale();
+    rect = {int(newpos.x), int(newpos.y), scale*100, scale*40};
 }
 
 SDL_Rect Button::getglobalrect()
@@ -47,8 +48,9 @@ bool Button::checkclick(Vec mousepos, int type)
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext) : Button(newpanel, newpos)
 {
     text = newtext;
-    rect.w = 80;
-    rect.h = 20;
+    int scale = ui->getlogicalscale();
+    rect.w = scale*80;
+    rect.h = scale*20;
     maxtextwidth = rect.w - 10;
     SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth);
 	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
@@ -81,14 +83,16 @@ void PlaceTrack::click()
 void ManageRoutes::click()
 {
     Vec viewsize = game->getrendering().getviewsize();
-    SDL_Rect routepanelrect = {int(viewsize.x)-300,0,300,int(viewsize.y)};
+    int scale = ui->getlogicalscale();
+    SDL_Rect routepanelrect = {int(viewsize.x)-scale*300,0,scale*300,int(viewsize.y)};
     new RoutePanel(ui, routepanelrect);
 }
 
 void ManageTrains::click()
 {
     Vec viewsize = game->getrendering().getviewsize();
-    SDL_Rect trainpanelrect = {300,int(viewsize.y)-200,400,200};
+    int scale = ui->getlogicalscale();
+    SDL_Rect trainpanelrect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
     new TrainPanel(ui, trainpanelrect);
 }
 

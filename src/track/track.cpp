@@ -218,7 +218,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 
 void Track::render(Rendering* r, int mode)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	//// banvall ////
 	/*if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 127,127,127,255);

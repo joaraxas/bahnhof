@@ -153,12 +153,13 @@ Wipe::Wipe()
 void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
 {
 	int x = int(pos.x); int y = int(pos.y);
-	SDL_Rect rect = {x,y,16,14};
+	int scale = r->getlogicalscale();
+	SDL_Rect rect = {x,y,16*scale,14*scale};
 	if(!valid)
 		bgrcol.a *= 0.4;
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
 	r->renderfilledrectangle(rect, true, false);
-	r->rendertext(std::to_string(number), x+1, y, textcol);
+	r->rendertext(std::to_string(number), x+1*scale, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
@@ -176,7 +177,7 @@ void Gotostate::render(Rendering* r, int number)
 
 void Setswitch::render(Rendering* r, int number)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
 	Vec inlabel = lineend+Vec(0+10,10)/scale;
 	Order::renderlabel(r, lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
@@ -185,7 +186,7 @@ void Setswitch::render(Rendering* r, int number)
 
 void Setsignal::render(Rendering* r, int number)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	Vec lineend = pos+Vec(-8,12+16*offset)/scale;
 	SDL_Color bgrcol = {255, 0, 0, 255};
 	if(redgreenflip==1)

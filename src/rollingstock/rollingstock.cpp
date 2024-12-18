@@ -41,7 +41,7 @@ void Wagon::update(int ms)
 
 void Wagon::render(Rendering* r)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	if(scale<0.3)
 		icon.render(r, pos);
 	else

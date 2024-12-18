@@ -159,8 +159,9 @@ void Train::render(Rendering* r)
 		if(route){
 			if(orderid>=0){
 				int iOrder = route->getindex(orderid);
-				int rectw = 10;
-				SDL_Rect rect = {int(r->getviewsize().x)-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
+				int scale = r->getlogicalscale();
+				int rectw = 10*scale;
+				SDL_Rect rect = {int(r->getviewsize().x)-(300+2)*scale-rectw,((iOrder+1)*14+2)*scale,rectw,rectw};
 				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
 				r->renderfilledrectangle(rect, false, false);
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

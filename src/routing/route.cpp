@@ -128,13 +128,14 @@ void Route::render(Rendering* r, int xoffset, int yoffset)
 	if(orderids.empty())
 		r->rendertext("Route has no orders yet", xoffset, yoffset, {0,0,0,0}, false);
 	else{
+		int textheight = 14*r->getlogicalscale();
 		int renderordernr = 1;
 		if(orders[0]->order==gotostate)
 			renderordernr = 0;
 		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
 			int oid = orderids[iOrder];
 			int x = xoffset;
-			int y = yoffset + iOrder*14;
+			int y = yoffset + iOrder*textheight;
 			Uint8 intensity = (oid==selectedorderid)*255;
 			if(orders[iOrder]->order==gotostate)
 				renderordernr++;
