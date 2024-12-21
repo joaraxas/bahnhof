@@ -17,7 +17,7 @@ Game::Game()
 	input = new InputManager(this);
 	cam = new Camera(this);
 	rendering = new Rendering(this, cam);
-	allsprites = new SpriteManager();
+	allsprites = new SpriteManager(this);
 	resources = new ResourceManager(this);
 	ui = new InterfaceManager(this);
 	gamestate = new Gamestate(this);

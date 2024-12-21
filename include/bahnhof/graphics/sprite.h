@@ -27,12 +27,13 @@ enum name
 };
 }
 
+class Game;
 class Rendering;
 
 class Spritesheet
 {
 public:
-    Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
+    Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1, float imscale=1);
     ~Spritesheet();
     void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0);
     int getimagenumber();
@@ -50,17 +51,19 @@ private:
     SDL_Rect rect;
     int imagenumber;
     int imagetypes;
+    float imagescale;
     Vec origin;
 };
 
 class SpriteManager
 {
 public:
-    SpriteManager();
+    SpriteManager(Game* _game);
     Spritesheet* get(sprites::name);
 private:
+    Game* game;
     std::map<sprites::name, std::unique_ptr<Spritesheet>> spritemap;
-    void addspritesheet(sprites::name, std::string path, int imagenumber=1, int imagetypes=1);
+    void addspritesheet(sprites::name, std::string path, int imagenumber=1, int imagetypes=1, float imagescale=1);
 };
 
 class Sprite

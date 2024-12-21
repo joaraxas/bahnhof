@@ -62,26 +62,28 @@ void Storage::render(Rendering* r)
 	int xoffset = 0;
 	int nCols = 0;
 	float scale = r->getcamscale();
-	int sep = 20/scale;
-	int frameoffset = fmax(1,int(2/scale));
+	float hdscale = r->getlogicalscale();
+	int iconwidth = 20*hdscale;
+	int sep = iconwidth/scale;
+	int frameoffset = fmax(1,int(2*hdscale/scale));
 	for(auto resourcepair : storedresources){
 		Resource* resource = allresources.get(resourcepair.first);
 		int amount = resourcepair.second;
 		if(amount*sep*sep<rect.w*rect.h*0.6){
+			int maxrows = floor(rect.h/sep);
 			for(int i=0; i<amount; i++){
-				int maxrows = floor(rect.h/sep);
 				nCols = floor(i/maxrows);
-				int y = frameoffset+rect.y+sep/2+sep*i-nCols*maxrows*sep;
-				int x = frameoffset+xoffset+rect.x+sep/2+sep*nCols;
+				int y = frameoffset+rect.y+iconwidth/2+sep*i-nCols*maxrows*sep;
+				int x = frameoffset+xoffset+rect.x+iconwidth/2+sep*nCols;
 				resource->render(r, Vec(x, y));
 			}
 			xoffset += (1+nCols)*sep;
 		}
 		else{
-			int y = rect.y+frameoffset+sep/2;
-			int x = rect.x+frameoffset+sep/2+xoffset;
-			r->rendertext(std::to_string(amount), x-sep/2, y-7/scale);
-			int textwidth = 7*(1+(amount>=10)+(amount>=100))/scale;
+			int y = rect.y+frameoffset+iconwidth/2;
+			int x = rect.x+frameoffset+iconwidth/2+xoffset;
+			SDL_Rect textrect = r->rendertext(std::to_string(amount), x-iconwidth/2, y);
+			int textwidth = textrect.w/scale;
 			resource->render(r, Vec(x+textwidth, y));
 			xoffset += textwidth+sep;
 		}

@@ -3,7 +3,7 @@
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 
-Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimages, int ntypes) : name(newname)
+Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimages, int ntypes, float imscale) : name(newname)
 {
 	tex = loadimage(pathtopng);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
@@ -11,6 +11,7 @@ Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimag
 	h = h/imagenumber;
     imagetypes = ntypes;
     w = w/ntypes;
+	imagescale = imscale;
 	origin = Vec(int(w/2), int(h/2));
 }
 
@@ -24,10 +25,7 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float 
 	int x = int(pos.x);
 	int y = int(pos.y);
 	srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
-    float scale = 1;
-    if(!zoomed)
-        scale = r->getcamscale();
-	rect = {int(x - origin.x/scale), int(y - origin.y/scale), w, h};
+	rect = {int(x - origin.x*imagescale), int(y - origin.y*imagescale), int(w*imagescale), int(h*imagescale)};
 	if(origin.x==int(w/2) && origin.y==int(h/2))
 		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed);
 	else
@@ -56,7 +54,7 @@ void Spritesheet::setoriginy(int neworiginy)
 
 Vec Spritesheet::getsize()
 {
-	return Vec(w, h);
+	return Vec(w*imagescale, h*imagescale);
 }
 
 sprites::name Spritesheet::getname()

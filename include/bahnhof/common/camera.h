@@ -18,5 +18,5 @@ private:
     Game* game;
     void restricttomap();
     SDL_Rect cam;
-    int logscale = 0;
+    int logscale = 1;
 };
