@@ -9,13 +9,14 @@ RouteManager::RouteManager(Tracks::Tracksystem* tracks)
 
 void RouteManager::renderroutes(Rendering* r, int xoffset, int yoffset)
 {
-	int offset = 0;
-	int textheight = 14*r->getlogicalscale();
-	for(auto &route : routes){
-		r->rendertext("("+std::to_string(offset+1)+") "+route->name, xoffset, yoffset + (offset)*textheight, {0,0,0,0}, false);
-		offset++;
+	std::vector<std::string> routenames;
+	int iroute = 1;
+	for(auto& route : routes){
+		routenames.push_back("("+std::to_string(iroute)+") "+route->name);
+		iroute++;
 	}
-	r->rendertext("(r) Create new route", xoffset, yoffset + (offset)*textheight, {0,0,0,0}, false);
+	int tableheight = r->rendertable(routenames, {xoffset, yoffset, 200, 1000});
+	r->rendertext("(r) Create new route", xoffset, yoffset + tableheight, {0,0,0,0}, false);
 }
 
 Route* RouteManager::addroute()

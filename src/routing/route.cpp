@@ -128,19 +128,19 @@ void Route::render(Rendering* r, int xoffset, int yoffset)
 	if(orderids.empty())
 		r->rendertext("Route has no orders yet", xoffset, yoffset, {0,0,0,0}, false);
 	else{
-		int textheight = 14*r->getlogicalscale();
+		std::vector<std::string> orderdescriptions;
 		int renderordernr = 1;
 		if(orders[0]->order==gotostate)
 			renderordernr = 0;
 		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
 			int oid = orderids[iOrder];
-			int x = xoffset;
-			int y = yoffset + iOrder*textheight;
 			Uint8 intensity = (oid==selectedorderid)*255;
 			if(orders[iOrder]->order==gotostate)
 				renderordernr++;
-			r->rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intensity,intensity,intensity,0}, false);
+			orderdescriptions.push_back("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description);
 			orders[iOrder]->render(r, renderordernr);
 		}
+
+		r->rendertable(orderdescriptions, {xoffset, yoffset, 400, 1000});
 	}
 }

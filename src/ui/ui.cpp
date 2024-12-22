@@ -3,7 +3,6 @@
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/timing.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
@@ -14,18 +13,12 @@ InterfaceManager::InterfaceManager(Game* newgame)
 
 void InterfaceManager::render(Rendering* r)
 {
-    Gamestate& gamestate = game->getgamestate();
-
     for(auto& panel: panels)
         panel->render(r);
     
     int scale = getlogicalscale();
     int textheight = 14*scale;
-    r->rendertext(std::to_string(int(gamestate.money)) + " Fr", 220, 2*textheight, {static_cast<Uint8>(127*(gamestate.money<0)),static_cast<Uint8>(63*(gamestate.money>=0)),0,0}, false, false);
-	r->rendertext(std::to_string(int(gamestate.time*0.001/60)) + " min", 220, 3*textheight, {0,0,0,0}, false, false);
-	r->rendertext(std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h", 220, 4*textheight, {0,0,0,0}, false, false);
-	r->rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 220, 5*textheight, {0,0,0,0}, false, false);
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+    SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 	int scalelinelength = scale*200;
     int viewheight = r->getviewsize().y;
     int offset = 20*scale;

@@ -23,9 +23,10 @@ class Rendering
 public:
     Rendering(Game* whatgame, Camera* whatcam);
     void render(Gamestate* gamestate);
-    void rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
+    SDL_Rect rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
     void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=true, bool zoomed=true, bool originiscenter=true, int centerx=0, int centery=0);
     void renderline(Vec pos1, Vec pos2, bool ported=true);
+    int rendertable(std::vector<std::string> lines, SDL_Rect maxarea);
     void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     Vec getviewsize();

@@ -24,10 +24,14 @@ public:
     Vec topcorner();
     InterfaceManager& getui();
 protected:
+    void addbutton(Button* button);
     SDL_Rect rect;
     InterfaceManager* ui;
     Game* game;
     std::vector<std::unique_ptr<Button>> buttons;
+    int xoffset;
+    int yoffset;
+    int ydist = 10;
 };
 
 class MainPanel : public Panel
@@ -35,6 +39,7 @@ class MainPanel : public Panel
 public:
     MainPanel(InterfaceManager* newui, SDL_Rect newrect);
     ~MainPanel();
+    void render(Rendering*);
 };
 
 class RoutePanel : public Panel
