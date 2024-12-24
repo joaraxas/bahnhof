@@ -24,7 +24,7 @@ public:
     Vec topcorner();
     InterfaceManager& getui();
 protected:
-    void addbutton(Button* button);
+    template <class T> void addbutton();
     SDL_Rect rect;
     InterfaceManager* ui;
     Game* game;

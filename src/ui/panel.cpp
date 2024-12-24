@@ -44,7 +44,9 @@ bool Panel::click(Vec mousepos, int type)
     return false;
 }
 
-void Panel::addbutton(Button* button){
+
+template <class T> void Panel::addbutton(){
+	T* button = new T(this, Vec(xoffset,yoffset));
 	buttons.emplace_back(button);
 	yoffset += ydist + button->getlocalrect().h;
 }
@@ -61,15 +63,15 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 	int scale = ui->getlogicalscale();
 	xoffset = 20*scale;
 	yoffset = 20*scale;
-	addbutton(new Close(this, Vec(xoffset,yoffset)));
+	addbutton<Close>();
 }
 
 MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
-	addbutton(new PlaceTrack(this, Vec(xoffset,yoffset)));
-	addbutton(new PlaceSignal(this, Vec(xoffset,yoffset)));
-	addbutton(new ManageRoutes(this, Vec(xoffset,yoffset)));
-	addbutton(new ManageTrains(this, Vec(xoffset,yoffset)));
+	addbutton<PlaceTrack>();
+	addbutton<PlaceSignal>();
+	addbutton<ManageRoutes>();
+	addbutton<ManageTrains>();
 }
 
 MainPanel::~MainPanel(){std::cout<<"del mainpanel"<<std::endl;}
