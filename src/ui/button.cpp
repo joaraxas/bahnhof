@@ -90,10 +90,7 @@ void ManageRoutes::click()
 
 void ManageTrains::click()
 {
-    Vec viewsize = game->getrendering().getviewsize();
-    int scale = ui->getlogicalscale();
-    SDL_Rect trainpanelrect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
-    new TrainPanel(ui, trainpanelrect);
+    new TrainListPanel(ui);
 }
 
 } //end namespace UI

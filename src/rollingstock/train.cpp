@@ -380,7 +380,7 @@ bool Train::split(int where, Route* assignedroute)
 	if(speed!=0)
 		splitsucceed = false;
 	else if(wagons.size()>where){
-		TrainManager& trainmanager = game->getgamestate().gettrains();
+		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
 		if(gasisforward){
 			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
 			wagons = {wagons.begin(), wagons.begin() + where};
@@ -398,4 +398,12 @@ bool Train::split(int where, Route* assignedroute)
 		std::cout << "split" << std::endl;
 	}
 	return splitsucceed;
+}
+
+TrainInfo Train::getinfo(){
+	TrainInfo info;
+	info.train = this;
+	info.name = name;
+	info.speed = speed;
+	return info;
 }

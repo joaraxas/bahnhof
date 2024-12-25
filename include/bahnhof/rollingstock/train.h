@@ -10,6 +10,13 @@ namespace Tracks{
     class Tracksystem;
 }
 
+struct TrainInfo
+{
+    Train* train;
+    std::string name;
+    float speed;
+};
+
 class Train
 {
 public:
@@ -29,6 +36,7 @@ public:
     State backwardstate();
     bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
+    TrainInfo getinfo();
     Tracks::Tracksystem* tracksystem;
     float speed;
     bool gasisforward = true;
@@ -56,6 +64,7 @@ public:
     void addtrain(Train* train);
     void deselectall();
     Train* gettrainatpos(Vec pos);
+    std::vector<TrainInfo> gettrainsinfo();
     void inittrain(State startstate);
     void addtrainstoorphans();
 private:

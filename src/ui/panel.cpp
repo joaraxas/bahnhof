@@ -66,6 +66,8 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 	addbutton<Close>();
 }
 
+Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}){}
+
 MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
 	addbutton<PlaceTrack>();
@@ -109,6 +111,34 @@ void RoutePanel::render(Rendering* r)
 		gamestate.getrouting().selectedroute->render(r, rect.x+xoffset, rect.y+yoffset);
 	else
 		gamestate.getrouting().renderroutes(r, rect.x+xoffset, rect.y+yoffset);
+}
+
+TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
+{
+    Vec viewsize = game->getrendering().getviewsize();
+    int scale = ui->getlogicalscale();
+    rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
+}
+
+TrainListPanel::~TrainListPanel()
+{
+	game->getinputmanager().selecttrain(nullptr);
+	std::cout<<"del trainlistpanel"<<std::endl;
+}
+
+void TrainListPanel::render(Rendering* r)
+{
+	Panel::render(r);
+	std::vector<TrainInfo> traininfos = game->getgamestate().gettrainmanager().gettrainsinfo();
+	std::vector<std::string> trainstrings;
+	for(TrainInfo& info: traininfos){
+		trainstrings.push_back(info.name);
+	}
+	// Train* selectedtrain = game->getinputmanager().getselectedtrain();
+	int scale = ui->getlogicalscale();
+	int xoffset = 10*scale;
+	int yoffset = (20+30)*scale;
+	int tableheight = r->rendertable(trainstrings, {rect.x+xoffset, rect.y+yoffset, rect.w-xoffset, rect.h-20*scale});
 }
 
 TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)

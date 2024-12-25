@@ -44,7 +44,7 @@ void Rendering::render(Gamestate* gamestate)
 		storage->render(this);
 	Tracks::render(tracksystem, this);
 	game->getinputmanager().render(this, tracksystem);
-	gamestate->gettrains().render(this);
+	gamestate->gettrainmanager().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 
 	InterfaceManager& ui = game->getui();

@@ -18,7 +18,7 @@ void InputManager::handle(int ms, int mslogic){
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     RouteManager& routing = gamestate.getrouting();
-    TrainManager& trainmanager = gamestate.gettrains();
+    TrainManager& trainmanager = gamestate.gettrainmanager();
     SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
     InterfaceManager& ui = game->getui();
@@ -77,7 +77,7 @@ void InputManager::handle(int ms, int mslogic){
                         }
                     }
                     else{
-                        Train* clickedtrain = gamestate.gettrains().gettrainatpos(mousepos);
+                        Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
                         if(clickedtrain){
                             selecttrain(clickedtrain);
                         }
@@ -142,7 +142,7 @@ void InputManager::handle(int ms, int mslogic){
                     nicetracks = !nicetracks;
                 }
                 if(gamestate.money>0){
-                    TrainManager& trainmanager = gamestate.gettrains();
+                    TrainManager& trainmanager = gamestate.gettrainmanager();
                     if(e.key.keysym.sym == SDLK_o){
                         trainmanager.addwagon(new Openwagon(&tracksystem, gamestate.newwagonstate));
                         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
@@ -232,7 +232,7 @@ void InputManager::selecttrain(Train* whattrain)
 {
     Gamestate& gamestate = game->getgamestate();
     RouteManager& routing = gamestate.getrouting();
-	gamestate.gettrains().deselectall();
+	gamestate.gettrainmanager().deselectall();
     routing.selectedroute = nullptr;
 	if(whattrain){
 		whattrain->selected = true;

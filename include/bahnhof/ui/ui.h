@@ -17,6 +17,7 @@ class Button;
 class Panel{
 public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
+    Panel(InterfaceManager* newui);
     virtual ~Panel();
     void erase();
     bool click(Vec pos, int type);
@@ -47,6 +48,14 @@ class RoutePanel : public Panel
 public:
     RoutePanel(InterfaceManager* newui, SDL_Rect newrect);
     ~RoutePanel();
+    void render(Rendering*);
+};
+
+class TrainListPanel : public Panel
+{
+public:
+    TrainListPanel(InterfaceManager* newui);
+    ~TrainListPanel();
     void render(Rendering*);
 };
 

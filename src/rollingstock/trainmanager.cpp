@@ -86,6 +86,15 @@ Train* TrainManager::gettrainatpos(Vec pos)
     return clickedtrain;
 }
 
+std::vector<TrainInfo> TrainManager::gettrainsinfo()
+{
+	std::vector<TrainInfo> infos;
+	for(auto& train : trains){
+		infos.push_back(train->getinfo());
+	}
+	return infos;
+}
+
 void TrainManager::inittrain(State startstate)
 {
 	int nWagons = wagons.size();
