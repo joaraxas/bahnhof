@@ -65,18 +65,6 @@ SDL_Rect Rendering::rendertext(std::string text, int x, int y, SDL_Color color, 
 	return rect;
 }
 
-int Rendering::rendertable(std::vector<std::string> lines, SDL_Rect maxarea){
-    int scale = getlogicalscale();
-    int maxwidth = maxarea.w;
-    int linedist = 3;
-    int yoffset = 0;
-    for(auto& line: lines){
-        SDL_Rect textrect = rendertext(line, maxarea.x, maxarea.y+yoffset, {0,0,0,0}, false, false, maxwidth);
-        yoffset += textrect.h + linedist;
-    }
-    return yoffset;
-}
-
 void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
 	if(ported){

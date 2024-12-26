@@ -14,6 +14,7 @@ namespace UI{
 
 class Element;
 class Button;
+class Table;
 
 class Panel{
 public:
@@ -43,8 +44,6 @@ class MainPanel : public Panel
 {
 public:
     MainPanel(InterfaceManager* newui, SDL_Rect newrect);
-    ~MainPanel();
-    void render(Rendering*);
 };
 
 class RoutePanel : public Panel
@@ -52,7 +51,6 @@ class RoutePanel : public Panel
 public:
     RoutePanel(InterfaceManager* newui, SDL_Rect newrect);
     ~RoutePanel();
-    void render(Rendering*);
 };
 
 class TrainListPanel : public Panel

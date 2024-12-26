@@ -123,24 +123,34 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 			order->assignroute(this);
 }
 
-void Route::render(Rendering* r, int xoffset, int yoffset)
+std::vector<int> Route::getordernumberstorender()
 {
-	if(orderids.empty())
-		r->rendertext("Route has no orders yet", xoffset, yoffset, {0,0,0,0}, false);
-	else{
-		std::vector<std::string> orderdescriptions;
-		int renderordernr = 1;
-		if(orders[0]->order==gotostate)
-			renderordernr = 0;
-		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
-			int oid = orderids[iOrder];
-			Uint8 intensity = (oid==selectedorderid)*255;
-			if(orders[iOrder]->order==gotostate)
-				renderordernr++;
-			orderdescriptions.push_back("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description);
-			orders[iOrder]->render(r, renderordernr);
-		}
+	std::vector<int> renderordernrs;
+	int renderordernr = 0;
+	for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+		if(orders[iOrder]->order==gotostate)
+			renderordernr++;
+		if(renderordernr==0)
+			renderordernr = 1;
+		renderordernrs.push_back(renderordernr);
+	}
+	return renderordernrs;
+}
 
-		r->rendertable(orderdescriptions, {xoffset, yoffset, 400, 1000});
+std::vector<std::string> Route::getorderdescriptions()
+{
+	std::vector<std::string> orderdescriptions;
+	for(auto& order: orders)
+		orderdescriptions.push_back(order->description);
+	return orderdescriptions;
+}
+
+void Route::render(Rendering* r)
+{
+	if(! orderids.empty()){
+		std::vector<int> renderordernrs = getordernumberstorender();
+		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+			orders[iOrder]->render(r, renderordernrs[iOrder]);
+		}
 	}
 }

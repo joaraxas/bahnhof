@@ -22,8 +22,10 @@ public:
     void removeorder(int orderid);
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
-    void render(Rendering* r, int xoffset=0, int yoffset=0);
+    void render(Rendering* r);
     int getindex(int orderid);
+    std::vector<std::string> getorderdescriptions();
+    std::vector<int> getordernumberstorender();
     Tracks::Tracksystem* tracksystem;
     std::string name = "New route";
     int selectedorderid = -1;
@@ -39,8 +41,8 @@ class RouteManager
 {
 public:
     RouteManager(Tracks::Tracksystem* tracks);
-    void renderroutes(Rendering* r, int xoffset=0, int yoffset=0);
     Route* addroute();
+    std::vector<std::string> getroutenames();
     Tracks::Tracksystem* tracksystem;
     Route* selectedroute = nullptr;
     std::vector<std::unique_ptr<Route>> routes;

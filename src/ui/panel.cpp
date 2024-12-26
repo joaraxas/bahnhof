@@ -6,7 +6,6 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/common/timing.h"
 
 namespace UI{
 
@@ -84,43 +83,23 @@ MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, n
 	createbutton<PlaceSignal>();
 	createbutton<ManageRoutes>();
 	createbutton<ManageTrains>();
-}
 
-MainPanel::~MainPanel(){std::cout<<"del mainpanel"<<std::endl;}
-
-void MainPanel::render(Rendering* r)
-{
-	Panel::render(r);
-    Gamestate& gamestate = game->getgamestate();
-    int scale = r->getlogicalscale();
-	r->rendertable({std::to_string(int(gamestate.money)) + " Fr",
-                    std::to_string(int(gamestate.time*0.001/60)) + " min", 
-                    std::to_string(int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60))) + " Fr/h",
-                    std::to_string(game->gettimemanager().getfps()) + " fps"}, 
-                   {110*scale, 28*scale, 100*scale, 2000*scale});
+    int scale = ui->getlogicalscale();
+	SDL_Rect tablerect = {110*scale, 28*scale, 100*scale, 2000*scale};
+	addelement(new MainInfoTable(this, tablerect));
 }
 
 RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
+    int scale = ui->getlogicalscale();
+	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-10*scale, rect.h-10*scale};
+	addelement(new RoutesTable(this, tablerect));
 }
 
 RoutePanel::~RoutePanel()
 {
 	std::cout<<"del routepanel"<<std::endl;
     game->getgamestate().getrouting().selectedroute = nullptr;
-}
-
-void RoutePanel::render(Rendering* r)
-{
-	Panel::render(r);
-    Gamestate& gamestate = game->getgamestate();
-	int scale = ui->getlogicalscale();
-	int xoffset = 10*scale;
-	int yoffset = (20+30)*scale;
-	if(gamestate.getrouting().selectedroute)
-		gamestate.getrouting().selectedroute->render(r, rect.x+xoffset, rect.y+yoffset);
-	else
-		gamestate.getrouting().renderroutes(r, rect.x+xoffset, rect.y+yoffset);
 }
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
