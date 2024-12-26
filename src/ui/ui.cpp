@@ -11,6 +11,12 @@ InterfaceManager::InterfaceManager(Game* newgame)
     new UI::MainPanel(this, {0,0,200*getlogicalscale(),200*getlogicalscale()});
 }
 
+void InterfaceManager::update(int ms)
+{
+    for(auto& panel: panels)
+        panel->update(ms);
+}
+
 void InterfaceManager::render(Rendering* r)
 {
     for(auto& panel: panels)

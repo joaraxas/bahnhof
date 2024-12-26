@@ -41,6 +41,7 @@ void Game::play()
 	while(!quit){
 		timer->tick();
 		input->handle(timer->getms(), timer->getmslogic());
+		ui->update(timer->getms());
 		gamestate->update(timer->getmslogic());
 		rendering->render(gamestate);
 	}

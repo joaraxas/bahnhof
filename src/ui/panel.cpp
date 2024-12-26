@@ -1,11 +1,11 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/buttons.h"
+#include "bahnhof/ui/tables.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
-#include "bahnhof/rollingstock/train.h"
 #include "bahnhof/common/timing.h"
 
 namespace UI{
@@ -25,12 +25,18 @@ Vec Panel::topcorner()
 	return Vec(rect.x, rect.y);
 }
 
+void Panel::update(int ms)
+{
+	for(auto& element: elements)
+		element->update(ms);
+}
+
 void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
     r->renderfilledrectangle(rect, false, false);
-	for(auto& button: buttons)
-		button->render(r);
+	for(auto& element: elements)
+		element->render(r);
 }
 
 bool Panel::click(Vec mousepos, int type)
@@ -44,10 +50,14 @@ bool Panel::click(Vec mousepos, int type)
     return false;
 }
 
+void Panel::addelement(Element* element){
+	elements.emplace_back(element);
+}
 
-template <class T> void Panel::addbutton(){
+template <class T> void Panel::createbutton(){
 	T* button = new T(this, Vec(xoffset,yoffset));
-	buttons.emplace_back(button);
+	buttons.push_back(button);
+	addelement(button);
 	yoffset += ydist + button->getlocalrect().h;
 }
 
@@ -63,17 +73,17 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 	int scale = ui->getlogicalscale();
 	xoffset = 20*scale;
 	yoffset = 20*scale;
-	addbutton<Close>();
+	createbutton<Close>();
 }
 
 Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}){}
 
 MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
-	addbutton<PlaceTrack>();
-	addbutton<PlaceSignal>();
-	addbutton<ManageRoutes>();
-	addbutton<ManageTrains>();
+	createbutton<PlaceTrack>();
+	createbutton<PlaceSignal>();
+	createbutton<ManageRoutes>();
+	createbutton<ManageTrains>();
 }
 
 MainPanel::~MainPanel(){std::cout<<"del mainpanel"<<std::endl;}
@@ -118,6 +128,8 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
     Vec viewsize = game->getrendering().getviewsize();
     int scale = ui->getlogicalscale();
     rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
+	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-10*scale, rect.h-10*scale};
+	addelement(new TrainTable(this, tablerect));
 }
 
 TrainListPanel::~TrainListPanel()
@@ -126,45 +138,30 @@ TrainListPanel::~TrainListPanel()
 	std::cout<<"del trainlistpanel"<<std::endl;
 }
 
-void TrainListPanel::render(Rendering* r)
-{
-	Panel::render(r);
-	std::vector<TrainInfo> traininfos = game->getgamestate().gettrainmanager().gettrainsinfo();
-	std::vector<std::string> trainstrings;
-	for(TrainInfo& info: traininfos){
-		trainstrings.push_back(info.name);
-	}
-	// Train* selectedtrain = game->getinputmanager().getselectedtrain();
-	int scale = ui->getlogicalscale();
-	int xoffset = 10*scale;
-	int yoffset = (20+30)*scale;
-	int tableheight = r->rendertable(trainstrings, {rect.x+xoffset, rect.y+yoffset, rect.w-xoffset, rect.h-20*scale});
-}
+// TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
+// {
+// }
 
-TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
-{
-}
+// TrainPanel::~TrainPanel()
+// {
+// 	game->getinputmanager().selecttrain(nullptr);
+// 	std::cout<<"del trainpanel"<<std::endl;
+// }
 
-TrainPanel::~TrainPanel()
-{
-	game->getinputmanager().selecttrain(nullptr);
-	std::cout<<"del trainpanel"<<std::endl;
-}
-
-void TrainPanel::render(Rendering* r)
-{
-	Panel::render(r);
-	Train* selectedtrain = game->getinputmanager().getselectedtrain();
-	int scale = ui->getlogicalscale();
-	int xoffset = 10*scale;
-	int yoffset = (20+30)*scale;
-	if(selectedtrain){
-		if(selectedtrain->route)
-			r->rendertext(selectedtrain->route->name, rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-		else
-			r->rendertext("No route assigned", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-	}
-	else
-		r->rendertext("No train selected", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-}
+// void TrainPanel::render(Rendering* r)
+// {
+// 	Panel::render(r);
+// 	Train* selectedtrain = game->getinputmanager().getselectedtrain();
+// 	int scale = ui->getlogicalscale();
+// 	int xoffset = 10*scale;
+// 	int yoffset = (20+30)*scale;
+// 	if(selectedtrain){
+// 		if(selectedtrain->route)
+// 			r->rendertext(selectedtrain->route->name, rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
+// 		else
+// 			r->rendertext("No route assigned", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
+// 	}
+// 	else
+// 		r->rendertext("No train selected", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
+// }
 } // namespace UI

@@ -5,6 +5,8 @@
 
 class InputManager;
 class Route;
+class Train;
+class Wagon;
 
 namespace Tracks{
     class Tracksystem;

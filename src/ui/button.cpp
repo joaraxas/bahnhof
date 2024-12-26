@@ -8,24 +8,10 @@
 
 namespace UI{
 
-Button::Button(Panel* newpanel, Vec newpos)
+Button::Button(Panel* newpanel, Vec newpos) : Element(newpanel)
 {
-    panel = newpanel;
-    ui = &panel->getui();
-    game = &ui->getgame();
     int scale = ui->getlogicalscale();
     rect = {int(newpos.x), int(newpos.y), scale*100, scale*40};
-}
-
-SDL_Rect Button::getglobalrect()
-{
-    Vec panelpos = panel->topcorner();
-    return {rect.x+int(panelpos.x), rect.y+int(panelpos.y), rect.w, rect.h};
-}
-
-SDL_Rect Button::getlocalrect()
-{
-    return rect;
 }
 
 void Button::render(Rendering* r)

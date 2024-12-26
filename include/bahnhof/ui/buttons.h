@@ -4,6 +4,7 @@
 #include<SDL_ttf.h>
 #include<vector>
 #include "bahnhof/common/math.h"
+#include "bahnhof/ui/tables.h"
 
 class Game;
 class Gamestate;
@@ -13,28 +14,22 @@ class InterfaceManager;
 namespace UI{
 class Panel;
 
-class Button
+class Button : public Element
 {
 public:
     Button(Panel*, Vec newpos);
-    virtual ~Button() {};
+    virtual ~Button() {std::cout<<"del button"<<std::endl;};
     bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
-    SDL_Rect getglobalrect();
-    SDL_Rect getlocalrect();
 protected:
     virtual void click() {};
-    Panel* panel;
-    SDL_Rect rect;
-    InterfaceManager* ui;
-    Game* game;
 };
 
 class TextButton : public Button
 {
 public:
     TextButton(Panel*, Vec newpos, std::string text);
-    virtual ~TextButton() {};
+    virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
     virtual void render(Rendering*);
 private:
     int textheight;
