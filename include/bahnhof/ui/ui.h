@@ -21,6 +21,7 @@ class Element
 public:
     Element(Panel*);
     virtual ~Element() {};
+    virtual bool checkclick(Vec pos, int type);
     virtual void update(int ms) {};
     virtual void render(Rendering*) {};
     virtual SDL_Rect getglobalrect();
@@ -50,7 +51,6 @@ protected:
     InterfaceManager* ui;
     Game* game;
     std::vector<std::unique_ptr<Element>> elements;
-    std::vector<Button*> buttons;
     int xoffset;
     int yoffset;
     int ydist = 10;

@@ -40,6 +40,7 @@ public:
     void setoriginx(int);
     void setoriginy(int);
     Vec getsize();
+    sprites::name getname();
 private:
     sprites::name name;
     int w;
@@ -69,6 +70,7 @@ public:
     void updateframe(int ms);
     void render(Rendering* r, Vec pos);
     Vec getsize();
+    sprites::name getname();
     float imageangle = 0;
     float imagespeed = 0;
     float imageindex = 0;

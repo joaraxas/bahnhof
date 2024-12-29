@@ -58,3 +58,10 @@ Vec Spritesheet::getsize()
 {
 	return Vec(w, h);
 }
+
+sprites::name Spritesheet::getname()
+{
+	if(name == sprites::name::none)
+		std::cout<<"Warning: spritesheet with name none was called";
+	return name;
+}

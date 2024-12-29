@@ -69,11 +69,6 @@ std::vector<State*> Wagon::getstates()
 	return std::vector<State*>({&state});
 }
 
-float Wagon::getpower()
-{
-	return 0;
-}
-
 int Wagon::loadwagon(resourcetype resource, int amount)
 {
 	int loadedamount = 0;
@@ -95,10 +90,19 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	return unloadedamount;
 }
 
-Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
+float Wagon::getpower()
 {
-	hasdriver = true;
+	return 0;
 }
+
+WagonInfo Wagon::getinfo()
+{
+	WagonInfo info(icon.getname(), loadedresource, loadamount);
+	return info;
+}
+
+Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
+{}
 
 void Locomotive::update(int ms)
 {

@@ -22,13 +22,12 @@ void Button::render(Rendering* r)
 
 bool Button::checkclick(Vec mousepos, int type)
 {
-    SDL_Rect absrect = getglobalrect();
-	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
+    bool clicked = Element::checkclick(mousepos, type);
+	if(clicked){
         if(type==SDL_BUTTON_LEFT)
             click();
-		return true;
 	}
-    return false;
+    return clicked;
 }
 
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext) : Element(newpanel), Button(newpanel, newpos)

@@ -81,6 +81,15 @@ Element::Element(Panel* newpanel)
     game = &ui->getgame();
 }
 
+bool Element::checkclick(Vec mousepos, int type)
+{
+    SDL_Rect absrect = getglobalrect();
+	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
+		return true;
+	}
+    return false;
+}
+
 SDL_Rect Element::getglobalrect()
 {
     Vec panelpos = panel->topcorner();

@@ -4,6 +4,7 @@
 #include "bahnhof/graphics/sprite.h"
 
 class Train;
+class WagonInfo;
 
 namespace Tracks{
     class Tracksystem;
@@ -12,7 +13,7 @@ namespace Tracks{
 class Wagon
 {
 public:
-    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
+    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconname);
     ~Wagon(); //TODO: should be virtual
     void travel(float pixels);
     virtual void update(int ms);
@@ -23,10 +24,10 @@ public:
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
+    virtual WagonInfo getinfo();
     Train* train;
     Vec pos;
     bool alignedforward = true;
-    bool hasdriver = false;
     int w;
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;

@@ -41,8 +41,8 @@ void Panel::render(Rendering* r)
 bool Panel::click(Vec mousepos, int type)
 {
 	if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
-		for(auto& button: buttons)
-			if(button->checkclick(mousepos, type))
+		for(auto& element: elements)
+			if(element->checkclick(mousepos, type))
 				break;
 		return true;
 	}
@@ -55,7 +55,6 @@ void Panel::addelement(Element* element){
 
 template <class T> void Panel::createbutton(){
 	T* button = new T(this, Vec(xoffset,yoffset));
-	buttons.push_back(button);
 	addelement(button);
 	yoffset += ydist + button->getlocalrect().h;
 }
@@ -113,7 +112,6 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 
 TrainListPanel::~TrainListPanel()
 {
-	game->getinputmanager().selecttrain(nullptr);
 	std::cout<<"del trainlistpanel"<<std::endl;
 }
 

@@ -401,9 +401,9 @@ bool Train::split(int where, Route* assignedroute)
 }
 
 TrainInfo Train::getinfo(){
-	TrainInfo info;
-	info.train = this;
-	info.name = name;
-	info.speed = speed;
-	return info;
+	std::vector<WagonInfo> wagoninfos;
+	for(auto& wagon : wagons){
+		wagoninfos.push_back(wagon->getinfo());
+	}
+	return TrainInfo(this, name, speed, wagoninfos);
 }

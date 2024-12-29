@@ -32,3 +32,11 @@ Vec Sprite::getsize()
 	Vec sheetsize = spritesheet->getsize();
 	return Vec(sheetsize.x/imagetypes, sheetsize.y/imagenumber);
 }
+
+sprites::name Sprite::getname()
+{	
+	sprites::name sheetname = spritesheet->getname();
+	if(sheetname == sprites::name::none)
+		std::cout<<"Warning: sprite with spritesheet with name none was called";
+	return sheetname;
+}

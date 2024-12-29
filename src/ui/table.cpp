@@ -36,27 +36,68 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea)
     rect.h = textrect.h;
 }
 
-TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo) : Element(p), TableLine(p, t), Button(p, Vec(0,0))
-{
-    info = traininfo;
-}
+TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
+    Element(p), 
+    TableLine(p, t), 
+    Button(p, Vec(0,0)), 
+    info(traininfo),
+    trainmanager(manager)
+{}
 
 void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
-    rect.h = 20*ui->getlogicalscale();
-    Button::render(r);
+    auto scale = ui->getlogicalscale();
+    Uint8 intensity = 255*info.train->selected;
+    SDL_Rect absrect = getglobalrect();
+    int rowoffset = 3*scale;
+    int textpadding = 1*scale;
+    int namerowwidth = 40*scale;
+    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
+    
+    SDL_Rect namerect = r->rendertext(info.name, absrect.x+rowoffset, absrect.y+textpadding, {intensity, intensity, intensity, 255}, false, false, namerowwidth-rowoffset);
+    absrect.h = namerect.h + 2*textpadding;
+    
+    int iconoffset = 2*scale;
+	SpriteManager& spritemanager = ui->getgame().getsprites();
+    Sprite wagonicon;
+    wagonicon.ported = false;
+    wagonicon.zoomed = false;
+    int icon_x = namerowwidth + rowoffset;
+    for(WagonInfo& wagoninfo : info.wagoninfos){
+        wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
+        Vec iconsize = wagonicon.getsize();
+        wagonicon.render(r, Vec(absrect.x+icon_x+iconsize.x*0.5, absrect.y+textpadding+namerect.h*0.5));
+        icon_x += iconsize.x + iconoffset;
+    }
+    
+    r->renderrectangle(absrect, false, false);
+    rect.h = absrect.h;
 }
 
 void TrainTableLine::click()
 {
-    // info.train->selected = true;
+    trainmanager->deselectall();
+    info.train->selected = true;
 }
 
 
 Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
 {
     rect = newrect;
+}
+
+bool Table::checkclick(Vec mousepos, int type)
+{
+    bool clicked = Element::checkclick(mousepos, type);
+	if(clicked){
+        for(auto& line : lines){
+            if(line->checkclick(mousepos, type)){
+                return true;
+            }
+        }
+	}
+    return false;
 }
 
 void Table::render(Rendering* r)
@@ -95,7 +136,7 @@ void TrainTable::update(int ms)
 	std::vector<TrainInfo> traininfos = trainmanager->gettrainsinfo();
 	lines.clear();
 	for(TrainInfo& info: traininfos){
-        lines.emplace_back(new TrainTableLine(panel, this, info));
+        lines.emplace_back(new TrainTableLine(panel, this, info, trainmanager));
 	}
 }
 

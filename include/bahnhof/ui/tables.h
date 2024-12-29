@@ -20,7 +20,8 @@ class TableLine : virtual public Element
 {
 public:
     TableLine(Panel*, Table*);
-    virtual void render(Rendering* r, SDL_Rect maxarea) {std::cout<<"but this does"<<std::endl;};
+    virtual ~TableLine() {std::cout<<"del tableline"<<std::endl;};
+    virtual void render(Rendering* r, SDL_Rect maxarea) {};
     SDL_Rect getglobalrect();
 protected:
     Table* table;
@@ -38,18 +39,20 @@ private:
 class TrainTableLine : public TableLine, public Button
 {
 public:
-    TrainTableLine(Panel*, Table*, TrainInfo);
+    TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
     void click();
     TrainInfo info;
+    TrainManager* trainmanager;
 };
 
 class Table : public Element
 {
 public:
     Table(Panel*, SDL_Rect newrect);
-    virtual ~Table() {};
+    virtual ~Table() {std::cout<<"del table"<<std::endl;};
+    bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
@@ -74,7 +77,7 @@ class TrainTable : public Table
 public:
     TrainTable(Panel*, SDL_Rect newrect);
     void update(int ms);
-protected:
+private:
     TrainManager* trainmanager;
 };
 
