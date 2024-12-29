@@ -10,24 +10,6 @@
 
 namespace UI{
 
-Element::Element(Panel* newpanel)
-{
-    panel = newpanel;
-    ui = &panel->getui();
-    game = &ui->getgame();
-}
-
-SDL_Rect Element::getglobalrect()
-{
-    Vec panelpos = panel->topcorner();
-    return {rect.x+int(panelpos.x), rect.y+int(panelpos.y), rect.w, rect.h};
-}
-
-SDL_Rect Element::getlocalrect()
-{
-    return rect;
-}
-
 TableLine::TableLine(Panel* newpanel, Table* newtable) : Element(newpanel)
 {
     table = newtable;
@@ -35,17 +17,42 @@ TableLine::TableLine(Panel* newpanel, Table* newtable) : Element(newpanel)
     rect = {tablerect.x, tablerect.y, 100, 20};
 }
 
-TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
+SDL_Rect TableLine::getglobalrect()
+{
+    SDL_Rect tablepos = table->getglobalrect();
+    return {rect.x+int(tablepos.x), rect.y+int(tablepos.y), rect.w, rect.h};
+}
+
+TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : Element(newpanel), TableLine(newpanel, newtable)
 {
     str = newstr;
 }
 
 void TableTextLine::render(Rendering* r, SDL_Rect maxarea)
 {
-    SDL_Rect textrect = r->rendertext(str, maxarea.x, maxarea.y, {0,0,0,0}, false, false, maxarea.w);
-    rect.w = textrect.w;
+    rect = maxarea;
+    SDL_Rect globrect = getglobalrect();
+    SDL_Rect textrect = r->rendertext(str, globrect.x, globrect.y, {0,0,0,0}, false, false, globrect.w);
     rect.h = textrect.h;
 }
+
+TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo) : Element(p), TableLine(p, t), Button(p, Vec(0,0))
+{
+    info = traininfo;
+}
+
+void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    rect = maxarea;
+    rect.h = 20*ui->getlogicalscale();
+    Button::render(r);
+}
+
+void TrainTableLine::click()
+{
+    // info.train->selected = true;
+}
+
 
 Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
 {
@@ -54,7 +61,7 @@ Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
 
 void Table::render(Rendering* r)
 {
-    SDL_Rect maxarea = getglobalrect();
+    SDL_Rect maxarea = {0,0,rect.w,rect.h};
     for(auto& line: lines){
         line->render(r, maxarea);
         SDL_Rect textrect = line->getlocalrect();
@@ -85,20 +92,16 @@ TrainTable::TrainTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newr
 
 void TrainTable::update(int ms)
 {
-	traininfos = trainmanager->gettrainsinfo();
-    trainstrings.clear();
+	std::vector<TrainInfo> traininfos = trainmanager->gettrainsinfo();
+	lines.clear();
 	for(TrainInfo& info: traininfos){
-		trainstrings.push_back(info.name);
-		trainspeeds.push_back(info.speed);
+        lines.emplace_back(new TrainTableLine(panel, this, info));
 	}
 }
 
 void RoutesTable::update(int ms)
 {
 	RouteManager& routing = ui->getgame().getgamestate().getrouting();
-	int scale = ui->getlogicalscale();
-	int xoffset = 10*scale;
-	int yoffset = (20+30)*scale;
 	lines.clear();
 	
 	if(routing.selectedroute){

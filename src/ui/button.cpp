@@ -31,7 +31,7 @@ bool Button::checkclick(Vec mousepos, int type)
     return false;
 }
 
-TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext) : Button(newpanel, newpos)
+TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext) : Element(newpanel), Button(newpanel, newpos)
 {
     text = newtext;
     int scale = ui->getlogicalscale();

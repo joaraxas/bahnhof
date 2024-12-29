@@ -92,7 +92,7 @@ MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, n
 RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
     int scale = ui->getlogicalscale();
-	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-10*scale, rect.h-10*scale};
+	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
 	addelement(new RoutesTable(this, tablerect));
 }
 
@@ -107,7 +107,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
     Vec viewsize = game->getrendering().getviewsize();
     int scale = ui->getlogicalscale();
     rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
-	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-10*scale, rect.h-10*scale};
+	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
 	addelement(new TrainTable(this, tablerect));
 }
 

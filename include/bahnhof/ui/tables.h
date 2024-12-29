@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include<vector>
+#include "bahnhof/ui/buttons.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/rollingstock/train.h"
 
@@ -15,28 +16,13 @@ namespace UI{
 class Panel;
 class Table;
 
-class Element
-{
-public:
-    Element(Panel*);
-    virtual ~Element() {};
-    virtual void update(int ms) {};
-    virtual void render(Rendering*) {};
-    SDL_Rect getglobalrect();
-    SDL_Rect getlocalrect();
-protected:
-    Panel* panel;
-    SDL_Rect rect = {0,0,100,100};
-    InterfaceManager* ui;
-    Game* game;
-};
-
-class TableLine : public Element
+class TableLine : virtual public Element
 {
 public:
     TableLine(Panel*, Table*);
     virtual void render(Rendering* r, SDL_Rect maxarea) {std::cout<<"but this does"<<std::endl;};
-private:
+    SDL_Rect getglobalrect();
+protected:
     Table* table;
 };
 
@@ -47,6 +33,16 @@ public:
     virtual void render(Rendering* r, SDL_Rect maxarea);
 private:
     std::string str;
+};
+
+class TrainTableLine : public TableLine, public Button
+{
+public:
+    TrainTableLine(Panel*, Table*, TrainInfo);
+    void render(Rendering* r, SDL_Rect maxarea);
+private:
+    void click();
+    TrainInfo info;
 };
 
 class Table : public Element
@@ -80,9 +76,6 @@ public:
     void update(int ms);
 protected:
     TrainManager* trainmanager;
-    std::vector<TrainInfo> traininfos;
-	std::vector<std::string> trainstrings;
-	std::vector<float> trainspeeds;
 };
 
 }

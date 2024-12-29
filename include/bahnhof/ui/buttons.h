@@ -4,7 +4,7 @@
 #include<SDL_ttf.h>
 #include<vector>
 #include "bahnhof/common/math.h"
-#include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/ui.h"
 
 class Game;
 class Gamestate;
@@ -12,9 +12,8 @@ class Rendering;
 class InterfaceManager;
 
 namespace UI{
-class Panel;
 
-class Button : public Element
+class Button : virtual public Element
 {
 public:
     Button(Panel*, Vec newpos);
@@ -41,7 +40,7 @@ private:
 class Close : public TextButton
 {
 public:
-    Close(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Close") {}
+    Close(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Close") {}
 protected:
     void click();
 };
@@ -49,7 +48,7 @@ protected:
 class PlaceSignal : public TextButton
 {
 public:
-    PlaceSignal(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
+    PlaceSignal(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build signal") {}
 protected:
     void click();
 };
@@ -57,7 +56,7 @@ protected:
 class PlaceTrack : public TextButton
 {
 public:
-    PlaceTrack(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {}
+    PlaceTrack(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build track") {}
 protected:
     void click();
 };
@@ -65,7 +64,7 @@ protected:
 class BuildWagon : public TextButton
 {
 public:
-    BuildWagon(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
+    BuildWagon(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build signal") {}
 protected:
     void click();
 };
@@ -73,7 +72,7 @@ protected:
 class ManageRoutes : public TextButton
 {
 public:
-    ManageRoutes(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage routes") {}
+    ManageRoutes(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage routes") {}
 protected:
     void click();
 };
@@ -81,7 +80,7 @@ protected:
 class ManageTrains : public TextButton
 {
 public:
-    ManageTrains(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage trains") {}
+    ManageTrains(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage trains") {}
 protected:
     void click();
 };

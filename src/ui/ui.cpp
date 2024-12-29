@@ -72,3 +72,23 @@ int InterfaceManager::getlogicalscale()
 {
     return game->getrendering().getlogicalscale();
 }
+
+namespace UI{
+Element::Element(Panel* newpanel)
+{
+    panel = newpanel;
+    ui = &panel->getui();
+    game = &ui->getgame();
+}
+
+SDL_Rect Element::getglobalrect()
+{
+    Vec panelpos = panel->topcorner();
+    return {rect.x+int(panelpos.x), rect.y+int(panelpos.y), rect.w, rect.h};
+}
+
+SDL_Rect Element::getlocalrect()
+{
+    return rect;
+}
+}

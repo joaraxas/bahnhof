@@ -12,9 +12,25 @@ class InterfaceManager;
 
 namespace UI{
 
-class Element;
 class Button;
 class Table;
+class Panel;
+
+class Element
+{
+public:
+    Element(Panel*);
+    virtual ~Element() {};
+    virtual void update(int ms) {};
+    virtual void render(Rendering*) {};
+    virtual SDL_Rect getglobalrect();
+    SDL_Rect getlocalrect();
+protected:
+    Panel* panel;
+    SDL_Rect rect = {0,0,100,100};
+    InterfaceManager* ui;
+    Game* game;
+};
 
 class Panel{
 public:
