@@ -36,6 +36,35 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea)
     rect.h = textrect.h;
 }
 
+RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename, int i) :
+    Element(p), 
+    routeindex(i),
+    TableTextLine(p, t, routename), 
+    Button(p, Vec(0,0))
+{}
+
+void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    TableTextLine::render(r, maxarea);
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    r->renderrectangle(getglobalrect(), false, false);
+}
+
+void RouteTableLine::click()
+{
+    game->getgamestate().getrouting().selectroute(routeindex);
+}
+
+NewRouteTableLine::NewRouteTableLine(Panel* p, Table* t) :
+    Element(p),
+    RouteTableLine(p, t, "New route", 0)
+{}
+
+void NewRouteTableLine::click()
+{
+    game->getgamestate().getrouting().addroute();
+}
+
 TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
     Element(p), 
     TableLine(p, t), 
@@ -71,8 +100,8 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
         icon_x += iconsize.x + iconoffset;
     }
     
-    r->renderrectangle(absrect, false, false);
     rect.h = absrect.h;
+    r->renderrectangle(getglobalrect(), false, false);
 }
 
 void TrainTableLine::click()
@@ -150,16 +179,19 @@ void RoutesTable::update(int ms)
 		std::vector<int> numbers = routing.selectedroute->getordernumberstorender();
         for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
             std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
-            lines.emplace_back(new TableTextLine(panel, this, str));
+            lines.emplace_back(new RouteTableLine(panel, this, str, iOrder));
         }
 	}
 	else{
 		std::vector<std::string> names = routing.getroutenames();
+		std::vector<int> ids = routing.getrouteids();
         for(int iRoute = 0; iRoute<names.size(); iRoute++){
-            std::string str = "(ctrl+"+std::to_string(iRoute+1)+") " + names[iRoute];
-            lines.emplace_back(new TableTextLine(panel, this, str));
+            int id = ids[iRoute];
+            std::string name = names[iRoute];
+            std::string str = "(ctrl+"+std::to_string(id)+") " + name;
+            lines.emplace_back(new RouteTableLine(panel, this, str, id));
         }
-        lines.emplace_back(new TableTextLine(panel, this, "(r) Create new route"));
+        lines.emplace_back(new NewRouteTableLine(panel, this));
     }
 }
 

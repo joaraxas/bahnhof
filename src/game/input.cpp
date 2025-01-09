@@ -124,12 +124,12 @@ void InputManager::handle(int ms, int mslogic){
                         routing.selectedroute->insertorderatselected(new Couple());
                 }
                 if(selectedtrain){
-                    if(keyispressed(routeassignbutton)){
-                        if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
-                            routing.selectedroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
-                            selectedtrain->route = routing.selectedroute;
-                        }
-                    }
+                    // if(keyispressed(routeassignbutton)){
+                    //     if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
+                    //         routing.selectedroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
+                    //         selectedtrain->route = routing.selectedroute;
+                    //     }
+                    // }
                     if(e.key.keysym.sym == SDLK_p){
                         selectedtrain->proceed();
                     }

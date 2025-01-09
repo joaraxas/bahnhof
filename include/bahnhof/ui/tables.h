@@ -31,9 +31,27 @@ class TableTextLine : public TableLine
 {
 public:
     TableTextLine(Panel*, Table*, std::string newstr);
+    virtual ~TableTextLine() {std::cout<<"del tabletextline"<<std::endl;};
     virtual void render(Rendering* r, SDL_Rect maxarea);
 private:
     std::string str;
+};
+
+class RouteTableLine : public TableTextLine, public Button
+{
+public:
+    RouteTableLine(Panel*, Table*, std::string routename, int index);
+    void render(Rendering* r, SDL_Rect maxarea);
+private:
+    virtual void click();
+    int routeindex;
+};
+class NewRouteTableLine : public RouteTableLine
+{
+public:
+    NewRouteTableLine(Panel* p, Table* t);
+private:
+    void click();
 };
 
 class TrainTableLine : public TableLine, public Button

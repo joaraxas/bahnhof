@@ -5,10 +5,10 @@
 #include "bahnhof/routing/routing.h"
 
 
-Route::Route(Tracks::Tracksystem* tracks, std::string routename)
+Route::Route(Tracks::Tracksystem* tracksystem, std::string routename)
 {
 	name = routename;
-	tracksystem = tracks;
+	tracks = tracksystem;
 }
 
 int Route::getindex(int orderid)
@@ -73,7 +73,7 @@ int Route::insertorder(Order* order, int orderindex)
 {
 	int neworderid = ordercounter;
 	if(orderindex<0 || orderindex>=orderids.size()) orderindex = orderids.size()-1;
-	order->assignroute(this);
+	order->assignroute(this, tracks);
 	orders.emplace(orders.begin() + orderindex + 1, order);
 	orderids.insert(orderids.begin() + orderindex + 1, neworderid);
 	ordercounter++;
@@ -120,7 +120,7 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
     switches.clear();
 	for(auto& order: orders)
 		if(order->valid)
-			order->assignroute(this);
+			order->assignroute(this, tracks);
 }
 
 std::vector<int> Route::getordernumberstorender()

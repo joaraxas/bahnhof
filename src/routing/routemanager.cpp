@@ -7,11 +7,15 @@ RouteManager::RouteManager(Tracks::Tracksystem* tracks)
     tracksystem = tracks;
 }
 
-Route* RouteManager::addroute()
+void RouteManager::addroute()
 {
 	Route* newroute = new Route(tracksystem, "Route "+std::to_string(routes.size()+1));
 	routes.emplace_back(newroute);
-    return newroute;
+}
+
+void RouteManager::selectroute(int id)
+{
+	selectedroute = routes[id].get();
 }
 
 std::vector<std::string> RouteManager::getroutenames()
@@ -21,4 +25,15 @@ std::vector<std::string> RouteManager::getroutenames()
 		routenames.push_back(route->name);
 	}
 	return routenames;
+}
+
+std::vector<int> RouteManager::getrouteids()
+{
+	std::vector<int> routeids;
+	int id = 0;
+	for(auto& route : routes){
+		routeids.push_back(id);
+		id++;
+	}
+	return routeids;
 }
