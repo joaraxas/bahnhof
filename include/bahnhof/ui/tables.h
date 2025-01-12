@@ -20,7 +20,7 @@ class TableLine : virtual public Element
 {
 public:
     TableLine(Panel*, Table*);
-    virtual ~TableLine() {std::cout<<"del tableline"<<std::endl;};
+    virtual ~TableLine() {};
     virtual void render(Rendering* r, SDL_Rect maxarea) {};
     SDL_Rect getglobalrect();
 protected:
@@ -31,7 +31,7 @@ class TableTextLine : public TableLine
 {
 public:
     TableTextLine(Panel*, Table*, std::string newstr);
-    virtual ~TableTextLine() {std::cout<<"del tabletextline"<<std::endl;};
+    virtual ~TableTextLine() {};
     virtual void render(Rendering* r, SDL_Rect maxarea);
 private:
     std::string str;
@@ -83,11 +83,20 @@ public:
     void update(int ms);
 };
 
-class RoutesTable : public Table
+class RouteListTable : public Table
 {
 public:
-    RoutesTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {};
+    RouteListTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {};
     void update(int ms);
+};
+
+class RouteTable : public Table
+{
+public:
+    RouteTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {}
+    void update(int ms);
+private:
+    Route* route;
 };
 
 class TrainTable : public Table

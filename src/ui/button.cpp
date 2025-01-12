@@ -69,8 +69,8 @@ void ManageRoutes::click()
 {
     Vec viewsize = game->getrendering().getviewsize();
     int scale = ui->getlogicalscale();
-    SDL_Rect routepanelrect = {int(viewsize.x)-scale*300,0,scale*300,int(viewsize.y)};
-    new RoutePanel(ui, routepanelrect);
+    SDL_Rect routepanelrect = {int(viewsize.x)-scale*200,0,scale*200,int(viewsize.y)};
+    new RouteListPanel(ui, routepanelrect);
 }
 
 void ManageTrains::click()

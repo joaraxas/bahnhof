@@ -3,7 +3,6 @@
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/routing/routing.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
@@ -21,9 +20,6 @@ void InterfaceManager::update(int ms)
 void InterfaceManager::render(Rendering* r)
 {
     int scale = getlogicalscale();
-    RouteManager& routing = game->getgamestate().getrouting();
-	if(routing.selectedroute)
-		routing.selectedroute->render(r);
 
     for(auto& panel: panels)
         panel->render(r);

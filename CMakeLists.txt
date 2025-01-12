@@ -21,6 +21,7 @@ add_executable(bahnhof
     src/ui/panel.cpp
     src/ui/button.cpp
     src/ui/table.cpp
+    src/ui/tableline.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/trackreferencing.cpp

@@ -11,6 +11,7 @@ namespace Tracks{
 class Game;
 class Rendering;
 class Train;
+class Route;
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -36,6 +37,7 @@ public:
     bool keyispressed(const int scancode);
     void selecttrain(Train* train);
     Train* getselectedtrain() {return selectedtrain;};
+    void editroute(Route* route);
     void placesignal();
     void placetrack();
 private:
@@ -46,4 +48,5 @@ private:
     Train* selectedtrain = nullptr;
     nodeid selectednode = 0;
     Vec trackorigin;
+    Route* editingroute = nullptr;
 };

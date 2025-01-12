@@ -88,17 +88,57 @@ MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, n
 	addelement(new MainInfoTable(this, tablerect));
 }
 
-RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
+RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
     int scale = ui->getlogicalscale();
 	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
-	addelement(new RoutesTable(this, tablerect));
+	addelement(new RouteListTable(this, tablerect));
+}
+
+RouteListPanel::~RouteListPanel()
+{
+	std::cout<<"del routelistpanel"<<std::endl;
+}
+
+void RouteListPanel::erase()
+{
+	if(routepanel)
+		routepanel->erase();
+	Panel::erase();
+}
+
+void RouteListPanel::addroutepanel(int routeindex)
+{
+	if(routepanel)
+		routepanel->erase();
+    Vec viewsize = game->getrendering().getviewsize();
+    int scale = ui->getlogicalscale();
+    SDL_Rect routepanelrect = {int(viewsize.x)-scale*500,0,scale*300,int(viewsize.y)};
+	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
+}
+
+RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp) :
+	Panel(newui, newrect), routelistpanel(rlp)
+{
+    RouteManager& routing = game->getgamestate().getrouting();
+    route = routing.getroute(routeid);
+    int scale = ui->getlogicalscale();
+	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
+	addelement(new RouteTable(this, tablerect, route));
+	game->getinputmanager().editroute(route);
 }
 
 RoutePanel::~RoutePanel()
 {
 	std::cout<<"del routepanel"<<std::endl;
-    game->getgamestate().getrouting().selectedroute = nullptr;
+}
+
+void RoutePanel::erase()
+{
+	if(routelistpanel)
+		routelistpanel->deselectroutepanel();
+    game->getinputmanager().editroute(nullptr);
+	Panel::erase();
 }
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)

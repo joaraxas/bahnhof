@@ -17,7 +17,7 @@ class Button : virtual public Element
 {
 public:
     Button(Panel*, Vec newpos);
-    virtual ~Button() {std::cout<<"del button"<<std::endl;};
+    virtual ~Button() {};
     bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
 protected:

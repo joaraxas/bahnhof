@@ -35,10 +35,10 @@ void InputManager::handle(int ms, int mslogic){
                     trackorigin = Vec(0,0);
                     placingtrack = false;
                     placingsignal = false;
-                    if(routing.selectedroute){
+                    if(editingroute){
                         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
                         if(neworder)
-                            routing.selectedroute->insertorderatselected(neworder);
+                            editingroute->insertorderatselected(neworder);
                     }
                 }
                 if(e.button.button == SDL_BUTTON_MIDDLE){
@@ -92,42 +92,42 @@ void InputManager::handle(int ms, int mslogic){
             }
             case SDL_KEYDOWN:{
                 if(e.key.keysym.sym == SDLK_r){
-                    if(!routing.selectedroute)
+                    if(!editingroute)
                         routing.addroute();
                 }
                 if(e.key.keysym.sym == SDLK_UP){
-                    if(routing.selectedroute)
-                        routing.selectedroute->selectedorderid = routing.selectedroute->previousorder(routing.selectedroute->selectedorderid);
+                    if(editingroute)
+                        editingroute->selectedorderid = editingroute->previousorder(editingroute->selectedorderid);
                 }
                 if(e.key.keysym.sym == SDLK_DOWN){
-                    if(routing.selectedroute)
-                        routing.selectedroute->selectedorderid = routing.selectedroute->nextorder(routing.selectedroute->selectedorderid);
+                    if(editingroute)
+                        editingroute->selectedorderid = editingroute->nextorder(editingroute->selectedorderid);
                 }
                 if(e.key.keysym.sym == SDLK_BACKSPACE){
-                    if(routing.selectedroute)
-                        routing.selectedroute->removeselectedorder();
+                    if(editingroute)
+                        editingroute->removeselectedorder();
                 }
                 if(e.key.keysym.sym == SDLK_t){
-                    if(routing.selectedroute)
-                        routing.selectedroute->insertorderatselected(new Turn());
+                    if(editingroute)
+                        editingroute->insertorderatselected(new Turn());
                 }
                 if(e.key.keysym.sym == SDLK_e){
-                    if(routing.selectedroute)
-                        routing.selectedroute->insertorderatselected(new Decouple());
+                    if(editingroute)
+                        editingroute->insertorderatselected(new Decouple());
                 }
                 if(e.key.keysym.sym == SDLK_l){
-                    if(routing.selectedroute)
-                        routing.selectedroute->insertorderatselected(new Loadresource());
+                    if(editingroute)
+                        editingroute->insertorderatselected(new Loadresource());
                 }
                 if(e.key.keysym.sym == SDLK_c){
-                    if(routing.selectedroute)
-                        routing.selectedroute->insertorderatselected(new Couple());
+                    if(editingroute)
+                        editingroute->insertorderatselected(new Couple());
                 }
                 if(selectedtrain){
                     // if(keyispressed(routeassignbutton)){
                     //     if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
-                    //         routing.selectedroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
-                    //         selectedtrain->route = routing.selectedroute;
+                    //         editingroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
+                    //         selectedtrain->route = editingroute;
                     //     }
                     // }
                     if(e.key.keysym.sym == SDLK_p){
@@ -205,6 +205,8 @@ void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
         for(auto node: section.nodes)
             delete node;
     }
+    if(editingroute)
+        editingroute->render(r);
 }
 
 Vec InputManager::mapmousepos()
@@ -231,14 +233,16 @@ bool InputManager::keyispressed(const int scancode)
 void InputManager::selecttrain(Train* whattrain)
 {
     Gamestate& gamestate = game->getgamestate();
-    RouteManager& routing = gamestate.getrouting();
 	gamestate.gettrainmanager().deselectall();
-    routing.selectedroute = nullptr;
 	if(whattrain){
 		whattrain->selected = true;
-        routing.selectedroute = whattrain->route;
     }
 	selectedtrain = whattrain;
+}
+
+void InputManager::editroute(Route* route)
+{
+    editingroute = route;
 }
 
 void InputManager::placesignal()

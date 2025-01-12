@@ -42,10 +42,9 @@ class RouteManager
 public:
     RouteManager(Tracks::Tracksystem* tracks);
     void addroute();
-    void selectroute(int id);
+    Route* getroute(int id);
     std::vector<std::string> getroutenames();
     std::vector<int> getrouteids();
-    Route* selectedroute = nullptr;
 private:
     Tracks::Tracksystem* tracksystem;
     std::vector<std::unique_ptr<Route>> routes;

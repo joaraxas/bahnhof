@@ -9,12 +9,14 @@ class Game;
 class Gamestate;
 class Rendering;
 class InterfaceManager;
+class Route;
 
 namespace UI{
 
 class Button;
 class Table;
 class Panel;
+class RouteListPanel;
 
 class Element
 {
@@ -38,7 +40,7 @@ public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
     Panel(InterfaceManager* newui);
     virtual ~Panel();
-    void erase();
+    virtual void erase();
     void update(int ms);
     bool click(Vec pos, int type);
     virtual void render(Rendering*);
@@ -65,8 +67,24 @@ public:
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, SDL_Rect newrect);
+    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp);
     ~RoutePanel();
+    void erase();
+private:
+    Route* route;
+    RouteListPanel* routelistpanel;
+};
+
+class RouteListPanel : public Panel
+{
+public:
+    RouteListPanel(InterfaceManager* newui, SDL_Rect newrect);
+    ~RouteListPanel();
+    void addroutepanel(int routeindex);
+    void deselectroutepanel() {routepanel = nullptr;};
+    void erase();
+private:
+    RoutePanel* routepanel = nullptr;
 };
 
 class TrainListPanel : public Panel
