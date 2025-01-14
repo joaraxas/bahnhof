@@ -5,6 +5,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
+#include "bahnhof/routing/routing.h"
 
 namespace UI{
 
@@ -30,11 +31,11 @@ bool Button::checkclick(Vec mousepos, int type)
     return clicked;
 }
 
-TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext) : Element(newpanel), Button(newpanel, newpos)
+TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Element(newpanel), Button(newpanel, newpos)
 {
     text = newtext;
     int scale = ui->getlogicalscale();
-    rect.w = scale*80;
+    rect.w = scale*width;
     rect.h = scale*20;
     maxtextwidth = rect.w - 10;
     SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth);
@@ -77,5 +78,35 @@ void ManageTrains::click()
 {
     new TrainListPanel(ui);
 }
+
+namespace Routing
+{
+
+void AddTurn::click()
+{
+    route->insertorderatselected(new Turn());
+}
+
+void AddCouple::click()
+{
+    route->insertorderatselected(new Couple());
+}
+
+void AddDecouple::click()
+{
+    route->insertorderatselected(new Decouple());
+}
+
+void AddLoadResource::click()
+{
+    route->insertorderatselected(new Loadresource());
+}
+
+void RemoveOrder::click()
+{
+    route->removeselectedorder();
+}
+
+} //end namespace Routing
 
 } //end namespace UI

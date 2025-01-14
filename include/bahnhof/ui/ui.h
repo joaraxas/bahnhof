@@ -47,7 +47,7 @@ public:
     Vec topcorner();
     InterfaceManager& getui();
 protected:
-    template <class T> void createbutton();
+    template <class T, typename... Args> void createbutton(Args&&... args);
     void addelement(Element*);
     SDL_Rect rect;
     InterfaceManager* ui;

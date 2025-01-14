@@ -27,7 +27,7 @@ protected:
 class TextButton : public Button
 {
 public:
-    TextButton(Panel*, Vec newpos, std::string text);
+    TextButton(Panel*, Vec newpos, std::string text, int width=80);
     virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
     virtual void render(Rendering*);
 private:
@@ -85,4 +85,59 @@ protected:
     void click();
 };
 
-}
+namespace Routing
+{
+
+class AddOrder : public TextButton
+{
+public:
+    AddOrder(Panel* newpanel, Vec newpos, Route* whatroute, std::string text) : 
+                            Element(newpanel), 
+                            TextButton(newpanel, newpos, text, 120),
+                            route(whatroute) {}
+protected:
+    Route* route;
+};
+
+class AddTurn : public AddOrder
+{
+public:
+    AddTurn(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
+protected:
+    void click();
+};
+
+class AddCouple : public AddOrder
+{
+public:
+    AddCouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Couple") {}
+protected:
+    void click();
+};
+
+class AddDecouple : public AddOrder
+{
+public:
+    AddDecouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Decouple") {}
+protected:
+    void click();
+};
+
+class AddLoadResource : public AddOrder
+{
+public:
+    AddLoadResource(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Load resource") {}
+protected:
+    void click();
+};
+
+class RemoveOrder : public AddOrder
+{
+public:
+    RemoveOrder(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Remove selected") {}
+protected:
+    void click();
+};
+
+} //namespace Routing
+} //namespace UI

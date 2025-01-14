@@ -53,8 +53,8 @@ void Panel::addelement(Element* element){
 	elements.emplace_back(element);
 }
 
-template <class T> void Panel::createbutton(){
-	T* button = new T(this, Vec(xoffset,yoffset));
+template <class T, typename... Args> void Panel::createbutton(Args&&... args){
+	T* button = new T(this, Vec(xoffset,yoffset), std::forward<Args>(args)...);
 	addelement(button);
 	yoffset += ydist + button->getlocalrect().h;
 }
@@ -122,8 +122,13 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, R
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
+	createbutton<Routing::AddTurn>(route);
+	createbutton<Routing::AddLoadResource>(route);
+	createbutton<Routing::AddCouple>(route);
+	createbutton<Routing::AddDecouple>(route);
+	createbutton<Routing::RemoveOrder>(route);
     int scale = ui->getlogicalscale();
-	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
+	SDL_Rect tablerect = {10*scale, yoffset, rect.w-20*scale, rect.h-60*scale};
 	addelement(new RouteTable(this, tablerect, route));
 	game->getinputmanager().editroute(route);
 }

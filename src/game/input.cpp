@@ -91,10 +91,6 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_KEYDOWN:{
-                if(e.key.keysym.sym == SDLK_r){
-                    if(!editingroute)
-                        routing.addroute();
-                }
                 if(e.key.keysym.sym == SDLK_UP){
                     if(editingroute)
                         editingroute->selectedorderid = editingroute->previousorder(editingroute->selectedorderid);
@@ -102,26 +98,6 @@ void InputManager::handle(int ms, int mslogic){
                 if(e.key.keysym.sym == SDLK_DOWN){
                     if(editingroute)
                         editingroute->selectedorderid = editingroute->nextorder(editingroute->selectedorderid);
-                }
-                if(e.key.keysym.sym == SDLK_BACKSPACE){
-                    if(editingroute)
-                        editingroute->removeselectedorder();
-                }
-                if(e.key.keysym.sym == SDLK_t){
-                    if(editingroute)
-                        editingroute->insertorderatselected(new Turn());
-                }
-                if(e.key.keysym.sym == SDLK_e){
-                    if(editingroute)
-                        editingroute->insertorderatselected(new Decouple());
-                }
-                if(e.key.keysym.sym == SDLK_l){
-                    if(editingroute)
-                        editingroute->insertorderatselected(new Loadresource());
-                }
-                if(e.key.keysym.sym == SDLK_c){
-                    if(editingroute)
-                        editingroute->insertorderatselected(new Couple());
                 }
                 if(selectedtrain){
                     // if(keyispressed(routeassignbutton)){
