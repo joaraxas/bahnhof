@@ -7,11 +7,11 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
+bool retina = false;
 
 int init()
 {
 	bool success = true;
-	bool retina = true;
 	std::srand((unsigned) time(NULL));
 	int sdlflags = SDL_INIT_VIDEO;
 	int res = SDL_Init(sdlflags);
@@ -75,7 +75,10 @@ SDL_Texture* loadimage(std::string path)
 SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 {
 	SDL_Surface* surf = nullptr;
-	surf = TTF_RenderUTF8_Solid_Wrapped(font, text.c_str(), color, maxwidth);
+	if(retina)
+		surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, maxwidth);
+	else
+		surf = TTF_RenderUTF8_Solid_Wrapped(font, text.c_str(), color, maxwidth);
 	if(!surf){
 		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
 	}
