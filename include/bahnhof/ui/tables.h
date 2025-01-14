@@ -32,7 +32,8 @@ class TableTextLine : public TableLine
 public:
     TableTextLine(Panel*, Table*, std::string newstr);
     virtual ~TableTextLine() {};
-    virtual void render(Rendering* r, SDL_Rect maxarea);
+    virtual void render(Rendering* r, SDL_Rect maxarea, SDL_Color color);
+    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, {0,0,0,255});};
 private:
     std::string str;
 };
@@ -52,6 +53,17 @@ public:
     NewRouteTableLine(Panel* p, Table* t);
 private:
     void click();
+};
+
+class OrderTableLine : public TableTextLine, public Button
+{
+public:
+    OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
+    void render(Rendering* r, SDL_Rect maxarea);
+private:
+    void click();
+    Route* route;
+    int orderid;
 };
 
 class TrainTableLine : public TableLine, public Button

@@ -86,10 +86,12 @@ void RouteTable::update(int ms)
 	lines.clear();
 	
     std::vector<std::string> descriptions = route->getorderdescriptions();
+    std::vector<int> ids = route->getorderids();
     std::vector<int> numbers = route->getordernumberstorender();
     for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
         std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
-        lines.emplace_back(new TableTextLine(panel, this, str));
+        int id = ids[iOrder];
+        lines.emplace_back(new OrderTableLine(panel, this, route, id, str));
     }
     if(lines.size() == 0)
         lines.emplace_back(new TableTextLine(panel, this, "No orders yet"));

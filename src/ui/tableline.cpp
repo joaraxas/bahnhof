@@ -25,11 +25,11 @@ TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newst
     str = newstr;
 }
 
-void TableTextLine::render(Rendering* r, SDL_Rect maxarea)
+void TableTextLine::render(Rendering* r, SDL_Rect maxarea, SDL_Color color)
 {
     rect = maxarea;
     SDL_Rect globrect = getglobalrect();
-    SDL_Rect textrect = r->rendertext(str, globrect.x, globrect.y, {0,0,0,0}, false, false, globrect.w);
+    SDL_Rect textrect = r->rendertext(str, globrect.x, globrect.y, color, false, false, globrect.w);
     rect.h = textrect.h;
 }
 
@@ -61,6 +61,28 @@ NewRouteTableLine::NewRouteTableLine(Panel* p, Table* t) :
 void NewRouteTableLine::click()
 {
     game->getgamestate().getrouting().addroute();
+}
+
+OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :
+    Element(p), 
+    route(r),
+    orderid(i),
+    TableTextLine(p, t, description), 
+    Button(p, Vec(0,0))
+{}
+
+void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    uint8_t intensity = 255*(orderid==route->selectedorderid);
+    SDL_Color c = {intensity, intensity, intensity, 255};
+    TableTextLine::render(r, maxarea, c);
+    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
+    r->renderrectangle(getglobalrect(), false, false);
+}
+
+void OrderTableLine::click()
+{
+    route->selectedorderid = orderid;
 }
 
 TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 

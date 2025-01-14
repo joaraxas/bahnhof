@@ -123,6 +123,11 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
 			order->assignroute(this, tracks);
 }
 
+std::vector<int> Route::getorderids()
+{
+	return orderids;
+}
+
 std::vector<int> Route::getordernumberstorender()
 {
 	std::vector<int> renderordernrs;

@@ -25,6 +25,7 @@ public:
     void render(Rendering* r);
     int getindex(int orderid);
     std::vector<std::string> getorderdescriptions();
+    std::vector<int> getorderids();
     std::vector<int> getordernumberstorender();
     std::string name = "New route";
     int selectedorderid = -1;

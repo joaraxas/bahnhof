@@ -10,7 +10,6 @@
 TrainManager::TrainManager(Tracks::Tracksystem* newtracks)
 {
     tracks = newtracks;
-    std::cout<<"Train manager created"<<std::endl;
 	addtrainstoorphans();
 }
 
