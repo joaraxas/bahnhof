@@ -44,7 +44,7 @@ public:
     RouteTableLine(Panel*, Table*, std::string routename, int index);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
-    virtual void click();
+    virtual void click(Vec mousepos);
     int routeindex;
 };
 class NewRouteTableLine : public RouteTableLine
@@ -52,7 +52,7 @@ class NewRouteTableLine : public RouteTableLine
 public:
     NewRouteTableLine(Panel* p, Table* t);
 private:
-    void click();
+    void click(Vec mousepos);
 };
 
 class OrderTableLine : public TableTextLine, public Button
@@ -61,7 +61,7 @@ public:
     OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
-    void click();
+    void click(Vec mousepos);
     Route* route;
     int orderid;
 };
@@ -72,7 +72,7 @@ public:
     TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
-    void click();
+    void click(Vec mousepos);
     TrainInfo info;
     TrainManager* trainmanager;
 };
@@ -84,8 +84,14 @@ public:
     virtual ~Table() {std::cout<<"del table"<<std::endl;};
     bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
-protected:
     std::vector<std::unique_ptr<TableLine>> lines;
+protected:
+};
+
+class Dropdown : public Table, public ClickableHost
+{
+public:
+    Dropdown(InterfaceManager* _ui, SDL_Rect r, Panel* p) : ClickableHost(_ui, r), Table(p, r) {};
 };
 
 class MainInfoTable : public Table
@@ -111,10 +117,10 @@ private:
     Route* route;
 };
 
-class TrainTable : public Table
+class TrainListTable : public Table
 {
 public:
-    TrainTable(Panel*, SDL_Rect newrect);
+    TrainListTable(Panel*, SDL_Rect newrect);
     void update(int ms);
 private:
     TrainManager* trainmanager;

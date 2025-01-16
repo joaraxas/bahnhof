@@ -21,7 +21,7 @@ public:
     bool checkclick(Vec pos, int type);
     virtual void render(Rendering*);
 protected:
-    virtual void click() {};
+    virtual void click(Vec mousepos) {};
 };
 
 class TextButton : public Button
@@ -42,7 +42,7 @@ class Close : public TextButton
 public:
     Close(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Close") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class PlaceSignal : public TextButton
@@ -50,7 +50,7 @@ class PlaceSignal : public TextButton
 public:
     PlaceSignal(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build signal") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class PlaceTrack : public TextButton
@@ -58,7 +58,7 @@ class PlaceTrack : public TextButton
 public:
     PlaceTrack(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build track") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class BuildWagon : public TextButton
@@ -66,7 +66,7 @@ class BuildWagon : public TextButton
 public:
     BuildWagon(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build signal") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class ManageRoutes : public TextButton
@@ -74,7 +74,7 @@ class ManageRoutes : public TextButton
 public:
     ManageRoutes(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage routes") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class ManageTrains : public TextButton
@@ -82,7 +82,7 @@ class ManageTrains : public TextButton
 public:
     ManageTrains(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage trains") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 namespace Routing
@@ -104,7 +104,7 @@ class AddTurn : public AddOrder
 public:
     AddTurn(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class AddCouple : public AddOrder
@@ -112,7 +112,7 @@ class AddCouple : public AddOrder
 public:
     AddCouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Couple") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class AddDecouple : public AddOrder
@@ -120,7 +120,7 @@ class AddDecouple : public AddOrder
 public:
     AddDecouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Decouple") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class AddLoadResource : public AddOrder
@@ -128,7 +128,7 @@ class AddLoadResource : public AddOrder
 public:
     AddLoadResource(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Load resource") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 class RemoveOrder : public AddOrder
@@ -136,7 +136,7 @@ class RemoveOrder : public AddOrder
 public:
     RemoveOrder(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Remove selected") {}
 protected:
-    void click();
+    void click(Vec mousepos);
 };
 
 } //namespace Routing

@@ -10,6 +10,7 @@ class Gamestate;
 class Rendering;
 class InterfaceManager;
 class Route;
+class Train;
 
 namespace UI{
 
@@ -35,24 +36,33 @@ protected:
     Game* game;
 };
 
-class Panel{
+class ClickableHost
+{
+public:
+    ClickableHost(InterfaceManager* newui, SDL_Rect newrect);
+    bool click(Vec pos, int type);
+    void update(int ms);
+    virtual void render(Rendering*);
+    void addelement(Element*);
+    Vec topcorner();
+    virtual void erase();
+    InterfaceManager& getui();
+protected:
+    Game* game;
+    SDL_Rect rect;
+    std::vector<std::unique_ptr<Element>> elements;
+    InterfaceManager* ui;
+};
+
+class Panel : public ClickableHost
+{
 public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
     Panel(InterfaceManager* newui);
     virtual ~Panel();
-    virtual void erase();
-    void update(int ms);
-    bool click(Vec pos, int type);
     virtual void render(Rendering*);
-    Vec topcorner();
-    InterfaceManager& getui();
 protected:
     template <class T, typename... Args> void createbutton(Args&&... args);
-    void addelement(Element*);
-    SDL_Rect rect;
-    InterfaceManager* ui;
-    Game* game;
-    std::vector<std::unique_ptr<Element>> elements;
     int xoffset;
     int yoffset;
     int ydist = 10;
@@ -97,9 +107,11 @@ public:
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrain);
     ~TrainPanel();
-    void render(Rendering*);
+    Train& gettrain() {return train;};
+private:
+    Train& train;
 };
 
 }
@@ -110,11 +122,11 @@ public:
     void update(int ms);
     int leftclick(Vec pos);
     void render(Rendering*);
-    void addpanel(UI::Panel*);
-    void removepanel(UI::Panel*);
+    void addpanel(UI::ClickableHost*);
+    void removepanel(UI::ClickableHost*);
     Game& getgame();
     int getlogicalscale();
 private:
-    std::vector<std::unique_ptr<UI::Panel>> panels;
+    std::vector<std::unique_ptr<UI::ClickableHost>> panels;
     Game* game;
 };

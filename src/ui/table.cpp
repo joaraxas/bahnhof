@@ -51,12 +51,12 @@ void MainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
 }
 
-TrainTable::TrainTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect)
+TrainListTable::TrainListTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
 }
 
-void TrainTable::update(int ms)
+void TrainListTable::update(int ms)
 {
 	std::vector<TrainInfo> traininfos = trainmanager->gettrainsinfo();
 	lines.clear();

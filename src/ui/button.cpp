@@ -26,7 +26,7 @@ bool Button::checkclick(Vec mousepos, int type)
     bool clicked = Element::checkclick(mousepos, type);
 	if(clicked){
         if(type==SDL_BUTTON_LEFT)
-            click();
+            click(mousepos);
 	}
     return clicked;
 }
@@ -51,22 +51,22 @@ void TextButton::render(Rendering* r)
     r->rendertext(text, int(globalrect.x+globalrect.w*0.5-textwidth*0.5), globalrect.y+5, {255,255,255,255}, false, false, maxtextwidth);
 }
 
-void Close::click()
+void Close::click(Vec mousepos)
 {
     panel->erase();
 }
 
-void PlaceSignal::click()
+void PlaceSignal::click(Vec mousepos)
 {
     game->getinputmanager().placesignal();
 }
 
-void PlaceTrack::click()
+void PlaceTrack::click(Vec mousepos)
 {
     game->getinputmanager().placetrack();
 }
 
-void ManageRoutes::click()
+void ManageRoutes::click(Vec mousepos)
 {
     Vec viewsize = game->getrendering().getviewsize();
     int scale = ui->getlogicalscale();
@@ -74,7 +74,7 @@ void ManageRoutes::click()
     new RouteListPanel(ui, routepanelrect);
 }
 
-void ManageTrains::click()
+void ManageTrains::click(Vec mousepos)
 {
     new TrainListPanel(ui);
 }
@@ -82,27 +82,27 @@ void ManageTrains::click()
 namespace Routing
 {
 
-void AddTurn::click()
+void AddTurn::click(Vec mousepos)
 {
     route->insertorderatselected(new Turn());
 }
 
-void AddCouple::click()
+void AddCouple::click(Vec mousepos)
 {
     route->insertorderatselected(new Couple());
 }
 
-void AddDecouple::click()
+void AddDecouple::click(Vec mousepos)
 {
     route->insertorderatselected(new Decouple());
 }
 
-void AddLoadResource::click()
+void AddLoadResource::click(Vec mousepos)
 {
     route->insertorderatselected(new Loadresource());
 }
 
-void RemoveOrder::click()
+void RemoveOrder::click(Vec mousepos)
 {
     route->removeselectedorder();
 }

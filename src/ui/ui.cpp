@@ -44,15 +44,15 @@ int InterfaceManager::leftclick(Vec mousepos)
     return 0;
 }
 
-void InterfaceManager::addpanel(UI::Panel* panel)
+void InterfaceManager::addpanel(UI::ClickableHost* panel)
 {
     panels.emplace_back(panel);
 }
 
-void InterfaceManager::removepanel(UI::Panel* panel)
+void InterfaceManager::removepanel(UI::ClickableHost* panel)
 {
     auto it = std::find_if(panels.begin(), panels.end(), 
-        [panel](const std::unique_ptr<UI::Panel>& ptr){
+        [panel](const std::unique_ptr<UI::ClickableHost>& ptr){
             return ptr.get() == panel;
         });
     if(it!=panels.end())

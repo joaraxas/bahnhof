@@ -9,47 +9,53 @@
 
 namespace UI{
 
-InterfaceManager& Panel::getui()
+ClickableHost::ClickableHost(InterfaceManager* newui, SDL_Rect newrect)
+{
+    ui = newui;
+    game = &ui->getgame();
+	rect = newrect;
+    ui->addpanel(this);
+}
+
+InterfaceManager& ClickableHost::getui()
 {
     return *ui;
 }
 
-void Panel::erase()
+void ClickableHost::erase()
 {
     ui->removepanel(this);
 }
 
-Vec Panel::topcorner()
+Vec ClickableHost::topcorner()
 {
 	return Vec(rect.x, rect.y);
 }
 
-void Panel::update(int ms)
+void ClickableHost::update(int ms)
 {
 	for(auto& element: elements)
 		element->update(ms);
 }
 
-void Panel::render(Rendering* r)
+void ClickableHost::render(Rendering* r)
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-    r->renderfilledrectangle(rect, false, false);
 	for(auto& element: elements)
 		element->render(r);
 }
 
-bool Panel::click(Vec mousepos, int type)
+bool ClickableHost::click(Vec pos, int type)
 {
-	if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
+	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
 		for(auto& element: elements)
-			if(element->checkclick(mousepos, type))
+			if(element->checkclick(pos, type))
 				break;
 		return true;
 	}
     return false;
 }
 
-void Panel::addelement(Element* element){
+void ClickableHost::addelement(Element* element){
 	elements.emplace_back(element);
 }
 
@@ -61,13 +67,8 @@ template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 
 Panel::~Panel(){std::cout<<"del panel"<<std::endl;}
 
-Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
+Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : ClickableHost(newui, newrect)
 {
-    ui = newui;
-    game = &ui->getgame();
-	rect = newrect;
-    ui->addpanel(this);
-	
 	int scale = ui->getlogicalscale();
 	xoffset = 20*scale;
 	yoffset = 20*scale;
@@ -75,6 +76,13 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect)
 }
 
 Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}){}
+
+void Panel::render(Rendering* r)
+{
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
+    r->renderfilledrectangle(rect, false, false);
+	ClickableHost::render(r);
+}
 
 MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
@@ -152,7 +160,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
     int scale = ui->getlogicalscale();
     rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
 	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
-	addelement(new TrainTable(this, tablerect));
+	addelement(new TrainListTable(this, tablerect));
 }
 
 TrainListPanel::~TrainListPanel()
@@ -160,15 +168,16 @@ TrainListPanel::~TrainListPanel()
 	std::cout<<"del trainlistpanel"<<std::endl;
 }
 
-// TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
-// {
-// }
+TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrain) : 
+		Panel(newui, newrect), train(newtrain)
+{
+	TrainInfo info = train.getinfo();
+}
 
-// TrainPanel::~TrainPanel()
-// {
-// 	game->getinputmanager().selecttrain(nullptr);
-// 	std::cout<<"del trainpanel"<<std::endl;
-// }
+TrainPanel::~TrainPanel()
+{
+	std::cout<<"del trainpanel"<<std::endl;
+}
 
 // void TrainPanel::render(Rendering* r)
 // {

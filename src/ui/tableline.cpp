@@ -47,7 +47,7 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void RouteTableLine::click()
+void RouteTableLine::click(Vec mousepos)
 {
     RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
     rlp->addroutepanel(routeindex);
@@ -58,7 +58,7 @@ NewRouteTableLine::NewRouteTableLine(Panel* p, Table* t) :
     RouteTableLine(p, t, "New route", 0)
 {}
 
-void NewRouteTableLine::click()
+void NewRouteTableLine::click(Vec mousepos)
 {
     game->getgamestate().getrouting().addroute();
 }
@@ -80,7 +80,7 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void OrderTableLine::click()
+void OrderTableLine::click(Vec mousepos)
 {
     route->selectedorderid = orderid;
 }
@@ -124,10 +124,31 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void TrainTableLine::click()
+void TrainTableLine::click(Vec mousepos)
 {
     trainmanager->deselectall();
     info.train->selected = true;
+    
+    Vec viewsize = game->getrendering().getviewsize();
+    int scale = ui->getlogicalscale();
+    rect = {scale*300,scale*200,scale*400,scale*200};
+    new TrainPanel(ui, rect, *info.train);
+
+    // SDL_Rect tablerect = {0, 0, 500, 200};
+    Vec panelpos = panel->topcorner();
+    SDL_Rect tablerect = {int(mousepos.x-panelpos.x), int(mousepos.y-panelpos.y), 500, 200};
+	// Table* ntable = new Table(panel, tablerect);
+	// panel->addelement(ntable);
+    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "fun"));
+    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
+    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
+    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
+    Dropdown* ntable = new Dropdown(ui, tablerect, panel);
+    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "fun"));
+    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
+    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
+    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
+	panel->addelement(ntable);
 }
 
 } //end namespace UI
