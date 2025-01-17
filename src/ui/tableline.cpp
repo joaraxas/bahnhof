@@ -53,14 +53,16 @@ void RouteTableLine::click(Vec mousepos)
     rlp->addroutepanel(routeindex);
 }
 
-NewRouteTableLine::NewRouteTableLine(Panel* p, Table* t) :
-    Element(p),
-    RouteTableLine(p, t, "New route", 0)
-{}
-
 void NewRouteTableLine::click(Vec mousepos)
 {
     game->getgamestate().getrouting().addroute();
+}
+
+void SelectRouteTableLine::click(Vec mousepos)
+{
+    std::cout<<"clicked routeable"<<std::endl;
+    RouteManager& routing = game->getgamestate().getrouting();
+    dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(routeindex);
 }
 
 OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :
@@ -133,21 +135,6 @@ void TrainTableLine::click(Vec mousepos)
     int scale = ui->getlogicalscale();
     rect = {scale*300,scale*200,scale*400,scale*200};
     new TrainPanel(ui, rect, *info.train);
-
-    // SDL_Rect tablerect = {0, 0, 500, 200};
-    Vec panelpos = panel->topcorner();
-    SDL_Rect tablerect = {int(mousepos.x-panelpos.x), int(mousepos.y-panelpos.y), 500, 200};
-	// Table* ntable = new Table(panel, tablerect);
-	// panel->addelement(ntable);
-    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "fun"));
-    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
-    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
-    // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
-    Dropdown* ntable = new Dropdown(tablerect, panel);
-    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "fun"));
-    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
-    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
-    ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
 }
 
 } //end namespace UI

@@ -30,7 +30,7 @@ public:
     TextButton(Panel*, Vec newpos, std::string text, int width=80);
     virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
     virtual void render(Rendering*);
-private:
+protected:
     int textheight;
     int textwidth;
     int maxtextwidth;
@@ -81,6 +81,24 @@ class ManageTrains : public TextButton
 {
 public:
     ManageTrains(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage trains") {}
+protected:
+    void click(Vec mousepos);
+};
+
+class SetRoute : public TextButton
+{
+public:
+    SetRoute(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Change route") {}
+    void update(int ms);
+protected:
+    void click(Vec mousepos);
+};
+
+class GoTrain : public TextButton
+{
+public:
+    GoTrain(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Start route") {}
+    void update(int ms);
 protected:
     void click(Vec mousepos);
 };

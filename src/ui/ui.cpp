@@ -14,8 +14,9 @@ InterfaceManager::InterfaceManager(Game* newgame)
 
 void InterfaceManager::update(int ms)
 {
-    if(dropdown)
+    if(dropdown){
         dropdown->update(ms);
+    }
     for(auto& panel: panels)
         panel->update(ms);
 }

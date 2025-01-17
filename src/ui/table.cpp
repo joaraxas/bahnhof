@@ -38,10 +38,24 @@ void Table::render(Rendering* r)
     }
 }
 
-Dropdown::Dropdown(SDL_Rect r, Panel* p) :
-Table(p, r)
+Dropdown::Dropdown(Panel* p, SDL_Rect r) : Table(p, r)
 {
     ui->setdropdown(this);
+}
+
+void RouteDropdown::update(int ms)
+{
+	lines.clear();
+	
+	RouteManager& routing = ui->getgame().getgamestate().getrouting();
+    std::vector<std::string> names = routing.getroutenames();
+    std::vector<int> ids = routing.getrouteids();
+    for(int iRoute = 0; iRoute<names.size(); iRoute++){
+        int id = ids[iRoute];
+        std::string name = names[iRoute];
+        std::string str = name;
+        lines.emplace_back(new SelectRouteTableLine(panel, this, str, id));
+    }
 }
 
 MainInfoTable::MainInfoTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}

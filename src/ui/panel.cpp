@@ -172,6 +172,8 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 		Panel(newui, newrect), train(newtrain)
 {
 	TrainInfo info = train.getinfo();
+	createbutton<SetRoute>();
+	createbutton<GoTrain>();
 }
 
 TrainPanel::~TrainPanel()

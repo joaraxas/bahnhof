@@ -1,6 +1,7 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/buttons.h"
+#include "bahnhof/ui/tables.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
@@ -77,6 +78,37 @@ void ManageRoutes::click(Vec mousepos)
 void ManageTrains::click(Vec mousepos)
 {
     new TrainListPanel(ui);
+}
+
+void SetRoute::click(Vec mousepos)
+{
+    Vec panelpos = panel->topcorner();
+    SDL_Rect tablerect = {int(mousepos.x-panelpos.x), int(mousepos.y-panelpos.y), 500, 200};
+    Dropdown* ntable = new RouteDropdown(panel, tablerect);
+}
+
+void SetRoute::update(int ms)
+{
+    Route* route = dynamic_cast<TrainPanel*>(panel)->gettrain().route;
+    if(route)
+        text = route->name;
+    else
+        text = "No route set";
+}
+
+void GoTrain::click(Vec mousepos)
+{
+    bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
+    go = !go;
+}
+
+void GoTrain::update(int ms)
+{
+    bool go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
+    if(go)
+        text = "Stop train";
+    else
+        text = "Start route";
 }
 
 namespace Routing

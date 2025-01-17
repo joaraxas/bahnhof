@@ -100,18 +100,8 @@ void InputManager::handle(int ms, int mslogic){
                         editingroute->selectedorderid = editingroute->nextorder(editingroute->selectedorderid);
                 }
                 if(selectedtrain){
-                    // if(keyispressed(routeassignbutton)){
-                    //     if(e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_0+routing.routes.size()){
-                    //         editingroute = routing.routes[e.key.keysym.sym-SDLK_0-1].get();
-                    //         selectedtrain->route = editingroute;
-                    //     }
-                    // }
                     if(e.key.keysym.sym == SDLK_p){
                         selectedtrain->proceed();
-                    }
-                    if(e.key.keysym.sym == SDLK_RETURN){
-                        selectedtrain->go = !selectedtrain->go;
-                        selectedtrain->speed = 0;
                     }
                 }
                 if(e.key.keysym.sym == SDLK_n){
