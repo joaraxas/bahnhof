@@ -38,6 +38,12 @@ void Table::render(Rendering* r)
     }
 }
 
+Dropdown::Dropdown(SDL_Rect r, Panel* p) :
+Table(p, r)
+{
+    ui->setdropdown(this);
+}
+
 MainInfoTable::MainInfoTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}
 
 void MainInfoTable::update(int ms)

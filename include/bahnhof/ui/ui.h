@@ -16,6 +16,7 @@ namespace UI{
 
 class Button;
 class Table;
+class Dropdown;
 class Panel;
 class RouteListPanel;
 
@@ -40,8 +41,8 @@ class ClickableHost
 {
 public:
     ClickableHost(InterfaceManager* newui, SDL_Rect newrect);
-    bool click(Vec pos, int type);
-    void update(int ms);
+    virtual bool click(Vec pos, int type);
+    virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
     Vec topcorner();
@@ -124,9 +125,11 @@ public:
     void render(Rendering*);
     void addpanel(UI::ClickableHost*);
     void removepanel(UI::ClickableHost*);
+    void setdropdown(UI::Dropdown*);
     Game& getgame();
     int getlogicalscale();
 private:
     std::vector<std::unique_ptr<UI::ClickableHost>> panels;
+    UI::Dropdown* dropdown = nullptr;
     Game* game;
 };

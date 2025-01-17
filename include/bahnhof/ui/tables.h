@@ -88,10 +88,10 @@ public:
 protected:
 };
 
-class Dropdown : public Table, public ClickableHost
+class Dropdown : public Table
 {
 public:
-    Dropdown(InterfaceManager* _ui, SDL_Rect r, Panel* p) : ClickableHost(_ui, r), Table(p, r) {};
+    Dropdown(SDL_Rect r, Panel* p);
 };
 
 class MainInfoTable : public Table

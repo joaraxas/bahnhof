@@ -14,7 +14,6 @@ ClickableHost::ClickableHost(InterfaceManager* newui, SDL_Rect newrect)
     ui = newui;
     game = &ui->getgame();
 	rect = newrect;
-    ui->addpanel(this);
 }
 
 InterfaceManager& ClickableHost::getui()
@@ -69,6 +68,7 @@ Panel::~Panel(){std::cout<<"del panel"<<std::endl;}
 
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : ClickableHost(newui, newrect)
 {
+    ui->addpanel(this);
 	int scale = ui->getlogicalscale();
 	xoffset = 20*scale;
 	yoffset = 20*scale;

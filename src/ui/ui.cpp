@@ -1,5 +1,6 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
@@ -13,6 +14,8 @@ InterfaceManager::InterfaceManager(Game* newgame)
 
 void InterfaceManager::update(int ms)
 {
+    if(dropdown)
+        dropdown->update(ms);
     for(auto& panel: panels)
         panel->update(ms);
 }
@@ -20,6 +23,9 @@ void InterfaceManager::update(int ms)
 void InterfaceManager::render(Rendering* r)
 {
     int scale = getlogicalscale();
+
+    if(dropdown)
+        dropdown->render(r);
 
     for(auto& panel: panels)
         panel->render(r);
@@ -38,10 +44,18 @@ void InterfaceManager::render(Rendering* r)
 
 int InterfaceManager::leftclick(Vec mousepos)
 {
-    for(auto& panel: panels)
-        if(panel->click(mousepos, SDL_BUTTON_LEFT))
-            return 1;
-    return 0;
+    bool clicked = false;
+    if(dropdown){
+        if(dropdown->checkclick(mousepos, SDL_BUTTON_LEFT)){
+            clicked = true;
+        }
+        setdropdown(nullptr);
+    }
+    if(!clicked)
+        for(auto& panel: panels)
+            if(panel->click(mousepos, SDL_BUTTON_LEFT))
+                return true;
+    return clicked;
 }
 
 void InterfaceManager::addpanel(UI::ClickableHost* panel)
@@ -57,6 +71,13 @@ void InterfaceManager::removepanel(UI::ClickableHost* panel)
         });
     if(it!=panels.end())
         panels.erase(it);
+}
+
+void InterfaceManager::setdropdown(UI::Dropdown* dr)
+{
+    if(dropdown)
+        delete dropdown;
+    dropdown = dr;
 }
 
 Game& InterfaceManager::getgame()

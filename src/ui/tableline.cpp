@@ -143,12 +143,11 @@ void TrainTableLine::click(Vec mousepos)
     // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
     // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
     // ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
-    Dropdown* ntable = new Dropdown(ui, tablerect, panel);
+    Dropdown* ntable = new Dropdown(tablerect, panel);
     ntable->lines.emplace_back(new TableTextLine(panel, ntable, "fun"));
     ntable->lines.emplace_back(new TableTextLine(panel, ntable, "to"));
     ntable->lines.emplace_back(new TableTextLine(panel, ntable, "be"));
     ntable->lines.emplace_back(new TableTextLine(panel, ntable, "programming"));
-	panel->addelement(ntable);
 }
 
 } //end namespace UI
