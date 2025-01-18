@@ -90,6 +90,12 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 break;
             }
+            case SDL_MOUSEBUTTONUP:{
+                if(e.button.button == SDL_BUTTON_LEFT){
+                    Vec mousepos = screenmousepos();
+                    ui.leftbuttonup(mousepos);
+                }
+            }
             case SDL_KEYDOWN:{
                 if(e.key.keysym.sym == SDLK_UP){
                     if(editingroute)

@@ -1,4 +1,5 @@
 #include<iostream>
+#include "bahnhof/common/input.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/buttons.h"
@@ -17,6 +18,10 @@ void InterfaceManager::update(int ms)
     if(dropdown){
         dropdown->update(ms);
     }
+
+    if(movingwindow)
+        movingwindow->move(game->getinputmanager().screenmousepos() - movingwindowoffset);
+    
     for(auto& panel: panels)
         panel->update(ms);
 }
@@ -60,10 +65,21 @@ int InterfaceManager::leftclick(Vec mousepos)
         setdropdown(nullptr);
     }
     if(!clicked)
-        for(auto& panel: panels)
-            if(panel->click(mousepos, SDL_BUTTON_LEFT))
-                return true;
+        for(auto& panel: panels){
+            UI::Host* p = panel.get();
+            if(p->click(mousepos, SDL_BUTTON_LEFT)){
+                clicked = true;
+                if(movingwindow)
+                    movingwindowoffset = mousepos-movingwindow->topcorner();
+                break;
+            }
+        }
     return clicked;
+}
+
+void InterfaceManager::leftbuttonup(Vec mousepos)
+{
+    movingwindow = nullptr;
 }
 
 void InterfaceManager::addpanel(UI::Host* panel)
@@ -73,6 +89,8 @@ void InterfaceManager::addpanel(UI::Host* panel)
 
 void InterfaceManager::removepanel(UI::Host* panel)
 {
+    if(movingwindow==panel)
+        movingwindow = nullptr;
     auto it = std::find_if(panels.begin(), panels.end(), 
         [panel](const std::unique_ptr<UI::Host>& ptr){
             return ptr.get() == panel;

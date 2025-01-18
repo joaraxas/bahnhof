@@ -48,6 +48,7 @@ bool Host::click(Vec pos, int type)
 	bool wasclicked = false;
 	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
 		wasclicked = true;
+        ui->movingwindow = this;
 		for(auto& element: elements)
 			if(element->checkclick(pos, type))
 				break;
@@ -57,6 +58,11 @@ bool Host::click(Vec pos, int type)
 
 void Host::addelement(Element* element){
 	elements.emplace_back(element);
+}
+
+void Host::move(Vec towhattopcorner){
+	rect.x = int(towhattopcorner.x);
+	rect.y = int(towhattopcorner.y);
 }
 
 template <class T, typename... Args> void Panel::createbutton(Args&&... args){

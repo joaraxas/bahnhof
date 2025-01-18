@@ -45,6 +45,7 @@ public:
     virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
+    void move(Vec towhattopcorner);
     Vec topcorner();
     virtual void erase();
     InterfaceManager& getui();
@@ -121,15 +122,18 @@ public:
     InterfaceManager(Game*);
     void update(int ms);
     int leftclick(Vec pos);
+    void leftbuttonup(Vec pos);
     void render(Rendering*);
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
     int getlogicalscale();
+    UI::Host* movingwindow = nullptr;
 private:
     void renderscalemeasurer(Rendering* r, int leftx, int lefty, int scalelinelength);
     std::vector<std::unique_ptr<UI::Host>> panels;
     UI::Dropdown* dropdown = nullptr;
+    Vec movingwindowoffset;
     Game* game;
 };
