@@ -24,23 +24,30 @@ void InterfaceManager::update(int ms)
 void InterfaceManager::render(Rendering* r)
 {
     int scale = getlogicalscale();
-
-    if(dropdown)
-        dropdown->render(r);
+    int viewheight = r->getviewsize().y;
+    renderscalemeasurer(r, scale*20, viewheight-scale*20, scale*200);
 
     for(auto& panel: panels)
         panel->render(r);
-    
+
+    if(dropdown)
+        dropdown->render(r);
+}
+
+void InterfaceManager::renderscalemeasurer(Rendering* r, int leftx, int lefty, int scalelinelength)
+{
+    int scale = getlogicalscale();
+
     int textheight = 14*scale;
     SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	int scalelinelength = scale*200;
     int viewheight = r->getviewsize().y;
-    int offset = 20*scale;
+    int offset = leftx;
     int markersize = 2*scale;
-	r->renderline(Vec(offset,viewheight-offset), Vec(offset+scalelinelength,viewheight-offset), false);
-	r->renderline(Vec(offset,viewheight-offset-markersize), Vec(offset,viewheight-offset+markersize), false);
-	r->renderline(Vec(offset+scalelinelength,viewheight-offset-markersize), Vec(offset+scalelinelength,viewheight-offset+markersize), false);
-	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getcamscale())) + " m", offset+scalelinelength*0.5-offset, viewheight-offset-textheight, {0,0,0,0}, false, false);
+	r->renderline(Vec(leftx,lefty), Vec(leftx+scalelinelength,lefty), false);
+	r->renderline(Vec(leftx,lefty-markersize), Vec(leftx,lefty+markersize), false);
+	r->renderline(Vec(leftx+scalelinelength,lefty-markersize), Vec(leftx+scalelinelength,lefty+markersize), false);
+	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getcamscale())) + " m", leftx+scalelinelength*0.5-leftx, lefty-textheight, {0,0,0,0}, false, false);
+
 }
 
 int InterfaceManager::leftclick(Vec mousepos)
@@ -59,15 +66,15 @@ int InterfaceManager::leftclick(Vec mousepos)
     return clicked;
 }
 
-void InterfaceManager::addpanel(UI::ClickableHost* panel)
+void InterfaceManager::addpanel(UI::Host* panel)
 {
     panels.emplace_back(panel);
 }
 
-void InterfaceManager::removepanel(UI::ClickableHost* panel)
+void InterfaceManager::removepanel(UI::Host* panel)
 {
     auto it = std::find_if(panels.begin(), panels.end(), 
-        [panel](const std::unique_ptr<UI::ClickableHost>& ptr){
+        [panel](const std::unique_ptr<UI::Host>& ptr){
             return ptr.get() == panel;
         });
     if(it!=panels.end())

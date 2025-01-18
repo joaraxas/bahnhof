@@ -37,10 +37,10 @@ protected:
     Game* game;
 };
 
-class ClickableHost
+class Host
 {
 public:
-    ClickableHost(InterfaceManager* newui, SDL_Rect newrect);
+    Host(InterfaceManager* newui, SDL_Rect newrect);
     virtual bool click(Vec pos, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
@@ -55,12 +55,11 @@ protected:
     InterfaceManager* ui;
 };
 
-class Panel : public ClickableHost
+class Panel : public Host
 {
 public:
     Panel(InterfaceManager* newui, SDL_Rect newrect);
     Panel(InterfaceManager* newui);
-    virtual ~Panel();
     virtual void render(Rendering*);
 protected:
     template <class T, typename... Args> void createbutton(Args&&... args);
@@ -123,13 +122,14 @@ public:
     void update(int ms);
     int leftclick(Vec pos);
     void render(Rendering*);
-    void addpanel(UI::ClickableHost*);
-    void removepanel(UI::ClickableHost*);
+    void addpanel(UI::Host*);
+    void removepanel(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
     int getlogicalscale();
 private:
-    std::vector<std::unique_ptr<UI::ClickableHost>> panels;
+    void renderscalemeasurer(Rendering* r, int leftx, int lefty, int scalelinelength);
+    std::vector<std::unique_ptr<UI::Host>> panels;
     UI::Dropdown* dropdown = nullptr;
     Game* game;
 };

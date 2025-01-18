@@ -60,9 +60,17 @@ void NewRouteTableLine::click(Vec mousepos)
 
 void SelectRouteTableLine::click(Vec mousepos)
 {
-    std::cout<<"clicked routeable"<<std::endl;
     RouteManager& routing = game->getgamestate().getrouting();
     dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(routeindex);
+}
+
+void SelectRouteTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    // TODO: cheating here by rendering table text twice to get dimensions
+    RouteTableLine::render(r, maxarea);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    r->renderfilledrectangle(getglobalrect(), false, false);
+    RouteTableLine::render(r, maxarea);
 }
 
 OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :

@@ -42,7 +42,7 @@ class RouteTableLine : public TableTextLine, public Button
 {
 public:
     RouteTableLine(Panel*, Table*, std::string routename, int index);
-    void render(Rendering* r, SDL_Rect maxarea);
+    virtual void render(Rendering* r, SDL_Rect maxarea);
 protected:
     virtual void click(Vec mousepos);
     int routeindex;
@@ -58,6 +58,7 @@ class SelectRouteTableLine : public RouteTableLine
 {
 public:
     SelectRouteTableLine(Panel* p, Table* t, std::string r, int i) : Element(p), RouteTableLine(p, t, r, i) {};
+    void render(Rendering* r, SDL_Rect maxarea);
 protected:
     void click(Vec mousepos);
 };
@@ -99,7 +100,7 @@ class Dropdown : public Table
 {
 public:
     Dropdown(Panel* p, SDL_Rect r);
-    virtual void update(int ms) {std::cout<<"I'm dumb"<<std::endl;};
+    virtual void update(int ms) {};
 };
 
 class RouteDropdown : public Dropdown

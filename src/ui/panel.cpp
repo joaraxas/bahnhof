@@ -9,52 +9,53 @@
 
 namespace UI{
 
-ClickableHost::ClickableHost(InterfaceManager* newui, SDL_Rect newrect)
+Host::Host(InterfaceManager* newui, SDL_Rect newrect)
 {
     ui = newui;
     game = &ui->getgame();
 	rect = newrect;
 }
 
-InterfaceManager& ClickableHost::getui()
+InterfaceManager& Host::getui()
 {
     return *ui;
 }
 
-void ClickableHost::erase()
+void Host::erase()
 {
     ui->removepanel(this);
 }
 
-Vec ClickableHost::topcorner()
+Vec Host::topcorner()
 {
 	return Vec(rect.x, rect.y);
 }
 
-void ClickableHost::update(int ms)
+void Host::update(int ms)
 {
 	for(auto& element: elements)
 		element->update(ms);
 }
 
-void ClickableHost::render(Rendering* r)
+void Host::render(Rendering* r)
 {
 	for(auto& element: elements)
 		element->render(r);
 }
 
-bool ClickableHost::click(Vec pos, int type)
+bool Host::click(Vec pos, int type)
 {
+	bool wasclicked = false;
 	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
+		wasclicked = true;
 		for(auto& element: elements)
 			if(element->checkclick(pos, type))
 				break;
-		return true;
 	}
-    return false;
+    return wasclicked;
 }
 
-void ClickableHost::addelement(Element* element){
+void Host::addelement(Element* element){
 	elements.emplace_back(element);
 }
 
@@ -64,9 +65,7 @@ template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 	yoffset += ydist + button->getlocalrect().h;
 }
 
-Panel::~Panel(){std::cout<<"del panel"<<std::endl;}
-
-Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : ClickableHost(newui, newrect)
+Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
 {
     ui->addpanel(this);
 	int scale = ui->getlogicalscale();
@@ -81,7 +80,7 @@ void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
     r->renderfilledrectangle(rect, false, false);
-	ClickableHost::render(r);
+	Host::render(r);
 }
 
 MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
