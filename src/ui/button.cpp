@@ -22,16 +22,6 @@ void Button::render(Rendering* r)
     r->renderfilledrectangle(getglobalrect(), false, false);
 }
 
-bool Button::checkclick(Vec mousepos, int type)
-{
-    bool clicked = Element::checkclick(mousepos, type);
-	if(clicked){
-        if(type==SDL_BUTTON_LEFT)
-            click(mousepos);
-	}
-    return clicked;
-}
-
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Element(newpanel), Button(newpanel, newpos)
 {
     text = newtext;
@@ -52,22 +42,22 @@ void TextButton::render(Rendering* r)
     r->rendertext(text, int(globalrect.x+globalrect.w*0.5-textwidth*0.5), globalrect.y+5, {255,255,255,255}, false, false, maxtextwidth);
 }
 
-void Close::click(Vec mousepos)
+void Close::leftclick(Vec mousepos)
 {
     panel->erase();
 }
 
-void PlaceSignal::click(Vec mousepos)
+void PlaceSignal::leftclick(Vec mousepos)
 {
     game->getinputmanager().placesignal();
 }
 
-void PlaceTrack::click(Vec mousepos)
+void PlaceTrack::leftclick(Vec mousepos)
 {
     game->getinputmanager().placetrack();
 }
 
-void ManageRoutes::click(Vec mousepos)
+void ManageRoutes::leftclick(Vec mousepos)
 {
     Vec viewsize = game->getrendering().getviewsize();
     int scale = ui->getlogicalscale();
@@ -75,12 +65,12 @@ void ManageRoutes::click(Vec mousepos)
     new RouteListPanel(ui, routepanelrect);
 }
 
-void ManageTrains::click(Vec mousepos)
+void ManageTrains::leftclick(Vec mousepos)
 {
     new TrainListPanel(ui);
 }
 
-void SetRoute::click(Vec mousepos)
+void SetRoute::leftclick(Vec mousepos)
 {
     Vec panelpos = panel->topcorner();
     SDL_Rect tablerect = {int(mousepos.x-panelpos.x), int(mousepos.y-panelpos.y), 500, 200};
@@ -96,7 +86,7 @@ void SetRoute::update(int ms)
         text = "No route set";
 }
 
-void GoTrain::click(Vec mousepos)
+void GoTrain::leftclick(Vec mousepos)
 {
     bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
     go = !go;
@@ -114,27 +104,27 @@ void GoTrain::update(int ms)
 namespace Routing
 {
 
-void AddTurn::click(Vec mousepos)
+void AddTurn::leftclick(Vec mousepos)
 {
     route->insertorderatselected(new Turn());
 }
 
-void AddCouple::click(Vec mousepos)
+void AddCouple::leftclick(Vec mousepos)
 {
     route->insertorderatselected(new Couple());
 }
 
-void AddDecouple::click(Vec mousepos)
+void AddDecouple::leftclick(Vec mousepos)
 {
     route->insertorderatselected(new Decouple());
 }
 
-void AddLoadResource::click(Vec mousepos)
+void AddLoadResource::leftclick(Vec mousepos)
 {
     route->insertorderatselected(new Loadresource());
 }
 
-void RemoveOrder::click(Vec mousepos)
+void RemoveOrder::leftclick(Vec mousepos)
 {
     route->removeselectedorder();
 }

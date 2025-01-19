@@ -55,25 +55,32 @@ void InterfaceManager::renderscalemeasurer(Rendering* r, int leftx, int lefty, i
 
 }
 
-int InterfaceManager::leftclick(Vec mousepos)
+bool InterfaceManager::leftclick(Vec mousepos)
 {
     bool clicked = false;
     if(dropdown){
-        if(dropdown->checkclick(mousepos, SDL_BUTTON_LEFT)){
+        if(dropdown->checkclick(mousepos)){
             clicked = true;
+            dropdown->leftclick(mousepos);
         }
         setdropdown(nullptr);
     }
-    if(!clicked)
+    if(!clicked){
+        UI::Host* clickedpanel = nullptr;
         for(auto& panel: panels){
             UI::Host* p = panel.get();
-            if(p->click(mousepos, SDL_BUTTON_LEFT)){
+            if(p->checkclick(mousepos)){
                 clicked = true;
+                clickedpanel = p;
+                movingwindow = p;
                 if(movingwindow)
                     movingwindowoffset = mousepos-movingwindow->topcorner();
                 break;
             }
         }
+        if(clickedpanel)
+            clickedpanel->click(mousepos, SDL_BUTTON_LEFT);
+    }
     return clicked;
 }
 
@@ -124,7 +131,7 @@ Element::Element(Panel* newpanel)
     game = &ui->getgame();
 }
 
-bool Element::checkclick(Vec mousepos, int type)
+bool Element::checkclick(Vec mousepos)
 {
     SDL_Rect absrect = getglobalrect();
 	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){

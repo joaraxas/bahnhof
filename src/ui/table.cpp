@@ -13,17 +13,35 @@ Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
     rect = newrect;
 }
 
-bool Table::checkclick(Vec mousepos, int type)
+bool Table::checkclick(Vec mousepos)
 {
-    bool clicked = Element::checkclick(mousepos, type);
+    std::cout<<"ehe"<<std::endl;
+    bool clicked = Element::checkclick(mousepos);
+    std::cout<<clicked<<std::endl;
 	if(clicked){
-        for(auto& line : lines){
-            if(line->checkclick(mousepos, type)){
+        for(auto& line : lines){ //TODO: maybe expand a separate rect instead when adding lines
+            std::cout<<"woho"<<std::endl;
+            if(line->checkclick(mousepos)){
+                std::cout<<"ihi"<<std::endl;
                 return true;
             }
         }
 	}
     return false;
+}
+
+void Table::leftclick(Vec mousepos)
+{
+    TableLine* clickedline = nullptr;
+    std::cout<<"aha"<<std::endl;
+    for(auto& line : lines)
+        if(line->checkclick(mousepos)){
+            std::cout<<"oho"<<std::endl;
+            clickedline = line.get();
+            break;
+        }
+	if(clickedline)
+        clickedline->leftclick(mousepos);
 }
 
 void Table::render(Rendering* r)

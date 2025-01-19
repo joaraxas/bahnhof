@@ -43,24 +43,22 @@ class RouteTableLine : public TableTextLine, public Button
 public:
     RouteTableLine(Panel*, Table*, std::string routename, int index);
     virtual void render(Rendering* r, SDL_Rect maxarea);
+    virtual void leftclick(Vec mousepos);
 protected:
-    virtual void click(Vec mousepos);
     int routeindex;
 };
 class NewRouteTableLine : public RouteTableLine
 {
 public:
     NewRouteTableLine(Panel* p, Table* t) : Element(p), RouteTableLine(p, t, "New route", 0) {};
-protected:
-    void click(Vec mousepos);
+    void leftclick(Vec mousepos);
 };
 class SelectRouteTableLine : public RouteTableLine
 {
 public:
     SelectRouteTableLine(Panel* p, Table* t, std::string r, int i) : Element(p), RouteTableLine(p, t, r, i) {};
     void render(Rendering* r, SDL_Rect maxarea);
-protected:
-    void click(Vec mousepos);
+    void leftclick(Vec mousepos);
 };
 
 class OrderTableLine : public TableTextLine, public Button
@@ -68,8 +66,8 @@ class OrderTableLine : public TableTextLine, public Button
 public:
     OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
+    void leftclick(Vec mousepos);
 private:
-    void click(Vec mousepos);
     Route* route;
     int orderid;
 };
@@ -79,9 +77,9 @@ class TrainTableLine : public TableLine, public Button
 public:
     TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);
     void render(Rendering* r, SDL_Rect maxarea);
-private:
-    void click(Vec mousepos);
+    void leftclick(Vec mousepos);
     TrainInfo info;
+private:
     TrainManager* trainmanager;
 };
 
@@ -90,7 +88,8 @@ class Table : public Element
 public:
     Table(Panel*, SDL_Rect newrect);
     virtual ~Table() {std::cout<<"del table"<<std::endl;};
-    bool checkclick(Vec pos, int type);
+    bool checkclick(Vec pos);
+    void leftclick(Vec pos);
     virtual void render(Rendering*);
     std::vector<std::unique_ptr<TableLine>> lines;
 protected:

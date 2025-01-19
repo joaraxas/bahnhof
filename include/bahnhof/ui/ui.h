@@ -25,7 +25,8 @@ class Element
 public:
     Element(Panel*);
     virtual ~Element() {};
-    virtual bool checkclick(Vec pos, int type);
+    virtual bool checkclick(Vec pos);
+    virtual void leftclick(Vec pos) {};
     virtual void update(int ms) {};
     virtual void render(Rendering*) {};
     virtual SDL_Rect getglobalrect();
@@ -41,6 +42,7 @@ class Host
 {
 public:
     Host(InterfaceManager* newui, SDL_Rect newrect);
+    bool checkclick(Vec pos);
     virtual bool click(Vec pos, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
@@ -121,7 +123,7 @@ class InterfaceManager{
 public:
     InterfaceManager(Game*);
     void update(int ms);
-    int leftclick(Vec pos);
+    bool leftclick(Vec pos);
     void leftbuttonup(Vec pos);
     void render(Rendering*);
     void addpanel(UI::Host*);

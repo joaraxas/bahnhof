@@ -43,17 +43,30 @@ void Host::render(Rendering* r)
 		element->render(r);
 }
 
+bool Host::checkclick(Vec pos)
+{
+	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
+		return true;
+	}
+    return false;
+}
+
 bool Host::click(Vec pos, int type)
 {
-	bool wasclicked = false;
-	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
-		wasclicked = true;
-        ui->movingwindow = this;
-		for(auto& element: elements)
-			if(element->checkclick(pos, type))
-				break;
+	Element* clickedelement = nullptr;
+	for(auto& element: elements)
+		if(element->checkclick(pos)){
+			clickedelement = element.get();
+			break;
+		}
+	if(clickedelement){
+		switch (type)
+		{
+		case SDL_BUTTON_LEFT:
+			clickedelement->leftclick(pos);
+			break;
+		}
 	}
-    return wasclicked;
 }
 
 void Host::addelement(Element* element){

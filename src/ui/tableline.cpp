@@ -47,18 +47,18 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void RouteTableLine::click(Vec mousepos)
+void RouteTableLine::leftclick(Vec mousepos)
 {
     RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
     rlp->addroutepanel(routeindex);
 }
 
-void NewRouteTableLine::click(Vec mousepos)
+void NewRouteTableLine::leftclick(Vec mousepos)
 {
     game->getgamestate().getrouting().addroute();
 }
 
-void SelectRouteTableLine::click(Vec mousepos)
+void SelectRouteTableLine::leftclick(Vec mousepos)
 {
     RouteManager& routing = game->getgamestate().getrouting();
     dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(routeindex);
@@ -90,7 +90,7 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void OrderTableLine::click(Vec mousepos)
+void OrderTableLine::leftclick(Vec mousepos)
 {
     route->selectedorderid = orderid;
 }
@@ -134,7 +134,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-void TrainTableLine::click(Vec mousepos)
+void TrainTableLine::leftclick(Vec mousepos)
 {
     trainmanager->deselectall();
     info.train->selected = true;
