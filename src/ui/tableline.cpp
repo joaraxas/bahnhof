@@ -33,8 +33,7 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, SDL_Color color)
     rect.h = textrect.h;
 }
 
-RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename, int i) :
-    routeindex(i),
+RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename) :
     TableTextLine(p, t, routename)
 {}
 
@@ -43,32 +42,6 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
     TableTextLine::render(r, maxarea);
     SDL_SetRenderDrawColor(renderer,0,0,0,255);
     r->renderrectangle(getglobalrect(), false, false);
-}
-
-void RouteTableLine::leftclick(Vec mousepos)
-{
-    RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
-    rlp->addroutepanel(routeindex);
-}
-
-void NewRouteTableLine::leftclick(Vec mousepos)
-{
-    game->getgamestate().getrouting().addroute();
-}
-
-void SelectRouteTableLine::leftclick(Vec mousepos)
-{
-    RouteManager& routing = game->getgamestate().getrouting();
-    dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(routeindex);
-}
-
-void SelectRouteTableLine::render(Rendering* r, SDL_Rect maxarea)
-{
-    // TODO: cheating here by rendering table text twice to get dimensions
-    RouteTableLine::render(r, maxarea);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    r->renderfilledrectangle(getglobalrect(), false, false);
-    RouteTableLine::render(r, maxarea);
 }
 
 OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :
@@ -84,11 +57,6 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
     TableTextLine::render(r, maxarea, c);
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     r->renderrectangle(getglobalrect(), false, false);
-}
-
-void OrderTableLine::leftclick(Vec mousepos)
-{
-    route->selectedorderid = orderid;
 }
 
 TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -126,17 +94,6 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     
     rect.h = absrect.h;
     r->renderrectangle(getglobalrect(), false, false);
-}
-
-void TrainTableLine::leftclick(Vec mousepos)
-{
-    trainmanager->deselectall();
-    info.train->selected = true;
-    
-    Vec viewsize = game->getrendering().getviewsize();
-    int scale = ui->getlogicalscale();
-    rect = {scale*300,scale*200,scale*400,scale*200};
-    new TrainPanel(ui, rect, *info.train);
 }
 
 } //end namespace UI

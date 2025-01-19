@@ -15,14 +15,10 @@ Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
 
 bool Table::checkclick(Vec mousepos)
 {
-    std::cout<<"ehe"<<std::endl;
     bool clicked = Element::checkclick(mousepos);
-    std::cout<<clicked<<std::endl;
 	if(clicked){
         for(auto& line : lines){ //TODO: maybe expand a separate rect instead when adding lines
-            std::cout<<"woho"<<std::endl;
             if(line->checkclick(mousepos)){
-                std::cout<<"ihi"<<std::endl;
                 return true;
             }
         }
@@ -30,18 +26,15 @@ bool Table::checkclick(Vec mousepos)
     return false;
 }
 
-void Table::leftclick(Vec mousepos)
+int Table::getlineindexat(Vec mousepos)
 {
-    TableLine* clickedline = nullptr;
-    std::cout<<"aha"<<std::endl;
-    for(auto& line : lines)
-        if(line->checkclick(mousepos)){
-            std::cout<<"oho"<<std::endl;
-            clickedline = line.get();
+    int lineindex = -1;
+    for(int index=0; index<lines.size(); index++)
+        if(lines[index]->checkclick(mousepos)){
+            lineindex = index;
             break;
         }
-	if(clickedline)
-        clickedline->leftclick(mousepos);
+    return lineindex;
 }
 
 void Table::render(Rendering* r)
@@ -62,18 +55,35 @@ Dropdown::Dropdown(Panel* p, SDL_Rect r) : Table(p, r)
     ui->setdropdown(this);
 }
 
+void Dropdown::render(Rendering* r)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    r->renderfilledrectangle(getglobalrect(), false, false);
+    Table::render(r);
+}
+
+RouteDropdown::RouteDropdown(Panel* p, SDL_Rect r) : 
+    Dropdown(p, r), 
+    routing(ui->getgame().getgamestate().getrouting())
+{}
+
 void RouteDropdown::update(int ms)
 {
 	lines.clear();
 	
-	RouteManager& routing = ui->getgame().getgamestate().getrouting();
-    std::vector<std::string> names = routing.getroutenames();
-    std::vector<int> ids = routing.getrouteids();
+    names = routing.getroutenames();
+    ids = routing.getrouteids();
     for(int iRoute = 0; iRoute<names.size(); iRoute++){
-        int id = ids[iRoute];
         std::string name = names[iRoute];
-        std::string str = name;
-        lines.emplace_back(new SelectRouteTableLine(panel, this, str, id));
+        lines.emplace_back(new RouteTableLine(panel, this, name));
+    }
+}
+
+void RouteDropdown::leftclick(Vec mousepos)
+{
+    int index = getlineindexat(mousepos);
+    if(index>=0){
+        dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
     }
 }
 
@@ -90,50 +100,89 @@ void MainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
 }
 
-TrainListTable::TrainListTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect)
+TrainTable::TrainTable(Panel* newpanel, SDL_Rect newrect) : 
+    Table(newpanel, newrect)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
 }
 
-void TrainListTable::update(int ms)
+void TrainTable::update(int ms)
 {
-	std::vector<TrainInfo> traininfos = trainmanager->gettrainsinfo();
+	traininfos = trainmanager->gettrainsinfo();
 	lines.clear();
 	for(TrainInfo& info: traininfos){
         lines.emplace_back(new TrainTableLine(panel, this, info, trainmanager));
 	}
 }
 
-void RouteListTable::update(int ms)
+void TrainTable::leftclick(Vec mousepos)
 {
-	lines.clear();
-	
-	RouteManager& routing = ui->getgame().getgamestate().getrouting();
-    std::vector<std::string> names = routing.getroutenames();
-    std::vector<int> ids = routing.getrouteids();
-    for(int iRoute = 0; iRoute<names.size(); iRoute++){
-        int id = ids[iRoute];
-        std::string name = names[iRoute];
-        std::string str = name;
-        lines.emplace_back(new RouteTableLine(panel, this, str, id));
+    int index = getlineindexat(mousepos);
+    if(index>=0){
+        trainmanager->deselectall();
+        TrainInfo info = traininfos[index];
+        info.train->selected = true;
+        
+        Vec viewsize = game->getrendering().getviewsize();
+        int scale = ui->getlogicalscale();
+        SDL_Rect trainpanelrect = {scale*300,scale*200,scale*400,scale*200};
+        new TrainPanel(ui, trainpanelrect, *info.train);
     }
-    lines.emplace_back(new NewRouteTableLine(panel, this));
 }
+
+RouteTable::RouteTable(Panel* p, SDL_Rect r) : 
+    Table(p, r), 
+    routing(ui->getgame().getgamestate().getrouting())
+{};
 
 void RouteTable::update(int ms)
 {
 	lines.clear();
 	
-    std::vector<std::string> descriptions = route->getorderdescriptions();
-    std::vector<int> ids = route->getorderids();
-    std::vector<int> numbers = route->getordernumberstorender();
+    names = routing.getroutenames();
+    ids = routing.getrouteids();
+    for(int iRoute = 0; iRoute<names.size(); iRoute++){
+        std::string name = names[iRoute];
+        lines.emplace_back(new RouteTableLine(panel, this, name));
+    }
+    lines.emplace_back(new RouteTableLine(panel, this, "New route"));
+}
+
+void RouteTable::leftclick(Vec mousepos)
+{
+    int index = getlineindexat(mousepos);
+    if(index>=0){
+        if(index<ids.size()){
+            RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
+            rlp->addroutepanel(ids[index]);
+        }
+        else if(index==ids.size())
+            routing.addroute();
+    }
+}
+
+void OrderTable::update(int ms)
+{
+	lines.clear();
+	
+    descriptions = route->getorderdescriptions();
+    orderids = route->getorderids();
+    numbers = route->getordernumberstorender();
     for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
         std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
-        int id = ids[iOrder];
+        int id = orderids[iOrder];
         lines.emplace_back(new OrderTableLine(panel, this, route, id, str));
     }
     if(lines.size() == 0)
         lines.emplace_back(new TableTextLine(panel, this, "No orders yet"));
+}
+
+void OrderTable::leftclick(Vec pos)
+{
+    int index = getlineindexat(pos);
+    if(index>=0){
+        route->selectedorderid = orderids[index];
+    }
 }
 
 } //end namespace UI

@@ -118,7 +118,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Pane
 {
     int scale = ui->getlogicalscale();
 	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
-	addelement(new RouteListTable(this, tablerect));
+	addelement(new RouteTable(this, tablerect));
 }
 
 RouteListPanel::~RouteListPanel()
@@ -155,7 +155,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, R
 	createbutton<Routing::RemoveOrder>(route);
     int scale = ui->getlogicalscale();
 	SDL_Rect tablerect = {10*scale, yoffset, rect.w-20*scale, rect.h-60*scale};
-	addelement(new RouteTable(this, tablerect, route));
+	addelement(new OrderTable(this, tablerect, route));
 	game->getinputmanager().editroute(route);
 }
 
@@ -178,7 +178,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
     int scale = ui->getlogicalscale();
     rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
 	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
-	addelement(new TrainListTable(this, tablerect));
+	addelement(new TrainTable(this, tablerect));
 }
 
 TrainListPanel::~TrainListPanel()

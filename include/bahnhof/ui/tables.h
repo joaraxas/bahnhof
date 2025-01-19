@@ -11,6 +11,7 @@ class Game;
 class Gamestate;
 class Rendering;
 class InterfaceManager;
+class RouteManager;
 
 namespace UI{
 class Panel;
@@ -41,24 +42,8 @@ private:
 class RouteTableLine : public TableTextLine
 {
 public:
-    RouteTableLine(Panel*, Table*, std::string routename, int index);
+    RouteTableLine(Panel*, Table*, std::string routename);
     virtual void render(Rendering* r, SDL_Rect maxarea);
-    virtual void leftclick(Vec mousepos);
-protected:
-    int routeindex;
-};
-class NewRouteTableLine : public RouteTableLine
-{
-public:
-    NewRouteTableLine(Panel* p, Table* t) : RouteTableLine(p, t, "New route", 0) {};
-    void leftclick(Vec mousepos);
-};
-class SelectRouteTableLine : public RouteTableLine
-{
-public:
-    SelectRouteTableLine(Panel* p, Table* t, std::string r, int i) : RouteTableLine(p, t, r, i) {};
-    void render(Rendering* r, SDL_Rect maxarea);
-    void leftclick(Vec mousepos);
 };
 
 class OrderTableLine : public TableTextLine
@@ -66,7 +51,6 @@ class OrderTableLine : public TableTextLine
 public:
     OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
-    void leftclick(Vec mousepos);
 private:
     Route* route;
     int orderid;
@@ -77,7 +61,6 @@ class TrainTableLine : public TableLine
 public:
     TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);
     void render(Rendering* r, SDL_Rect maxarea);
-    void leftclick(Vec mousepos);
     TrainInfo info;
 private:
     TrainManager* trainmanager;
@@ -89,10 +72,10 @@ public:
     Table(Panel*, SDL_Rect newrect);
     virtual ~Table() {std::cout<<"del table"<<std::endl;};
     bool checkclick(Vec pos);
-    void leftclick(Vec pos);
     virtual void render(Rendering*);
-    std::vector<std::unique_ptr<TableLine>> lines;
 protected:
+    int getlineindexat(Vec pos);
+    std::vector<std::unique_ptr<TableLine>> lines;
 };
 
 class Dropdown : public Table
@@ -100,13 +83,19 @@ class Dropdown : public Table
 public:
     Dropdown(Panel* p, SDL_Rect r);
     virtual void update(int ms) {};
+    void render(Rendering* r);
 };
 
 class RouteDropdown : public Dropdown
 {
 public:
-    RouteDropdown(Panel* p, SDL_Rect r) : Dropdown(p, r) {};
+    RouteDropdown(Panel* p, SDL_Rect r);
     void update(int ms);
+    void leftclick(Vec pos);
+private:
+	RouteManager& routing;
+    std::vector<std::string> names;
+    std::vector<int> ids;
 };
 
 class MainInfoTable : public Table
@@ -116,29 +105,40 @@ public:
     void update(int ms);
 };
 
-class RouteListTable : public Table
-{
-public:
-    RouteListTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {};
-    void update(int ms);
-};
-
 class RouteTable : public Table
 {
 public:
-    RouteTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {}
+    RouteTable(Panel* p, SDL_Rect r);
     void update(int ms);
+    void leftclick(Vec pos);
 private:
-    Route* route;
+	RouteManager& routing;
+    std::vector<std::string> names;
+    std::vector<int> ids;
 };
 
-class TrainListTable : public Table
+class OrderTable : public Table
 {
 public:
-    TrainListTable(Panel*, SDL_Rect newrect);
+    OrderTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {}
     void update(int ms);
+    void leftclick(Vec pos);
+private:
+    Route* route;
+    std::vector<std::string> descriptions;
+    std::vector<int> orderids;
+    std::vector<int> numbers;
+};
+
+class TrainTable : public Table
+{
+public:
+    TrainTable(Panel*, SDL_Rect newrect);
+    void update(int ms);
+    void leftclick(Vec pos);
 private:
     TrainManager* trainmanager;
+    std::vector<TrainInfo> traininfos;
 };
 
 }
