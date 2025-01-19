@@ -13,7 +13,7 @@ class InterfaceManager;
 
 namespace UI{
 
-class Button : virtual public Element
+class Button : public Element
 {
 public:
     Button(Panel*, Vec newpos);
@@ -37,42 +37,42 @@ protected:
 class Close : public TextButton
 {
 public:
-    Close(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Close") {}
+    Close(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Close") {}
     void leftclick(Vec mousepos);
 };
 
 class PlaceSignal : public TextButton
 {
 public:
-    PlaceSignal(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build signal") {}
+    PlaceSignal(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {}
     void leftclick(Vec mousepos);
 };
 
 class PlaceTrack : public TextButton
 {
 public:
-    PlaceTrack(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Build track") {}
+    PlaceTrack(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {}
     void leftclick(Vec mousepos);
 };
 
 class ManageRoutes : public TextButton
 {
 public:
-    ManageRoutes(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage routes") {}
+    ManageRoutes(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage routes") {}
     void leftclick(Vec mousepos);
 };
 
 class ManageTrains : public TextButton
 {
 public:
-    ManageTrains(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Manage trains") {}
+    ManageTrains(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage trains") {}
     void leftclick(Vec mousepos);
 };
 
 class SetRoute : public TextButton
 {
 public:
-    SetRoute(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Change route") {}
+    SetRoute(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Change route") {}
     void update(int ms);
     void leftclick(Vec mousepos);
 };
@@ -80,7 +80,7 @@ public:
 class GoTrain : public TextButton
 {
 public:
-    GoTrain(Panel* newpanel, Vec newpos) : Element(newpanel), TextButton(newpanel, newpos, "Start route") {}
+    GoTrain(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Start route") {}
     void update(int ms);
     void leftclick(Vec mousepos);
 };
@@ -92,7 +92,6 @@ class AddOrder : public TextButton
 {
 public:
     AddOrder(Panel* newpanel, Vec newpos, Route* whatroute, std::string text) : 
-                            Element(newpanel), 
                             TextButton(newpanel, newpos, text, 120),
                             route(whatroute) {}
 protected:
@@ -102,35 +101,35 @@ protected:
 class AddTurn : public AddOrder
 {
 public:
-    AddTurn(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
+    AddTurn(Panel* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
     void leftclick(Vec mousepos);
 };
 
 class AddCouple : public AddOrder
 {
 public:
-    AddCouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Couple") {}
+    AddCouple(Panel* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Couple") {}
     void leftclick(Vec mousepos);
 };
 
 class AddDecouple : public AddOrder
 {
 public:
-    AddDecouple(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Decouple") {}
+    AddDecouple(Panel* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Decouple") {}
     void leftclick(Vec mousepos);
 };
 
 class AddLoadResource : public AddOrder
 {
 public:
-    AddLoadResource(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Load resource") {}
+    AddLoadResource(Panel* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Load resource") {}
     void leftclick(Vec mousepos);
 };
 
 class RemoveOrder : public AddOrder
 {
 public:
-    RemoveOrder(Panel* newpanel, Vec newpos, Route* whatroute) : Element(newpanel), AddOrder(newpanel, newpos, whatroute, "Remove selected") {}
+    RemoveOrder(Panel* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Remove selected") {}
     void leftclick(Vec mousepos);
 };
 

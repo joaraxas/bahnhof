@@ -20,7 +20,7 @@ SDL_Rect TableLine::getglobalrect()
     return {rect.x+int(tablepos.x), rect.y+int(tablepos.y), rect.w, rect.h};
 }
 
-TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : Element(newpanel), TableLine(newpanel, newtable)
+TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
 {
     str = newstr;
 }
@@ -34,10 +34,8 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, SDL_Color color)
 }
 
 RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename, int i) :
-    Element(p), 
     routeindex(i),
-    TableTextLine(p, t, routename), 
-    Button(p, Vec(0,0))
+    TableTextLine(p, t, routename)
 {}
 
 void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
@@ -74,11 +72,9 @@ void SelectRouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 }
 
 OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :
-    Element(p), 
     route(r),
     orderid(i),
-    TableTextLine(p, t, description), 
-    Button(p, Vec(0,0))
+    TableTextLine(p, t, description)
 {}
 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
@@ -96,9 +92,7 @@ void OrderTableLine::leftclick(Vec mousepos)
 }
 
 TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
-    Element(p), 
     TableLine(p, t), 
-    Button(p, Vec(0,0)), 
     info(traininfo),
     trainmanager(manager)
 {}

@@ -16,7 +16,7 @@ namespace UI{
 class Panel;
 class Table;
 
-class TableLine : virtual public Element
+class TableLine : public Element
 {
 public:
     TableLine(Panel*, Table*);
@@ -38,7 +38,7 @@ private:
     std::string str;
 };
 
-class RouteTableLine : public TableTextLine, public Button
+class RouteTableLine : public TableTextLine
 {
 public:
     RouteTableLine(Panel*, Table*, std::string routename, int index);
@@ -50,18 +50,18 @@ protected:
 class NewRouteTableLine : public RouteTableLine
 {
 public:
-    NewRouteTableLine(Panel* p, Table* t) : Element(p), RouteTableLine(p, t, "New route", 0) {};
+    NewRouteTableLine(Panel* p, Table* t) : RouteTableLine(p, t, "New route", 0) {};
     void leftclick(Vec mousepos);
 };
 class SelectRouteTableLine : public RouteTableLine
 {
 public:
-    SelectRouteTableLine(Panel* p, Table* t, std::string r, int i) : Element(p), RouteTableLine(p, t, r, i) {};
+    SelectRouteTableLine(Panel* p, Table* t, std::string r, int i) : RouteTableLine(p, t, r, i) {};
     void render(Rendering* r, SDL_Rect maxarea);
     void leftclick(Vec mousepos);
 };
 
-class OrderTableLine : public TableTextLine, public Button
+class OrderTableLine : public TableTextLine
 {
 public:
     OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
@@ -72,7 +72,7 @@ private:
     int orderid;
 };
 
-class TrainTableLine : public TableLine, public Button
+class TrainTableLine : public TableLine
 {
 public:
     TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);

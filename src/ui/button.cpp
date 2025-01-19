@@ -22,7 +22,7 @@ void Button::render(Rendering* r)
     r->renderfilledrectangle(getglobalrect(), false, false);
 }
 
-TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Element(newpanel), Button(newpanel, newpos)
+TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
     int scale = ui->getlogicalscale();
