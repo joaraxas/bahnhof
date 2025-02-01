@@ -215,11 +215,17 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 		Panel(newui, newrect), train(newtrain)
 {
 	TrainInfo info = train.getinfo();
+
 	createbutton<SetRoute>();
 	createbutton<GoTrain>();
 	createbutton<GasTrain>();
 	createbutton<BrakeTrain>();
 	createbutton<TurnTrain>();
+	
+    int scale = ui->getlogicalscale();
+	SDL_Rect trainnamerect = {rect.w/2-50*scale, 10*scale, 100*scale, 20*scale};
+	trainnametext = new Text(this, info.name, trainnamerect);
+	addelement(trainnametext);
 }
 
 TrainPanel::~TrainPanel()

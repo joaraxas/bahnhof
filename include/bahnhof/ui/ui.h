@@ -40,6 +40,15 @@ protected:
     Game* game;
 };
 
+class Text : public Element
+{
+public:
+    Text(Panel* p, std::string t, SDL_Rect r) : Element(p), text(t) {rect = r;};
+    void render(Rendering*);
+    std::string text;
+    SDL_Color color = {0,0,0,255};
+};
+
 class Host
 {
 public:
@@ -120,6 +129,7 @@ public:
     Train& gettrain() {return train;};
 private:
     Train& train;
+    Text* trainnametext;
 };
 
 }

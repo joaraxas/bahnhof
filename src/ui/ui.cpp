@@ -152,6 +152,7 @@ int InterfaceManager::getlogicalscale()
 }
 
 namespace UI{
+
 Element::Element(Panel* newpanel)
 {
     panel = newpanel;
@@ -178,4 +179,11 @@ SDL_Rect Element::getlocalrect()
 {
     return rect;
 }
+
+void Text::render(Rendering* r)
+{
+    SDL_Rect absrect = getglobalrect();
+    r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
+}
+
 }
