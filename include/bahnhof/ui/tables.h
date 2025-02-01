@@ -49,10 +49,10 @@ public:
 class OrderTableLine : public TableTextLine
 {
 public:
-    OrderTableLine(Panel*, Table*, Route*, int orderindex, std::string description);
+    OrderTableLine(Panel*, Table*, bool select, int orderindex, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
-    Route* route;
+    bool selected = false;
     int orderid;
 };
 
@@ -120,14 +120,24 @@ private:
 class OrderTable : public Table
 {
 public:
-    OrderTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {}
-    void update(int ms);
-    void leftclick(Vec pos);
-private:
+    OrderTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {};
+    virtual void update(int ms);
+    virtual void leftclick(Vec pos);
+protected:
     Route* route;
     std::vector<std::string> descriptions;
     std::vector<int> orderids;
     std::vector<int> numbers;
+};
+
+class TrainOrderTable : public OrderTable
+{
+public:
+    TrainOrderTable(Panel* p, SDL_Rect r, Train& t) : OrderTable(p, r, nullptr), train(t) {};
+    void update(int ms);
+    void leftclick(Vec pos);
+private:
+    Train& train;
 };
 
 class TrainTable : public Table

@@ -156,17 +156,6 @@ void Train::proceed()
 void Train::render(Rendering* r)
 {
 	if(selected){
-		if(route){
-			if(orderid>=0){
-				int iOrder = route->getindex(orderid);
-				int scale = r->getlogicalscale();
-				int rectw = 10*scale;
-				SDL_Rect rect = {int(r->getviewsize().x)-(300+2)*scale-rectw,((iOrder+1)*14+2)*scale,rectw,rectw};
-				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
-				r->renderfilledrectangle(rect, false, false);
-				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			}
-		}
 		Vec frontpos = getpos(*tracksystem, forwardstate());
 		float forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;

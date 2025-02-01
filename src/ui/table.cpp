@@ -124,7 +124,6 @@ void TrainTable::leftclick(Vec mousepos)
         TrainInfo info = traininfos[index];
         info.train->selected = true;
         
-        Vec viewsize = game->getrendering().getviewsize();
         int scale = ui->getlogicalscale();
         SDL_Rect trainpanelrect = {scale*300,scale*200,scale*400,scale*200};
         new TrainPanel(ui, trainpanelrect, *info.train);
@@ -177,13 +176,16 @@ void OrderTable::update(int ms)
 {
 	lines.clear();
 	
-    descriptions = route->getorderdescriptions();
-    orderids = route->getorderids();
-    numbers = route->getordernumberstorender();
-    for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
-        std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
-        int id = orderids[iOrder];
-        lines.emplace_back(new OrderTableLine(panel, this, route, id, str));
+    if(route){
+        descriptions = route->getorderdescriptions();
+        orderids = route->getorderids();
+        numbers = route->getordernumberstorender();
+        for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
+            std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
+            int id = orderids[iOrder];
+            bool isselected = (id==route->selectedorderid);
+            lines.emplace_back(new OrderTableLine(panel, this, isselected, id, str));
+        }
     }
     if(lines.size() == 0)
         lines.emplace_back(new TableTextLine(panel, this, "No orders yet"));
@@ -193,7 +195,30 @@ void OrderTable::leftclick(Vec pos)
 {
     int index = getlineindexat(pos);
     if(index>=0){
-        route->selectedorderid = orderids[index];
+        if(route)
+            route->selectedorderid = orderids[index];
+    }
+}
+
+void TrainOrderTable::update(int ms)
+{
+    route = train.route;
+    int id;
+    if(route){
+        id = route->selectedorderid;
+        route->selectedorderid = train.orderid; // TODO: This is a temporary hack, should extend this functionality to abstract table class
+    }
+    OrderTable::update(ms);
+    if(route)
+        route->selectedorderid = id;
+}
+
+void TrainOrderTable::leftclick(Vec pos)
+{
+    int index = getlineindexat(pos);
+    if(index>=0){
+        if(route)
+            train.orderid = orderids[index];
     }
 }
 

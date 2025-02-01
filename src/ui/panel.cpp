@@ -227,11 +227,14 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 	trainnametext = new Text(this, info.name, trainnamerect);
 	addelement(trainnametext);
 
-	SDL_Rect tablerect = {120*scale, (40)*scale, 100*scale, 100*scale};
-	addelement(new TrainInfoTable(this, tablerect, train));
+	SDL_Rect traininfotablerect = {120*scale, (40)*scale, 100*scale, 100*scale};
+	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {120*scale, (40+50)*scale, 300*scale, 30*scale};
+	SDL_Rect trainiconsrect = {120*scale, (40+50)*scale, 55*scale, 30*scale};
 	addelement(new TrainIcons(this, trainiconsrect, train));
+
+	SDL_Rect routetablerect = {180*scale, (40)*scale, 180*scale, 160*scale};
+	addelement(new TrainOrderTable(this, routetablerect, train));
 }
 
 TrainPanel::~TrainPanel()
@@ -239,20 +242,4 @@ TrainPanel::~TrainPanel()
 	std::cout<<"del trainpanel"<<std::endl;
 }
 
-// void TrainPanel::render(Rendering* r)
-// {
-// 	Panel::render(r);
-// 	Train* selectedtrain = game->getinputmanager().getselectedtrain();
-// 	int scale = ui->getlogicalscale();
-// 	int xoffset = 10*scale;
-// 	int yoffset = (20+30)*scale;
-// 	if(selectedtrain){
-// 		if(selectedtrain->route)
-// 			r->rendertext(selectedtrain->route->name, rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-// 		else
-// 			r->rendertext("No route assigned", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-// 	}
-// 	else
-// 		r->rendertext("No train selected", rect.x + xoffset, rect.y + yoffset, {0,0,0,255}, false, false);
-// }
 } // namespace UI

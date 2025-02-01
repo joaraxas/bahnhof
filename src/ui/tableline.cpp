@@ -44,15 +44,15 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(getglobalrect(), false, false);
 }
 
-OrderTableLine::OrderTableLine(Panel* p, Table* t, Route* r, int i, std::string description) :
-    route(r),
+OrderTableLine::OrderTableLine(Panel* p, Table* t, bool sel, int i, std::string description) :
+    selected(sel),
     orderid(i),
     TableTextLine(p, t, description)
 {}
 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
-    uint8_t intensity = 255*(orderid==route->selectedorderid);
+    uint8_t intensity = 255*selected;
     SDL_Color c = {intensity, intensity, intensity, 255};
     TableTextLine::render(r, maxarea, c);
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
