@@ -186,4 +186,9 @@ void Text::render(Rendering* r)
     r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
 }
 
+void TrainIcons::render(Rendering* r)
+{
+    rendertrainicons(r, *ui, train.getinfo(), getglobalrect());
+}
+
 }

@@ -229,6 +229,9 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 
 	SDL_Rect tablerect = {120*scale, (40)*scale, 100*scale, 100*scale};
 	addelement(new TrainInfoTable(this, tablerect, train));
+
+	SDL_Rect trainiconsrect = {120*scale, (40+50)*scale, 300*scale, 30*scale};
+	addelement(new TrainIcons(this, trainiconsrect, train));
 }
 
 TrainPanel::~TrainPanel()

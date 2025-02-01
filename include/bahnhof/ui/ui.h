@@ -49,6 +49,15 @@ public:
     SDL_Color color = {0,0,0,255};
 };
 
+class TrainIcons : public Element
+{
+public:
+    TrainIcons(Panel* p, SDL_Rect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
+    void render(Rendering*);
+private:
+    Train& train;
+};
+
 class Host
 {
 public:

@@ -79,21 +79,32 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     SDL_Rect namerect = r->rendertext(info.name, absrect.x+rowoffset, absrect.y+textpadding, {intensity, intensity, intensity, 255}, false, false, namerowwidth-rowoffset);
     absrect.h = namerect.h + 2*textpadding;
     
-    int iconoffset = 2*scale;
-	SpriteManager& spritemanager = ui->getgame().getsprites();
-    Sprite wagonicon;
-    wagonicon.ported = false;
-    wagonicon.zoomed = false;
-    int icon_x = namerowwidth + rowoffset;
-    for(WagonInfo& wagoninfo : info.wagoninfos){
-        wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
-        Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(absrect.x+icon_x+iconsize.x*0.5, absrect.y+textpadding+namerect.h*0.5));
-        icon_x += iconsize.x + iconoffset;
-    }
+    SDL_Rect trainiconrect = {absrect.x+rowoffset+namerowwidth+textpadding, 
+                              absrect.y+textpadding, 
+                              absrect.w-namerowwidth-rowoffset-2*textpadding, 
+                              namerect.h};
+    rendertrainicons(r, *ui, info, trainiconrect);
     
     rect.h = absrect.h;
     r->renderrectangle(getglobalrect(), false, false);
+}
+
+SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
+{
+    auto scale = ui.getlogicalscale();
+    int iconoffset = 2*scale;
+	SpriteManager& spritemanager = ui.getgame().getsprites();
+    Sprite wagonicon;
+    wagonicon.ported = false;
+    wagonicon.zoomed = false;
+    int icon_x = 0;
+    for(WagonInfo& wagoninfo : info.wagoninfos){
+        wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
+        Vec iconsize = wagonicon.getsize();
+        wagonicon.render(r, Vec(maxrect.x+icon_x+iconsize.x*0.5, maxrect.y+maxrect.h*0.5));
+        icon_x += iconsize.x + iconoffset;
+    }
+    return maxrect;
 }
 
 } //end namespace UI

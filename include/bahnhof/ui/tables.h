@@ -150,4 +150,6 @@ private:
     Train& train;
 };
 
+SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect rect);
+
 }
