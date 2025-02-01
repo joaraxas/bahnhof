@@ -141,4 +141,13 @@ private:
     std::vector<TrainInfo> traininfos;
 };
 
+class TrainInfoTable : public Table
+{
+public:
+    TrainInfoTable(Panel* p, SDL_Rect r, Train& t): Table(p, r), train(t) {};
+    void update(int ms);
+private:
+    Train& train;
+};
+
 }

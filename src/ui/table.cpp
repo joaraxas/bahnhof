@@ -1,4 +1,5 @@
 #include<iostream>
+#include<format>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/graphics/rendering.h"
@@ -128,6 +129,17 @@ void TrainTable::leftclick(Vec mousepos)
         SDL_Rect trainpanelrect = {scale*300,scale*200,scale*400,scale*200};
         new TrainPanel(ui, trainpanelrect, *info.train);
     }
+}
+
+void TrainInfoTable::update(int ms)
+{
+	TrainInfo info = train.getinfo();
+    lines.clear();
+    lines.emplace_back(new TableTextLine(panel, this, info.name));
+    float mps = info.speed*0.001*150;
+    float kmh = mps*3.6;
+    lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} km/h", abs(kmh))));
+    // lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
 }
 
 RouteTable::RouteTable(Panel* p, SDL_Rect r) : 
