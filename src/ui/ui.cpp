@@ -29,8 +29,8 @@ void InterfaceManager::render(Rendering* r)
     int viewheight = r->getviewsize().y;
     renderscaleruler(r, scale*20, viewheight-scale*20, scale*200);
 
-    for(auto& panel: panels)
-        panel->render(r);
+    for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)
+        (*pit)->render(r);
 
     if(dropdown)
         dropdown->render(r);
@@ -78,26 +78,28 @@ bool InterfaceManager::mousehover(Vec mousepos, int ms)
     return false;
 }
 
-bool InterfaceManager::leftclick(Vec mousepos)
+bool InterfaceManager::click(Vec mousepos, int type)
 {
-    bool clicked = false;
+    bool clickedui = false;
     if(dropdown){
         if(dropdown->checkclick(mousepos)){
-            clicked = true;
-            dropdown->leftclick(mousepos);
+            clickedui = true;
+            if(type==SDL_BUTTON_LEFT)
+                dropdown->leftclick(mousepos);
         }
         setdropdown(nullptr);
     }
-    if(!clicked){
+    if(!clickedui){
         UI::Host* clickedpanel = getpanelat(mousepos);
         if(clickedpanel){
-            clicked = true;
+            movepaneltofront(clickedpanel);
+            clickedui = true;
             movingwindow = clickedpanel;
             movingwindowoffset = mousepos-movingwindow->topcorner();
-            clickedpanel->click(mousepos, SDL_BUTTON_LEFT);
+            clickedpanel->click(mousepos, type);
         }
     }
-    return clicked;
+    return clickedui;
 }
 
 void InterfaceManager::leftbuttonup(Vec mousepos)
@@ -120,6 +122,7 @@ bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
 void InterfaceManager::addpanel(UI::Host* panel)
 {
     panels.emplace_back(panel);
+    movepaneltofront(panel);
 }
 
 void InterfaceManager::removepanel(UI::Host* panel)
@@ -132,6 +135,19 @@ void InterfaceManager::removepanel(UI::Host* panel)
         });
     if(it!=panels.end())
         panels.erase(it);
+}
+
+void InterfaceManager::movepaneltofront(UI::Host* selectedpanel)
+{
+    auto it = std::find_if(panels.begin(), panels.end(), [selectedpanel](const std::unique_ptr<UI::Host>& ptr) {
+        return ptr.get() == selectedpanel;
+    });
+
+    if (it != panels.end()) {
+        auto temp = std::move(*it);
+        panels.erase(it);
+        panels.insert(panels.begin(), std::move(temp));
+    }
 }
 
 void InterfaceManager::setdropdown(UI::Dropdown* dr)

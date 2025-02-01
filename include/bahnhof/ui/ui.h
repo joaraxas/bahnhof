@@ -148,12 +148,13 @@ public:
     InterfaceManager(Game*);
     void update(int ms);
     bool mousehover(Vec pos, int ms);
-    bool leftclick(Vec pos);
+    bool click(Vec pos, int type);
     void leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
+    void movepaneltofront(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
     int getlogicalscale();

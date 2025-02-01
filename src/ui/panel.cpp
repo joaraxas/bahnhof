@@ -124,6 +124,8 @@ void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
     r->renderfilledrectangle(rect, false, false);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
+    r->renderrectangle(rect, false, false);
 	Host::render(r);
 }
 

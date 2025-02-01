@@ -48,7 +48,7 @@ void InputManager::handle(int ms, int mslogic){
                     Tracks::Input::deleteat(tracksystem, mousepos);
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
-                    if(ui.leftclick(screenmousepos())){}
+                    if(ui.click(screenmousepos(), SDL_BUTTON_LEFT)){}
                     else if(placingsignal){
                         if(gamestate.money>0){
                             Tracks::Input::buildsignalat(tracksystem, mousepos);
