@@ -88,6 +88,28 @@ public:
     void leftclick(Vec mousepos);
 };
 
+class GasTrain : public TextButton
+{
+public:
+    GasTrain(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Gas") {};
+    void leftpressed(Vec mousepos, int mslogic);
+};
+
+class BrakeTrain : public TextButton
+{
+public:
+    BrakeTrain(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Brake") {};
+    void leftpressed(Vec mousepos, int mslogic);
+};
+
+class TurnTrain : public TextButton
+{
+public:
+    TurnTrain(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Reverse") {};
+    void leftclick(Vec mousepos);
+};
+
+
 namespace Routing
 {
 

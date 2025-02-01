@@ -51,14 +51,18 @@ bool Host::checkclick(Vec pos)
     return false;
 }
 
-void Host::mousehover(Vec pos, int ms)
+Element* Host::getelementat(Vec pos)
 {
-	Element* hoveredelement = nullptr;
 	for(auto& element: elements)
 		if(element->checkclick(pos)){
-			hoveredelement = element.get();
-			break;
+			return element.get();
 		}
+	return nullptr;
+}
+
+void Host::mousehover(Vec pos, int ms)
+{
+	Element* hoveredelement = getelementat(pos);
 	if(hoveredelement){
 		hoveredelement->mousehover(pos, ms);
 	}
@@ -66,17 +70,25 @@ void Host::mousehover(Vec pos, int ms)
 
 void Host::click(Vec pos, int type)
 {
-	Element* clickedelement = nullptr;
-	for(auto& element: elements)
-		if(element->checkclick(pos)){
-			clickedelement = element.get();
-			break;
-		}
+	Element* clickedelement = getelementat(pos);
 	if(clickedelement){
 		switch (type)
 		{
 		case SDL_BUTTON_LEFT:
 			clickedelement->leftclick(pos);
+			break;
+		}
+	}
+}
+
+void Host::mousepress(Vec pos, int mslogic, int type)
+{
+	Element* clickedelement = getelementat(pos);
+	if(clickedelement){
+		switch (type)
+		{
+		case SDL_BUTTON_LEFT:
+			clickedelement->leftpressed(pos, mslogic);
 			break;
 		}
 	}
@@ -205,6 +217,9 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 	TrainInfo info = train.getinfo();
 	createbutton<SetRoute>();
 	createbutton<GoTrain>();
+	createbutton<GasTrain>();
+	createbutton<BrakeTrain>();
+	createbutton<TurnTrain>();
 }
 
 TrainPanel::~TrainPanel()

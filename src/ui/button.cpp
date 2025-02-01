@@ -108,6 +108,24 @@ void GoTrain::update(int ms)
         text = "Start route";
 }
 
+void GasTrain::leftpressed(Vec mousepos, int mslogic)
+{
+    Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
+    train.gas(mslogic);
+}
+
+void BrakeTrain::leftpressed(Vec mousepos, int mslogic)
+{
+    Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
+    train.brake(mslogic);
+}
+
+void TurnTrain::leftclick(Vec mousepos)
+{
+    Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
+    train.shiftdirection();
+}
+
 namespace Routing
 {
 

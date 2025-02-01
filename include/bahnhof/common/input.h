@@ -35,6 +35,7 @@ public:
     Vec screenmousepos();
     Vec mapmousepos();
     bool keyispressed(const int scancode);
+    bool leftmouseispressed();
     void selecttrain(Train* train);
     Train* getselectedtrain() {return selectedtrain;};
     void editroute(Route* route);

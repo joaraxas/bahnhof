@@ -18,9 +18,6 @@ void InterfaceManager::update(int ms)
     if(dropdown){
         dropdown->update(ms);
     }
-
-    if(movingwindow)
-        movingwindow->move(game->getinputmanager().screenmousepos() - movingwindowoffset);
     
     for(auto& panel: panels)
         panel->update(ms);
@@ -55,6 +52,15 @@ void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int 
 
 }
 
+UI::Host* InterfaceManager::getpanelat(Vec screenpos)
+{
+    for(auto& panel: panels){
+        if(panel->checkclick(screenpos))
+            return panel.get();
+    }
+    return nullptr;
+}
+
 bool InterfaceManager::mousehover(Vec mousepos, int ms)
 {
     if(dropdown){
@@ -64,14 +70,7 @@ bool InterfaceManager::mousehover(Vec mousepos, int ms)
         }
     }
     
-    UI::Host* hoveredoverpanel = nullptr;
-    for(auto& panel: panels){
-        UI::Host* p = panel.get();
-        if(p->checkclick(mousepos)){
-            hoveredoverpanel = p;
-            break;
-        }
-    }
+    UI::Host* hoveredoverpanel = getpanelat(mousepos);
     if(hoveredoverpanel){
         hoveredoverpanel->mousehover(mousepos, ms);
         return true;
@@ -90,20 +89,13 @@ bool InterfaceManager::leftclick(Vec mousepos)
         setdropdown(nullptr);
     }
     if(!clicked){
-        UI::Host* clickedpanel = nullptr;
-        for(auto& panel: panels){
-            UI::Host* p = panel.get();
-            if(p->checkclick(mousepos)){
-                clicked = true;
-                clickedpanel = p;
-                movingwindow = p;
-                if(movingwindow)
-                    movingwindowoffset = mousepos-movingwindow->topcorner();
-                break;
-            }
-        }
-        if(clickedpanel)
+        UI::Host* clickedpanel = getpanelat(mousepos);
+        if(clickedpanel){
+            clicked = true;
+            movingwindow = clickedpanel;
+            movingwindowoffset = mousepos-movingwindow->topcorner();
             clickedpanel->click(mousepos, SDL_BUTTON_LEFT);
+        }
     }
     return clicked;
 }
@@ -111,6 +103,18 @@ bool InterfaceManager::leftclick(Vec mousepos)
 void InterfaceManager::leftbuttonup(Vec mousepos)
 {
     movingwindow = nullptr;
+}
+
+bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
+{
+    UI::Host* pressedpanel = getpanelat(mousepos);
+    if(pressedpanel){
+        pressedpanel->mousepress(mousepos, mslogic, SDL_BUTTON_LEFT);
+    }
+    if(movingwindow){
+        movingwindow->move(mousepos - movingwindowoffset);
+        return true;
+    }
 }
 
 void InterfaceManager::addpanel(UI::Host* panel)
