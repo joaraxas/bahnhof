@@ -27,6 +27,7 @@ public:
     virtual ~Element() {};
     virtual bool checkclick(Vec pos);
     virtual void leftclick(Vec pos) {};
+    virtual void mousehover(Vec pos, int ms) {};
     virtual void update(int ms) {};
     virtual void render(Rendering*) {};
     virtual SDL_Rect getglobalrect();
@@ -43,7 +44,8 @@ class Host
 public:
     Host(InterfaceManager* newui, SDL_Rect newrect);
     bool checkclick(Vec pos);
-    virtual bool click(Vec pos, int type);
+    virtual void mousehover(Vec pos, int ms);
+    virtual void click(Vec pos, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
@@ -123,6 +125,7 @@ class InterfaceManager{
 public:
     InterfaceManager(Game*);
     void update(int ms);
+    bool mousehover(Vec pos, int ms);
     bool leftclick(Vec pos);
     void leftbuttonup(Vec pos);
     void render(Rendering*);
@@ -133,7 +136,7 @@ public:
     int getlogicalscale();
     UI::Host* movingwindow = nullptr;
 private:
-    void renderscalemeasurer(Rendering* r, int leftx, int lefty, int scalelinelength);
+    void renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength);
     std::vector<std::unique_ptr<UI::Host>> panels;
     UI::Dropdown* dropdown = nullptr;
     Vec movingwindowoffset;

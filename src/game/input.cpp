@@ -22,6 +22,9 @@ void InputManager::handle(int ms, int mslogic){
     SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
     InterfaceManager& ui = game->getui();
+
+    ui.mousehover(screenmousepos(), ms);
+
     while(SDL_PollEvent(&e)){
         switch(e.type){
             case SDL_QUIT:{

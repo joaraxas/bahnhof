@@ -30,7 +30,7 @@ void InterfaceManager::render(Rendering* r)
 {
     int scale = getlogicalscale();
     int viewheight = r->getviewsize().y;
-    renderscalemeasurer(r, scale*20, viewheight-scale*20, scale*200);
+    renderscaleruler(r, scale*20, viewheight-scale*20, scale*200);
 
     for(auto& panel: panels)
         panel->render(r);
@@ -39,7 +39,7 @@ void InterfaceManager::render(Rendering* r)
         dropdown->render(r);
 }
 
-void InterfaceManager::renderscalemeasurer(Rendering* r, int leftx, int lefty, int scalelinelength)
+void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
 {
     int scale = getlogicalscale();
 
@@ -53,6 +53,30 @@ void InterfaceManager::renderscalemeasurer(Rendering* r, int leftx, int lefty, i
 	r->renderline(Vec(leftx+scalelinelength,lefty-markersize), Vec(leftx+scalelinelength,lefty+markersize), false);
 	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getcamscale())) + " m", leftx+scalelinelength*0.5-leftx, lefty-textheight, {0,0,0,0}, false, false);
 
+}
+
+bool InterfaceManager::mousehover(Vec mousepos, int ms)
+{
+    if(dropdown){
+        if(dropdown->checkclick(mousepos)){
+            dropdown->mousehover(mousepos, ms);
+            return true;
+        }
+    }
+    
+    UI::Host* hoveredoverpanel = nullptr;
+    for(auto& panel: panels){
+        UI::Host* p = panel.get();
+        if(p->checkclick(mousepos)){
+            hoveredoverpanel = p;
+            break;
+        }
+    }
+    if(hoveredoverpanel){
+        hoveredoverpanel->mousehover(mousepos, ms);
+        return true;
+    }
+    return false;
 }
 
 bool InterfaceManager::leftclick(Vec mousepos)

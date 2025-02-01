@@ -51,7 +51,20 @@ bool Host::checkclick(Vec pos)
     return false;
 }
 
-bool Host::click(Vec pos, int type)
+void Host::mousehover(Vec pos, int ms)
+{
+	Element* hoveredelement = nullptr;
+	for(auto& element: elements)
+		if(element->checkclick(pos)){
+			hoveredelement = element.get();
+			break;
+		}
+	if(hoveredelement){
+		hoveredelement->mousehover(pos, ms);
+	}
+}
+
+void Host::click(Vec pos, int type)
 {
 	Element* clickedelement = nullptr;
 	for(auto& element: elements)

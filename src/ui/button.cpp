@@ -16,10 +16,17 @@ Button::Button(Panel* newpanel, Vec newpos) : Element(newpanel)
     rect = {int(newpos.x), int(newpos.y), scale*100, scale*40};
 }
 
+void Button::mousehover(Vec pos, int ms)
+{
+    highlighted = true;
+}
+
 void Button::render(Rendering* r)
 {
-    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    int i = highlighted*127;
+    SDL_SetRenderDrawColor(renderer,i,i,i,255);
     r->renderfilledrectangle(getglobalrect(), false, false);
+    highlighted = false;
 }
 
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
