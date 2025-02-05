@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include<algorithm>
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"

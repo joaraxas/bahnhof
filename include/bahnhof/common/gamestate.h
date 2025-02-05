@@ -1,5 +1,5 @@
 #pragma once
-#include<vector>
+#include "bahnhof/common/math.h"
 #include "bahnhof/track/state.h"
 
 class Route;

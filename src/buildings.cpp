@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include "bahnhof/common/math.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
