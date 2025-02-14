@@ -91,7 +91,7 @@ protected:
     template <class T, typename... Args> void createbutton(Args&&... args);
     int xoffset;
     int yoffset;
-    int ydist = 10;
+    int ydist = 5;
 };
 
 class MainPanel : public Panel

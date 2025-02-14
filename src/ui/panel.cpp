@@ -103,12 +103,6 @@ void Host::move(Vec towhattopcorner){
 	rect.y = int(towhattopcorner.y);
 }
 
-template <class T, typename... Args> void Panel::createbutton(Args&&... args){
-	T* button = new T(this, Vec(xoffset,yoffset), std::forward<Args>(args)...);
-	addelement(button);
-	yoffset += ydist + button->getlocalrect().h;
-}
-
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
 {
     ui->addpanel(this);
@@ -118,7 +112,14 @@ Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
 	createbutton<Close>();
 }
 
-Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}){}
+Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}) {}
+
+template <class T, typename... Args> void Panel::createbutton(Args&&... args){
+	int scale = ui->getlogicalscale();
+	T* button = new T(this, Vec(xoffset,yoffset), std::forward<Args>(args)...);
+	addelement(button);
+	yoffset += ydist*scale + button->getlocalrect().h;
+}
 
 void Panel::render(Rendering* r)
 {

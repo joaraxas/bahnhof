@@ -35,10 +35,10 @@ TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int wid
     int scale = ui->getlogicalscale();
     rect.w = scale*width;
     rect.h = scale*20;
-    maxtextwidth = rect.w - 10;
+    maxtextwidth = rect.w - scale*10;
     SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth);
 	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
-    rect.h = fmax(rect.h, 10+textheight);
+    rect.h = fmax(rect.h, scale*10+textheight);
 	SDL_DestroyTexture(tex);
 }
 
