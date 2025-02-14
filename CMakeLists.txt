@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 project(bahnhof VERSION 1.0)
 
+set(SDL2_PATH "C:\\mingw_dev_lib\\SDL2")
+set(SDL2_IMAGE_PATH "C:\\mingw_dev_lib\\SDL2")
+set(SDL2_TTF_PATH "C:\\mingw_dev_lib\\SDL2")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
