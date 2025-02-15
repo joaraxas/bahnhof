@@ -75,10 +75,7 @@ SDL_Texture* loadimage(std::string path)
 SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 {
 	SDL_Surface* surf = nullptr;
-	if(retina)
-		surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, maxwidth);
-	else
-		surf = TTF_RenderUTF8_Solid_Wrapped(font, text.c_str(), color, maxwidth);
+	surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, maxwidth);
 	if(!surf){
 		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
 	}
