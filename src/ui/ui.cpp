@@ -117,6 +117,7 @@ bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
         movingwindow->move(mousepos - movingwindowoffset);
         return true;
     }
+    return false;
 }
 
 void InterfaceManager::addpanel(UI::Host* panel)
