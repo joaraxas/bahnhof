@@ -7,7 +7,7 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
-bool retina = false;
+bool retina = true;
 
 int init()
 {

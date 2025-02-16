@@ -31,8 +31,8 @@ public:
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     Vec getviewsize();
     float getcamscale();
-private:
     int getlogicalscale();
+private:
     Game* game;
     Camera* cam;
     SDL_Texture* fieldtex;

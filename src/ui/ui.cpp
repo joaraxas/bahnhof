@@ -11,6 +11,8 @@
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
+    setuiscale(game->getrendering().getlogicalscale());
+    std::cout<<uiscale<<std::endl;
     new UI::MainPanel(this, {0,0,200,300});
 }
 
@@ -65,7 +67,7 @@ SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect r
     return screentoui(textrect);
 }
 
-void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
+void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, float scalelinelength)
 {
     float scale = getlogicalscale();
 
@@ -73,11 +75,11 @@ void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int 
     SDL_SetRenderDrawColor(renderer, 0,0,0,255);
     int viewheight = r->getviewsize().y;
     int offset = leftx;
-    int markersize = 2*scale;
+    int markersize = round(2*scale);
 	r->renderline(Vec(leftx,lefty), Vec(leftx+scalelinelength,lefty), false);
 	r->renderline(Vec(leftx,lefty-markersize), Vec(leftx,lefty+markersize), false);
 	r->renderline(Vec(leftx+scalelinelength,lefty-markersize), Vec(leftx+scalelinelength,lefty+markersize), false);
-	r->rendertext(std::to_string(int(scalelinelength*0.001*150/r->getcamscale())) + " m", leftx+scalelinelength*0.5-leftx, lefty-textheight, {0,0,0,0}, false, false);
+	r->rendertext(std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()))) + " m", leftx+scalelinelength*0.5-leftx, lefty-textheight, {0,0,0,0}, false, false);
 
 }
 
@@ -200,14 +202,17 @@ float InterfaceManager::getlogicalscale()
 
 void InterfaceManager::increaseuiscale()
 {
-    uiscale += 0.2;
-    int newfontsize = 12*uiscale;
-    setfontsize(newfontsize);
+    setuiscale(uiscale + 0.2);
 }
 
 void InterfaceManager::decreaseuiscale()
 {
-    uiscale = std::fmax(0.4, uiscale-0.2);
+    setuiscale(uiscale - 0.2);
+}
+
+void InterfaceManager::setuiscale(float newscale)
+{
+    uiscale = std::fmax(0.4, newscale);;
     int newfontsize = 12*uiscale;
     setfontsize(newfontsize);
 }
