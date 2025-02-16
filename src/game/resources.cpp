@@ -6,6 +6,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/ui/ui.h"
 
 std::vector<std::unique_ptr<Storage>> storages;
 
@@ -56,16 +57,17 @@ Storage::Storage(Game* whatgame, int x, int y, int w, int h, resourcetype _accep
 void Storage::render(Rendering* r)
 {
 	ResourceManager& allresources = game->getresources();
+	InterfaceManager& ui = allresources.getgame().getui();
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
 	r->renderrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;
 	float scale = r->getcamscale();
-	float hdscale = r->getlogicalscale();
-	int iconwidth = 20*hdscale;
+	float uiscale = ui.getlogicalscale();
+	int iconwidth = 20*uiscale;
 	int sep = iconwidth/scale;
-	int frameoffset = fmax(1,int(2*hdscale/scale));
+	int frameoffset = fmax(1,int(2*uiscale/scale));
 	for(auto resourcepair : storedresources){
 		Resource* resource = allresources.get(resourcepair.first);
 		int amount = resourcepair.second;

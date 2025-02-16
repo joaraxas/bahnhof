@@ -12,8 +12,7 @@ namespace UI{
 
 Button::Button(Panel* newpanel, Vec newpos) : Element(newpanel)
 {
-    int scale = ui->getlogicalscale();
-    rect = {int(newpos.x), int(newpos.y), scale*100, scale*40};
+    rect = {int(newpos.x), int(newpos.y), 100, 40};
 }
 
 void Button::mousehover(Vec pos, int ms)
@@ -32,21 +31,22 @@ void Button::render(Rendering* r)
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
-    int scale = ui->getlogicalscale();
-    rect.w = scale*width;
-    rect.h = scale*20;
-    maxtextwidth = rect.w - scale*10;
+    float scale = ui->getlogicalscale();
+    rect.w = width;
+    rect.h = 20;
+    maxtextwidth = (rect.w - 10)*scale;
     SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth);
 	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
-    rect.h = fmax(rect.h, scale*10+textheight);
+    rect.h = fmax(rect.h, 10+textheight/scale);
 	SDL_DestroyTexture(tex);
 }
 
 void TextButton::render(Rendering* r)
 {
     Button::render(r);
+    float scale = ui->getlogicalscale();
     SDL_Rect globalrect = getglobalrect();
-    r->rendertext(text, int(globalrect.x+globalrect.w*0.5-textwidth*0.5), globalrect.y+5, {255,255,255,255}, false, false, maxtextwidth);
+    r->rendertext(text, int(globalrect.x+globalrect.w*0.5-textwidth*0.5*scale), globalrect.y+5, {255,255,255,255}, false, false, maxtextwidth*scale);
 }
 
 void Close::leftclick(Vec mousepos)
@@ -67,8 +67,8 @@ void PlaceTrack::leftclick(Vec mousepos)
 void ManageRoutes::leftclick(Vec mousepos)
 {
     Vec viewsize = game->getrendering().getviewsize();
-    int scale = ui->getlogicalscale();
-    SDL_Rect routepanelrect = {int(viewsize.x)-scale*200,0,scale*200,int(viewsize.y)};
+    float scale = ui->getlogicalscale();
+    SDL_Rect routepanelrect = {int(viewsize.x/scale)-200,0,200,int(viewsize.y/scale)};
     new RouteListPanel(ui, routepanelrect);
 }
 
@@ -77,10 +77,20 @@ void ManageTrains::leftclick(Vec mousepos)
     new TrainListPanel(ui);
 }
 
+void IncreaseUIScale::leftclick(Vec mousepos)
+{
+    ui->increaseuiscale();
+}
+
+void DecreaseUIScale::leftclick(Vec mousepos)
+{
+    ui->decreaseuiscale();
+}
+
 void SetRoute::leftclick(Vec mousepos)
 {
-    Vec panelpos = panel->topcorner();
-    SDL_Rect tablerect = {int(mousepos.x-panelpos.x), int(mousepos.y-panelpos.y), 500, 200};
+    SDL_Rect panelrect = panel->getglobalrect();
+    SDL_Rect tablerect = {int(mousepos.x-panelrect.x), int(mousepos.y-panelrect.y), 500, 200};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }
 

@@ -5,6 +5,9 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/ui/ui.h"
 
 
 void Order::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
@@ -154,7 +157,8 @@ Wipe::Wipe()
 void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
 {
 	int x = int(pos.x); int y = int(pos.y);
-	int scale = r->getlogicalscale();
+	InterfaceManager& ui = tracks->game->getui();
+	int scale = ui.getlogicalscale();
 	SDL_Rect rect = {x,y,16*scale,14*scale};
 	if(!valid)
 		bgrcol.a *= 0.4;

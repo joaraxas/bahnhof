@@ -48,18 +48,21 @@ int init()
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	int fontsize;
-	if(retina)
-		fontsize = 24;
-	else
-		fontsize = 12;
+	res = setfontsize(12);
+	if(res<0)
+		success = false;
+	return success;
+}
+
+int setfontsize(int fontsize)
+{
 	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", fontsize);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
-        success = false;
+        return -1;
     }
-	return success;
+	return 1;
 }
 
 SDL_Texture* loadimage(std::string path)

@@ -26,9 +26,16 @@ void Host::erase()
     ui->removepanel(this);
 }
 
-Vec Host::topcorner()
+SDL_Rect Host::getglobalrect()
 {
-	return Vec(rect.x, rect.y);
+	float scale = ui->getlogicalscale();
+	SDL_Rect logicalcoordrect = {int(rect.x*scale), int(rect.y*scale), int(rect.w*scale), int(rect.h*scale)};
+	return logicalcoordrect;
+}
+
+SDL_Rect Host::getlocalrect()
+{
+	return rect;
 }
 
 void Host::update(int ms)
@@ -45,7 +52,8 @@ void Host::render(Rendering* r)
 
 bool Host::checkclick(Vec pos)
 {
-	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h){
+	SDL_Rect absrect = getglobalrect();
+	if(pos.x>=absrect.x && pos.x<=absrect.x+absrect.w && pos.y>=absrect.y && pos.y<=absrect.y+absrect.h){
 		return true;
 	}
     return false;
@@ -99,34 +107,33 @@ void Host::addelement(Element* element){
 }
 
 void Host::move(Vec towhattopcorner){
-	rect.x = int(towhattopcorner.x);
-	rect.y = int(towhattopcorner.y);
+	float scale = ui->getlogicalscale();
+	rect.x = int(towhattopcorner.x/scale);
+	rect.y = int(towhattopcorner.y/scale);
 }
 
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
 {
     ui->addpanel(this);
-	int scale = ui->getlogicalscale();
-	xoffset = 20*scale;
-	yoffset = 20*scale;
+	xoffset = 20;
+	yoffset = 20;
 	createbutton<Close>();
 }
 
 Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}) {}
 
 template <class T, typename... Args> void Panel::createbutton(Args&&... args){
-	int scale = ui->getlogicalscale();
 	T* button = new T(this, Vec(xoffset,yoffset), std::forward<Args>(args)...);
 	addelement(button);
-	yoffset += ydist*scale + button->getlocalrect().h;
+	yoffset += ydist + button->getlocalrect().h;
 }
 
 void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-    r->renderfilledrectangle(rect, false, false);
+    r->renderfilledrectangle(getglobalrect(), false, false);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
-    r->renderrectangle(rect, false, false);
+    r->renderrectangle(getglobalrect(), false, false);
 	Host::render(r);
 }
 
@@ -136,16 +143,16 @@ MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, n
 	createbutton<PlaceSignal>();
 	createbutton<ManageRoutes>();
 	createbutton<ManageTrains>();
+	createbutton<IncreaseUIScale>();
+	createbutton<DecreaseUIScale>();
 
-    int scale = ui->getlogicalscale();
-	SDL_Rect tablerect = {110*scale, 28*scale, 100*scale, 2000*scale};
+	SDL_Rect tablerect = {110, 28, 100, 2000};
 	addelement(new MainInfoTable(this, tablerect));
 }
 
 RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
-    int scale = ui->getlogicalscale();
-	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
+	SDL_Rect tablerect = {10, (20+30), getlocalrect().w-20, getlocalrect().h-60};
 	addelement(new RouteTable(this, tablerect));
 }
 
@@ -166,8 +173,8 @@ void RouteListPanel::addroutepanel(int routeindex)
 	if(routepanel)
 		routepanel->erase();
     Vec viewsize = game->getrendering().getviewsize();
-    int scale = ui->getlogicalscale();
-    SDL_Rect routepanelrect = {int(viewsize.x)-scale*500,0,scale*300,int(viewsize.y)};
+    float scale = ui->getlogicalscale();
+    SDL_Rect routepanelrect = {getlocalrect().x-300,0,300,getlocalrect().h};
 	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
 }
 
@@ -181,8 +188,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, R
 	createbutton<Routing::AddCouple>(route);
 	createbutton<Routing::AddDecouple>(route);
 	createbutton<Routing::RemoveOrder>(route);
-    int scale = ui->getlogicalscale();
-	SDL_Rect tablerect = {10*scale, yoffset, rect.w-20*scale, rect.h-60*scale};
+	SDL_Rect tablerect = {10, yoffset, getlocalrect().w-20, getlocalrect().h-60};
 	addelement(new OrderTable(this, tablerect, route));
 	game->getinputmanager().editroute(route);
 }
@@ -203,9 +209,9 @@ void RoutePanel::erase()
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
     Vec viewsize = game->getrendering().getviewsize();
-    int scale = ui->getlogicalscale();
-    rect = {scale*300,int(viewsize.y)-scale*200,scale*400,scale*200};
-	SDL_Rect tablerect = {10*scale, (20+30)*scale, rect.w-20*scale, rect.h-60*scale};
+    float scale = ui->getlogicalscale();
+    rect = {int(viewsize.x*0.5/scale-200),int(viewsize.y/scale)-200,400,200};
+	SDL_Rect tablerect = {10, (20+30), getlocalrect().w-20, getlocalrect().h-60};
 	addelement(new TrainTable(this, tablerect));
 }
 
@@ -225,18 +231,18 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 	createbutton<BrakeTrain>();
 	createbutton<TurnTrain>();
 	
-    int scale = ui->getlogicalscale();
-	SDL_Rect trainnamerect = {rect.w/2-50*scale, 10*scale, 100*scale, 20*scale};
+    float scale = ui->getlogicalscale();
+	SDL_Rect trainnamerect = {int(getlocalrect().w/2-50), 10, 100, 20};
 	trainnametext = new Text(this, info.name, trainnamerect);
 	addelement(trainnametext);
 
-	SDL_Rect traininfotablerect = {120*scale, (40)*scale, 100*scale, 100*scale};
+	SDL_Rect traininfotablerect = {int(120*scale), int(40*scale), int(100*scale), int(100*scale)};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {120*scale, (40+50)*scale, 55*scale, 30*scale};
+	SDL_Rect trainiconsrect = {int(120*scale), int((40+50)*scale), int(55*scale), int(30*scale)};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
-	SDL_Rect routetablerect = {180*scale, (40)*scale, 180*scale, 160*scale};
+	SDL_Rect routetablerect = {int(180*scale), int(40*scale), int(180*scale), int(160*scale)};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 }
 

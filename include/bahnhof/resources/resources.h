@@ -30,6 +30,7 @@ public:
     ResourceManager(Game* whatgame);
     ~ResourceManager();
     Resource* get(resourcetype type);
+    Game& getgame() {return *game;};
 private:
     std::map<resourcetype, Resource*> resourcemap;
     Game* game;

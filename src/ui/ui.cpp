@@ -4,13 +4,14 @@
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
-    new UI::MainPanel(this, {0,0,200*getlogicalscale(),200*getlogicalscale()});
+    new UI::MainPanel(this, {0,0,int(200*getlogicalscale()),int(300*getlogicalscale())});
 }
 
 void InterfaceManager::update(int ms)
@@ -95,7 +96,8 @@ bool InterfaceManager::click(Vec mousepos, int type)
             movepaneltofront(clickedpanel);
             clickedui = true;
             movingwindow = clickedpanel;
-            movingwindowoffset = mousepos-movingwindow->topcorner();
+            SDL_Rect movingwindowrect = movingwindow->getglobalrect();
+            movingwindowoffset = mousepos-Vec(movingwindowrect.x, movingwindowrect.y);
             clickedpanel->click(mousepos, type);
         }
     }
@@ -163,9 +165,23 @@ Game& InterfaceManager::getgame()
     return *game;
 }
 
-int InterfaceManager::getlogicalscale()
+float InterfaceManager::getlogicalscale()
 {
-    return game->getrendering().getlogicalscale();
+    return uiscale;
+}
+
+void InterfaceManager::increaseuiscale()
+{
+    uiscale += 0.2;
+    int newfontsize = 12*uiscale;
+    setfontsize(newfontsize);
+}
+
+void InterfaceManager::decreaseuiscale()
+{
+    uiscale = std::fmax(0.4, uiscale-0.2);
+    int newfontsize = 12*uiscale;
+    setfontsize(newfontsize);
 }
 
 namespace UI{
@@ -188,8 +204,9 @@ bool Element::checkclick(Vec mousepos)
 
 SDL_Rect Element::getglobalrect()
 {
-    Vec panelpos = panel->topcorner();
-    return {rect.x+int(panelpos.x), rect.y+int(panelpos.y), rect.w, rect.h};
+    float scale = ui->getlogicalscale();
+    SDL_Rect panelrect = panel->getglobalrect();
+    return {int(panelrect.x+scale*rect.x), int(panelrect.y+scale*rect.y), int(scale*rect.w), int(scale*rect.h)};
 }
 
 SDL_Rect Element::getlocalrect()

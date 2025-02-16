@@ -6,32 +6,31 @@
 
 SpriteManager::SpriteManager(Game* g) : game(g)
 {
-	float hdscale = game->getrendering().getlogicalscale();
 	using namespace sprites;
 	addspritesheet(openwagon, "rollingstock/openwagon.png");
 	addspritesheet(refrigeratorcar, "rollingstock/refrigeratorcar.png");
 	addspritesheet(tankloco, "rollingstock/loco0.png", 4);
 
-	addspritesheet(iconopenwagon, "icons/openwagon.png", 1, 1, hdscale);
-	addspritesheet(iconrefrigeratorcar, "icons/refrigeratorcar.png", 1, 1, hdscale);
-	addspritesheet(icontankloco, "icons/loco.png", 1, 1, hdscale);
+	addspritesheet(iconopenwagon, "icons/openwagon.png");
+	addspritesheet(iconrefrigeratorcar, "icons/refrigeratorcar.png");
+	addspritesheet(icontankloco, "icons/loco.png");
 
-	addspritesheet(switchsprite, "track/switch.png", 1, 2, hdscale);
+	addspritesheet(switchsprite, "track/switch.png", 1, 2);
 	get(switchsprite)->setoriginy(15);
-	addspritesheet(sprites::signal, "track/signal.png", 1, 2, hdscale);
+	addspritesheet(sprites::signal, "track/signal.png", 1, 2);
 	get(sprites::signal)->setoriginx(3);
 	get(sprites::signal)->setoriginy(31);
 
 	addspritesheet(light, "effects/light.png", 1, 2);
 
-	addspritesheet(beer, "resources/beer.png", 1, 1, hdscale);
-	addspritesheet(hops, "resources/hops.png", 1, 1, hdscale);
-	addspritesheet(barley, "resources/barley.png", 1, 1, hdscale);
+	addspritesheet(beer, "resources/beer.png");
+	addspritesheet(hops, "resources/hops.png");
+	addspritesheet(barley, "resources/barley.png");
 }
 
-void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes, float imagescale)
+void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes)
 {
-	spritemap[name] = std::make_unique<Spritesheet>(name, pathtopng, imagenumber, imagetypes, imagescale);
+	spritemap[name] = std::make_unique<Spritesheet>(name, pathtopng, imagenumber, imagetypes);
 }
 
 Spritesheet* SpriteManager::get(sprites::name name)

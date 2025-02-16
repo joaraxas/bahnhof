@@ -22,9 +22,7 @@ Vec Camera::screencoord(Vec mappos){
 void Camera::zoomin(Vec centerpoint){
     Vec viewsize = game->getrendering().getviewsize();
     cam.x+=cam.w/2*centerpoint.x/viewsize.x;
-    // cam.w/=2;
     cam.y+=cam.h/2*centerpoint.y/viewsize.y;
-    // cam.h/=2;
     logscale++;
     game->gettimemanager().speeddown();
     restricttomap();
@@ -34,9 +32,7 @@ void Camera::zoomout(Vec centerpoint){
     if(2*cam.w<=MAP_WIDTH && 2*cam.h<=MAP_HEIGHT){
         Vec viewsize = game->getrendering().getviewsize();
         cam.x-=cam.w*centerpoint.x/viewsize.x;
-        // cam.w*=2;
         cam.y-=cam.h*centerpoint.y/viewsize.y;
-        // cam.h*=2;
         logscale--;
         game->gettimemanager().speedup();
         restricttomap();

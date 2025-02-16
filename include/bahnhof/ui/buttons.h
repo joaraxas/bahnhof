@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include<vector>
+#include<iostream>
 #include "bahnhof/common/math.h"
 #include "bahnhof/ui/ui.h"
 
@@ -69,6 +70,20 @@ class ManageTrains : public TextButton
 {
 public:
     ManageTrains(Panel* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage trains") {};
+    void leftclick(Vec mousepos);
+};
+
+class IncreaseUIScale : public TextButton
+{
+public:
+    IncreaseUIScale(Panel* p, Vec pos) : TextButton(p, pos, "Increase UI size") {};
+    void leftclick(Vec mousepos);
+};
+
+class DecreaseUIScale : public TextButton
+{
+public:
+    DecreaseUIScale(Panel* p, Vec pos) : TextButton(p, pos, "Decrease UI size") {};
     void leftclick(Vec mousepos);
 };
 

@@ -5,6 +5,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
+#include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
 
 namespace UI{
@@ -92,13 +93,15 @@ MainInfoTable::MainInfoTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel
 
 void MainInfoTable::update(int ms)
 {
-    Gamestate* gamestate = &(ui->getgame().getgamestate());
+    Gamestate& gamestate = ui->getgame().getgamestate();
+    InputManager& input = ui->getgame().getinputmanager();
     lines.clear();
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate->money)) + " Fr"));
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate->time*0.001/60)) + " min"));
-    int income = int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60));
+    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate.money)) + " Fr"));
+    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
+    int income = int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60));
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(income) + " Fr/h"));
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
+    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
 TrainTable::TrainTable(Panel* newpanel, SDL_Rect newrect) : 

@@ -33,9 +33,9 @@ class Rendering;
 class Spritesheet
 {
 public:
-    Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1, float imscale=1);
+    Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
     ~Spritesheet();
-    void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0);
+    void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0, float imagescale=1);
     int getimagenumber();
     int getimagetypes();
     void setoriginx(int);
@@ -51,7 +51,6 @@ private:
     SDL_Rect rect;
     int imagenumber;
     int imagetypes;
-    float imagescale;
     Vec origin;
 };
 
@@ -63,7 +62,7 @@ public:
 private:
     Game* game;
     std::map<sprites::name, std::unique_ptr<Spritesheet>> spritemap;
-    void addspritesheet(sprites::name, std::string path, int imagenumber=1, int imagetypes=1, float imagescale=1);
+    void addspritesheet(sprites::name, std::string path, int imagenumber=1, int imagetypes=1);
 };
 
 class Sprite
@@ -78,6 +77,7 @@ public:
     float imagespeed = 0;
     float imageindex = 0;
     float imagetype = 0;
+    float imagescale = 1;
     bool ported = true;
     bool zoomed = true;
 private:

@@ -3,7 +3,7 @@
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 
-Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimages, int ntypes, float imscale) : name(newname)
+Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimages, int ntypes) : name(newname)
 {
 	tex = loadimage(pathtopng);
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
@@ -11,7 +11,6 @@ Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimag
 	h = h/imagenumber;
     imagetypes = ntypes;
     w = w/ntypes;
-	imagescale = imscale;
 	origin = Vec(int(w/2), int(h/2));
 }
 
@@ -20,7 +19,7 @@ Spritesheet::~Spritesheet()
     SDL_DestroyTexture(tex);
 }
 
-void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype)
+void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype, float imagescale)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
@@ -54,7 +53,7 @@ void Spritesheet::setoriginy(int neworiginy)
 
 Vec Spritesheet::getsize()
 {
-	return Vec(w*imagescale, h*imagescale);
+	return Vec(w, h);
 }
 
 sprites::name Spritesheet::getname()

@@ -70,9 +70,10 @@ public:
     virtual void render(Rendering*);
     void addelement(Element*);
     void move(Vec towhattopcorner);
-    Vec topcorner();
     virtual void erase();
     InterfaceManager& getui();
+    SDL_Rect getglobalrect();
+    SDL_Rect getlocalrect();
 protected:
     Element* getelementat(Vec pos);
     Game* game;
@@ -84,7 +85,7 @@ protected:
 class Panel : public Host
 {
 public:
-    Panel(InterfaceManager* newui, SDL_Rect newrect);
+    Panel(InterfaceManager* newui, SDL_Rect newrect); //TODO: Maybe get rid of this and always handle rect setting in each panel ctor
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
@@ -157,7 +158,9 @@ public:
     void movepaneltofront(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
-    int getlogicalscale();
+    float getlogicalscale();
+    void increaseuiscale();
+    void decreaseuiscale();
     UI::Host* movingwindow = nullptr;
 private:
     UI::Host* getpanelat(Vec pos);
@@ -166,4 +169,5 @@ private:
     UI::Dropdown* dropdown = nullptr;
     Vec movingwindowoffset;
     Game* game;
+    float uiscale = 1;
 };
