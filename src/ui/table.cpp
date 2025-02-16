@@ -60,7 +60,7 @@ Dropdown::Dropdown(Panel* p, SDL_Rect r) : Table(p, r)
 void Dropdown::render(Rendering* r)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    r->renderfilledrectangle(getglobalrect(), false, false);
+    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
     Table::render(r);
 }
 
@@ -127,7 +127,7 @@ void TrainTable::leftclick(Vec mousepos)
         TrainInfo info = traininfos[index];
         info.train->selected = true;
         
-        SDL_Rect trainpanelrect = {300,200,400,200};
+        SDL_Rect trainpanelrect = {300,200,440,220};
         new TrainPanel(ui, trainpanelrect, *info.train);
     }
 }

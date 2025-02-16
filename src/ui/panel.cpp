@@ -28,9 +28,7 @@ void Host::erase()
 
 SDL_Rect Host::getglobalrect()
 {
-	float scale = ui->getlogicalscale();
-	SDL_Rect logicalcoordrect = {int(rect.x*scale), int(rect.y*scale), int(rect.w*scale), int(rect.h*scale)};
-	return logicalcoordrect;
+	return rect;
 }
 
 SDL_Rect Host::getlocalrect()
@@ -52,7 +50,7 @@ void Host::render(Rendering* r)
 
 bool Host::checkclick(Vec pos)
 {
-	SDL_Rect absrect = getglobalrect();
+	SDL_Rect absrect = ui->uitoscreen(getglobalrect());
 	if(pos.x>=absrect.x && pos.x<=absrect.x+absrect.w && pos.y>=absrect.y && pos.y<=absrect.y+absrect.h){
 		return true;
 	}
@@ -107,9 +105,8 @@ void Host::addelement(Element* element){
 }
 
 void Host::move(Vec towhattopcorner){
-	float scale = ui->getlogicalscale();
-	rect.x = int(round(towhattopcorner.x/scale));
-	rect.y = int(round(towhattopcorner.y/scale));
+	rect.x = round(towhattopcorner.x);
+	rect.y = round(towhattopcorner.y);
 }
 
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
@@ -131,9 +128,9 @@ template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-    r->renderfilledrectangle(getglobalrect(), false, false);
+    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
-    r->renderrectangle(getglobalrect(), false, false);
+    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 	Host::render(r);
 }
 
@@ -146,7 +143,7 @@ MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, n
 	createbutton<IncreaseUIScale>();
 	createbutton<DecreaseUIScale>();
 
-	SDL_Rect tablerect = {110, 28, 100, 2000};
+	SDL_Rect tablerect = {110, 20, getlocalrect().w-110-10, getlocalrect().h-20-10};
 	addelement(new MainInfoTable(this, tablerect));
 }
 
@@ -240,7 +237,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 	SDL_Rect trainiconsrect = {120, (40+50), 55, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
-	SDL_Rect routetablerect = {180, 40, 180, 160};
+	SDL_Rect routetablerect = {120+100+20, 40, 180, 160};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 }
 

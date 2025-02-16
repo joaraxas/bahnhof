@@ -29,7 +29,7 @@ void Sprite::render(Rendering* r, Vec pos)
 
 Vec Sprite::getsize()
 {
-	Vec sheetsize = spritesheet->getsize();
+	Vec sheetsize = spritesheet->getsize()*imagescale;
 	return Vec(sheetsize.x/imagetypes, sheetsize.y/imagenumber);
 }
 

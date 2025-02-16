@@ -33,8 +33,8 @@ class TableTextLine : public TableLine
 public:
     TableTextLine(Panel*, Table*, std::string newstr);
     virtual ~TableTextLine() {};
-    virtual void render(Rendering* r, SDL_Rect maxarea, SDL_Color color);
-    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, {0,0,0,255});};
+    virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
+    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info);};
 private:
     std::string str;
 };

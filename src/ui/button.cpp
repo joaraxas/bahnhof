@@ -24,7 +24,7 @@ void Button::render(Rendering* r)
 {
     int i = highlighted*127;
     SDL_SetRenderDrawColor(renderer,i,i,i,255);
-    r->renderfilledrectangle(getglobalrect(), false, false);
+    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
     highlighted = false;
 }
 
@@ -45,9 +45,10 @@ TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int wid
 void TextButton::render(Rendering* r)
 {
     Button::render(r);
-    float scale = ui->getlogicalscale();
-    SDL_Rect globalrect = getglobalrect();
-    r->rendercenteredtext(text, int(globalrect.x+globalrect.w*0.5), int(globalrect.y+globalrect.h*0.5), {255,255,255,255}, false, false, maxtextwidth*scale);
+    SDL_Rect textrect = getglobalrect();
+    textrect.x+=5;
+    textrect.w-=5*2;
+    ui->rendertext(r, text, textrect, InvertedInfo, true);
 }
 
 void Close::leftclick(Vec mousepos)

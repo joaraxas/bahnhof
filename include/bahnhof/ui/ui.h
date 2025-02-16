@@ -20,6 +20,12 @@ class Dropdown;
 class Panel;
 class RouteListPanel;
 
+enum TextStyle{
+    Info,
+    Highlighted,
+    InvertedInfo
+};
+
 class Element
 {
 public:
@@ -154,6 +160,7 @@ public:
     void leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
+    SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false);
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void movepaneltofront(UI::Host*);
@@ -162,6 +169,10 @@ public:
     float getlogicalscale();
     void increaseuiscale();
     void decreaseuiscale();
+    SDL_Rect uitoscreen(SDL_Rect rect);
+    SDL_Rect screentoui(SDL_Rect rect);
+    Vec uitoscreen(Vec pos);
+    Vec screentoui(Vec pos);
     UI::Host* movingwindow = nullptr;
 private:
     UI::Host* getpanelat(Vec pos);

@@ -11,7 +11,7 @@
 InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
-    new UI::MainPanel(this, {0,0,int(200*getlogicalscale()),int(300*getlogicalscale())});
+    new UI::MainPanel(this, {0,0,200,300});
 }
 
 void InterfaceManager::update(int ms)
@@ -35,6 +35,34 @@ void InterfaceManager::render(Rendering* r)
 
     if(dropdown)
         dropdown->render(r);
+}
+
+SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered)
+{
+    SDL_Color color;
+    switch (style)
+    {
+    case UI::Info:
+        color = {0,0,0,255};
+        break;
+    case UI::Highlighted:
+        color = {255,255,255,255};
+        break;
+    case UI::InvertedInfo:
+        color = {255,255,255,255};
+        break;
+    default:
+        std::cout<<"Warning: UI style "<<style<<" not supported in InterfaceManager::rendertext"<<std::endl;
+        break;
+    }
+    float scale = getlogicalscale();
+    SDL_Rect absrect = uitoscreen(rect);
+    SDL_Rect textrect;
+    if(centered)
+        textrect = r->rendercenteredtext(text, absrect.x+absrect.w*0.5, absrect.y+absrect.h*0.5, color, false, false, absrect.w);
+    else
+        textrect = r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
+    return screentoui(textrect);
 }
 
 void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
@@ -97,7 +125,7 @@ bool InterfaceManager::click(Vec mousepos, int type)
             clickedui = true;
             movingwindow = clickedpanel;
             SDL_Rect movingwindowrect = movingwindow->getglobalrect();
-            movingwindowoffset = mousepos-Vec(movingwindowrect.x, movingwindowrect.y);
+            movingwindowoffset = screentoui(mousepos)-Vec(movingwindowrect.x, movingwindowrect.y);
             clickedpanel->click(mousepos, type);
         }
     }
@@ -116,7 +144,7 @@ bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
         pressedpanel->mousepress(mousepos, mslogic, SDL_BUTTON_LEFT);
     }
     if(movingwindow){
-        movingwindow->move(mousepos - movingwindowoffset);
+        movingwindow->move(screentoui(mousepos) - movingwindowoffset);
         return true;
     }
     return false;
@@ -184,6 +212,34 @@ void InterfaceManager::decreaseuiscale()
     setfontsize(newfontsize);
 }
 
+SDL_Rect InterfaceManager::uitoscreen(SDL_Rect uirect)
+{
+    float scale = getlogicalscale();
+    SDL_Rect screenrect = {int(round(uirect.x*scale)), int(round(uirect.y*scale)), int(round(uirect.w*scale)), int(round(uirect.h*scale))};
+    return screenrect;
+}
+
+SDL_Rect InterfaceManager::screentoui(SDL_Rect screenrect)
+{
+    float scale = getlogicalscale();
+    SDL_Rect uirect = {int(round(screenrect.x/scale)), int(round(screenrect.y/scale)), int(round(screenrect.w/scale)), int(round(screenrect.h/scale))};
+    return uirect;
+}
+
+Vec InterfaceManager::uitoscreen(Vec pos)
+{
+    float scale = getlogicalscale();
+    Vec uipos = Vec(pos.x*scale, pos.y*scale);
+    return uipos;
+}
+
+Vec InterfaceManager::screentoui(Vec pos)
+{
+    float scale = getlogicalscale();
+    Vec uipos = Vec(pos.x/scale, pos.y/scale);
+    return uipos;
+}
+
 namespace UI{
 
 Element::Element(Panel* newpanel)
@@ -195,7 +251,7 @@ Element::Element(Panel* newpanel)
 
 bool Element::checkclick(Vec mousepos)
 {
-    SDL_Rect absrect = getglobalrect();
+    SDL_Rect absrect = ui->uitoscreen(getglobalrect());
 	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
 		return true;
 	}
@@ -204,9 +260,8 @@ bool Element::checkclick(Vec mousepos)
 
 SDL_Rect Element::getglobalrect()
 {
-    float scale = ui->getlogicalscale();
     SDL_Rect panelrect = panel->getglobalrect();
-    return {int(panelrect.x+scale*rect.x), int(panelrect.y+scale*rect.y), int(scale*rect.w), int(scale*rect.h)};
+    return {panelrect.x+rect.x, panelrect.y+rect.y, rect.w, rect.h};
 }
 
 SDL_Rect Element::getlocalrect()
@@ -216,11 +271,11 @@ SDL_Rect Element::getlocalrect()
 
 void Text::render(Rendering* r)
 {
-    SDL_Rect absrect = getglobalrect();
+    SDL_Rect screenrect = ui->uitoscreen(getglobalrect());
     if(centered)
-        r->rendercenteredtext(text, int(absrect.x+absrect.w*0.5), int(absrect.y+absrect.h*0.5), color, false, false, absrect.w);
+        r->rendercenteredtext(text, int(screenrect.x+screenrect.w*0.5), int(screenrect.y+screenrect.h*0.5), color, false, false, screenrect.w);
     else
-        r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
+        r->rendertext(text, screenrect.x, screenrect.y, color, false, false, screenrect.w);
 }
 
 void TrainIcons::render(Rendering* r)

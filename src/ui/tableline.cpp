@@ -17,8 +17,7 @@ TableLine::TableLine(Panel* newpanel, Table* newtable) : Element(newpanel)
 SDL_Rect TableLine::getglobalrect()
 {
     SDL_Rect tablepos = table->getglobalrect();
-    float scale = ui->getlogicalscale();
-    return {int(rect.x*scale+tablepos.x), int(rect.y*scale+tablepos.y), int(rect.w*scale), int(rect.h*scale)};
+    return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
 TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
@@ -26,12 +25,13 @@ TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newst
     str = newstr;
 }
 
-void TableTextLine::render(Rendering* r, SDL_Rect maxarea, SDL_Color color)
+void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect = maxarea;
-    SDL_Rect globrect = getglobalrect();
-    SDL_Rect textrect = r->rendertext(str, globrect.x, globrect.y, color, false, false, globrect.w);
-    rect.h = int(textrect.h/(ui->getlogicalscale()));
+    SDL_Rect textrect = ui->rendertext(r, str, getglobalrect(), style);
+    if(!nicetracks)
+        r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    rect.h = textrect.h;
 }
 
 RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename) :
@@ -42,7 +42,7 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableTextLine::render(r, maxarea);
     SDL_SetRenderDrawColor(renderer,0,0,0,255);
-    r->renderrectangle(getglobalrect(), false, false);
+    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 }
 
 OrderTableLine::OrderTableLine(Panel* p, Table* t, bool sel, int i, std::string description) :
@@ -54,10 +54,14 @@ OrderTableLine::OrderTableLine(Panel* p, Table* t, bool sel, int i, std::string 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     uint8_t intensity = 255*selected;
-    SDL_Color c = {intensity, intensity, intensity, 255};
-    TableTextLine::render(r, maxarea, c);
+    TextStyle style;
+    if(selected)
+        style = Highlighted;
+    else
+        style = Info;
+    TableTextLine::render(r, maxarea, style);
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
-    r->renderrectangle(getglobalrect(), false, false);
+    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 }
 
 TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -69,40 +73,45 @@ TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainMan
 void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
-    auto scale = ui->getlogicalscale();
+    TextStyle style = Info;
+    if(info.train->selected)
+        style = Highlighted;
     Uint8 intensity = 255*info.train->selected;
-    SDL_Rect absrect = getglobalrect();
-    int rowoffset = 3*scale;
-    int textpadding = 1*scale;
-    int namerowwidth = 40*scale;
+    int rowoffset = 2;
+    int textpadding = 5;
+    int namerowwidth = 60;
+    SDL_Rect namerect = getglobalrect();
+    namerect = {namerect.x+textpadding, namerect.y+rowoffset, namerowwidth-2*textpadding, 100};
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
-    SDL_Rect namerect = r->rendertext(info.name, absrect.x+rowoffset, absrect.y+textpadding, {intensity, intensity, intensity, 255}, false, false, namerowwidth-rowoffset);
-    absrect.h = namerect.h + 2*textpadding;
+    namerect = ui->rendertext(r, info.name, namerect, style);
+    rect.h = namerect.h+2*rowoffset;
     
-    SDL_Rect trainiconrect = {absrect.x+rowoffset+namerowwidth+textpadding, 
-                              absrect.y+textpadding, 
-                              absrect.w-namerowwidth-rowoffset-2*textpadding, 
+    SDL_Rect trainiconrect = getglobalrect();
+    trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
+                              trainiconrect.y+rowoffset, 
+                              trainiconrect.w-namerowwidth-2*textpadding, 
                               namerect.h};
     rendertrainicons(r, *ui, info, trainiconrect);
     
-    rect.h = absrect.h/scale;
-    r->renderrectangle(getglobalrect(), false, false);
+    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 }
 
 SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
 {
+    SDL_Rect screenrect = ui.uitoscreen(maxrect);
     auto scale = ui.getlogicalscale();
     int iconoffset = 2*scale;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
     Sprite wagonicon;
     wagonicon.ported = false;
     wagonicon.zoomed = false;
+    wagonicon.imagescale = scale;
     int icon_x = 0;
     for(WagonInfo& wagoninfo : info.wagoninfos){
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
         Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(maxrect.x+icon_x+iconsize.x*0.5, maxrect.y+maxrect.h*0.5));
+        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5, screenrect.y+screenrect.h*0.5));
         icon_x += iconsize.x + iconoffset;
     }
     return maxrect;
