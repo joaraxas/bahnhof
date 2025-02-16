@@ -127,8 +127,7 @@ void TrainTable::leftclick(Vec mousepos)
         TrainInfo info = traininfos[index];
         info.train->selected = true;
         
-        int scale = ui->getlogicalscale();
-        SDL_Rect trainpanelrect = {scale*300,scale*200,scale*400,scale*200};
+        SDL_Rect trainpanelrect = {300,200,400,200};
         new TrainPanel(ui, trainpanelrect, *info.train);
     }
 }

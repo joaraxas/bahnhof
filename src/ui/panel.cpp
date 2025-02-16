@@ -108,8 +108,8 @@ void Host::addelement(Element* element){
 
 void Host::move(Vec towhattopcorner){
 	float scale = ui->getlogicalscale();
-	rect.x = int(towhattopcorner.x/scale);
-	rect.y = int(towhattopcorner.y/scale);
+	rect.x = int(round(towhattopcorner.x/scale));
+	rect.y = int(round(towhattopcorner.y/scale));
 }
 
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
@@ -173,7 +173,6 @@ void RouteListPanel::addroutepanel(int routeindex)
 	if(routepanel)
 		routepanel->erase();
     Vec viewsize = game->getrendering().getviewsize();
-    float scale = ui->getlogicalscale();
     SDL_Rect routepanelrect = {getlocalrect().x-300,0,300,getlocalrect().h};
 	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
 }
@@ -231,18 +230,17 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 	createbutton<BrakeTrain>();
 	createbutton<TurnTrain>();
 	
-    float scale = ui->getlogicalscale();
-	SDL_Rect trainnamerect = {int(getlocalrect().w/2-50), 10, 100, 20};
+	SDL_Rect trainnamerect = {10, 10, getlocalrect().w-2*10, 20};
 	trainnametext = new Text(this, info.name, trainnamerect);
 	addelement(trainnametext);
 
-	SDL_Rect traininfotablerect = {int(120*scale), int(40*scale), int(100*scale), int(100*scale)};
+	SDL_Rect traininfotablerect = {120, 40, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {int(120*scale), int((40+50)*scale), int(55*scale), int(30*scale)};
+	SDL_Rect trainiconsrect = {120, (40+50), 55, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
-	SDL_Rect routetablerect = {int(180*scale), int(40*scale), int(180*scale), int(160*scale)};
+	SDL_Rect routetablerect = {180, 40, 180, 160};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 }
 

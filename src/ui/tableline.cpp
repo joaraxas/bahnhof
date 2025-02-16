@@ -17,7 +17,8 @@ TableLine::TableLine(Panel* newpanel, Table* newtable) : Element(newpanel)
 SDL_Rect TableLine::getglobalrect()
 {
     SDL_Rect tablepos = table->getglobalrect();
-    return {rect.x+int(tablepos.x), rect.y+int(tablepos.y), rect.w, rect.h};
+    float scale = ui->getlogicalscale();
+    return {int(rect.x*scale+tablepos.x), int(rect.y*scale+tablepos.y), int(rect.w*scale), int(rect.h*scale)};
 }
 
 TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
@@ -30,7 +31,7 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, SDL_Color color)
     rect = maxarea;
     SDL_Rect globrect = getglobalrect();
     SDL_Rect textrect = r->rendertext(str, globrect.x, globrect.y, color, false, false, globrect.w);
-    rect.h = textrect.h;
+    rect.h = int(textrect.h/(ui->getlogicalscale()));
 }
 
 RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename) :
@@ -85,7 +86,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
                               namerect.h};
     rendertrainicons(r, *ui, info, trainiconrect);
     
-    rect.h = absrect.h;
+    rect.h = absrect.h/scale;
     r->renderrectangle(getglobalrect(), false, false);
 }
 

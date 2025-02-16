@@ -32,8 +32,6 @@ public:
     virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
     virtual void render(Rendering*);
 protected:
-    int textheight;
-    int textwidth;
     int maxtextwidth;
     std::string text;
 };

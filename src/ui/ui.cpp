@@ -26,9 +26,9 @@ void InterfaceManager::update(int ms)
 
 void InterfaceManager::render(Rendering* r)
 {
-    int scale = getlogicalscale();
+    float scale = getlogicalscale();
     int viewheight = r->getviewsize().y;
-    renderscaleruler(r, scale*20, viewheight-scale*20, scale*200);
+    renderscaleruler(r, scale*20, viewheight-scale*20, 200*scale);
 
     for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)
         (*pit)->render(r);
@@ -39,7 +39,7 @@ void InterfaceManager::render(Rendering* r)
 
 void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
 {
-    int scale = getlogicalscale();
+    float scale = getlogicalscale();
 
     int textheight = 14*scale;
     SDL_SetRenderDrawColor(renderer, 0,0,0,255);
@@ -217,7 +217,10 @@ SDL_Rect Element::getlocalrect()
 void Text::render(Rendering* r)
 {
     SDL_Rect absrect = getglobalrect();
-    r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
+    if(centered)
+        r->rendercenteredtext(text, int(absrect.x+absrect.w*0.5), int(absrect.y+absrect.h*0.5), color, false, false, absrect.w);
+    else
+        r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
 }
 
 void TrainIcons::render(Rendering* r)

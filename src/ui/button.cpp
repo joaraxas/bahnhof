@@ -34,8 +34,9 @@ TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int wid
     float scale = ui->getlogicalscale();
     rect.w = width;
     rect.h = 20;
-    maxtextwidth = (rect.w - 10)*scale;
-    SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth);
+    maxtextwidth = (rect.w - 10);
+    SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth*scale);
+    int textwidth, textheight;
 	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
     rect.h = fmax(rect.h, 10+textheight/scale);
 	SDL_DestroyTexture(tex);
@@ -46,7 +47,7 @@ void TextButton::render(Rendering* r)
     Button::render(r);
     float scale = ui->getlogicalscale();
     SDL_Rect globalrect = getglobalrect();
-    r->rendertext(text, int(globalrect.x+globalrect.w*0.5-textwidth*0.5*scale), globalrect.y+5, {255,255,255,255}, false, false, maxtextwidth*scale);
+    r->rendercenteredtext(text, int(globalrect.x+globalrect.w*0.5), int(globalrect.y+globalrect.h*0.5), {255,255,255,255}, false, false, maxtextwidth*scale);
 }
 
 void Close::leftclick(Vec mousepos)
@@ -89,8 +90,9 @@ void DecreaseUIScale::leftclick(Vec mousepos)
 
 void SetRoute::leftclick(Vec mousepos)
 {
-    SDL_Rect panelrect = panel->getglobalrect();
-    SDL_Rect tablerect = {int(mousepos.x-panelrect.x), int(mousepos.y-panelrect.y), 500, 200};
+    SDL_Rect panelrect = panel->getlocalrect();
+    float scale = ui->getlogicalscale();
+    SDL_Rect tablerect = {int(mousepos.x/scale-panelrect.x), int(mousepos.y/scale-panelrect.y), 150, 100};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }
 

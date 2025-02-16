@@ -47,6 +47,7 @@ public:
     void render(Rendering*);
     std::string text;
     SDL_Color color = {0,0,0,255};
+    bool centered = true;
 };
 
 class TrainIcons : public Element
