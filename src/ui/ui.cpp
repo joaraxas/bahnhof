@@ -41,7 +41,7 @@ void InterfaceManager::render(Rendering* r)
 
 void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
 {
-    float scale = getlogicalscale();
+    float uiscale = getlogicalscale();
 
     int textheight = 14;
     SDL_Color c = getcolorfromstyle(UI::MapOverlay);
@@ -50,7 +50,7 @@ void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int 
 	r->renderline(uitoscreen(Vec(leftx,lefty)), uitoscreen(Vec(leftx+scalelinelength,lefty)), false);
 	r->renderline(uitoscreen(Vec(leftx,lefty-markersize)), uitoscreen(Vec(leftx,lefty+markersize)), false);
 	r->renderline(uitoscreen(Vec(leftx+scalelinelength,lefty-markersize)), uitoscreen(Vec(leftx+scalelinelength,lefty+markersize)), false);
-    std::string scaletext = std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()))) + " m";
+    std::string scaletext = std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()*uiscale))) + " m";
 	rendertext(r, scaletext, {leftx, lefty-textheight, scalelinelength, textheight}, UI::MapOverlay, true);
 }
 
