@@ -23,7 +23,8 @@ class RouteListPanel;
 enum TextStyle{
     Info,
     Highlighted,
-    InvertedInfo
+    InvertedInfo,
+    MapOverlay
 };
 
 class Element
@@ -176,7 +177,8 @@ public:
     UI::Host* movingwindow = nullptr;
 private:
     UI::Host* getpanelat(Vec pos);
-    void renderscaleruler(Rendering* r, int leftx, int lefty, float scalelinelength);
+    SDL_Color getcolorfromstyle(UI::TextStyle style);
+    void renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength);
     void setuiscale(float newscale);
     std::vector<std::unique_ptr<UI::Host>> panels;
     UI::Dropdown* dropdown = nullptr;

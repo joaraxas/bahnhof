@@ -28,9 +28,9 @@ void InterfaceManager::update(int ms)
 
 void InterfaceManager::render(Rendering* r)
 {
-    float scale = getlogicalscale();
-    int viewheight = r->getviewsize().y;
-    renderscaleruler(r, scale*20, viewheight-scale*20, 200*scale);
+    int viewheight = screentoui(r->getviewsize()).y;
+    
+    renderscaleruler(r, 20, viewheight-20, 200);
 
     for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)
         (*pit)->render(r);
@@ -39,7 +39,23 @@ void InterfaceManager::render(Rendering* r)
         dropdown->render(r);
 }
 
-SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered)
+void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
+{
+    float scale = getlogicalscale();
+
+    int textheight = 14;
+    SDL_Color c = getcolorfromstyle(UI::MapOverlay);
+    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
+    int markersize = 2;
+	r->renderline(uitoscreen(Vec(leftx,lefty)), uitoscreen(Vec(leftx+scalelinelength,lefty)), false);
+	r->renderline(uitoscreen(Vec(leftx,lefty-markersize)), uitoscreen(Vec(leftx,lefty+markersize)), false);
+	r->renderline(uitoscreen(Vec(leftx+scalelinelength,lefty-markersize)), uitoscreen(Vec(leftx+scalelinelength,lefty+markersize)), false);
+    std::string scaletext = std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()))) + " m";
+	rendertext(r, scaletext, {leftx, lefty-textheight, scalelinelength, textheight}, UI::MapOverlay, true);
+
+}
+
+SDL_Color InterfaceManager::getcolorfromstyle(UI::TextStyle style)
 {
     SDL_Color color;
     switch (style)
@@ -53,10 +69,19 @@ SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect r
     case UI::InvertedInfo:
         color = {255,255,255,255};
         break;
+    case UI::MapOverlay:
+        color = {255,255,255,255};
+        break;
     default:
         std::cout<<"Warning: UI style "<<style<<" not supported in InterfaceManager::rendertext"<<std::endl;
         break;
     }
+    return color;
+}
+
+SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered)
+{
+    SDL_Color color = getcolorfromstyle(style);
     float scale = getlogicalscale();
     SDL_Rect absrect = uitoscreen(rect);
     SDL_Rect textrect;
@@ -65,22 +90,6 @@ SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect r
     else
         textrect = r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
     return screentoui(textrect);
-}
-
-void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, float scalelinelength)
-{
-    float scale = getlogicalscale();
-
-    int textheight = 14*scale;
-    SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-    int viewheight = r->getviewsize().y;
-    int offset = leftx;
-    int markersize = round(2*scale);
-	r->renderline(Vec(leftx,lefty), Vec(leftx+scalelinelength,lefty), false);
-	r->renderline(Vec(leftx,lefty-markersize), Vec(leftx,lefty+markersize), false);
-	r->renderline(Vec(leftx+scalelinelength,lefty-markersize), Vec(leftx+scalelinelength,lefty+markersize), false);
-	r->rendertext(std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()))) + " m", leftx+scalelinelength*0.5-leftx, lefty-textheight, {0,0,0,0}, false, false);
-
 }
 
 UI::Host* InterfaceManager::getpanelat(Vec screenpos)
