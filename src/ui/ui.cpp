@@ -52,7 +52,6 @@ void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int 
 	r->renderline(uitoscreen(Vec(leftx+scalelinelength,lefty-markersize)), uitoscreen(Vec(leftx+scalelinelength,lefty+markersize)), false);
     std::string scaletext = std::to_string(int(round(scalelinelength*0.001*150/r->getcamscale()))) + " m";
 	rendertext(r, scaletext, {leftx, lefty-textheight, scalelinelength, textheight}, UI::MapOverlay, true);
-
 }
 
 SDL_Color InterfaceManager::getcolorfromstyle(UI::TextStyle style)

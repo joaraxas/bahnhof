@@ -98,6 +98,7 @@ void InputManager::handle(int ms, int mslogic){
                     Vec mousepos = screenmousepos();
                     ui.leftbuttonup(mousepos);
                 }
+                break;
             }
             case SDL_KEYDOWN:{
                 if(e.key.keysym.sym == SDLK_UP){
