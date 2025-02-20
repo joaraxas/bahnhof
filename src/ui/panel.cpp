@@ -204,9 +204,8 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    Vec viewsize = game->getrendering().getviewsize();
-    float scale = ui->getlogicalscale();
-    rect = {int(viewsize.x*0.5/scale-200),int(viewsize.y/scale)-200,400,200};
+    Vec viewsize = ui->screentoui(game->getrendering().getviewsize());
+    rect = {int(viewsize.x*0.5-200),int(viewsize.y)-200,400,200};
 	SDL_Rect tablerect = {10, (20+30), getlocalrect().w-20, getlocalrect().h-60};
 	addelement(new TrainTable(this, tablerect));
 }

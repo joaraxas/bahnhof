@@ -37,13 +37,13 @@ Resource::Resource(SpriteManager& s, resourcetype newtype, std::string newname, 
 {
     type = newtype;
 	name = newname;
-	sprite.setspritesheet(s, spritename);
-	sprite.zoomed = false;
+	icon.setspritesheet(s, spritename);
+	game = s.getgame();
 }
 
 void Resource::render(Rendering* r, Vec pos)
 {
-	sprite.render(r, pos);
+	icon.render(r, pos);
 }
 
 Storage::Storage(Game* whatgame, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
@@ -63,31 +63,30 @@ void Storage::render(Rendering* r)
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	int xoffset = 0;
 	int nCols = 0;
-	float scale = r->getcamscale();
-	float uiscale = ui.getlogicalscale();
-	int iconwidth = 20*uiscale;
-	int sep = iconwidth/scale;
-	int frameoffset = fmax(1,int(2*uiscale/scale));
+	float camscale = r->getcamscale();
+	float uiscale = ui.getuiscale();
+	int iconwidth = 20*uiscale/camscale;
+	int frameoffset = fmax(1,int(2*uiscale/camscale));
 	for(auto resourcepair : storedresources){
 		Resource* resource = allresources.get(resourcepair.first);
 		int amount = resourcepair.second;
-		if(amount*sep*sep<rect.w*rect.h*0.6){
-			int maxrows = floor(rect.h/sep);
+		if(amount*iconwidth*iconwidth<rect.w*rect.h*0.6){
+			int maxrows = floor(rect.h/iconwidth);
 			for(int i=0; i<amount; i++){
 				nCols = floor(i/maxrows);
-				int y = frameoffset+rect.y+iconwidth/2+sep*i-nCols*maxrows*sep;
-				int x = frameoffset+xoffset+rect.x+iconwidth/2+sep*nCols;
+				int y = frameoffset+rect.y+iconwidth/2+iconwidth*i-nCols*maxrows*iconwidth;
+				int x = frameoffset+xoffset+rect.x+iconwidth/2+iconwidth*nCols;
 				resource->render(r, Vec(x, y));
 			}
-			xoffset += (1+nCols)*sep;
+			xoffset += (1+nCols)*iconwidth;
 		}
 		else{
 			int y = rect.y+frameoffset+iconwidth/2;
 			int x = rect.x+frameoffset+iconwidth/2+xoffset;
 			SDL_Rect textrect = r->rendertext(std::to_string(amount), x-iconwidth/2, y);
-			int textwidth = textrect.w/scale;
+			int textwidth = textrect.w/camscale;
 			resource->render(r, Vec(x+textwidth, y));
-			xoffset += textwidth+sep;
+			xoffset += textwidth+iconwidth;
 		}
 	}
 }

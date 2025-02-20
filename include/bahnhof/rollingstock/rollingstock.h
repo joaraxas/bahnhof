@@ -33,7 +33,7 @@ protected:
     Tracks::Tracksystem* tracksystem = nullptr;
     State state;
     Sprite sprite;
-    Sprite icon;
+    Icon icon;
     ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;

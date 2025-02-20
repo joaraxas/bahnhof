@@ -32,6 +32,7 @@ public:
     Vec getviewsize();
     float getcamscale();
     int getlogicalscale();
+    Game& getgame() {return *game;};
 private:
     Game* game;
     Camera* cam;

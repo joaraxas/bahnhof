@@ -1,5 +1,8 @@
 #include<iostream>
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/graphics/rendering.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/ui/ui.h"
 
 void Sprite::setspritesheet(SpriteManager& s, sprites::name name)
 {
@@ -39,4 +42,15 @@ sprites::name Sprite::getname()
 	if(sheetname == sprites::name::none)
 		std::cout<<"Warning: sprite with spritesheet with name none was called";
 	return sheetname;
+}
+
+Icon::Icon()
+{
+	zoomed = false;
+}
+
+void Icon::render(Rendering* r, Vec pos)
+{
+	imagescale = r->getgame().getui().getuiscale();
+	Sprite::render(r, pos);
 }

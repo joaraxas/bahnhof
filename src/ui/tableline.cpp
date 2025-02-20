@@ -100,7 +100,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
 {
     SDL_Rect screenrect = ui.uitoscreen(maxrect);
-    auto scale = ui.getlogicalscale();
+    auto scale = ui.getuiscale();
     int iconoffset = 2*scale;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
     Sprite wagonicon;

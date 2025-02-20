@@ -31,7 +31,7 @@ void Button::render(Rendering* r)
 TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
-    float scale = ui->getlogicalscale();
+    float scale = ui->getuiscale();
     rect.w = width;
     rect.h = 20;
     maxtextwidth = (rect.w - 10);
@@ -68,9 +68,8 @@ void PlaceTrack::leftclick(Vec mousepos)
 
 void ManageRoutes::leftclick(Vec mousepos)
 {
-    Vec viewsize = game->getrendering().getviewsize();
-    float scale = ui->getlogicalscale();
-    SDL_Rect routepanelrect = {int(viewsize.x/scale)-200,0,200,int(viewsize.y/scale)};
+    Vec viewsize = ui->screentoui(game->getrendering().getviewsize());
+    SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
     new RouteListPanel(ui, routepanelrect);
 }
 
@@ -92,8 +91,8 @@ void DecreaseUIScale::leftclick(Vec mousepos)
 void SetRoute::leftclick(Vec mousepos)
 {
     SDL_Rect panelrect = panel->getlocalrect();
-    float scale = ui->getlogicalscale();
-    SDL_Rect tablerect = {int(mousepos.x/scale-panelrect.x), int(mousepos.y/scale-panelrect.y), 150, 100};
+    Vec uimousepos = ui->screentoui(mousepos);
+    SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), int(uimousepos.y-panelrect.y), 150, 100};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }
 

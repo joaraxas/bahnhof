@@ -51,7 +51,8 @@ private:
     SDL_Rect rect;
     int imagenumber;
     int imagetypes;
-    Vec origin;
+    int origin_x;
+    int origin_y;
 };
 
 class SpriteManager
@@ -59,6 +60,7 @@ class SpriteManager
 public:
     SpriteManager(Game* _game);
     Spritesheet* get(sprites::name);
+    Game* getgame() {return game;};
 private:
     Game* game;
     std::map<sprites::name, std::unique_ptr<Spritesheet>> spritemap;
@@ -70,7 +72,7 @@ class Sprite
 public:
     void setspritesheet(SpriteManager& s, sprites::name name);
     void updateframe(int ms);
-    void render(Rendering* r, Vec pos);
+    virtual void render(Rendering* r, Vec pos);
     Vec getsize();
     sprites::name getname();
     float imageangle = 0;
@@ -84,4 +86,11 @@ private:
     Spritesheet* spritesheet = nullptr;
     int imagenumber = 0;
     int imagetypes = 0;
+};
+
+class Icon : public Sprite
+{
+public:
+    Icon();
+    void render(Rendering* r, Vec pos);
 };

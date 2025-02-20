@@ -21,7 +21,8 @@ public:
     resourcetype type;
 private:
     std::string name;
-    Sprite sprite;
+    Icon icon;
+    Game* game;
 };
 
 class ResourceManager

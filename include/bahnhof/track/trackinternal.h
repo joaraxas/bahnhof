@@ -61,7 +61,7 @@ private:
     bool updown;
     int switchstate = 0;
     std::vector<Track*> tracks;
-    Sprite sprite;
+    Icon sprite;
 };
 
 float getradiusoriginatingfromnode(Track* track, nodeid node);
@@ -122,7 +122,7 @@ private:
     Tracksystem* tracksystem;
     bool isgreen = true;
     Trackblock blocks;
-    Sprite sprite;
+    Icon sprite;
 };
 
     State tryincrementingtrack(Tracksystem&, State state);

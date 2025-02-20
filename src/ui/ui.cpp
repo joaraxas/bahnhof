@@ -41,7 +41,7 @@ void InterfaceManager::render(Rendering* r)
 
 void InterfaceManager::renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength)
 {
-    float uiscale = getlogicalscale();
+    float uiscale = getuiscale();
 
     int textheight = 14;
     SDL_Color c = getcolorfromstyle(UI::MapOverlay);
@@ -81,7 +81,7 @@ SDL_Color InterfaceManager::getcolorfromstyle(UI::TextStyle style)
 SDL_Rect InterfaceManager::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered)
 {
     SDL_Color color = getcolorfromstyle(style);
-    float scale = getlogicalscale();
+    float scale = getuiscale();
     SDL_Rect absrect = uitoscreen(rect);
     SDL_Rect textrect;
     if(centered)
@@ -203,7 +203,7 @@ Game& InterfaceManager::getgame()
     return *game;
 }
 
-float InterfaceManager::getlogicalscale()
+float InterfaceManager::getuiscale()
 {
     return uiscale;
 }
@@ -227,28 +227,28 @@ void InterfaceManager::setuiscale(float newscale)
 
 SDL_Rect InterfaceManager::uitoscreen(SDL_Rect uirect)
 {
-    float scale = getlogicalscale();
+    float scale = getuiscale();
     SDL_Rect screenrect = {int(round(uirect.x*scale)), int(round(uirect.y*scale)), int(round(uirect.w*scale)), int(round(uirect.h*scale))};
     return screenrect;
 }
 
 SDL_Rect InterfaceManager::screentoui(SDL_Rect screenrect)
 {
-    float scale = getlogicalscale();
+    float scale = getuiscale();
     SDL_Rect uirect = {int(round(screenrect.x/scale)), int(round(screenrect.y/scale)), int(round(screenrect.w/scale)), int(round(screenrect.h/scale))};
     return uirect;
 }
 
 Vec InterfaceManager::uitoscreen(Vec pos)
 {
-    float scale = getlogicalscale();
+    float scale = getuiscale();
     Vec uipos = Vec(pos.x*scale, pos.y*scale);
     return uipos;
 }
 
 Vec InterfaceManager::screentoui(Vec pos)
 {
-    float scale = getlogicalscale();
+    float scale = getuiscale();
     Vec uipos = Vec(pos.x/scale, pos.y/scale);
     return uipos;
 }

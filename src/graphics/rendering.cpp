@@ -80,13 +80,20 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 
 void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
-	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+	if(originiscenter){
+		centerx = int(rect->w)*0.5;
+		centery = int(rect->h)*0.5;
 	}
+	Vec pos(rect->x+centerx, rect->y+centery);
 	if(zoomed){
 		rect->w *= cam->getscale();
 		rect->h *= cam->getscale();
+		centerx *= cam->getscale();
+		centery *= cam->getscale();
+	}
+	if(ported){
+		Vec screenpos = cam->screencoord(pos);
+		rect->x = screenpos.x-centerx; rect->y = screenpos.y-centery;
 	}
 	if(originiscenter)
 		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);

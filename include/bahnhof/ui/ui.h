@@ -167,7 +167,7 @@ public:
     void movepaneltofront(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
-    float getlogicalscale();
+    float getuiscale();
     void increaseuiscale();
     void decreaseuiscale();
     SDL_Rect uitoscreen(SDL_Rect rect);
