@@ -81,11 +81,11 @@ void Storage::render(Rendering* r)
 			xoffset += (1+nCols)*iconwidth;
 		}
 		else{
-			int y = rect.y+frameoffset+iconwidth/2;
-			int x = rect.x+frameoffset+iconwidth/2+xoffset;
-			SDL_Rect textrect = r->rendertext(std::to_string(amount), x-iconwidth/2, y);
+			int y = rect.y+frameoffset;
+			int x = rect.x+frameoffset+xoffset;
+			SDL_Rect textrect = r->rendertext(std::to_string(amount), x, y);
 			int textwidth = textrect.w/camscale;
-			resource->render(r, Vec(x+textwidth, y));
+			resource->render(r, Vec(x+textwidth+iconwidth/2, y+iconwidth/2));
 			xoffset += textwidth+iconwidth;
 		}
 	}
