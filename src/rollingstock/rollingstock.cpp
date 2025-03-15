@@ -102,7 +102,9 @@ WagonInfo Wagon::getinfo()
 }
 
 Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
-{}
+{
+	hasdriver = true;
+}
 
 void Locomotive::update(int ms)
 {

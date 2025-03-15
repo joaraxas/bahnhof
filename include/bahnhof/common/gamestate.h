@@ -55,11 +55,10 @@ public:
     ~Gamestate();
     void update(int ms);
     void randommap();
-    void initjusttrack();
+    void inittracks();
     Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
     TrainManager& gettrainmanager() {return *trainmanager;};
-    //std::vector<Wagon*> wagons;
     std::vector<std::unique_ptr<Building>> buildings;
     int time = 0;
     float money = 10;

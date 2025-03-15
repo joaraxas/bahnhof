@@ -16,10 +16,10 @@ Gamestate::Gamestate(Game* whatgame)
 	game = whatgame;
 	money = 600;
 	newwagonstate = State(1, 0.2, true);
-	initjusttrack();
+	inittracks();
 	routing = new RouteManager(tracksystem.get());
 	trainmanager = new TrainManager(tracksystem.get());
-	trainmanager->inittrain(State(1,0.4,1));
+	trainmanager->inittrain(State(1,0.8,1));
 
 	randommap();
 }
@@ -76,7 +76,7 @@ void Gamestate::randommap()
 	}
 }
 
-void Gamestate::initjusttrack()
+void Gamestate::inittracks()
 {
-	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {200,700,900}, {250,250,450}));
+	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {600,900,1100}, {300,300,400}));
 }

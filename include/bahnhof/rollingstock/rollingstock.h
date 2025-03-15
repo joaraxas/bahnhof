@@ -28,6 +28,7 @@ public:
     Train* train;
     Vec pos;
     bool alignedforward = true;
+    bool hasdriver = false;
     int w;
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;
@@ -51,8 +52,7 @@ public:
     float getpower();
 private:
     float P[2] = {0.2,0.2};
-    float maxspeed[2] = {180,180};
-    //float maxspeed[2] = {90,180}; //backwards, forwards
+    float maxspeed[2] = {90,180}; //backwards, forwards
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;

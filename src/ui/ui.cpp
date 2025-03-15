@@ -12,7 +12,6 @@ InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
     setuiscale(game->getrendering().getlogicalscale());
-    std::cout<<uiscale<<std::endl;
     new UI::MainPanel(this, {0,0,200,300});
 }
 

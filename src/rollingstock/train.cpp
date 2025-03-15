@@ -241,12 +241,12 @@ bool Train::gas(int ms)
 	float mtot = size(wagons);
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
 	// uncomment to remove train backwards speed restriction
-	/*
+	// /*
 	if(gasisforward && !wagons.front()->hasdriver)
 		speed = fmin(50, speed);
 	if(!gasisforward && !wagons.back()->hasdriver)
 		speed = -fmin(50, -speed);
-	*/
+	// */
 	return true;
 }
 
