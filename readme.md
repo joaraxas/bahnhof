@@ -8,6 +8,7 @@ Features include an automated signaling system, advanced switching including cou
 Create a `build` directory, then use cmake to generate the makefile and the binary.
 
 This project requires SDL2, available at https://www.libsdl.org/
+On Unix systems, the libraries are automatically found and linked if they are installed in a standard location. For Windows you need to manually edit the SDL paths in CMakeLists.txt.
 
 ### Contributing
 This is work in progress. I am designing as I go and there is plenty of room for improvement. Feel free to submit a pull request if you'd like to contribute and perhaps become a part of the project.
