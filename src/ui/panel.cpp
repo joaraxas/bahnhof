@@ -247,7 +247,7 @@ TrainPanel::~TrainPanel()
 
 void TrainPanel::update(int ms)
 {
-	if(!trainmanager.exists(train)){
+	if(!trainmanager.trainexists(train)){
 		Panel::erase();
 		return;
 	}
@@ -257,7 +257,7 @@ void TrainPanel::update(int ms)
 
 void TrainPanel::render(Rendering* r)
 {
-	if(!trainmanager.exists(train)){
+	if(!trainmanager.trainexists(train)){
 		return;
 	}
 

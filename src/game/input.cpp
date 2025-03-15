@@ -139,7 +139,7 @@ void InputManager::handle(int ms, int mslogic){
         }
     }
 
-    if(leftmouseispressed())
+    if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
     if(keyispressed(leftpanbutton))
@@ -196,7 +196,7 @@ bool InputManager::keyispressed(const int scancode)
     return keys[scancode];
 }
 
-bool InputManager::leftmouseispressed()
+bool InputManager::isleftmousepressed()
 {
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }

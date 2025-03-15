@@ -94,7 +94,7 @@ std::vector<TrainInfo> TrainManager::gettrainsinfo()
 	return infos;
 }
 
-bool TrainManager::exists(Train& train){
+bool TrainManager::trainexists(Train& train){
 	for(auto& tr : trains)
 		if(tr.get() == &train)
 			return true;

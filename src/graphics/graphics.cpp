@@ -7,7 +7,7 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
-bool retina = true;
+bool allowretina = true;
 
 int init()
 {
@@ -26,7 +26,7 @@ int init()
 		std::cout << "Failed to open SDL_Image, error code: " << res << ", error: " << IMG_GetError() << std::endl;
 	}
 	int windowflags;
-	if(retina)
+	if(allowretina)
 		windowflags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 	else
 		windowflags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
