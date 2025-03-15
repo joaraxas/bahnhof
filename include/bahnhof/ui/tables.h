@@ -5,7 +5,7 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/common/math.h"
-#include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 
 class Game;
 class Gamestate;

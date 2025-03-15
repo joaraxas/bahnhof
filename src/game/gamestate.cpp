@@ -4,6 +4,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/buildings/buildings.h"

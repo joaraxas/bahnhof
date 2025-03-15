@@ -5,6 +5,7 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"

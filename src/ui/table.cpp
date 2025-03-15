@@ -7,6 +7,7 @@
 #include "bahnhof/common/timing.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/routing/routing.h"
+#include "bahnhof/rollingstock/train.h"
 
 namespace UI{
 

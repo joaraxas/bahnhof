@@ -10,6 +10,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/resources/storage.h"
 
 

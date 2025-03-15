@@ -6,6 +6,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/rollingstock/train.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
