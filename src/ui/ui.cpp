@@ -221,7 +221,7 @@ void InterfaceManager::decreaseuiscale()
 
 void InterfaceManager::setuiscale(float newscale)
 {
-    uiscale = std::fmax(0.4, newscale);;
+    uiscale = std::fmax(0.8, newscale);;
     int newfontsize = 12*uiscale;
     setfontsize(newfontsize);
 }
