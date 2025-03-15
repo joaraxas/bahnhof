@@ -4,7 +4,7 @@
 #include "bahnhof/graphics/sprite.h"
 
 class Train;
-class WagonInfo;
+struct WagonInfo;
 
 namespace Tracks{
     class Tracksystem;

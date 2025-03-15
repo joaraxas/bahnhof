@@ -8,7 +8,6 @@ class InputManager;
 class Route;
 class Train;
 class Wagon;
-class WagonInfo;
 
 namespace Tracks{
     class Tracksystem;
