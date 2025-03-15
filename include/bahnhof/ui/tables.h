@@ -2,7 +2,6 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<SDL_ttf.h>
-#include<vector>
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/rollingstock/train.h"
