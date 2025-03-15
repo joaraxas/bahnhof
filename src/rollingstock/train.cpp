@@ -33,10 +33,8 @@ void Train::getinput(InputManager* input, int ms)
 			brake(ms);
 		if(input->keyispressed(gearbutton))
 			shiftdirection();
-		if(input->keyispressed(routeassignbutton)){}
-		else
-			for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
-				if(input->keyispressed(numberbuttons[iKey])) split(iKey);
+		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
+			if(input->keyispressed(numberbuttons[iKey])) split(iKey);
 		if(input->keyispressed(loadbutton))
 			loadall();
 		if(input->keyispressed(unloadbutton))

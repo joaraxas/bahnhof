@@ -101,19 +101,6 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_KEYDOWN:{
-                if(e.key.keysym.sym == SDLK_UP){
-                    if(editingroute)
-                        editingroute->selectedorderid = editingroute->previousorder(editingroute->selectedorderid);
-                }
-                if(e.key.keysym.sym == SDLK_DOWN){
-                    if(editingroute)
-                        editingroute->selectedorderid = editingroute->nextorder(editingroute->selectedorderid);
-                }
-                if(selectedtrain){
-                    if(e.key.keysym.sym == SDLK_p){
-                        selectedtrain->proceed();
-                    }
-                }
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
                 }
