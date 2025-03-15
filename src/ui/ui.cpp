@@ -3,6 +3,8 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/buttons.h"
+#include "bahnhof/ui/panels.h"
+#include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
@@ -257,7 +259,7 @@ Vec InterfaceManager::screentoui(Vec pos)
 
 namespace UI{
 
-Element::Element(Panel* newpanel)
+Element::Element(Host* newpanel)
 {
     panel = newpanel;
     ui = &panel->getui();

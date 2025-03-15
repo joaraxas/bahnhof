@@ -2,6 +2,8 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/panels.h"
+#include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"

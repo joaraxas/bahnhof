@@ -2,6 +2,7 @@
 #include<format>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
@@ -11,7 +12,7 @@
 
 namespace UI{
 
-Table::Table(Panel* newpanel, SDL_Rect newrect) : Element(newpanel)
+Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
 {
     rect = newrect;
 }
@@ -53,7 +54,7 @@ void Table::render(Rendering* r)
     }
 }
 
-Dropdown::Dropdown(Panel* p, SDL_Rect r) : Table(p, r)
+Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
 {
     ui->setdropdown(this);
 }
@@ -65,7 +66,7 @@ void Dropdown::render(Rendering* r)
     Table::render(r);
 }
 
-RouteDropdown::RouteDropdown(Panel* p, SDL_Rect r) : 
+RouteDropdown::RouteDropdown(Host* p, SDL_Rect r) : 
     Dropdown(p, r), 
     routing(ui->getgame().getgamestate().getrouting())
 {}
@@ -90,7 +91,7 @@ void RouteDropdown::leftclick(Vec mousepos)
     }
 }
 
-MainInfoTable::MainInfoTable(Panel* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}
+MainInfoTable::MainInfoTable(Host* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}
 
 void MainInfoTable::update(int ms)
 {
@@ -105,7 +106,7 @@ void MainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
-TrainTable::TrainTable(Panel* newpanel, SDL_Rect newrect) : 
+TrainTable::TrainTable(Host* newpanel, SDL_Rect newrect) : 
     Table(newpanel, newrect)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
@@ -144,7 +145,7 @@ void TrainInfoTable::update(int ms)
     // lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
 }
 
-RouteTable::RouteTable(Panel* p, SDL_Rect r) : 
+RouteTable::RouteTable(Host* p, SDL_Rect r) : 
     Table(p, r), 
     routing(ui->getgame().getgamestate().getrouting())
 {};

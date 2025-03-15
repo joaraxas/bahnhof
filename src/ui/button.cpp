@@ -2,6 +2,7 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
@@ -11,7 +12,7 @@
 
 namespace UI{
 
-Button::Button(Panel* newpanel, Vec newpos) : Element(newpanel)
+Button::Button(Host* newpanel, Vec newpos) : Element(newpanel)
 {
     rect = {int(newpos.x), int(newpos.y), 100, 40};
 }
@@ -29,7 +30,7 @@ void Button::render(Rendering* r)
     highlighted = false;
 }
 
-TextButton::TextButton(Panel* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
+TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
     float scale = ui->getuiscale();

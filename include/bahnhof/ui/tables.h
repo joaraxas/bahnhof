@@ -11,16 +11,16 @@ class Game;
 class Gamestate;
 class Rendering;
 class InterfaceManager;
+class Route;
 class RouteManager;
 
 namespace UI{
-class Panel;
 class Table;
 
 class TableLine : public Element
 {
 public:
-    TableLine(Panel*, Table*);
+    TableLine(Host*, Table*);
     virtual ~TableLine() {};
     virtual void render(Rendering* r, SDL_Rect maxarea) {};
     SDL_Rect getglobalrect();
@@ -31,7 +31,7 @@ protected:
 class TableTextLine : public TableLine
 {
 public:
-    TableTextLine(Panel*, Table*, std::string newstr);
+    TableTextLine(Host*, Table*, std::string newstr);
     virtual ~TableTextLine() {};
     virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
     virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info);};
@@ -42,14 +42,14 @@ private:
 class RouteTableLine : public TableTextLine
 {
 public:
-    RouteTableLine(Panel*, Table*, std::string routename);
+    RouteTableLine(Host*, Table*, std::string routename);
     virtual void render(Rendering* r, SDL_Rect maxarea);
 };
 
 class OrderTableLine : public TableTextLine
 {
 public:
-    OrderTableLine(Panel*, Table*, bool select, int orderindex, std::string description);
+    OrderTableLine(Host*, Table*, bool select, int orderindex, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
     bool selected = false;
@@ -59,7 +59,7 @@ private:
 class TrainTableLine : public TableLine
 {
 public:
-    TrainTableLine(Panel*, Table*, TrainInfo, TrainManager*);
+    TrainTableLine(Host*, Table*, TrainInfo, TrainManager*);
     void render(Rendering* r, SDL_Rect maxarea);
     TrainInfo info;
 private:
@@ -69,7 +69,7 @@ private:
 class Table : public Element
 {
 public:
-    Table(Panel*, SDL_Rect newrect);
+    Table(Host*, SDL_Rect newrect);
     virtual ~Table() {std::cout<<"del table"<<std::endl;};
     bool checkclick(Vec pos);
     virtual void render(Rendering*);
@@ -81,7 +81,7 @@ protected:
 class Dropdown : public Table
 {
 public:
-    Dropdown(Panel* p, SDL_Rect r);
+    Dropdown(Host* p, SDL_Rect r);
     virtual void update(int ms) {};
     void render(Rendering* r);
 };
@@ -89,7 +89,7 @@ public:
 class RouteDropdown : public Dropdown
 {
 public:
-    RouteDropdown(Panel* p, SDL_Rect r);
+    RouteDropdown(Host* p, SDL_Rect r);
     void update(int ms);
     void leftclick(Vec pos);
 private:
@@ -101,14 +101,14 @@ private:
 class MainInfoTable : public Table
 {
 public:
-    MainInfoTable(Panel*, SDL_Rect newrect);
+    MainInfoTable(Host*, SDL_Rect newrect);
     void update(int ms);
 };
 
 class RouteTable : public Table
 {
 public:
-    RouteTable(Panel* p, SDL_Rect r);
+    RouteTable(Host* p, SDL_Rect r);
     void update(int ms);
     void leftclick(Vec pos);
 private:
@@ -120,7 +120,7 @@ private:
 class OrderTable : public Table
 {
 public:
-    OrderTable(Panel* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {};
+    OrderTable(Host* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {};
     virtual void update(int ms);
     virtual void leftclick(Vec pos);
 protected:
@@ -133,7 +133,7 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Panel* p, SDL_Rect r, Train& t) : OrderTable(p, r, nullptr), train(t) {};
+    TrainOrderTable(Host* p, SDL_Rect r, Train& t) : OrderTable(p, r, nullptr), train(t) {};
     void update(int ms);
     void leftclick(Vec pos);
 private:
@@ -143,7 +143,7 @@ private:
 class TrainTable : public Table
 {
 public:
-    TrainTable(Panel*, SDL_Rect newrect);
+    TrainTable(Host*, SDL_Rect newrect);
     void update(int ms);
     void leftclick(Vec pos);
 private:
@@ -154,7 +154,7 @@ private:
 class TrainInfoTable : public Table
 {
 public:
-    TrainInfoTable(Panel* p, SDL_Rect r, Train& t): Table(p, r), train(t) {};
+    TrainInfoTable(Host* p, SDL_Rect r, Train& t): Table(p, r), train(t) {};
     void update(int ms);
 private:
     Train& train;

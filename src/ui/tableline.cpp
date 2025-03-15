@@ -8,7 +8,7 @@
 
 namespace UI{
 
-TableLine::TableLine(Panel* newpanel, Table* newtable) : Element(newpanel)
+TableLine::TableLine(Host* newpanel, Table* newtable) : Element(newpanel)
 {
     table = newtable;
     SDL_Rect tablerect = table->getlocalrect();
@@ -21,7 +21,7 @@ SDL_Rect TableLine::getglobalrect()
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
-TableTextLine::TableTextLine(Panel* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
+TableTextLine::TableTextLine(Host* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
 {
     str = newstr;
 }
@@ -35,7 +35,7 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
     rect.h = textrect.h;
 }
 
-RouteTableLine::RouteTableLine(Panel* p, Table* t, std::string routename) :
+RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
     TableTextLine(p, t, routename)
 {}
 
@@ -46,7 +46,7 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 }
 
-OrderTableLine::OrderTableLine(Panel* p, Table* t, bool sel, int i, std::string description) :
+OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
     selected(sel),
     orderid(i),
     TableTextLine(p, t, description)
@@ -65,7 +65,7 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
     r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
 }
 
-TrainTableLine::TrainTableLine(Panel* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
+TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
     TableLine(p, t), 
     info(traininfo),
     trainmanager(manager)
