@@ -22,8 +22,9 @@ void InterfaceManager::update(int ms)
         dropdown->update(ms);
     }
     
-    for(auto& panel: panels)
-        panel->update(ms);
+    // TODO: Develop proper deletion system to ensure no removal during iteration
+    for(auto it = panels.rbegin(); it!=panels.rend(); ++it)
+        (*it)->update(ms);
 }
 
 void InterfaceManager::render(Rendering* r)
@@ -168,6 +169,7 @@ void InterfaceManager::addpanel(UI::Host* panel)
 
 void InterfaceManager::removepanel(UI::Host* panel)
 {
+    // TODO: Develop proper deletion system to ensure no removal during iteration
     if(movingwindow==panel)
         movingwindow = nullptr;
     auto it = std::find_if(panels.begin(), panels.end(), 

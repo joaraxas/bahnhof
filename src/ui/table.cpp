@@ -128,7 +128,7 @@ void TrainTable::leftclick(Vec mousepos)
         info.train->selected = true;
         
         SDL_Rect trainpanelrect = {300,200,440,220};
-        new TrainPanel(ui, trainpanelrect, *info.train);
+        new TrainPanel(ui, trainpanelrect, *trainmanager, *info.train);
     }
 }
 

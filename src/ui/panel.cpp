@@ -215,8 +215,8 @@ TrainListPanel::~TrainListPanel()
 	std::cout<<"del trainlistpanel"<<std::endl;
 }
 
-TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrain) : 
-		Panel(newui, newrect), train(newtrain)
+TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain) : 
+		Panel(newui, newrect), trainmanager(manager), train(newtrain)
 {
 	TrainInfo info = train.getinfo();
 
@@ -243,6 +243,27 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrai
 TrainPanel::~TrainPanel()
 {
 	std::cout<<"del trainpanel"<<std::endl;
+}
+
+void TrainPanel::update(int ms)
+{
+	if(!trainmanager.exists(train)){
+		std::cout<<"train is gone in update"<<std::endl;
+		Panel::erase();
+		return;
+	}
+
+	Panel::update(ms);
+}
+
+void TrainPanel::render(Rendering* r)
+{
+	if(!trainmanager.exists(train)){
+		std::cout<<"train is gone in render"<<std::endl;
+		return;
+	}
+
+	Panel::render(r);
 }
 
 } // namespace UI

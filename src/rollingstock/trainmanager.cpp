@@ -94,6 +94,13 @@ std::vector<TrainInfo> TrainManager::gettrainsinfo()
 	return infos;
 }
 
+bool TrainManager::exists(Train& train){
+	for(auto& tr : trains)
+		if(tr.get() == &train)
+			return true;
+	return false;
+}
+
 void TrainManager::inittrain(State startstate)
 {
 	int nWagons = wagons.size();

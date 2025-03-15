@@ -10,6 +10,7 @@ class Gamestate;
 class Rendering;
 class InterfaceManager;
 class Route;
+class TrainManager;
 class Train;
 
 namespace UI{
@@ -74,7 +75,7 @@ public:
     void mousehover(Vec pos, int ms);
     void click(Vec pos, int type);
     void mousepress(Vec pos, int mslogic, int type);
-    void update(int ms);
+    virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
     void move(Vec towhattopcorner);
@@ -142,10 +143,13 @@ public:
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, SDL_Rect newrect, Train& newtrain);
+    TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain);
     ~TrainPanel();
+    void update(int ms);
+    void render(Rendering* r);
     Train& gettrain() {return train;};
 private:
+    TrainManager& trainmanager;
     Train& train;
     Text* trainnametext;
 };
