@@ -248,7 +248,6 @@ TrainPanel::~TrainPanel()
 void TrainPanel::update(int ms)
 {
 	if(!trainmanager.exists(train)){
-		std::cout<<"train is gone in update"<<std::endl;
 		Panel::erase();
 		return;
 	}
@@ -259,7 +258,6 @@ void TrainPanel::update(int ms)
 void TrainPanel::render(Rendering* r)
 {
 	if(!trainmanager.exists(train)){
-		std::cout<<"train is gone in render"<<std::endl;
 		return;
 	}
 

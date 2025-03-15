@@ -103,10 +103,8 @@ SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SD
     auto scale = ui.getuiscale();
     int iconoffset = 2*scale;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
-    Sprite wagonicon;
+    Icon wagonicon;
     wagonicon.ported = false;
-    wagonicon.zoomed = false;
-    wagonicon.imagescale = scale;
     int icon_x = 0;
     for(WagonInfo& wagoninfo : info.wagoninfos){
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);

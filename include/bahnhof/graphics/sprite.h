@@ -92,5 +92,6 @@ class Icon : public Sprite
 {
 public:
     Icon();
+    void setspritesheet(SpriteManager& s, sprites::name name);
     void render(Rendering* r, Vec pos);
 };

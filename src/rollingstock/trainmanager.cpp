@@ -9,7 +9,7 @@
 
 TrainManager::TrainManager(Tracks::Tracksystem* newtracks)
 {
-    tracks = newtracks;
+	tracks = newtracks;
 	addtrainstoorphans();
 }
 

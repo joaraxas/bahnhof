@@ -49,6 +49,12 @@ Icon::Icon()
 	zoomed = false;
 }
 
+void Icon::setspritesheet(SpriteManager& s, sprites::name name)
+{
+	imagescale = s.getgame()->getui().getuiscale();
+	Sprite::setspritesheet(s, name);
+}
+
 void Icon::render(Rendering* r, Vec pos)
 {
 	imagescale = r->getgame().getui().getuiscale();
