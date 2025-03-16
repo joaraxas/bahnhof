@@ -32,8 +32,9 @@ public:
     virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
     virtual void render(Rendering*);
 protected:
-    int maxtextwidth;
     std::string text;
+    static constexpr int mintextoffset_x = 6;
+    static constexpr int mintextoffset_y = 4;
 };
 
 class Close : public TextButton
@@ -88,7 +89,7 @@ public:
 class SetRoute : public TextButton
 {
 public:
-    SetRoute(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Change route") {};
+    SetRoute(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "No route set") {};
     void update(int ms);
     void leftclick(Vec mousepos);
 };

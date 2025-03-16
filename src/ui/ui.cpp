@@ -15,7 +15,7 @@ InterfaceManager::InterfaceManager(Game* newgame)
 {
     game = newgame;
     setuiscale(game->getrendering().getlogicalscale());
-    new UI::MainPanel(this, {0,0,200,300});
+    new UI::MainPanel(this, {0,0,180,280});
 }
 
 void InterfaceManager::update(int ms)

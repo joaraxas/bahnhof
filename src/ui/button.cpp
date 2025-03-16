@@ -36,11 +36,12 @@ TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int widt
     float scale = ui->getuiscale();
     rect.w = width;
     rect.h = 20;
-    maxtextwidth = (rect.w - 10);
+    int maxtextwidth = (rect.w - 2*mintextoffset_x);
     SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth*scale);
     int textwidth, textheight;
 	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
-    rect.h = fmax(rect.h, 10+textheight/scale);
+    int heightresultingfromtext = textheight/scale + 2*mintextoffset_y;
+    rect.h = fmax(rect.h, heightresultingfromtext);
 	SDL_DestroyTexture(tex);
 }
 
@@ -48,8 +49,8 @@ void TextButton::render(Rendering* r)
 {
     Button::render(r);
     SDL_Rect textrect = getglobalrect();
-    textrect.x+=5;
-    textrect.w-=5*2;
+    textrect.x += mintextoffset_x;   // this is to get line breaks right,
+    textrect.w -= 2*mintextoffset_x; // no need to set textrect.y as the render is centered vertically anyway
     ui->rendertext(r, text, textrect, InvertedInfo, true);
 }
 

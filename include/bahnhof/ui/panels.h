@@ -27,9 +27,11 @@ public:
     virtual void render(Rendering*);
 protected:
     template <class T, typename... Args> void createbutton(Args&&... args);
-    int xoffset;
-    int yoffset;
-    int ydist = 5;
+    static constexpr int margin_x = 15;
+    static constexpr int margin_y = 10;
+    int yoffset = 0;
+    static constexpr int elementdistance_x = 15;
+    static constexpr int elementdistance_y = 5;
 };
 
 class MainPanel : public Panel
