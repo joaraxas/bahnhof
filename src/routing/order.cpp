@@ -6,7 +6,6 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
 
 

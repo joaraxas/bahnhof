@@ -28,23 +28,23 @@ public:
     void play();
     void exit();
     std::string gamename;
-    ResourceManager& getresources() {return *resources;};
-    Camera& getcamera() {return *cam;};
     TimeManager& gettimemanager() {return *timer;};
     InputManager& getinputmanager() {return *input;};
+    Camera& getcamera() {return *cam;};
     Rendering& getrendering() {return *rendering;};
-    SpriteManager& getsprites() {return *allsprites;};
     InterfaceManager& getui() {return *ui;};
+    SpriteManager& getsprites() {return *allsprites;};
+    ResourceManager& getresources() {return *resources;};
     Gamestate& getgamestate() {return *gamestate;};
 private:
-    ResourceManager* resources;
-    Camera* cam;
-    TimeManager* timer;
-    InputManager* input;
-    Rendering* rendering;
-    SpriteManager* allsprites;
-    InterfaceManager* ui;
-    Gamestate* gamestate;
+    std::unique_ptr<TimeManager> timer;
+    std::unique_ptr<InputManager> input;
+    std::unique_ptr<Camera> cam;
+    std::unique_ptr<Rendering> rendering;
+    std::unique_ptr<InterfaceManager> ui;
+    std::unique_ptr<SpriteManager> allsprites;
+    std::unique_ptr<ResourceManager> resources;
+    std::unique_ptr<Gamestate> gamestate;
     bool quit;
 };
 
@@ -66,9 +66,9 @@ public:
     State newwagonstate; //TODO: remove this as it is not protected from track splitting
 private:
     Game* game;
-    RouteManager* routing;
-    TrainManager* trainmanager;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
+    std::unique_ptr<RouteManager> routing;
+    std::unique_ptr<TrainManager> trainmanager;
     //Map* map;
 };
 

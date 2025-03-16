@@ -13,28 +13,19 @@
 Game::Game()
 {
 	gamename = "Name of the game";
-	timer = new TimeManager();
-	input = new InputManager(this);
-	cam = new Camera(this);
-	rendering = new Rendering(this, cam);
-	allsprites = new SpriteManager(this);
-	resources = new ResourceManager(this);
-	ui = new InterfaceManager(this);
-	gamestate = new Gamestate(this);
+	timer = std::make_unique<TimeManager>();
+	input = std::make_unique<InputManager>(this);
+	cam = std::make_unique<Camera>(this);
+	rendering = std::make_unique<Rendering>(this, cam.get());
+	ui = std::make_unique<InterfaceManager>(this);
+	allsprites = std::make_unique<SpriteManager>(this);
+	resources = std::make_unique<ResourceManager>(this);
+	gamestate = std::make_unique<Gamestate>(this);
 	quit = false;
 }
 
 Game::~Game()
-{
-	delete timer;
-	delete input;
-	delete cam;
-	delete rendering;
-	delete allsprites;
-	delete resources;
-	delete ui;
-	delete gamestate;
-}
+{}
 
 void Game::play()
 {
@@ -43,7 +34,7 @@ void Game::play()
 		input->handle(timer->getms(), timer->getmslogic());
 		ui->update(timer->getms());
 		gamestate->update(timer->getmslogic());
-		rendering->render(gamestate);
+		rendering->render(gamestate.get());
 	}
 }
 

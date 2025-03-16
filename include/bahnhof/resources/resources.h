@@ -1,6 +1,4 @@
-#ifndef RESOURCES_H
-#define RESOURCES_H
-
+#pragma once
 #include<map>
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/common/math.h"
@@ -36,5 +34,3 @@ private:
     std::map<resourcetype, Resource*> resourcemap;
     Game* game;
 };
-
-#endif

@@ -18,8 +18,8 @@ Gamestate::Gamestate(Game* whatgame)
 	money = 600;
 	newwagonstate = State(1, 0.2, true);
 	inittracks();
-	routing = new RouteManager(tracksystem.get());
-	trainmanager = new TrainManager(tracksystem.get());
+	routing = std::make_unique<RouteManager>(tracksystem.get());
+	trainmanager = std::make_unique<TrainManager>(tracksystem.get());
 	trainmanager->inittrain(State(1,0.8,1));
 
 	randommap();
@@ -27,8 +27,6 @@ Gamestate::Gamestate(Game* whatgame)
 
 Gamestate::~Gamestate()
 {
-	delete routing;
-	delete trainmanager;
 }
 
 void Gamestate::update(int ms)
@@ -79,5 +77,7 @@ void Gamestate::randommap()
 
 void Gamestate::inittracks()
 {
-	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {600,900,1100}, {300,300,400}));
+	std::vector<float> xs = {600,900,1100};
+	std::vector<float> ys = {300,300,400};
+	tracksystem = std::make_unique<Tracks::Tracksystem>(*game, xs, ys);
 }
