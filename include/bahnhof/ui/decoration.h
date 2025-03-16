@@ -7,6 +7,8 @@
 
 class Rendering;
 class Train;
+struct TrainInfo;
+struct WagonInfo;
 
 namespace UI{
 
@@ -28,5 +30,7 @@ public:
 private:
     Train& train;
 };
+
+SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect rect);
 
 }

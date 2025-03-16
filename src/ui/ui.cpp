@@ -1,14 +1,10 @@
 #include<iostream>
-#include "bahnhof/common/input.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
-#include "bahnhof/ui/buttons.h"
 #include "bahnhof/ui/panels.h"
-#include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/rollingstock/train.h"
 
 
 InterfaceManager::InterfaceManager(Game* newgame)
@@ -255,49 +251,4 @@ Vec InterfaceManager::screentoui(Vec pos)
     float scale = getuiscale();
     Vec uipos = Vec(pos.x/scale, pos.y/scale);
     return uipos;
-}
-
-namespace UI{
-
-Element::Element(Host* newpanel)
-{
-    panel = newpanel;
-    ui = &panel->getui();
-    game = &ui->getgame();
-}
-
-bool Element::checkclick(Vec mousepos)
-{
-    SDL_Rect absrect = ui->uitoscreen(getglobalrect());
-	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
-		return true;
-	}
-    return false;
-}
-
-SDL_Rect Element::getglobalrect()
-{
-    SDL_Rect panelrect = panel->getglobalrect();
-    return {panelrect.x+rect.x, panelrect.y+rect.y, rect.w, rect.h};
-}
-
-SDL_Rect Element::getlocalrect()
-{
-    return rect;
-}
-
-void Text::render(Rendering* r)
-{
-    SDL_Rect screenrect = ui->uitoscreen(getglobalrect());
-    if(centered)
-        r->rendercenteredtext(text, int(screenrect.x+screenrect.w*0.5), int(screenrect.y+screenrect.h*0.5), color, false, false, screenrect.w);
-    else
-        r->rendertext(text, screenrect.x, screenrect.y, color, false, false, screenrect.w);
-}
-
-void TrainIcons::render(Rendering* r)
-{
-    rendertrainicons(r, *ui, train.getinfo(), getglobalrect());
-}
-
 }

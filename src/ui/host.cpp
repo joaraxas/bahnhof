@@ -1,0 +1,106 @@
+#include<iostream>
+#include "bahnhof/ui/ui.h"
+
+namespace UI{
+
+Host::Host(InterfaceManager* newui, SDL_Rect newrect)
+{
+    ui = newui;
+    game = &ui->getgame();
+	rect = newrect;
+}
+
+InterfaceManager& Host::getui()
+{
+    return *ui;
+}
+
+void Host::erase()
+{
+    ui->removepanel(this);
+}
+
+SDL_Rect Host::getglobalrect()
+{
+	return rect;
+}
+
+SDL_Rect Host::getlocalrect()
+{
+	return rect;
+}
+
+void Host::update(int ms)
+{
+	for(auto& element: elements)
+		element->update(ms);
+}
+
+void Host::render(Rendering* r)
+{
+	for(auto& element: elements)
+		element->render(r);
+}
+
+bool Host::checkclick(Vec pos)
+{
+	SDL_Rect absrect = ui->uitoscreen(getglobalrect());
+	if(pos.x>=absrect.x && pos.x<=absrect.x+absrect.w && pos.y>=absrect.y && pos.y<=absrect.y+absrect.h){
+		return true;
+	}
+    return false;
+}
+
+Element* Host::getelementat(Vec pos)
+{
+	for(auto& element: elements)
+		if(element->checkclick(pos)){
+			return element.get();
+		}
+	return nullptr;
+}
+
+void Host::mousehover(Vec pos, int ms)
+{
+	Element* hoveredelement = getelementat(pos);
+	if(hoveredelement){
+		hoveredelement->mousehover(pos, ms);
+	}
+}
+
+void Host::click(Vec pos, int type)
+{
+	Element* clickedelement = getelementat(pos);
+	if(clickedelement){
+		switch (type)
+		{
+		case SDL_BUTTON_LEFT:
+			clickedelement->leftclick(pos);
+			break;
+		}
+	}
+}
+
+void Host::mousepress(Vec pos, int mslogic, int type)
+{
+	Element* clickedelement = getelementat(pos);
+	if(clickedelement){
+		switch (type)
+		{
+		case SDL_BUTTON_LEFT:
+			clickedelement->leftpressed(pos, mslogic);
+			break;
+		}
+	}
+}
+
+void Host::addelement(Element* element){
+	elements.emplace_back(element);
+}
+
+void Host::move(Vec towhattopcorner){
+	rect.x = round(towhattopcorner.x);
+	rect.y = round(towhattopcorner.y);
+}
+
+} // namespace UI
