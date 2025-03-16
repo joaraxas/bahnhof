@@ -23,6 +23,7 @@ add_executable(bahnhof
     src/game/main.cpp
     src/game/resources.cpp
     src/ui/ui.cpp
+    src/ui/uirendering.cpp
     src/ui/host.cpp
     src/ui/panel.cpp
     src/ui/element.cpp

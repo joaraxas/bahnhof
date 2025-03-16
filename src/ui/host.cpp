@@ -44,7 +44,7 @@ void Host::render(Rendering* r)
 
 bool Host::checkclick(Vec pos)
 {
-	SDL_Rect absrect = ui->uitoscreen(getglobalrect());
+	SDL_Rect absrect = ui->getuirendering().uitoscreen(getglobalrect());
 	if(pos.x>=absrect.x && pos.x<=absrect.x+absrect.w && pos.y>=absrect.y && pos.y<=absrect.y+absrect.h){
 		return true;
 	}

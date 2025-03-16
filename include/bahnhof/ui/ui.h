@@ -66,6 +66,25 @@ protected:
 
 }
 
+class UIRendering{
+public:
+    UIRendering(InterfaceManager& newui);
+    SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false);
+    float getuiscale();
+    void increaseuiscale();
+    void decreaseuiscale();
+    SDL_Rect uitoscreen(SDL_Rect rect);
+    SDL_Rect screentoui(SDL_Rect rect);
+    Vec uitoscreen(Vec pos);
+    Vec screentoui(Vec pos);
+    void renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength);
+private:
+    float uiscale = 1;
+    void setuiscale(float newscale);
+    SDL_Color getcolorfromstyle(UI::TextStyle style);
+    InterfaceManager& ui;
+};
+
 class InterfaceManager{
 public:
     InterfaceManager(Game*);
@@ -75,28 +94,18 @@ public:
     void leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
-    SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false);
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void movepaneltofront(UI::Host*);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
-    float getuiscale();
-    void increaseuiscale();
-    void decreaseuiscale();
-    SDL_Rect uitoscreen(SDL_Rect rect);
-    SDL_Rect screentoui(SDL_Rect rect);
-    Vec uitoscreen(Vec pos);
-    Vec screentoui(Vec pos);
+    UIRendering& getuirendering() {return uirendering;};
     UI::Host* movingwindow = nullptr;
 private:
     UI::Host* getpanelat(Vec pos);
-    SDL_Color getcolorfromstyle(UI::TextStyle style);
-    void renderscaleruler(Rendering* r, int leftx, int lefty, int scalelinelength);
-    void setuiscale(float newscale);
     std::vector<std::unique_ptr<UI::Host>> panels;
     UI::Dropdown* dropdown = nullptr;
     Vec movingwindowoffset;
     Game* game;
-    float uiscale = 1;
+    UIRendering uirendering;
 };

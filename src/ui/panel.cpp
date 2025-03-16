@@ -29,9 +29,9 @@ template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 void Panel::render(Rendering* r)
 {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
-    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
 	Host::render(r);
 }
 
@@ -105,7 +105,7 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    Vec viewsize = ui->screentoui(game->getrendering().getviewsize());
+    Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
     rect = {int(viewsize.x*0.5-150),int(viewsize.y)-150,300,150};
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new TrainTable(this, tablerect));

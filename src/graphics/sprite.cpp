@@ -51,12 +51,12 @@ Icon::Icon()
 
 void Icon::setspritesheet(SpriteManager& s, sprites::name name)
 {
-	imagescale = s.getgame()->getui().getuiscale();
+	imagescale = s.getgame()->getui().getuirendering().getuiscale();
 	Sprite::setspritesheet(s, name);
 }
 
 void Icon::render(Rendering* r, Vec pos)
 {
-	imagescale = r->getgame().getui().getuiscale();
+	imagescale = r->getgame().getui().getuirendering().getuiscale();
 	Sprite::render(r, pos);
 }

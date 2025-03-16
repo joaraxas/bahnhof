@@ -157,7 +157,7 @@ void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL
 {
 	int x = int(pos.x); int y = int(pos.y);
 	InterfaceManager& ui = tracks->game->getui();
-	float scale = ui.getuiscale();
+	float scale = ui.getuirendering().getuiscale();
 	SDL_Rect rect = {x,y,int(16*scale),int(14*scale)};
 	if(!valid)
 		bgrcol.a *= 0.4;

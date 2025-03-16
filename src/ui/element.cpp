@@ -14,7 +14,7 @@ Element::Element(Host* newpanel)
 
 bool Element::checkclick(Vec mousepos)
 {
-    SDL_Rect absrect = ui->uitoscreen(getglobalrect());
+    SDL_Rect absrect = ui->getuirendering().uitoscreen(getglobalrect());
 	if(mousepos.x>=absrect.x && mousepos.x<=absrect.x+absrect.w && mousepos.y>=absrect.y && mousepos.y<=absrect.y+absrect.h){
 		return true;
 	}

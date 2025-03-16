@@ -3,7 +3,6 @@
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
-#include "bahnhof/common/gamestate.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 
@@ -30,9 +29,9 @@ TableTextLine::TableTextLine(Host* newpanel, Table* newtable, std::string newstr
 void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect = maxarea;
-    SDL_Rect textrect = ui->rendertext(r, str, getglobalrect(), style);
+    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getglobalrect(), style);
     if(!nicetracks)
-        r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
+        r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
     rect.h = textrect.h;
 }
 
@@ -44,7 +43,7 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableTextLine::render(r, maxarea);
     SDL_SetRenderDrawColor(renderer,0,0,0,255);
-    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
 }
 
 OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
@@ -63,7 +62,7 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
         style = Info;
     TableTextLine::render(r, maxarea, style);
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
-    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -86,7 +85,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     namerect = {namerect.x+textpadding, namerect.y+rowoffset, namerowwidth-2*textpadding, 100};
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
-    namerect = ui->rendertext(r, info.name, namerect, style);
+    namerect = ui->getuirendering().rendertext(r, info.name, namerect, style);
     rect.h = namerect.h+2*rowoffset;
     
     SDL_Rect trainiconrect = getglobalrect();
@@ -96,25 +95,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
                               namerect.h};
     rendertrainicons(r, *ui, info, trainiconrect);
     
-    r->renderrectangle(ui->uitoscreen(getglobalrect()), false, false);
-}
-
-SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
-{
-    SDL_Rect screenrect = ui.uitoscreen(maxrect);
-    auto scale = ui.getuiscale();
-    int iconoffset = 2*scale;
-	SpriteManager& spritemanager = ui.getgame().getsprites();
-    Icon wagonicon;
-    wagonicon.ported = false;
-    int icon_x = 0;
-    for(WagonInfo& wagoninfo : info.wagoninfos){
-        wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
-        Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5, screenrect.y+screenrect.h*0.5));
-        icon_x += iconsize.x + iconoffset;
-    }
-    return maxrect;
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
 }
 
 } //end namespace UI

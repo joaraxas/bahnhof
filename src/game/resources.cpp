@@ -64,7 +64,7 @@ void Storage::render(Rendering* r)
 	int xoffset = 0;
 	int nCols = 0;
 	float camscale = r->getcamscale();
-	float uiscale = ui.getuiscale();
+	float uiscale = ui.getuirendering().getuiscale();
 	int iconwidth = 20*uiscale/camscale;
 	int frameoffset = fmax(1,int(2*uiscale/camscale));
 	for(auto resourcepair : storedresources){

@@ -26,14 +26,14 @@ void Button::render(Rendering* r)
 {
     int i = highlighted*127;
     SDL_SetRenderDrawColor(renderer,i,i,i,255);
-    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
     highlighted = false;
 }
 
 TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
-    float scale = ui->getuiscale();
+    float scale = ui->getuirendering().getuiscale();
     rect.w = width;
     rect.h = 20;
     int maxtextwidth = (rect.w - 2*mintextoffset_x);
@@ -51,7 +51,7 @@ void TextButton::render(Rendering* r)
     SDL_Rect textrect = getglobalrect();
     textrect.x += mintextoffset_x;   // this is to get line breaks right,
     textrect.w -= 2*mintextoffset_x; // no need to set textrect.y as the render is centered vertically anyway
-    ui->rendertext(r, text, textrect, InvertedInfo, true);
+    ui->getuirendering().rendertext(r, text, textrect, InvertedInfo, true);
 }
 
 void Close::leftclick(Vec mousepos)
@@ -71,7 +71,7 @@ void PlaceTrack::leftclick(Vec mousepos)
 
 void ManageRoutes::leftclick(Vec mousepos)
 {
-    Vec viewsize = ui->screentoui(game->getrendering().getviewsize());
+    Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
     SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
     new RouteListPanel(ui, routepanelrect);
 }
@@ -83,18 +83,18 @@ void ManageTrains::leftclick(Vec mousepos)
 
 void IncreaseUIScale::leftclick(Vec mousepos)
 {
-    ui->increaseuiscale();
+    ui->getuirendering().increaseuiscale();
 }
 
 void DecreaseUIScale::leftclick(Vec mousepos)
 {
-    ui->decreaseuiscale();
+    ui->getuirendering().decreaseuiscale();
 }
 
 void SetRoute::leftclick(Vec mousepos)
 {
     SDL_Rect panelrect = panel->getlocalrect();
-    Vec uimousepos = ui->screentoui(mousepos);
+    Vec uimousepos = ui->getuirendering().screentoui(mousepos);
     SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), int(uimousepos.y-panelrect.y), 150, 100};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }

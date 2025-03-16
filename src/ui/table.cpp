@@ -62,7 +62,7 @@ Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
 void Dropdown::render(Rendering* r)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    r->renderfilledrectangle(ui->uitoscreen(getglobalrect()), false, false);
+    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
     Table::render(r);
 }
 
