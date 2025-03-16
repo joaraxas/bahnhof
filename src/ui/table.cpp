@@ -61,7 +61,13 @@ Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
 
 void Dropdown::render(Rendering* r)
 {
+    Table::render(r); // hack to get right table line heights
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    rect.h = 0;
+    for(auto& line : lines){
+        rect.h += line->getlocalrect().h;
+    }
+
     r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
     Table::render(r);
 }
@@ -74,20 +80,25 @@ RouteDropdown::RouteDropdown(Host* p, SDL_Rect r) :
 void RouteDropdown::update(int ms)
 {
 	lines.clear();
-	
     names = routing.getroutenames();
     ids = routing.getrouteids();
-    for(int iRoute = 0; iRoute<names.size(); iRoute++){
-        std::string name = names[iRoute];
-        lines.emplace_back(new RouteTableLine(panel, this, name));
+    if(names.size()==0){
+        lines.emplace_back(new TableTextLine(panel, this, "No routes created yet"));
     }
+    else
+        for(int iRoute = 0; iRoute<names.size(); iRoute++){
+            std::string name = names[iRoute];
+            lines.emplace_back(new RouteTableLine(panel, this, name));
+        }
 }
 
 void RouteDropdown::leftclick(Vec mousepos)
 {
-    int index = getlineindexat(mousepos);
-    if(index>=0){
-        dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
+    if(routing.getnumberofroutes() > 0){
+        int index = getlineindexat(mousepos);
+        if(index>=0){
+            dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
+        }
     }
 }
 

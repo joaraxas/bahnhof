@@ -46,6 +46,7 @@ public:
     Route* getroute(int id);
     std::vector<std::string> getroutenames();
     std::vector<int> getrouteids();
+    int getnumberofroutes();
 private:
     Tracks::Tracksystem* tracksystem;
     std::vector<std::unique_ptr<Route>> routes;

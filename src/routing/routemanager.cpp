@@ -14,6 +14,11 @@ void RouteManager::addroute()
 	routes.emplace_back(newroute);
 }
 
+int RouteManager::getnumberofroutes()
+{
+	return routes.size();
+}
+
 Route* RouteManager::getroute(int id)
 {
 	if(id<=0){
