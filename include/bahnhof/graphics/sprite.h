@@ -5,27 +5,7 @@
 #include<map>
 #include<string>
 #include "bahnhof/common/math.h"
-
-class Rendering;
-
-namespace sprites{
-enum name
-{
-    none=-1,
-    openwagon,
-    refrigeratorcar,
-    tankloco,
-    iconopenwagon,
-    iconrefrigeratorcar,
-    icontankloco,
-    switchsprite,
-    signal,
-    light,
-    hops,
-    barley,
-    beer
-};
-}
+#include "bahnhof/graphics/spritenames.h"
 
 class Game;
 class Rendering;
