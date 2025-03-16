@@ -7,6 +7,8 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 
 Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname)
 {
@@ -40,7 +42,7 @@ void Wagon::update(int ms)
 
 void Wagon::render(Rendering* r)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	if(scale<0.3)
 		icon.render(r, pos);
 	else
@@ -68,11 +70,6 @@ std::vector<State*> Wagon::getstates()
 	return std::vector<State*>({&state});
 }
 
-float Wagon::getpower()
-{
-	return 0;
-}
-
 int Wagon::loadwagon(resourcetype resource, int amount)
 {
 	int loadedamount = 0;
@@ -92,6 +89,17 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 	int unloadedamount = loadamount;
 	loadamount = 0;
 	return unloadedamount;
+}
+
+float Wagon::getpower()
+{
+	return 0;
+}
+
+WagonInfo Wagon::getinfo()
+{
+	WagonInfo info(icon.getname(), loadedresource, loadamount);
+	return info;
 }
 
 Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)

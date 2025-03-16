@@ -70,7 +70,7 @@ int Switch::getstateforordergeneration(){
 
 void Switch::render(Rendering* r)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	//if(scale>0.3){
         Vec switchpos = pos();
         sprite.imagetype = fmin(1, switchstate);

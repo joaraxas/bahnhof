@@ -1,21 +1,25 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include<algorithm>
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/resources/storage.h"
 
 
-Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed)
+Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons)
 {
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
-	speed = newspeed;
+	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;
 	light.setspritesheet(game->getsprites(), sprites::light);
@@ -30,10 +34,8 @@ void Train::getinput(InputManager* input, int ms)
 			brake(ms);
 		if(input->keyispressed(gearbutton))
 			shiftdirection();
-		if(input->keyispressed(routeassignbutton)){}
-		else
-			for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
-				if(input->keyispressed(numberbuttons[iKey])) split(iKey);
+		for(int iKey=1; iKey<fmin(wagons.size(), sizeof(numberbuttons)/sizeof(*numberbuttons)); iKey++)
+			if(input->keyispressed(numberbuttons[iKey])) split(iKey);
 		if(input->keyispressed(loadbutton))
 			loadall();
 		if(input->keyispressed(unloadbutton))
@@ -50,8 +52,11 @@ void Train::update(int ms)
 			proceed();
 	
 	float minradius = INFINITY;
+	// uncomment to remove radius speed restriction
+	// /*
 	for(auto w : wagons)
 		minradius = fmin(minradius, abs(getradius(*tracksystem, w->frontendstate())));
+	// */
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
 	float minradiusmeter = minradius*150*0.001;
@@ -151,19 +156,6 @@ void Train::proceed()
 void Train::render(Rendering* r)
 {
 	if(selected){
-		if(route){
-			if(orderid>=0){
-				int iOrder = route->getindex(orderid);
-				int rectw = 10;
-				SDL_Rect rect = {SCREEN_WIDTH-300-rectw-2,(iOrder+1)*14+2,rectw,rectw};
-				SDL_SetRenderDrawColor(renderer, 200*(!go), 63*go, 0, 255);
-				r->renderfilledrectangle(&rect, false, false);
-				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			}
-		}
-		else{
-			r->rendertext("No route assigned", SCREEN_WIDTH-300, (0+1)*14, {0,0,0,0}, false);
-		}
 		Vec frontpos = getpos(*tracksystem, forwardstate());
 		float forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;
@@ -247,10 +239,13 @@ bool Train::gas(int ms)
 		Ptot += w->getpower();
 	float mtot = size(wagons);
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
+	// uncomment to remove train backwards speed restriction
+	// /*
 	if(gasisforward && !wagons.front()->hasdriver)
 		speed = fmin(50, speed);
 	if(!gasisforward && !wagons.back()->hasdriver)
 		speed = -fmin(50, -speed);
+	// */
 	return true;
 }
 
@@ -374,21 +369,30 @@ bool Train::split(int where, Route* assignedroute)
 	if(speed!=0)
 		splitsucceed = false;
 	else if(wagons.size()>where){
+		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
 		if(gasisforward){
-			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()}, speed);
+			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
 			wagons = {wagons.begin(), wagons.begin() + where};
-			game->getgamestate().trains.emplace_back(newtrain);
+			trainmanager.addtrain(newtrain);
 			newtrain->route = assignedroute;
 		}
 		else{
-			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()}, speed);
+			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()});
 			std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
 			wagons = {wagons.rbegin(), wagons.rbegin() + where};
 			std::reverse(wagons.begin(), wagons.end());
-			game->getgamestate().trains.emplace_back(newtrain);
+			trainmanager.addtrain(newtrain);
 			newtrain->route = assignedroute;
 		}
 		std::cout << "split" << std::endl;
 	}
 	return splitsucceed;
+}
+
+TrainInfo Train::getinfo(){
+	std::vector<WagonInfo> wagoninfos;
+	for(auto& wagon : wagons){
+		wagoninfos.push_back(wagon->getinfo());
+	}
+	return TrainInfo(this, name, speed, wagoninfos);
 }

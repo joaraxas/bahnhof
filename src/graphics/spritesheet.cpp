@@ -11,7 +11,8 @@ Spritesheet::Spritesheet(sprites::name newname, std::string pathtopng, int nimag
 	h = h/imagenumber;
     imagetypes = ntypes;
     w = w/ntypes;
-	origin = Vec(int(w/2), int(h/2));
+	origin_x = int(w/2);
+	origin_y = int(h/2);
 }
 
 Spritesheet::~Spritesheet()
@@ -19,19 +20,16 @@ Spritesheet::~Spritesheet()
     SDL_DestroyTexture(tex);
 }
 
-void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype)
+void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype, float imagescale)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
 	srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
-    float scale = 1;
-    if(!zoomed)
-        scale = r->getscale();
-	rect = {int(x - origin.x/scale), int(y - origin.y/scale), w, h};
-	if(origin.x==int(w/2) && origin.y==int(h/2))
-		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed);
+	rect = {int(x - origin_x*imagescale), int(y - origin_y*imagescale), int(w*imagescale), int(h*imagescale)};
+	if(origin_x==int(w/2) && origin_y==int(h/2))
+		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, true);
 	else
-		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin.x, origin.y);
+		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin_x*imagescale, origin_y*imagescale);
 }
 
 int Spritesheet::getimagenumber()
@@ -46,15 +44,22 @@ int Spritesheet::getimagetypes()
 
 void Spritesheet::setoriginx(int neworiginx)
 {
-	origin.x = neworiginx;
+	origin_x = neworiginx;
 }
 
 void Spritesheet::setoriginy(int neworiginy)
 {
-	origin.y = neworiginy;
+	origin_y = neworiginy;
 }
 
 Vec Spritesheet::getsize()
 {
 	return Vec(w, h);
+}
+
+sprites::name Spritesheet::getname()
+{
+	if(name == sprites::name::none)
+		std::cout<<"Warning: spritesheet with name none was called";
+	return name;
 }

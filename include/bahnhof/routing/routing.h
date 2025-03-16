@@ -24,12 +24,15 @@ public:
     void removeorders(int orderindexfrom, int orderindexto);
     void render(Rendering* r);
     int getindex(int orderid);
-    Tracks::Tracksystem* tracksystem;
+    std::vector<std::string> getorderdescriptions();
+    std::vector<int> getorderids();
+    std::vector<int> getordernumberstorender();
     std::string name = "New route";
     int selectedorderid = -1;
     std::vector<signalid> signals;
     std::vector<switchid> switches;
 private:
+    Tracks::Tracksystem* tracks;
     std::vector<std::unique_ptr<Order>> orders;
     int ordercounter = 0;
     std::vector<int> orderids;
@@ -39,10 +42,13 @@ class RouteManager
 {
 public:
     RouteManager(Tracks::Tracksystem* tracks);
-    void renderroutes(Rendering* r);
-    Route* addroute();
+    void addroute();
+    Route* getroute(int id);
+    std::vector<std::string> getroutenames();
+    std::vector<int> getrouteids();
+    int getnumberofroutes();
+private:
     Tracks::Tracksystem* tracksystem;
-    Route* selectedroute = nullptr;
     std::vector<std::unique_ptr<Route>> routes;
 };
 
@@ -53,11 +59,12 @@ enum ordertype
 struct Order
 {
     virtual ~Order() {};//std::cout<<"del order"<<std::endl;};
-    virtual void assignroute(Route* newroute);
+    virtual void assignroute(Route* newroute, Tracks::Tracksystem* tracksystem);
     virtual void render(Rendering* r, int number) {};
     void renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol={255,255,255,255}, SDL_Color textcol = {0,0,0,255});
     void invalidate();
     Route* route = nullptr; // initialized by route
+    Tracks::Tracksystem* tracks = nullptr; // initialized by route
     ordertype order;
     std::string description;
     int offset = 0;
@@ -67,7 +74,7 @@ struct Gotostate : public Order
 {
     Gotostate(State whichstate, bool mustpass=false);
     ~Gotostate();
-    void assignroute(Route* newroute);
+    void assignroute(Route* newroute, Tracks::Tracksystem* tracksystem);
     void render(Rendering* r, int number);
     State state;
     bool pass;
@@ -78,7 +85,7 @@ struct Setsignal : public Order
 {
     Setsignal(signalid whichsignal, int redgreenorflip=2);
     ~Setsignal();
-    void assignroute(Route* newroute);
+    void assignroute(Route* newroute, Tracks::Tracksystem* tracksystem);
     void render(Rendering* r, int number);
     signalid signal;
     int redgreenflip;
@@ -88,7 +95,7 @@ struct Setswitch : public Order
 {
     Setswitch(switchid whichswitch, int whichnodestate=-1);
     ~Setswitch();
-    void assignroute(Route* newroute);
+    void assignroute(Route* newroute, Tracks::Tracksystem* tracksystem);
     void render(Rendering* r, int number);
     switchid _switch;
     bool flip;

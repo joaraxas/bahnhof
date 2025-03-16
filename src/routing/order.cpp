@@ -5,11 +5,14 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/ui/ui.h"
 
 
-void Order::assignroute(Route* newroute)
+void Order::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 {
 	route = newroute;
+	tracks = tracksystem;
 }
 
 void Order::invalidate()
@@ -29,17 +32,17 @@ Gotostate::Gotostate(State whichstate, bool mustpass)
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
 }
 
-void Gotostate::assignroute(Route* newroute)
+void Gotostate::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 {
-	Order::assignroute(newroute);
-	route->tracksystem->references->trackorders.push_back(this);
-	posleft = getpos(*route->tracksystem, state, 12);
-	posright = getpos(*route->tracksystem, state,-12);
+	Order::assignroute(newroute, tracksystem);
+	tracks->references->trackorders.push_back(this);
+	posleft = getpos(*tracks, state, 12);
+	posright = getpos(*tracks, state,-12);
 }
 
 Gotostate::~Gotostate()
 {
-	route->tracksystem->references->removetrackorderreference(this);
+	tracks->references->removetrackorderreference(this);
 }
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
@@ -55,12 +58,12 @@ Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 		description = "Flip signal " + std::to_string(signal);
 }
 
-void Setsignal::assignroute(Route* newroute)
+void Setsignal::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 {
 	offset = 0;
-	Order::assignroute(newroute);
-	pos = getsignalpos(*route->tracksystem, signal);
-	route->tracksystem->references->signalorders.push_back(this);
+	Order::assignroute(newroute, tracksystem);
+	pos = getsignalpos(*tracks, signal);
+	tracks->references->signalorders.push_back(this);
 	for(int iSignal=0; iSignal<route->signals.size(); iSignal++)
 		if(route->signals[iSignal]==signal)
 			offset++;
@@ -69,7 +72,7 @@ void Setsignal::assignroute(Route* newroute)
 
 Setsignal::~Setsignal()
 {
-	route->tracksystem->references->removesignalorderreference(this);
+	tracks->references->removesignalorderreference(this);
 }
 
 Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
@@ -93,12 +96,12 @@ Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
 	}
 }
 
-void Setswitch::assignroute(Route* newroute)
+void Setswitch::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 {
 	offset = 0;
-	Order::assignroute(newroute);
-	pos = getswitchpos(*route->tracksystem, _switch);
-	route->tracksystem->references->switchorders.push_back(this);
+	Order::assignroute(newroute, tracksystem);
+	pos = getswitchpos(*tracks, _switch);
+	tracks->references->switchorders.push_back(this);
 	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
 		if(route->switches[iSwitch]==_switch)
 			offset++;
@@ -107,7 +110,7 @@ void Setswitch::assignroute(Route* newroute)
 
 Setswitch::~Setswitch()
 {
-	route->tracksystem->references->removeswitchorderreference(this);
+	tracks->references->removeswitchorderreference(this);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
@@ -153,17 +156,20 @@ Wipe::Wipe()
 void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)
 {
 	int x = int(pos.x); int y = int(pos.y);
-	SDL_Rect rect = {x,y,16,14};
+	InterfaceManager& ui = tracks->game->getui();
+	float scale = ui.getuirendering().getuiscale();
+	SDL_Rect rect = {x,y,int(16*scale),int(14*scale)};
 	if(!valid)
 		bgrcol.a *= 0.4;
 	SDL_SetRenderDrawColor(renderer, bgrcol.r, bgrcol.g, bgrcol.b, bgrcol.a);
-	r->renderfilledrectangle(&rect, true, false);
-	r->rendertext(std::to_string(number), x+1, y, textcol);
+	r->renderfilledrectangle(rect, true, false);
+	r->rendertext(std::to_string(number), x+1*scale, y, textcol);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 void Gotostate::render(Rendering* r, int number)
 {
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	r->renderline(posleft, posright);
 	if(posright.x>=posleft.x){
 		Order::renderlabel(r, posright, number);
@@ -175,7 +181,7 @@ void Gotostate::render(Rendering* r, int number)
 
 void Setswitch::render(Rendering* r, int number)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	Vec lineend = pos+Vec(12+18*offset,-7)/scale;
 	Vec inlabel = lineend+Vec(0+10,10)/scale;
 	Order::renderlabel(r, lineend, number, {0, 0, 0, 255}, {255, 255, 255, 0});
@@ -184,7 +190,7 @@ void Setswitch::render(Rendering* r, int number)
 
 void Setsignal::render(Rendering* r, int number)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	Vec lineend = pos+Vec(-8,12+16*offset)/scale;
 	SDL_Color bgrcol = {255, 0, 0, 255};
 	if(redgreenflip==1)

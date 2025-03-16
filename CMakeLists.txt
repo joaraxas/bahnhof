@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
 project(bahnhof VERSION 1.0)
 
+# If on Windows, set these paths to wherever you have SDL installed
+set(SDL2_PATH "C:\\mingw_dev_lib\\SDL2")
+set(SDL2_IMAGE_PATH "C:\\mingw_dev_lib\\SDL2")
+set(SDL2_TTF_PATH "C:\\mingw_dev_lib\\SDL2")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
@@ -16,6 +21,16 @@ add_executable(bahnhof
     src/game/gamestate.cpp
     src/game/game.cpp
     src/game/main.cpp
+    src/game/resources.cpp
+    src/ui/ui.cpp
+    src/ui/uirendering.cpp
+    src/ui/host.cpp
+    src/ui/panel.cpp
+    src/ui/element.cpp
+    src/ui/decoration.cpp
+    src/ui/button.cpp
+    src/ui/table.cpp
+    src/ui/tableline.cpp
     src/track/track.cpp
     src/track/tracksystem.cpp
     src/track/trackreferencing.cpp
@@ -28,10 +43,10 @@ add_executable(bahnhof
     src/routing/routemanager.cpp
     src/routing/route.cpp
     src/routing/order.cpp
-    src/rollingstock.cpp
+    src/rollingstock/rollingstock.cpp
+    src/rollingstock/train.cpp
+    src/rollingstock/trainmanager.cpp
     src/buildings.cpp
-    src/game/resources.cpp
-    src/train.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)

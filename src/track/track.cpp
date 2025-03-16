@@ -45,7 +45,7 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
 	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir(), previousnode->getpos());
-	if(isinf(radius)){
+	if(std::isinf(radius)){
 		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir(), nextnode->getpos());
 		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
@@ -63,7 +63,7 @@ State Track::getcloseststate(Vec pos)
 	State closeststate(id, 0, true);
 	Vec d = localcoords(pos, previousnode->getdir(), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
-	if(isinf(radius)){
+	if(std::isinf(radius)){
 		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
 			closeststate.alignedwithtrack = (dy<=0);
@@ -91,7 +91,7 @@ State Track::getcloseststate(Vec pos)
 float Track::getarclength(float nodedist)
 {
 	float arclength;
-	if(isinf(radius)){
+	if(std::isinf(radius)){
 		arclength = nodedist*norm(previousnode->getpos() - nextnode->getpos());
 	}
 	else{
@@ -131,7 +131,7 @@ Track* Track::previoustrack(){
 
 bool Track::isabovepreviousnode()
 {
-	if(isinf(radius)){
+	if(std::isinf(radius)){
 		if(abs(previousnode->getpos().y - nextnode->getpos().y)>1)
 			return previousnode->getpos().y >= nextnode->getpos().y;
 		else
@@ -218,13 +218,13 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 
 void Track::render(Rendering* r, int mode)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	//// banvall ////
 	/*if(nicetracks){
 		SDL_SetRenderDrawColor(renderer, 127,127,127,255);
 		float sleeperwidth = 4000/200;
 		int nSleepers = round(getarclength(1)/0.25);
-		if(isinf(radius)) nSleepers = round(getarclength(1));
+		if(std::isinf(radius)) nSleepers = round(getarclength(1));
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
 			Vec drawposl = getpos(nodedist, sleeperwidth/2);
@@ -262,7 +262,7 @@ void Track::render(Rendering* r, int mode)
 	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
-	if(!isinf(radius))
+	if(!std::isinf(radius))
 		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
 	float gauge = 0;
 	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
@@ -282,7 +282,7 @@ void Track::render(Rendering* r, int mode)
 	if(!nicetracks){
 		Vec midpoint = getpos(0.5);
 		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
-		if(isinf(radius))
+		if(std::isinf(radius))
 			radiustext = std::to_string(radius);
 		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
 		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14/scale, {255,255,255,255});

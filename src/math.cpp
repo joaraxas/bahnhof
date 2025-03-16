@@ -48,15 +48,15 @@ Vec Vec::operator/(float a)
 
 float norm(Vec v)
 {
-	return sqrt(v.x*v.x + v.y*v.y);
+	return std::sqrt(v.x*v.x + v.y*v.y);
 }
 
 Vec localcoords(Vec globalvec, float angle, Vec origin)
 {
 	// pass from left-hand system to right-hand and rotate by -angle
 	Vec localvec;
-	localvec.x = cos(angle)*(globalvec.x - origin.x) + sin(angle)*-(globalvec.y - origin.y);
-	localvec.y =-sin(angle)*(globalvec.x - origin.x) + cos(angle)*-(globalvec.y - origin.y);
+	localvec.x = std::cos(angle)*(globalvec.x - origin.x) + std::sin(angle)*-(globalvec.y - origin.y);
+	localvec.y =-std::sin(angle)*(globalvec.x - origin.x) + std::cos(angle)*-(globalvec.y - origin.y);
 	return localvec;
 }
 
@@ -64,8 +64,8 @@ Vec globalcoords(Vec localvec, float angle, Vec origin)
 {
 	// pass from right-hand system to left-hand and rotate by angle
 	Vec globalvec;
-	globalvec.x = cos(angle)*(localvec.x) - sin(angle)*(localvec.y);
-	globalvec.y = sin(angle)*(localvec.x) + cos(angle)*(localvec.y);
+	globalvec.x = std::cos(angle)*(localvec.x) - std::sin(angle)*(localvec.y);
+	globalvec.y = std::sin(angle)*(localvec.x) + std::cos(angle)*(localvec.y);
 	globalvec.y = -globalvec.y;
 	globalvec = globalvec + origin;
 	return globalvec;
@@ -80,7 +80,7 @@ float sign(float a)
 
 float truncate(float dir)
 {
-	return dir - pi*floor(dir/pi);
+	return dir - pi*std::floor(dir/pi);
 }
 
 int randint(int maxinclusive)

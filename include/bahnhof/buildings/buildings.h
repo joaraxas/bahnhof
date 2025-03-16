@@ -1,6 +1,8 @@
 #pragma once
 #include "bahnhof/resources/resources.h"
 
+class Storage;
+
 class Building
 {
 public:

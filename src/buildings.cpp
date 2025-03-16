@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include "bahnhof/common/math.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
@@ -45,8 +46,7 @@ void Building::update(int ms)
 void Building::render(Rendering* rendering)
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	SDL_Rect drawrect = rect;
-	rendering->renderfilledrectangle(&drawrect);
+	rendering->renderfilledrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 

@@ -5,7 +5,7 @@
 
 bool nicetracks = true;
 
-int main(){
+int main(int argv, char** args){
 	init();
 	Game game;
 	game.play();

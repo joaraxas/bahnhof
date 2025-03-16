@@ -57,7 +57,7 @@ void Node::disconnecttrack(Track* track, bool fromabove)
 
 void Node::render(Rendering* r)
 {
-	float scale = r->getscale();
+	float scale = r->getcamscale();
 	if(!nicetracks){
 		r->renderline(pos+Vec(-5,-5)/scale, pos+Vec(5,5)/scale);
 		r->renderline(pos+Vec(-5,5)/scale, pos+Vec(5,-5)/scale);

@@ -1,13 +1,10 @@
+#pragma once
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/graphics/sprite.h"
 
-class Storage;
-class Route;
-class Order;
-
 class Train;
-class InputManager;
+struct WagonInfo;
 
 namespace Tracks{
     class Tracksystem;
@@ -16,7 +13,7 @@ namespace Tracks{
 class Wagon
 {
 public:
-    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconame);
+    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconname);
     ~Wagon(); //TODO: should be virtual
     void travel(float pixels);
     virtual void update(int ms);
@@ -27,6 +24,7 @@ public:
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype* type);
     virtual float getpower();
+    virtual WagonInfo getinfo();
     Train* train;
     Vec pos;
     bool alignedforward = true;
@@ -34,9 +32,9 @@ public:
     int w;
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;
-    State state; //should be protected
+    State state;
     Sprite sprite;
-    Sprite icon;
+    Icon icon;
     ResourceManager* allresources = nullptr;
 private:
     resourcetype loadedresource = none;
@@ -54,7 +52,7 @@ public:
     float getpower();
 private:
     float P[2] = {0.2,0.2};
-    float maxspeed[2] = {90,180};
+    float maxspeed[2] = {90,180}; //backwards, forwards
     int imagenumber = 4;
     float imageindex = 0;
     float imagespeed = 2;
@@ -74,38 +72,4 @@ public:
     int loadwagon(resourcetype type, int amount);
 };
 
-
-class Train
-{
-public:
-    Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons, float newspeed);
-    void getinput(InputManager* input, int ms);
-    void update(int ms);
-    void checkcollision(int ms, Train* train);
-    void render(Rendering* r);
-    bool perform(int ms);
-    void proceed();
-    bool gas(int ms);
-    bool brake(int ms);
-    bool shiftdirection();
-    bool loadall();
-    bool unloadall();
-    State forwardstate();
-    State backwardstate();
-    bool split(int where, Route* assignedroute=nullptr);
-    void couple(Train& train, bool ismyback, bool ishisback);
-    Tracks::Tracksystem* tracksystem;
-    float speed;
-    bool gasisforward = true;
-    std::vector<Wagon*> wagons;
-    Route* route = nullptr;
-    int orderid = 0;
-    bool go = false;
-    bool wantstocouple = false;
-    bool selected = false;
-private:
-    bool checkifreachedstate(State goalstate, int ms);
-    Sprite light;
-    Game* game;
-};
 

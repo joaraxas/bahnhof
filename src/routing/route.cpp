@@ -5,10 +5,10 @@
 #include "bahnhof/routing/routing.h"
 
 
-Route::Route(Tracks::Tracksystem* tracks, std::string routename)
+Route::Route(Tracks::Tracksystem* tracksystem, std::string routename)
 {
 	name = routename;
-	tracksystem = tracks;
+	tracks = tracksystem;
 }
 
 int Route::getindex(int orderid)
@@ -73,7 +73,7 @@ int Route::insertorder(Order* order, int orderindex)
 {
 	int neworderid = ordercounter;
 	if(orderindex<0 || orderindex>=orderids.size()) orderindex = orderids.size()-1;
-	order->assignroute(this);
+	order->assignroute(this, tracks);
 	orders.emplace(orders.begin() + orderindex + 1, order);
 	orderids.insert(orderids.begin() + orderindex + 1, neworderid);
 	ordercounter++;
@@ -120,26 +120,42 @@ void Route::removeorders(int orderindexfrom, int orderindexto)
     switches.clear();
 	for(auto& order: orders)
 		if(order->valid)
-			order->assignroute(this);
+			order->assignroute(this, tracks);
+}
+
+std::vector<int> Route::getorderids()
+{
+	return orderids;
+}
+
+std::vector<int> Route::getordernumberstorender()
+{
+	std::vector<int> renderordernrs;
+	int renderordernr = 0;
+	for(int iOrder=0; iOrder<orderids.size(); iOrder++){
+		if(orders[iOrder]->order==gotostate)
+			renderordernr++;
+		if(renderordernr==0)
+			renderordernr = 1;
+		renderordernrs.push_back(renderordernr);
+	}
+	return renderordernrs;
+}
+
+std::vector<std::string> Route::getorderdescriptions()
+{
+	std::vector<std::string> orderdescriptions;
+	for(auto& order: orders)
+		orderdescriptions.push_back(order->description);
+	return orderdescriptions;
 }
 
 void Route::render(Rendering* r)
 {
-	if(orderids.empty())
-		r->rendertext("Route has no orders yet", SCREEN_WIDTH-300, 1*14, {0,0,0,0}, false);
-	else{
-		int renderordernr = 1;
-		if(orders[0]->order==gotostate)
-			renderordernr = 0;
+	if(! orderids.empty()){
+		std::vector<int> renderordernrs = getordernumberstorender();
 		for(int iOrder=0; iOrder<orderids.size(); iOrder++){
-			int oid = orderids[iOrder];
-			int x = SCREEN_WIDTH-300;
-			int y = (iOrder+1)*14;
-			Uint8 intsty = (oid==selectedorderid)*255;
-			if(orders[iOrder]->order==gotostate)
-				renderordernr++;
-			r->rendertext("(" + std::to_string(renderordernr) + ") " + orders[iOrder]->description, x, y, {intsty,intsty,intsty,0}, false);
-			orders[iOrder]->render(r, renderordernr);
+			orders[iOrder]->render(r, renderordernrs[iOrder]);
 		}
 	}
 }

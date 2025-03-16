@@ -7,6 +7,7 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
+bool allowretina = true;
 
 int init()
 {
@@ -24,7 +25,12 @@ int init()
 		success = false;
 		std::cout << "Failed to open SDL_Image, error code: " << res << ", error: " << IMG_GetError() << std::endl;
 	}
-	window = SDL_CreateWindow("train", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	int windowflags;
+	if(allowretina)
+		windowflags = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+	else
+		windowflags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+	window = SDL_CreateWindow("train", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, windowflags);
 	if(window==NULL){
 		success = false;
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
@@ -34,6 +40,7 @@ int init()
 		success = false;
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
 	}
+
 	SDL_SetRenderDrawColor(renderer, 150, 200, 75, 255);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	res = TTF_Init();
@@ -41,13 +48,21 @@ int init()
 		success = false;
 		std::cout << "Failed to open SDL_TTF, error code: " << res << ", error: " << TTF_GetError() << std::endl;
 	}
-	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", 12);
+	res = setfontsize(12);
+	if(res<0)
+		success = false;
+	return success;
+}
+
+int setfontsize(int fontsize)
+{
+	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", fontsize);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
-        success = false;
+        return -1;
     }
-	return success;
+	return 1;
 }
 
 SDL_Texture* loadimage(std::string path)
@@ -60,10 +75,10 @@ SDL_Texture* loadimage(std::string path)
 	return tex;	
 }
 
-SDL_Texture* loadtext(std::string text, SDL_Color color)
+SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 {
 	SDL_Surface* surf = nullptr;
-	surf = TTF_RenderUTF8_Solid(font, text.c_str(), color);
+	surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, maxwidth);
 	if(!surf){
 		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
 	}

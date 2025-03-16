@@ -10,6 +10,8 @@ class Setswitch;
 class Train;
 class Wagon;
 class Gamestate;
+class Game;
+class Rendering;
 
 namespace Tracks
 {
@@ -24,6 +26,8 @@ struct Tracksection
 {
     Tracksection() {};
     Tracksection(std::vector<Track*> t, std::vector<Node*> n) : tracks(t), nodes(n) {};
+    Tracksection& operator +=(const Tracksection& rhs);
+    friend Tracksection operator +(Tracksection lhs, const Tracksection& rhs){lhs+=rhs; return lhs;};
     std::vector<Track*> tracks;
     std::vector<Node*> nodes;
     std::unordered_map<Node*,State> tracksplits;
@@ -82,7 +86,9 @@ namespace Input
 {
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
     nodeid selectat(Tracksystem& tracksystem, Vec pos);
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);

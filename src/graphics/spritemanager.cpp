@@ -1,8 +1,10 @@
 #include<iostream>
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/graphics/rendering.h"
 
 
-SpriteManager::SpriteManager()
+SpriteManager::SpriteManager(Game* g) : game(g)
 {
 	using namespace sprites;
 	addspritesheet(openwagon, "rollingstock/openwagon.png");

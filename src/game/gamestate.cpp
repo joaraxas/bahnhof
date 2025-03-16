@@ -4,6 +4,8 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/trainmanager.h"
+#include "bahnhof/rollingstock/train.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
@@ -15,40 +17,22 @@ Gamestate::Gamestate(Game* whatgame)
 	game = whatgame;
 	money = 600;
 	newwagonstate = State(1, 0.2, true);
-	initjusttrack();
-	routing = new RouteManager(tracksystem.get());
-	inittrain(State(1,0.4,1));
+	inittracks();
+	routing = std::make_unique<RouteManager>(tracksystem.get());
+	trainmanager = std::make_unique<TrainManager>(tracksystem.get());
+	trainmanager->inittrain(State(1,0.8,1));
 
-	addtrainstoorphans();
-	
 	randommap();
 }
 
 Gamestate::~Gamestate()
 {
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++)
-		delete wagons[iWagon];
-	delete routing;
 }
 
 void Gamestate::update(int ms)
 {
 	Tracks::Signaling::update(*tracksystem, ms);
-
-	for(int iTrain=0; iTrain<trains.size(); iTrain++)
-		for(int jTrain=0; jTrain<trains.size(); jTrain++)
-			if(iTrain!=jTrain)
-				trains[iTrain]->checkcollision(ms, trains[jTrain].get());
-
-	for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
-		if(trains[iTrain]->wagons.size() == 0)
-			trains.erase(trains.begin()+iTrain);
-
-	for(int iTrain=0; iTrain<trains.size(); iTrain++)
-		trains[iTrain]->update(ms);
-
-	for(auto& wagon : wagons)
-		wagon->update(ms);
+	trainmanager->update(ms);
 
 	int lastmoney = money;
 	
@@ -58,16 +42,6 @@ void Gamestate::update(int ms)
 	revenue += money-lastmoney;
 
 	time += ms;
-}
-
-void Gamestate::addtrainstoorphans()
-{
-	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
-		if(!wagons[iWagon]->train){
-			trains.emplace_back(new Train(*tracksystem, {wagons[iWagon]}, 0));
-			std::cout<<"added train automatically"<<std::endl;
-		}
-	}
 }
 
 void Gamestate::randommap()
@@ -101,21 +75,9 @@ void Gamestate::randommap()
 	}
 }
 
-void Gamestate::initjusttrack()
+void Gamestate::inittracks()
 {
-	tracksystem = std::unique_ptr<Tracks::Tracksystem>(new Tracks::Tracksystem(*game, {200,700,900}, {250,250,450}));
-}
-
-void Gamestate::inittrain(State startstate)
-{
-	int nWagons = wagons.size();
-	wagons.emplace_back(new Locomotive(tracksystem.get(), startstate));
-	for(int iWagon=0; iWagon<3; iWagon++){
-		State state = Tracks::travel(*tracksystem, startstate, -(53+49)/2-iWagon*49);
-		wagons.emplace_back(new Openwagon(tracksystem.get(), state));
-	}
-	trains.emplace_back(new Train(*tracksystem, std::vector<Wagon*>(wagons.begin()+nWagons, wagons.end()), 0));
-	
-	Route* loadroute = routing->addroute();
-	trains.back()->route = loadroute;
+	std::vector<float> xs = {600,900,1100};
+	std::vector<float> ys = {300,300,400};
+	tracksystem = std::make_unique<Tracks::Tracksystem>(*game, xs, ys);
 }

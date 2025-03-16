@@ -7,10 +7,10 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/input.h"
-#include "bahnhof/common/timing.h"
+#include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/resources/storage.h"
 
@@ -44,49 +44,56 @@ void Rendering::render(Gamestate* gamestate)
 		storage->render(this);
 	Tracks::render(tracksystem, this);
 	game->getinputmanager().render(this, tracksystem);
-	for(auto& wagon : gamestate->wagons)
-		wagon->render(this);
-	if(gamestate->getrouting().selectedroute)
-		gamestate->getrouting().selectedroute->render(this);
-	else
-		gamestate->getrouting().renderroutes(this);
-	for(auto& train : gamestate->trains)
-		train->render(this);
+	gamestate->gettrainmanager().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 
-	rendertext(std::to_string(int(gamestate->money)) + " Fr", 20, 2*14, {static_cast<Uint8>(127*(gamestate->money<0)),static_cast<Uint8>(63*(gamestate->money>=0)),0,0}, false, false);
-	rendertext(std::to_string(int(gamestate->time*0.001/60)) + " min", 20, 3*14, {0,0,0,0}, false, false);
-	rendertext(std::to_string(int(60*float(gamestate->revenue)/float(gamestate->time*0.001/60))) + " Fr/h", 20, 4*14, {0,0,0,0}, false, false);
-	rendertext(std::to_string(game->gettimemanager().getfps()) + " fps", 20, 5*14, {0,0,0,0}, false, false);
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	int scalelinelength = 200;
-	renderline(Vec(20,SCREEN_HEIGHT-20), Vec(20+scalelinelength,SCREEN_HEIGHT-20), false);
-	renderline(Vec(20,SCREEN_HEIGHT-20-2), Vec(20,SCREEN_HEIGHT-20+2), false);
-	renderline(Vec(20+scalelinelength,SCREEN_HEIGHT-20-2), Vec(20+scalelinelength,SCREEN_HEIGHT-20+2), false);
-	rendertext(std::to_string(int(scalelinelength*0.001*150/getscale())) + " m", 20+scalelinelength*0.5-20, SCREEN_HEIGHT-20-14, {0,0,0,0}, false, false);
+	InterfaceManager& ui = game->getui();
+	ui.render(this);
+
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderPresent(renderer);
 }
 
-void Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed)
+SDL_Rect Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
 {
-	SDL_Texture* tex = loadtext(text, color);
+	SDL_Texture* tex = loadtext(text, color, maxwidth);
 	int w, h;
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	SDL_Rect rect = {x, y, w, h};
 	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
 	SDL_DestroyTexture(tex);
+	return rect;
+}
+
+SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
+{
+	TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_CENTER);
+	SDL_Texture* tex = loadtext(text, color, maxwidth);
+	int w, h;
+	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+	SDL_Rect rect = {x-int(w*0.5), y-int(h*0.5), w, h};
+	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+	SDL_DestroyTexture(tex);
+	TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_LEFT);
+	return rect;
 }
 
 void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
-	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+	if(originiscenter){
+		centerx = int(rect->w)*0.5;
+		centery = int(rect->h)*0.5;
 	}
+	Vec pos(rect->x+centerx, rect->y+centery);
 	if(zoomed){
 		rect->w *= cam->getscale();
 		rect->h *= cam->getscale();
+		centerx *= cam->getscale();
+		centery *= cam->getscale();
+	}
+	if(ported){
+		Vec screenpos = cam->screencoord(pos);
+		rect->x = screenpos.x-centerx; rect->y = screenpos.y-centery;
 	}
 	if(originiscenter)
 		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
@@ -107,33 +114,57 @@ void Rendering::renderline(Vec pos1, Vec pos2, bool ported)
 		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
-void Rendering::renderrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+void Rendering::renderrectangle(SDL_Rect rect, bool ported, bool zoomed)
 {
 	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+		Vec screenpos = cam->screencoord(Vec(rect.x, rect.y));
+		rect.x = screenpos.x; rect.y = screenpos.y;
 	}
 	if(zoomed){
-		rect->w *= cam->getscale();
-		rect->h *= cam->getscale();
+		rect.w *= cam->getscale();
+		rect.h *= cam->getscale();
 	}
-	SDL_RenderDrawRect(renderer, rect);
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Rendering::renderfilledrectangle(SDL_Rect* rect, bool ported, bool zoomed)
+void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 {
 	if(ported){
-		Vec screenpos = cam->screencoord(Vec(rect->x, rect->y));
-		rect->x = screenpos.x; rect->y = screenpos.y;
+		Vec screenpos = cam->screencoord(Vec(rect.x, rect.y));
+		rect.x = screenpos.x; rect.y = screenpos.y;
 	}
 	if(zoomed){
-		rect->w *= cam->getscale();
-		rect->h *= cam->getscale();
+		rect.w *= cam->getscale();
+		rect.h *= cam->getscale();
 	}
-	SDL_RenderFillRect(renderer, rect);
+	SDL_RenderFillRect(renderer, &rect);
 }
 
-float Rendering::getscale()
+Vec Rendering::getviewsize()
+{
+	// Returns renderer size in useful logical pixels
+	// Use this instead of SDL native functions
+	int windowwidthinpixels, windowheightinpixels;
+    SDL_GetRendererOutputSize(renderer, &windowwidthinpixels, &windowheightinpixels);
+	return Vec(windowwidthinpixels, windowheightinpixels);
+}
+
+int Rendering::getlogicalscale()
+{
+	// Returns ratio of logical to input pixels, which is 2 on retina displays and 1 otherwise.
+	// This function is only used to determine the initial UI scaling.
+	int windowwidth, windowheight;
+	SDL_GetWindowSize(window, &windowwidth, &windowheight);
+	int windowwidthinpixels, windowheightinpixels;
+	SDL_GetWindowSizeInPixels(window, &windowwidthinpixels, &windowheightinpixels);
+	int xscale = windowwidthinpixels/windowwidth;
+	int yscale = windowheightinpixels/windowheight;
+	if(xscale!=yscale)
+		std::cout<<"warning: Rendering::getlogicalsize() returns different yscale from xscale"<<std::endl;
+	return xscale;
+}
+
+float Rendering::getcamscale()
 {
 	return cam->getscale();
 }
