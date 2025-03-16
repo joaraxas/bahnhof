@@ -42,10 +42,7 @@ TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int widt
 void TextButton::render(Rendering* r)
 {
     Button::render(r);
-    SDL_Rect textrect = getglobalrect();
-    textrect.x += mintextoffset_x;   // this is to get line breaks right,
-    textrect.w -= 2*mintextoffset_x; // no need to set textrect.y as the render is centered vertically anyway
-    ui->getuirendering().rendertext(r, text, textrect, InvertedInfo, true);
+    ui->getuirendering().rendertext(r, text, getglobalrect(), InvertedInfo, true, mintextoffset_x, mintextoffset_y);
 }
 
 void Close::leftclick(Vec mousepos)

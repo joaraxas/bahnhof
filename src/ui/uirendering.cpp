@@ -34,17 +34,25 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
     return color;
 }
 
-SDL_Rect UIRendering::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered)
+SDL_Rect UIRendering::rendertext(Rendering* r, std::string text, SDL_Rect rect, UI::TextStyle style, bool centered, int margin_x, int margin_y)
 {
     SDL_Color color = getcolorfromstyle(style);
-    float scale = getuiscale();
+    rect.x += margin_x;
+    rect.w -= 2*margin_x;
+    rect.y += margin_y;
+    rect.h -= 2*margin_y;
     SDL_Rect absrect = uitoscreen(rect);
-    SDL_Rect textrect;
+    SDL_Rect screentextrect;
     if(centered)
-        textrect = r->rendercenteredtext(text, absrect.x+absrect.w*0.5, absrect.y+absrect.h*0.5, color, false, false, absrect.w);
+        screentextrect = r->rendercenteredtext(text, absrect.x+absrect.w*0.5, absrect.y+absrect.h*0.5, color, false, false, absrect.w);
     else
-        textrect = r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
-    return screentoui(textrect);
+        screentextrect = r->rendertext(text, absrect.x, absrect.y, color, false, false, absrect.w);
+    SDL_Rect textrect = screentoui(screentextrect);
+    textrect.x -= margin_x;
+    textrect.w += 2*margin_x;
+    textrect.y -= margin_y;
+    textrect.h += 2*margin_y;
+    return textrect;
 }
 
 SDL_Rect UIRendering::gettextsize(std::string text, SDL_Rect maxrect, int margin_x, int margin_y)

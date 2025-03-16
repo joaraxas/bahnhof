@@ -82,17 +82,17 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     int textpadding = 5;
     int namerowwidth = 60;
     SDL_Rect namerect = getglobalrect();
-    namerect = {namerect.x+textpadding, namerect.y+rowoffset, namerowwidth-2*textpadding, 100};
+    namerect.w = namerowwidth;
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
-    namerect = ui->getuirendering().rendertext(r, info.name, namerect, style);
-    rect.h = namerect.h+2*rowoffset;
+    namerect = ui->getuirendering().rendertext(r, info.name, namerect, style, false, textpadding, rowoffset);
+    rect.h = namerect.h;
     
     SDL_Rect trainiconrect = getglobalrect();
     trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
                               trainiconrect.y+rowoffset, 
                               trainiconrect.w-namerowwidth-2*textpadding, 
-                              namerect.h};
+                              namerect.h-2*rowoffset};
     rendertrainicons(r, *ui, info, trainiconrect);
     
     r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
