@@ -184,6 +184,7 @@ Vec InputManager::mapmousepos()
 
 Vec InputManager::screenmousepos()
 {
+    // use this function instead of SDL_GetMouseState to get mouse position in useful logical pixels
     int currentmousex, currentmousey;
     float logicalmousex, logicalmousey;
 	SDL_GetMouseState(&currentmousex, &currentmousey);

@@ -142,7 +142,8 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 
 Vec Rendering::getviewsize()
 {
-	// Returns renderer size in logical pixels
+	// Returns renderer size in useful logical pixels
+	// Use this instead of SDL native functions
 	int windowwidthinpixels, windowheightinpixels;
     SDL_GetRendererOutputSize(renderer, &windowwidthinpixels, &windowheightinpixels);
 	return Vec(windowwidthinpixels, windowheightinpixels);
@@ -150,6 +151,8 @@ Vec Rendering::getviewsize()
 
 int Rendering::getlogicalscale()
 {
+	// Returns ratio of logical to input pixels, which is 2 on retina displays and 1 otherwise.
+	// This function is only used to determine the initial UI scaling.
 	int windowwidth, windowheight;
 	SDL_GetWindowSize(window, &windowwidth, &windowheight);
 	int windowwidthinpixels, windowheightinpixels;
