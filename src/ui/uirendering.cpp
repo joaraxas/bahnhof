@@ -47,6 +47,18 @@ SDL_Rect UIRendering::rendertext(Rendering* r, std::string text, SDL_Rect rect, 
     return screentoui(textrect);
 }
 
+SDL_Rect UIRendering::gettextsize(std::string text, SDL_Rect maxrect, int margin_x, int margin_y)
+{
+    int maxtextuiwidth = maxrect.w - 2*margin_x;
+    SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextuiwidth*uiscale);
+    int textscreenwidth, textscreenheight;
+	SDL_QueryTexture(tex, NULL, NULL, &textscreenwidth, &textscreenheight);
+	SDL_DestroyTexture(tex);
+    int textuiwidth = textscreenwidth/uiscale;
+    int textuiheight = textscreenheight/uiscale;
+    return SDL_Rect({maxrect.x, maxrect.y, textuiwidth+2*margin_x, textuiheight+2*margin_y});
+}
+
 float UIRendering::getuiscale()
 {
     return uiscale;

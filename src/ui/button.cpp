@@ -33,16 +33,10 @@ void Button::render(Rendering* r)
 TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
 {
     text = newtext;
-    float scale = ui->getuirendering().getuiscale();
     rect.w = width;
     rect.h = 20;
-    int maxtextwidth = (rect.w - 2*mintextoffset_x);
-    SDL_Texture* tex =  loadtext(text, {0,0,0,255}, maxtextwidth*scale);
-    int textwidth, textheight;
-	SDL_QueryTexture(tex, NULL, NULL, &textwidth, &textheight);
-    int heightresultingfromtext = textheight/scale + 2*mintextoffset_y;
-    rect.h = fmax(rect.h, heightresultingfromtext);
-	SDL_DestroyTexture(tex);
+    SDL_Rect paddedtextrect = ui->getuirendering().gettextsize(text, rect, mintextoffset_x, mintextoffset_y);
+    rect.h = fmax(rect.h, paddedtextrect.h);
 }
 
 void TextButton::render(Rendering* r)

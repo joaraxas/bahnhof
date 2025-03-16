@@ -20,6 +20,7 @@ public:
     std::string text;
     SDL_Color color = {0,0,0,255};
     bool centered = true;
+    TextStyle style = Info;
 };
 
 class TrainIcons : public Element

@@ -70,6 +70,7 @@ class UIRendering{
 public:
     UIRendering(InterfaceManager& newui);
     SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false);
+    SDL_Rect gettextsize(std::string text, SDL_Rect maxrect, int margin_x=0, int margin_y=0);
     float getuiscale();
     void increaseuiscale();
     void decreaseuiscale();

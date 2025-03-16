@@ -10,11 +10,7 @@ namespace UI{
 
 void Text::render(Rendering* r)
 {
-    SDL_Rect screenrect = ui->getuirendering().uitoscreen(getglobalrect());
-    if(centered)
-        r->rendercenteredtext(text, int(screenrect.x+screenrect.w*0.5), int(screenrect.y+screenrect.h*0.5), color, false, false, screenrect.w);
-    else
-        r->rendertext(text, screenrect.x, screenrect.y, color, false, false, screenrect.w);
+    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered);
 }
 
 void TrainIcons::render(Rendering* r)
