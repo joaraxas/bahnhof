@@ -16,9 +16,10 @@ void InterfaceManager::update(int ms)
         dropdown->update(ms);
     }
     
-    // TODO: Develop proper deletion system to ensure no removal during iteration
-    for(auto it = panels.rbegin(); it!=panels.rend(); ++it)
-        (*it)->update(ms);
+    for(auto& panel : panels)
+        panel->update(ms);
+        
+    cleanup();
 }
 
 void InterfaceManager::render(Rendering* r)
@@ -81,6 +82,7 @@ bool InterfaceManager::click(Vec mousepos, int type)
             clickedpanel->click(mousepos, type);
         }
     }
+    cleanup();
     return clickedui;
 }
 
@@ -110,15 +112,22 @@ void InterfaceManager::addpanel(UI::Host* panel)
 
 void InterfaceManager::removepanel(UI::Host* panel)
 {
-    // TODO: Develop proper deletion system to ensure no removal during iteration
-    if(movingwindow==panel)
-        movingwindow = nullptr;
-    auto it = std::find_if(panels.begin(), panels.end(), 
-        [panel](const std::unique_ptr<UI::Host>& ptr){
-            return ptr.get() == panel;
-        });
-    if(it!=panels.end())
-        panels.erase(it);
+    panelstodelete.push_back(panel);
+}
+
+void InterfaceManager::cleanup()
+{
+    for(auto panel: panelstodelete){
+        if(movingwindow==panel)
+            movingwindow = nullptr;
+        auto it = std::find_if(panels.begin(), panels.end(), 
+            [panel](const std::unique_ptr<UI::Host>& ptr){
+                return ptr.get() == panel;
+            });
+        if(it!=panels.end())
+            panels.erase(it);
+    }
+    panelstodelete.clear();
 }
 
 void InterfaceManager::movepaneltofront(UI::Host* selectedpanel)

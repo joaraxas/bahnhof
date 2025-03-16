@@ -104,7 +104,9 @@ public:
     UI::Host* movingwindow = nullptr;
 private:
     UI::Host* getpanelat(Vec pos);
+    void cleanup();
     std::vector<std::unique_ptr<UI::Host>> panels;
+    std::vector<UI::Host*> panelstodelete;
     UI::Dropdown* dropdown = nullptr;
     Vec movingwindowoffset;
     Game* game;
