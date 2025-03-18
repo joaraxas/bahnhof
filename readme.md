@@ -2,15 +2,52 @@
 In this railway system simulator, your task is to build a logistics system to optimize the production, distribution and consumption of beer.
 ![Title picture](assets/png/backgrounds/bahnhoftitle0.png)
 
-Features include an automated signaling system, advanced switching including coupling and decoupling, a routing system basically constituting a programming language of its own, and fully simulated rail dynamics. More will follow.
+Features include an automated signaling system, advanced switching including coupling and decoupling, a routing system to program train behavior, and fully simulated rail dynamics. 
+More will follow.
 
 ### Build
-Create a `build` directory, then use cmake to generate the makefile and the binary.
-
 This project requires SDL2, available at https://www.libsdl.org/
-On Unix systems, the libraries are automatically found and linked if they are installed in a standard location. For Windows you need to manually edit the SDL paths in CMakeLists.txt.
+
+On Unix systems, the libraries are automatically found and linked if they are installed in a standard location. 
+For Windows you need to manually edit the `SDL2_PATH`, `SDL2_IMAGE_PATH`, and `SDL2_TTF_PATH` in CMakeLists.txt to wherever you have installed each of these libaries.
+
+Create a `build` folder in this directory, then use cmake to generate the makefile and the binary:
+
+```
+mkdir build
+cmake -S . -B build
+cmake --build build
+```
+
+and run the binary with 
+```
+build/bahnhof
+```
+### Gameplay
+Admittedly the gameplay is not entirely self-explanatory at the moment. 
+This will get better soon now that the UI is in place and as I create more graphics. 
+Here are the basics.
+
+Breweries (blue buildings) require hops from farms (green) to produce beer. 
+Beer should be delivered to cities (gray) to generate income.
+Wagons must stop within the designated areas and be ordered to unload/load all cargo via the train's route.
+
+When devising a route, right click on a piece of track to generate an order to travel there. 
+Right click on a switch to order setting the switch to its current state. 
+The train must be assigned the route and ordered to start it via its UI panel.
+
+Signals allow a routed train passage if the way up to the next signal is unblocked. 
+Only one train is allowed passage at a time. 
+The signaling system must be designed to prevent deadlocks; for example, build double tracks. 
+
+Constructing new wagons is not yet supported by the UI, but can be achieved with the keyboard buttons `Y`, `Q`, and `O`.
+Prepare a selected train for coupling with `G` and decouple wagons with the number buttons.
+
+The maximal train speed is determined by the curve radius, the locomotive orientation and whether the locomotive travels first in the train. 
+You can couple more locomotives after one another to haul longer trains faster.
 
 ### Contributing
-This is work in progress. I am designing as I go and there is plenty of room for improvement. Feel free to submit a pull request if you'd like to contribute and perhaps become a part of the project.
+This is work in progress and much will change as the project develops. 
+Feel free to submit a pull request if you'd like to contribute and become a part of the project.
 
-Joar Axås 2024
+Joar Axås 2025
