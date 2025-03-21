@@ -64,6 +64,15 @@ void Gamestate::randommap()
 		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
 		buildings.emplace_back(new Hopsfield(game, newpos));
 	}
+	for(int i=0; i<4; i++){
+		Vec newpos = randpos(200,200);
+		int storageextraw = randint(600);
+		int storageextrah = randint(600);
+		int storagex = newpos.x-randint(storageextraw);
+		int storagey = newpos.y-randint(storageextrah);
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, none, barley));
+		buildings.emplace_back(new Barleyfield(game, newpos));
+	}
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
 		int storageextraw = randint(600);

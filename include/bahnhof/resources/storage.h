@@ -1,4 +1,14 @@
-#include "resources.h"
+#pragma once
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
+#include<map>
+#include "bahnhof/common/math.h"
+#include "resourcetypes.h"
+
+class Game;
+class ResourceManager;
+class Rendering;
 
 class Storage
 {

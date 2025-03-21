@@ -1,5 +1,5 @@
 #pragma once
-#include "bahnhof/resources/resources.h"
+#include "bahnhof/resources/resourcetypes.h"
 
 class Storage;
 
@@ -30,6 +30,12 @@ class Hopsfield : public Building
 {
 public:
     Hopsfield(Game* game, Vec pos);
+};
+
+class Barleyfield : public Building
+{
+public:
+    Barleyfield(Game* game, Vec pos);
 };
 
 class City : public Building

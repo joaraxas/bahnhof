@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/resources/resources.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/input.h"
 #include "bahnhof/common/camera.h"

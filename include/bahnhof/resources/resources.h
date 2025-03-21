@@ -1,12 +1,8 @@
 #pragma once
-#include<map>
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/common/math.h"
+#include "bahnhof/resources/resourcetypes.h"
 
-enum resourcetype
-{
-    none=-1, beer, hops, barley
-};
 
 class Game;
 class Rendering;

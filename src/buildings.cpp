@@ -60,6 +60,11 @@ Hopsfield::Hopsfield(Game* game, Vec pos) : Building(game, pos.x, pos.y, 200, 20
 	color = {63, 127, 63, 255};
 }
 
+Barleyfield::Barleyfield(Game* game, Vec pos) : Building(game, pos.x, pos.y, 200, 200, none, barley)
+{
+	color = {127, 127, 31, 255};
+}
+
 City::City(Game* game, Vec pos) : Building(game, pos.x, pos.y, 100, 150, beer, none)
 {
 	color = {63, 63, 31, 255};
