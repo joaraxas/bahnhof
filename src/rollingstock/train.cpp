@@ -278,10 +278,11 @@ bool Train::loadall()
 	else for(auto w : wagons){
 		Storage* storage = getstorageatpoint(w->pos);
 		if(storage){
-			int unloadedamount = storage->unloadstorage(storage->provides, 1);
-			int loadedamount = w->loadwagon(storage->provides, unloadedamount);
+			resourcetype provided = storage->getfirstprovidedresource();
+			int unloadedamount = storage->unloadstorage(provided, 1);
+			int loadedamount = w->loadwagon(provided, unloadedamount);
 			if(loadedamount!=unloadedamount)
-				storage->loadstorage(storage->provides, unloadedamount-loadedamount);
+				storage->loadstorage(provided, unloadedamount-loadedamount);
 			if(loadedamount!=0)
 				done = false;
 		}
@@ -299,7 +300,7 @@ bool Train::unloadall()
 		if(storage){
 			resourcetype beingunloaded;
 			int unloadedamount = w->unloadwagon(&beingunloaded);
-			if(storage->accepts==beingunloaded){
+			if(storage->accepts(beingunloaded)){
 				int loadedamount = storage->loadstorage(beingunloaded, unloadedamount);
 				if(loadedamount==unloadedamount && loadedamount!=0)
 					done = false;

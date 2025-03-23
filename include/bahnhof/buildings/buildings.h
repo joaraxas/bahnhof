@@ -1,4 +1,5 @@
 #pragma once
+#include<set>
 #include "bahnhof/resources/resourcetypes.h"
 
 class Storage;
@@ -6,7 +7,7 @@ class Storage;
 class Building
 {
 public:
-    Building(Game* game, int x, int y, int w, int h, resourcetype need, resourcetype production);
+    Building(Game* game, int x, int y, int w, int h, std::set<resourcetype> need, std::set<resourcetype> production);
     virtual void render(Rendering* rendering);
     void update(int ms);
 protected:
@@ -16,8 +17,8 @@ private:
     SDL_Rect rect;
     int timeleft = 3000;
     Game* game;
-    resourcetype wants;
-    resourcetype makes;
+    std::set<resourcetype> wants;
+    std::set<resourcetype> makes;
 };
 
 class Brewery : public Building

@@ -52,7 +52,7 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, hops, beer));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildings.emplace_back(new Brewery(game, newpos));
 	}
 	for(int i=0; i<4; i++){
@@ -61,7 +61,7 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, none, hops));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildings.emplace_back(new Hopsfield(game, newpos));
 	}
 	for(int i=0; i<4; i++){
@@ -70,7 +70,7 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, none, barley));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildings.emplace_back(new Barleyfield(game, newpos));
 	}
 	for(int i=0; i<6; i++){
@@ -79,7 +79,7 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400, beer, none));
+		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildings.emplace_back(new City(game, newpos));
 	}
 }

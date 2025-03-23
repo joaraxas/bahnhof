@@ -46,12 +46,10 @@ void Resource::render(Rendering* r, Vec pos)
 	icon.render(r, pos);
 }
 
-Storage::Storage(Game* whatgame, int x, int y, int w, int h, resourcetype _accepts, resourcetype _provides)
+Storage::Storage(Game* whatgame, int x, int y, int w, int h)
 {
 	game = whatgame;
 	rect = {x, y, w, h};
-	accepts = _accepts;
-	provides = _provides;
 }
 
 void Storage::render(Rendering* r)
@@ -91,6 +89,11 @@ void Storage::render(Rendering* r)
 	}
 }
 
+bool Storage::containspoint(Vec pos)
+{
+	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
+}
+
 int Storage::loadstorage(resourcetype resource, int amount)
 {
 	if(resource!=none){
@@ -118,18 +121,37 @@ int Storage::unloadstorage(resourcetype resource, int amount)
 	return unloadedamount;
 }
 
-bool Storage::containspoint(Vec pos)
+bool Storage::accepts(resourcetype resource)
 {
-	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
+	return acceptedresources.contains(resource);
 }
 
-resourcetype Storage::getfirststoredresource()
+bool Storage::provides(resourcetype resource)
 {
-	if(storedresources.size()>0)
-		return storedresources.begin()->first;
-	else
-		return none;
+	return providedresources.contains(resource);
 }
+
+void Storage::setaccepting(resourcetype resource, bool shouldaccept)
+{
+	if(shouldaccept)
+		acceptedresources.insert(resource);
+	else
+		acceptedresources.erase(resource);
+}
+
+void Storage::setproviding(resourcetype resource, bool shouldprovide)
+{
+	if(shouldprovide)
+		providedresources.insert(resource);
+	else
+		providedresources.erase(resource);
+}
+
+resourcetype Storage::getfirstprovidedresource()
+{
+	return *providedresources.begin();
+}
+
 
 Storage* getstorageatpoint(Vec pos)
 {
