@@ -44,14 +44,28 @@ int Table::getlineindexat(Vec mousepos)
 void Table::render(Rendering* r)
 {
     SDL_Rect maxarea = {0,0,rect.w,rect.h};
+
+    float scale = ui->getuirendering().getuiscale();
+	SDL_Texture* result = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ceil(maxarea.w*scale), ceil(maxarea.h*scale));
+  	SDL_SetTextureBlendMode(result, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderTarget(renderer, result);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    SDL_RenderFillRect(renderer, NULL);
+
     for(auto& line: lines){
         line->render(r, maxarea);
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
         if(maxarea.h<=0)
-            return;
+            break;
     }
+
+    SDL_SetTextureAlphaMod(result, 255);
+	SDL_SetRenderTarget(renderer, NULL);
+    SDL_Rect global = getglobalrect();
+    ui->getuirendering().rendertexture(r, result, &global);
+    SDL_DestroyTexture(result);
 }
 
 Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)

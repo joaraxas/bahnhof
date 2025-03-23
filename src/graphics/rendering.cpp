@@ -50,6 +50,18 @@ void Rendering::render(Gamestate* gamestate)
 	InterfaceManager& ui = game->getui();
 	ui.render(this);
 
+	SDL_Texture* newtex = loadimage("rollingstock/refrigeratorcar.png");
+	SDL_Texture* result = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 30, 60);          
+  	SDL_SetTextureBlendMode(result, SDL_BLENDMODE_BLEND);
+	int w, h;
+	SDL_QueryTexture(newtex, NULL, NULL, &w, &h);
+	SDL_Rect rect = {0,0,w,h};
+	SDL_SetRenderTarget(renderer, result);
+	rendertexture(newtex, &rect);
+	SDL_Rect endrect = {20,20,30,60};
+	SDL_SetRenderTarget(renderer, NULL);
+	rendertexture(result, &endrect);
+
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderPresent(renderer);
 }

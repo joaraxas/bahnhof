@@ -29,9 +29,7 @@ TableTextLine::TableTextLine(Host* newpanel, Table* newtable, std::string newstr
 void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect = maxarea;
-    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getglobalrect(), style);
-    if(!nicetracks)
-        r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style);
     rect.h = textrect.h;
 }
 
@@ -43,7 +41,7 @@ void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableTextLine::render(r, maxarea);
     SDL_SetRenderDrawColor(renderer,0,0,0,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
 }
 
 OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
@@ -62,7 +60,7 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
         style = Info;
     TableTextLine::render(r, maxarea, style);
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -81,21 +79,21 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     int rowoffset = 2;
     int textpadding = 5;
     int namerowwidth = 60;
-    SDL_Rect namerect = getglobalrect();
+    SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
     SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
     namerect = ui->getuirendering().rendertext(r, info.name, namerect, style, false, textpadding, rowoffset);
     rect.h = namerect.h;
     
-    SDL_Rect trainiconrect = getglobalrect();
+    SDL_Rect trainiconrect = getlocalrect();
     trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
                               trainiconrect.y+rowoffset, 
                               trainiconrect.w-namerowwidth-2*textpadding, 
                               namerect.h-2*rowoffset};
     rendertrainicons(r, *ui, info, trainiconrect);
     
-    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
 }
 
 } //end namespace UI

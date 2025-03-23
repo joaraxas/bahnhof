@@ -8,6 +8,7 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
 bool allowretina = true;
+SDL_BlendMode textblendmode = SDL_BLENDMODE_NONE;
 
 int init()
 {
@@ -35,7 +36,7 @@ int init()
 		success = false;
 		std::cout << "Failed to create window: " << SDL_GetError() << std::endl;
 	}
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
 	if(renderer==NULL){
 		success = false;
 		std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
@@ -87,6 +88,8 @@ SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 	if(!tex){
 		std::cout << "Failed to load texture from surface with text " << text << ": " << IMG_GetError() << std::endl;
 	}
+	else if(SDL_GetRenderTarget(renderer)!=NULL)
+		SDL_SetTextureBlendMode(tex, textblendmode);
     SDL_FreeSurface(surf);
 	return tex;	
 }

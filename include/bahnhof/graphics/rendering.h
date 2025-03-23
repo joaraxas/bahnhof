@@ -13,6 +13,7 @@ const int MAP_HEIGHT = SCREEN_HEIGHT*64;
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern TTF_Font* font;
+extern SDL_BlendMode textblendmode;
 
 extern bool nicetracks;
 
