@@ -9,6 +9,7 @@ set(SDL2_TTF_PATH "C:\\mingw_dev_lib\\SDL2")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
+    src/main.cpp
     src/math.cpp
     src/graphics/rendering.cpp
     src/graphics/graphics.cpp
@@ -20,7 +21,6 @@ add_executable(bahnhof
     src/game/timing.cpp
     src/game/gamestate.cpp
     src/game/game.cpp
-    src/game/main.cpp
     src/game/resources.cpp
     src/ui/ui.cpp
     src/ui/uirendering.cpp
