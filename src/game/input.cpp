@@ -130,10 +130,16 @@ void InputManager::handle(int ms, int mslogic){
             }
             case SDL_MOUSEWHEEL:{
                 if(e.wheel.y > 0){
-                    cam.zoomin(screenmousepos());
+                    if(ui.scroll(screenmousepos(), e.wheel.y))
+                        {}
+                    else
+                        cam.zoomin(screenmousepos());
                 }
                 if(e.wheel.y < 0){
-                    cam.zoomout(screenmousepos());
+                    if(ui.scroll(screenmousepos(), e.wheel.y))
+                        {}
+                    else
+                        cam.zoomout(screenmousepos());
                 }
                 break;
             }

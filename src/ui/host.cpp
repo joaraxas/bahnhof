@@ -81,6 +81,14 @@ void Host::click(Vec pos, int type)
 	}
 }
 
+void Host::scroll(Vec pos, int distance)
+{
+	Element* clickedelement = getelementat(pos);
+	if(clickedelement){
+		clickedelement->scroll(pos, distance);
+	}
+}
+
 void Host::mousepress(Vec pos, int mslogic, int type)
 {
 	Element* clickedelement = getelementat(pos);

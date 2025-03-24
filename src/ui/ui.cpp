@@ -86,6 +86,26 @@ bool InterfaceManager::click(Vec mousepos, int type)
     return clickedui;
 }
 
+bool InterfaceManager::scroll(Vec mousepos, int distance)
+{
+    bool clickedui = false;
+    if(dropdown){
+        if(dropdown->checkclick(mousepos)){
+            clickedui = true;
+            dropdown->scroll(mousepos, distance);
+        }
+    }
+    if(!clickedui){
+        UI::Host* clickedpanel = getpanelat(mousepos);
+        if(clickedpanel){
+            clickedui = true;
+            clickedpanel->scroll(mousepos, distance);
+        }
+    }
+    cleanup();
+    return clickedui;
+}
+
 void InterfaceManager::leftbuttonup(Vec mousepos)
 {
     movingwindow = nullptr;

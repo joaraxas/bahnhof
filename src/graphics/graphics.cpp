@@ -8,7 +8,6 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
 bool allowretina = true;
-SDL_BlendMode textblendmode = SDL_BLENDMODE_NONE;
 
 int init()
 {
@@ -89,7 +88,7 @@ SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 		std::cout << "Failed to load texture from surface with text " << text << ": " << IMG_GetError() << std::endl;
 	}
 	else if(SDL_GetRenderTarget(renderer)!=NULL)
-		SDL_SetTextureBlendMode(tex, textblendmode);
+		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_NONE); // This avoids a black outline on text rendered to a transparent surface
     SDL_FreeSurface(surf);
 	return tex;	
 }

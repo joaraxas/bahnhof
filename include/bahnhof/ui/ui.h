@@ -28,6 +28,7 @@ public:
     virtual bool checkclick(Vec pos);
     virtual void mousehover(Vec pos, int ms) {};
     virtual void leftclick(Vec pos) {};
+    virtual void scroll(Vec pos, int distance) {};
     virtual void leftpressed(Vec pos, int mslogic) {};
     virtual void update(int ms) {};
     virtual void render(Rendering*) {};
@@ -47,6 +48,7 @@ public:
     bool checkclick(Vec pos);
     void mousehover(Vec pos, int ms);
     void click(Vec pos, int type);
+    void scroll(Vec pos, int distance);
     void mousepress(Vec pos, int mslogic, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
@@ -93,6 +95,7 @@ public:
     void update(int ms);
     bool mousehover(Vec pos, int ms);
     bool click(Vec pos, int type);
+    bool scroll(Vec pos, int distance);
     void leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);

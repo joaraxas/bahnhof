@@ -72,10 +72,12 @@ public:
     Table(Host*, SDL_Rect newrect);
     virtual ~Table() {std::cout<<"del table"<<std::endl;};
     bool checkclick(Vec pos);
+    void scroll(Vec pos, int distance);
     virtual void render(Rendering*);
 protected:
     int getlineindexat(Vec pos);
     std::vector<std::unique_ptr<TableLine>> lines;
+    int toplineindex = 0;
 };
 
 class Dropdown : public Table

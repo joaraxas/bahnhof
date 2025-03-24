@@ -30,10 +30,19 @@ bool Table::checkclick(Vec mousepos)
     return false;
 }
 
+void Table::scroll(Vec pos, int distance)
+{
+    if(distance>0)
+        toplineindex = std::fmax(toplineindex-1, 0);
+    if(distance<0)
+        toplineindex = std::fmin(toplineindex+1, lines.size()-1);
+}
+
 int Table::getlineindexat(Vec mousepos)
 {
     int lineindex = -1;
-    for(int index=0; index<lines.size(); index++)
+    int numlines = lines.size();
+    for(int index=toplineindex; index<numlines; index++)
         if(lines[index]->checkclick(mousepos)){
             lineindex = index;
             break;
@@ -52,7 +61,8 @@ void Table::render(Rendering* r)
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     SDL_RenderFillRect(renderer, NULL);
 
-    for(auto& line: lines){
+    for(int index=toplineindex; index<lines.size(); index++){
+        auto& line = lines[index];
         line->render(r, maxarea);
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
