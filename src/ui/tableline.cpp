@@ -33,8 +33,6 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
     rect.x = maxarea.x;
     rect.y = maxarea.y;
     ui->getuirendering().rendertext(r, str, getlocalrect(), style);
-    // SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style);
-    // rect.h = textrect.h;
 }
 
 RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
