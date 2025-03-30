@@ -12,7 +12,7 @@ TableLine::TableLine(Host* newpanel, Table* newtable) : Element(newpanel)
 {
     table = newtable;
     SDL_Rect tablerect = table->getlocalrect();
-    rect = {tablerect.x, tablerect.y, 100, 20};
+    rect = {tablerect.x, tablerect.y, tablerect.w, 20};
 }
 
 SDL_Rect TableLine::getglobalrect()
@@ -24,13 +24,17 @@ SDL_Rect TableLine::getglobalrect()
 TableTextLine::TableTextLine(Host* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
 {
     str = newstr;
+    SDL_Rect textrect = ui->getuirendering().gettextsize(str, rect, 1, 1);
+    rect.h = textrect.h;
 }
 
 void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
-    rect = maxarea;
-    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style);
-    rect.h = textrect.h;
+    rect.x = maxarea.x;
+    rect.y = maxarea.y;
+    ui->getuirendering().rendertext(r, str, getlocalrect(), style);
+    // SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style);
+    // rect.h = textrect.h;
 }
 
 RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :

@@ -32,10 +32,32 @@ bool Table::checkclick(Vec mousepos)
 
 void Table::scroll(Vec pos, int distance)
 {
-    if(distance>0)
-        toplineindex = std::fmax(toplineindex-1, 0);
-    if(distance<0)
+    linescrolloffset -= 3*distance;
+
+    int lineheightleft = 0;
+    for(int index=toplineindex; index<lines.size(); index++){
+        lineheightleft += lines[index]->getlocalrect().h;
+        if(lineheightleft>rect.h+linescrolloffset){
+            lineheightleft = -1;
+            break;
+        }
+    }
+    if(lineheightleft != -1){
+        linescrolloffset = lineheightleft - rect.h;
+    }
+
+    while(linescrolloffset > lines[toplineindex]->getlocalrect().h){
+        linescrolloffset = linescrolloffset - lines[toplineindex]->getlocalrect().h;
         toplineindex = std::fmin(toplineindex+1, lines.size()-1);
+    }
+    while(linescrolloffset < 0){
+        if(toplineindex == 0)
+            linescrolloffset = 0;
+        else{
+            toplineindex = std::fmax(toplineindex-1, 0);
+            linescrolloffset = linescrolloffset + lines[toplineindex]->getlocalrect().h;
+        }
+    }
 }
 
 int Table::getlineindexat(Vec mousepos)
@@ -52,7 +74,7 @@ int Table::getlineindexat(Vec mousepos)
 
 void Table::render(Rendering* r)
 {
-    SDL_Rect maxarea = {0,0,rect.w,rect.h};
+    SDL_Rect maxarea = {0,-linescrolloffset,rect.w,rect.h};
 
     float scale = ui->getuirendering().getuiscale();
 	SDL_Texture* result = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ceil(maxarea.w*scale), ceil(maxarea.h*scale));
@@ -67,7 +89,7 @@ void Table::render(Rendering* r)
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
-        if(maxarea.h<=0)
+        if(maxarea.y>=rect.h)
             break;
     }
 

@@ -78,6 +78,7 @@ protected:
     int getlineindexat(Vec pos);
     std::vector<std::unique_ptr<TableLine>> lines;
     int toplineindex = 0;
+    int linescrolloffset = 0;
 };
 
 class Dropdown : public Table
