@@ -28,10 +28,13 @@ class TrainIcons : public Element
 public:
     TrainIcons(Host* p, SDL_Rect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
+    void mousehover(Vec pos, int ms);
+    void leftclick(Vec mousepos);
 private:
     Train& train;
+    std::vector<SDL_Rect> iconrects;
 };
 
-SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect rect);
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect rect);
 
 }

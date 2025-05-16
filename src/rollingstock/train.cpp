@@ -366,28 +366,26 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 
 bool Train::split(int where, Route* assignedroute)
 {
-	bool splitsucceed = true;
-	if(speed!=0)
-		splitsucceed = false;
-	else if(wagons.size()>where){
-		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
-		if(gasisforward){
-			Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
-			wagons = {wagons.begin(), wagons.begin() + where};
-			trainmanager.addtrain(newtrain);
-			newtrain->route = assignedroute;
-		}
-		else{
-			Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()});
-			std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
-			wagons = {wagons.rbegin(), wagons.rbegin() + where};
-			std::reverse(wagons.begin(), wagons.end());
-			trainmanager.addtrain(newtrain);
-			newtrain->route = assignedroute;
-		}
-		std::cout << "split" << std::endl;
+	if(speed!=0 || where<1)
+		return false;
+	where = std::fmin(where, wagons.size()-1);
+	TrainManager& trainmanager = game->getgamestate().gettrainmanager();
+	if(gasisforward){
+		Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
+		wagons = {wagons.begin(), wagons.begin() + where};
+		trainmanager.addtrain(newtrain);
+		newtrain->route = assignedroute;
 	}
-	return splitsucceed;
+	else{
+		Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()});
+		std::reverse(newtrain->wagons.begin(), newtrain->wagons.end());
+		wagons = {wagons.rbegin(), wagons.rbegin() + where};
+		std::reverse(wagons.begin(), wagons.end());
+		trainmanager.addtrain(newtrain);
+		newtrain->route = assignedroute;
+	}
+	std::cout << "split" << std::endl;
+	return true;
 }
 
 TrainInfo Train::getinfo(){

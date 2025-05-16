@@ -15,10 +15,32 @@ void Text::render(Rendering* r)
 
 void TrainIcons::render(Rendering* r)
 {
-    rendertrainicons(r, *ui, train.getinfo(), getglobalrect());
+    iconrects = rendertrainicons(r, *ui, train.getinfo(), getglobalrect());
 }
 
-SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
+void TrainIcons::mousehover(Vec pos, int ms)
+{
+    return;
+}
+    
+void TrainIcons::leftclick(Vec mousepos)
+{
+    int wheretosplit = 0;
+    mousepos = ui->getuirendering().screentoui(mousepos);
+    for(int iRect=0; iRect<iconrects.size(); iRect++){
+        SDL_Rect& rect = iconrects[iRect];
+	    if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
+            wheretosplit = iRect + 1;
+            break;
+        }
+    }
+    if(!train.gasisforward){
+        wheretosplit = iconrects.size()-wheretosplit+1;
+    }
+    train.split(wheretosplit, nullptr);
+}
+
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect maxrect)
 {
     SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
     auto scale = ui.getuirendering().getuiscale();
@@ -27,13 +49,16 @@ SDL_Rect rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SD
     Icon wagonicon;
     wagonicon.ported = false;
     int icon_x = 0;
+    std::vector<SDL_Rect> iconuirects;
     for(WagonInfo& wagoninfo : info.wagoninfos){
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
         Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5, screenrect.y+screenrect.h*0.5));
+        SDL_Rect iconrect = {screenrect.x+icon_x, int(screenrect.y+screenrect.h*0.5-iconsize.y*0.5), int(iconsize.x), int(iconsize.y)};
+        wagonicon.render(r, Vec(iconrect.x+iconsize.x*0.5, iconrect.y+iconsize.y*0.5));
+        iconuirects.push_back(ui.getuirendering().screentoui(iconrect));
         icon_x += iconsize.x + iconoffset;
     }
-    return maxrect;
+    return iconuirects;
 }
 
 }
