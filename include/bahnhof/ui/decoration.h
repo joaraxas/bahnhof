@@ -31,10 +31,11 @@ public:
     void mousehover(Vec pos, int ms);
     void leftclick(Vec mousepos);
 private:
+    int getwagonidatmousepos(Vec mousepos);
     Train& train;
     std::vector<SDL_Rect> iconrects;
 };
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, TrainInfo info, SDL_Rect rect);
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect rect);
 
 }

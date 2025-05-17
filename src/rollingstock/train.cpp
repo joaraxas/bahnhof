@@ -364,7 +364,7 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 
 bool Train::split(int where, Route* assignedroute)
 {
-	if(speed!=0 || where<1)
+	if(speed!=0 || where<1 || wagons.size()<=1)
 		return false;
 	where = std::fmin(where, wagons.size()-1);
 	TrainManager& trainmanager = game->getgamestate().gettrainmanager();
