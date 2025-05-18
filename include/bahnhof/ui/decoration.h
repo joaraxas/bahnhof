@@ -34,8 +34,9 @@ private:
     int getwagonidatmousepos(Vec mousepos);
     Train& train;
     std::vector<SDL_Rect> iconrects;
+    int rendersplitafterwagonid = -1;
 };
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect rect);
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect rect, int splitid=-1);
 
 }

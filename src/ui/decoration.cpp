@@ -15,15 +15,17 @@ void Text::render(Rendering* r)
 
 void TrainIcons::render(Rendering* r)
 {
-    iconrects = rendertrainicons(r, *ui, train.getinfo().wagoninfos, getglobalrect());
+    TrainInfo traininfo = train.getinfo();
+    int splitid = std::fmin(rendersplitafterwagonid, traininfo.wagoninfos.size()-2);
+    iconrects = rendertrainicons(r, *ui, traininfo.wagoninfos, getglobalrect(), splitid);
+    rendersplitafterwagonid = -1;
 }
 
 void TrainIcons::mousehover(Vec pos, int ms)
 {
-    int wagonid = getwagonidatmousepos(pos);
-    return;
+    rendersplitafterwagonid = getwagonidatmousepos(pos);
 }
-    
+
 void TrainIcons::leftclick(Vec mousepos)
 {
     int wagonid = getwagonidatmousepos(mousepos);
@@ -50,21 +52,25 @@ int TrainIcons::getwagonidatmousepos(Vec mousepos)
     return -1;
 }
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect maxrect)
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect maxrect, int splitid)
 {
     SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
     auto scale = ui.getuirendering().getuiscale();
     int iconoffset = 2*scale;
+    int splitoffset = 0;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
     Icon wagonicon;
     wagonicon.ported = false;
     int icon_x = 0;
     std::vector<SDL_Rect> iconuirects;
-    for(WagonInfo& wagoninfo : wagoninfos){
+    for(int iWagon = 0; iWagon<wagoninfos.size(); iWagon++){
+        WagonInfo& wagoninfo = wagoninfos[iWagon];
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
+        if(splitid>=0 && iWagon>splitid)
+            splitoffset = 5*scale;
         Vec iconsize = wagonicon.getsize();
-        SDL_Rect iconrect = {screenrect.x+icon_x, int(screenrect.y+screenrect.h*0.5-iconsize.y*0.5), int(iconsize.x), int(iconsize.y)};
-        wagonicon.render(r, Vec(iconrect.x+iconsize.x*0.5, iconrect.y+iconsize.y*0.5));
+        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5+splitoffset, screenrect.y+screenrect.h*0.5));
+        SDL_Rect iconrect = {screenrect.x+icon_x, screenrect.y, int(iconsize.x+iconoffset), screenrect.h};
         iconuirects.push_back(ui.getuirendering().screentoui(iconrect));
         icon_x += iconsize.x + iconoffset;
     }
