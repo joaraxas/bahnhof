@@ -136,7 +136,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	SDL_Rect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {column_2_x, columns_y+100+elementdistance_y, 100, 30};
+	SDL_Rect trainiconsrect = {column_2_x, columns_y+100+elementdistance_y, 200, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
 	int column_3_x = column_2_x + 100 + elementdistance_x;

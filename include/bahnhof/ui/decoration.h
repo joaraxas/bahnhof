@@ -37,6 +37,6 @@ private:
     int rendersplitafterwagonid = -1;
 };
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect rect, int splitid=-1);
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo>& wagoninfos, SDL_Rect rect, int splitid=-1);
 
 }

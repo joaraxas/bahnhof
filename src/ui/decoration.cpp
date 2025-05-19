@@ -16,14 +16,13 @@ void Text::render(Rendering* r)
 void TrainIcons::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
-    int splitid = std::fmin(rendersplitafterwagonid, traininfo.wagoninfos.size()-2);
-    iconrects = rendertrainicons(r, *ui, traininfo.wagoninfos, getglobalrect(), splitid);
+    iconrects = rendertrainicons(r, *ui, traininfo.wagoninfos, getglobalrect(), rendersplitafterwagonid);
     rendersplitafterwagonid = -1;
 }
 
 void TrainIcons::mousehover(Vec pos, int ms)
 {
-    rendersplitafterwagonid = getwagonidatmousepos(pos);
+    rendersplitafterwagonid = std::fmin(getwagonidatmousepos(pos), train.getinfo().wagoninfos.size()-2);
 }
 
 void TrainIcons::leftclick(Vec mousepos)
@@ -32,7 +31,7 @@ void TrainIcons::leftclick(Vec mousepos)
     if(wagonid<0) return;
     int wheretosplit = 0;
     if(!train.gasisforward){
-        wheretosplit = iconrects.size()-wagonid;
+        wheretosplit = iconrects.size()-wagonid-1;
     }
     else{
         wheretosplit = wagonid + 1;
@@ -52,7 +51,7 @@ int TrainIcons::getwagonidatmousepos(Vec mousepos)
     return -1;
 }
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo> wagoninfos, SDL_Rect maxrect, int splitid)
+std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo>& wagoninfos, SDL_Rect maxrect, int splitid)
 {
     SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
     auto scale = ui.getuirendering().getuiscale();
