@@ -34,14 +34,13 @@ Wagons must stop within the designated areas and be ordered to unload/load all c
 
 When devising a route, right click on a piece of track to generate an order to travel there. 
 Right click on a switch to order setting the switch to its current state. 
-The train must be assigned the route and ordered to start it via its UI panel.
+The train must be assigned to the route and ordered to start it via its UI panel.
 
 Signals allow a routed train passage if the way up to the next signal is unblocked. 
 Only one train is allowed passage at a time. 
 The signaling system must be designed to prevent deadlocks; for example, build double tracks. 
 
-Constructing new wagons is not yet supported by the UI, but can be achieved with the keyboard buttons `Y`, `Q`, and `O`.
-Prepare a selected train for coupling with `G` and decouple wagons with the number buttons.
+Building new wagons is not yet supported by the UI, but can be achieved with the keyboard buttons `Y`, `Q`, and `O`.
 
 The maximal train speed is determined by the curve radius, the locomotive orientation and whether the locomotive travels first in the train. 
 You can couple more locomotives after one another to haul longer trains faster.
