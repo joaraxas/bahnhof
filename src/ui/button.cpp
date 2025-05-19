@@ -132,6 +132,21 @@ void TurnTrain::leftclick(Vec mousepos)
     train.shiftdirection();
 }
 
+void CoupleTrain::leftclick(Vec mousepos)
+{
+    Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
+    train.wantstocouple = 1 - train.wantstocouple;
+}
+
+void CoupleTrain::update(int ms)
+{
+    bool wantstocouple = dynamic_cast<TrainPanel*>(panel)->gettrain().wantstocouple;
+    if(wantstocouple)
+        text = "Reject coupling";
+    else
+        text = "Accept coupling";
+}
+
 namespace Routing
 {
 

@@ -126,6 +126,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	createbutton<GasTrain>();
 	createbutton<BrakeTrain>();
 	createbutton<TurnTrain>();
+	createbutton<CoupleTrain>();
 	
 	SDL_Rect trainnamerect = {margin_x, margin_y, getlocalrect().w-2*margin_x, 20};
 	trainnametext = new Text(this, info.name, trainnamerect);

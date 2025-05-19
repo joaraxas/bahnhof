@@ -123,6 +123,14 @@ public:
     void leftclick(Vec mousepos);
 };
 
+class CoupleTrain : public TextButton
+{
+public:
+    CoupleTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Accept coupling") {};
+    void update(int ms);
+    void leftclick(Vec mousepos);
+};
+
 
 namespace Routing
 {
