@@ -137,11 +137,11 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	SDL_Rect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {column_2_x, columns_y+100+elementdistance_y, 200, 30};
+	SDL_Rect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
 	int column_3_x = column_2_x + 100 + elementdistance_x;
-	SDL_Rect routetablerect = {column_3_x,columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y};
+	SDL_Rect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 }
 
