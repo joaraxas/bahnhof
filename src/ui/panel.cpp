@@ -85,6 +85,9 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, R
 	createbutton<Routing::AddCouple>(route);
 	createbutton<Routing::AddDecouple>(route);
 	createbutton<Routing::RemoveOrder>(route);
+	SDL_Rect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
+	yoffset += 16;
+	addelement(new Text(this, route->name, routenamerect));
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new OrderTable(this, tablerect, route));
 	game->getinputmanager().editroute(route);
