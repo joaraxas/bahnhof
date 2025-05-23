@@ -13,6 +13,12 @@ void Text::render(Rendering* r)
     ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered);
 }
 
+void EditableText::leftclick(Vec mousepos)
+{
+    text = "new text";
+    textreference = text;
+};
+
 void TrainIcons::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
