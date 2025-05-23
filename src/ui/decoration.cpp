@@ -1,6 +1,7 @@
 #include<iostream>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/input.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -15,8 +16,9 @@ void Text::render(Rendering* r)
 
 void EditableText::leftclick(Vec mousepos)
 {
-    text = "new text";
-    textreference = text;
+    ui->getgame().getinputmanager().gettextinputmanager().starttextinput(&text);
+    // text = "new text";
+    // textreference = text;
 };
 
 void TrainIcons::render(Rendering* r)

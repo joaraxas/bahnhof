@@ -10,7 +10,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame){
+InputManager::InputManager(Game* whatgame) : texthandler(*this){
     game = whatgame;
 }
 
@@ -102,6 +102,8 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_KEYDOWN:{
+                if(texthandler.handle(e))
+                    break;
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
                 }
@@ -126,6 +128,10 @@ void InputManager::handle(int ms, int mslogic){
                         gamestate.money -= 8;
                     }
                 }
+                break;
+            }
+            case SDL_TEXTINPUT:{
+                texthandler.handle(e);
                 break;
             }
             case SDL_MOUSEWHEEL:{
@@ -207,6 +213,41 @@ bool InputManager::keyispressed(const int scancode)
 bool InputManager::isleftmousepressed()
 {
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
+}
+
+void TextInputManager::starttextinput(std::string* texttoedit)
+{
+    if(!editingtext){
+        SDL_StartTextInput();
+        editingtext = texttoedit;
+    }
+}
+
+void TextInputManager::endtextinput()
+{
+    if(editingtext){
+        editingtext = nullptr;
+        SDL_StopTextInput();
+    }
+}
+
+bool TextInputManager::handle(SDL_Event& e)
+{
+    if(editingtext){
+        switch (e.type)
+        {
+        case SDL_KEYDOWN:{
+            return true;
+        }
+        case SDL_TEXTINPUT:{
+            *editingtext += e.text.text;
+            return true;
+        }
+        default:
+            return false;
+        }
+    }
+    return false;
 }
 
 void InputManager::selecttrain(Train* whattrain)

@@ -25,10 +25,25 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
+class InputManager;
+
+class TextInputManager
+{
+public:
+    TextInputManager(InputManager& owner) : input(owner) {};
+    void starttextinput(std::string* texttoedit);
+    void endtextinput();
+    bool handle(SDL_Event& e);
+private:
+    InputManager& input;
+    std::string* editingtext = nullptr;
+};
+
 class InputManager
 {
 public:
     InputManager(Game* whatgame);
+    TextInputManager& gettextinputmanager() {return texthandler;};
     void handle(int ms, int mslogic);
     void render(Rendering*, Tracks::Tracksystem&);
     Vec screenmousepos();
@@ -42,6 +57,7 @@ public:
     void placetrack();
 private:
     Game* game;
+    TextInputManager texthandler;
     const Uint8* keys;
     bool placingsignal = false;
     bool placingtrack = false;
