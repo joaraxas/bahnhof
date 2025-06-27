@@ -237,6 +237,9 @@ bool TextInputManager::handle(SDL_Event& e)
         switch (e.type)
         {
         case SDL_KEYDOWN:{
+            if(e.key.keysym.sym == SDLK_ESCAPE){
+                    endtextinput();
+                }
             return true;
         }
         case SDL_TEXTINPUT:{
