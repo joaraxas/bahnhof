@@ -37,6 +37,7 @@ public:
 private:
     InputManager& input;
     std::string* editingtext = nullptr;
+    std::string fallbacktext;
 };
 
 class InputManager

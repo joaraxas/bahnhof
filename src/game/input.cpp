@@ -215,44 +215,6 @@ bool InputManager::isleftmousepressed()
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }
 
-void TextInputManager::starttextinput(std::string* texttoedit)
-{
-    if(!editingtext){
-        SDL_StartTextInput();
-        editingtext = texttoedit;
-    }
-}
-
-void TextInputManager::endtextinput()
-{
-    if(editingtext){
-        editingtext = nullptr;
-        SDL_StopTextInput();
-    }
-}
-
-bool TextInputManager::handle(SDL_Event& e)
-{
-    if(editingtext){
-        switch (e.type)
-        {
-        case SDL_KEYDOWN:{
-            if(e.key.keysym.sym == SDLK_ESCAPE){
-                    endtextinput();
-                }
-            return true;
-        }
-        case SDL_TEXTINPUT:{
-            *editingtext += e.text.text;
-            return true;
-        }
-        default:
-            return false;
-        }
-    }
-    return false;
-}
-
 void InputManager::selecttrain(Train* whattrain)
 {
     Gamestate& gamestate = game->getgamestate();
@@ -275,10 +237,61 @@ void InputManager::placesignal()
     selecttrain(nullptr);
 }
 
-
 void InputManager::placetrack()
 {
     placingtrack = true;
     placingsignal = false;
     selecttrain(nullptr);
 };
+
+void TextInputManager::starttextinput(std::string* texttoedit)
+{
+    if(!editingtext){
+        SDL_StartTextInput();
+        fallbacktext = *texttoedit;
+        editingtext = texttoedit;
+    }
+}
+
+void TextInputManager::endtextinput()
+{
+    if(editingtext){
+        editingtext = nullptr;
+        SDL_StopTextInput();
+    }
+}
+
+bool TextInputManager::handle(SDL_Event& e)
+{
+    if(editingtext){
+        switch(e.type){
+            case SDL_KEYDOWN:{
+                switch(e.key.keysym.sym){
+                    case SDLK_ESCAPE:{
+                        *editingtext = fallbacktext;
+                        endtextinput();
+                        break;
+                    }
+                    case SDLK_RETURN:{
+                        endtextinput();
+                        break;
+                    }
+                    case SDLK_BACKSPACE:{
+                        if(!(*editingtext).empty()){
+                            (*editingtext).pop_back();
+                        }
+                        break;
+                    }
+                }
+                return true;
+            }
+            case SDL_TEXTINPUT:{
+                *editingtext += e.text.text;
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+    return false;
+}
