@@ -28,6 +28,8 @@ class EditableText : public Text
 public:
     EditableText(Host* p, std::string& t, SDL_Rect r) : Text(p, t, r), textreference(t) {};
     void leftclick(Vec mousepos);
+    void updatesource();
+private:
     std::string& textreference;
 };
 

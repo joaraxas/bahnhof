@@ -12,6 +12,9 @@ class Game;
 class Rendering;
 class Train;
 class Route;
+namespace UI{
+    class EditableText;
+}
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -31,11 +34,12 @@ class TextInputManager
 {
 public:
     TextInputManager(InputManager& owner) : input(owner) {};
-    void starttextinput(std::string* texttoedit);
+    void starttextinput(UI::EditableText* textobject);
     void endtextinput();
     bool handle(SDL_Event& e);
 private:
     InputManager& input;
+    UI::EditableText* editingtextobject = nullptr;
     std::string* editingtext = nullptr;
     std::string fallbacktext;
 };

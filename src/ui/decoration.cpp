@@ -16,9 +16,12 @@ void Text::render(Rendering* r)
 
 void EditableText::leftclick(Vec mousepos)
 {
-    ui->getgame().getinputmanager().gettextinputmanager().starttextinput(&text);
-    // text = "new text";
-    // textreference = text;
+    ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
+};
+
+void EditableText::updatesource()
+{
+    textreference = text;
 };
 
 void TrainIcons::render(Rendering* r)

@@ -3,6 +3,7 @@
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/decoration.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -244,12 +245,13 @@ void InputManager::placetrack()
     selecttrain(nullptr);
 };
 
-void TextInputManager::starttextinput(std::string* texttoedit)
+void TextInputManager::starttextinput(UI::EditableText* textobject)
 {
     if(!editingtext){
         SDL_StartTextInput();
-        fallbacktext = *texttoedit;
-        editingtext = texttoedit;
+        editingtextobject = textobject;
+        editingtext = &(textobject->text);
+        fallbacktext = *editingtext;
     }
 }
 
@@ -257,6 +259,7 @@ void TextInputManager::endtextinput()
 {
     if(editingtext){
         editingtext = nullptr;
+        editingtextobject = nullptr;
         SDL_StopTextInput();
     }
 }
@@ -273,7 +276,10 @@ bool TextInputManager::handle(SDL_Event& e)
                         break;
                     }
                     case SDLK_RETURN:{
-                        endtextinput();
+                        if(!(*editingtext).empty()){
+                            editingtextobject->updatesource();
+                            endtextinput();
+                        }
                         break;
                     }
                     case SDLK_BACKSPACE:{
