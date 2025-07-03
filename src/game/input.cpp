@@ -301,6 +301,14 @@ bool TextInputManager::handle(SDL_Event& e)
                         editingtextobject->deleteselection();
                         break;
                     }
+                    case SDLK_LEFT:{
+                        editingtextobject->movecursorleft();
+                        break;
+                    }
+                    case SDLK_RIGHT:{
+                        editingtextobject->movecursorright();
+                        break;
+                    }
                 }
                 return true;
             }

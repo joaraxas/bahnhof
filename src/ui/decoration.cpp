@@ -23,7 +23,7 @@ void EditableText::render(Rendering* r)
 {
     if(beingedited){
         std::string rtext = text;
-        rtext.insert(rtext.begin()+cursorindex+1, '|');
+        rtext.insert(rtext.begin()+cursorindex, '|');
         ui->getuirendering().rendertext(r, rtext, getglobalrect(), style, centered);
     }
     else{
@@ -40,7 +40,7 @@ void EditableText::updatesource()
 }
 
 void EditableText::startwriting(){
-    cursorindex = text.size()-1;
+    cursorindex = text.size();
     beingedited = true;
     fallbacktext = text;
 }
@@ -51,14 +51,23 @@ void EditableText::stopwriting(){
 }
 
 void EditableText::deleteselection(){
-    if(!text.empty()){
-        text.erase(cursorindex);
+    if(!text.empty() && cursorindex>0){
+        text.erase(cursorindex-1, 1);
         cursorindex--;
     }
 }
 
 void EditableText::addtext(const std::string& string){
-    text += string;
+    text.insert(cursorindex, string);
+    cursorindex += string.size();
+}
+
+void EditableText::movecursorleft(){
+    cursorindex = std::fmax(0, cursorindex-1);
+}
+
+void EditableText::movecursorright(){
+    cursorindex = std::fmin(text.size(), cursorindex+1);
 }
 
 

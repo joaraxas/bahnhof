@@ -34,6 +34,8 @@ public:
     void stopwriting();
     void deleteselection();
     void addtext(const std::string& string);
+    void movecursorleft();
+    void movecursorright();
 private:
     std::string& textreference;
     std::string fallbacktext;
