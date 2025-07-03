@@ -38,13 +38,11 @@ public:
     void savetext();
     void trashtext();
     bool handle(SDL_Event& e);
-    bool iswriting() {return editingtext!=nullptr;};
+    bool iswriting() {return editingtextobject!=nullptr;};
 private:
     void endtextinput();
     InputManager& input;
     UI::EditableText* editingtextobject = nullptr;
-    std::string* editingtext = nullptr;
-    std::string fallbacktext;
 };
 
 class InputManager

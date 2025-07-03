@@ -17,12 +17,50 @@ void Text::render(Rendering* r)
 void EditableText::leftclick(Vec mousepos)
 {
     ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
-};
+}
+
+void EditableText::render(Rendering* r)
+{
+    if(beingedited){
+        std::string rtext = text;
+        rtext.insert(rtext.begin()+cursorindex+1, '|');
+        ui->getuirendering().rendertext(r, rtext, getglobalrect(), style, centered);
+    }
+    else{
+        Text::render(r);
+    }
+}
 
 void EditableText::updatesource()
 {
-    textreference = text;
-};
+    if(!text.empty()){
+        textreference = text;
+        fallbacktext = text;
+    }
+}
+
+void EditableText::startwriting(){
+    cursorindex = text.size()-1;
+    beingedited = true;
+    fallbacktext = text;
+}
+
+void EditableText::stopwriting(){
+    text = fallbacktext;
+    beingedited = false;
+}
+
+void EditableText::deleteselection(){
+    if(!text.empty()){
+        text.erase(cursorindex);
+        cursorindex--;
+    }
+}
+
+void EditableText::addtext(const std::string& string){
+    text += string;
+}
+
 
 void TrainIcons::render(Rendering* r)
 {

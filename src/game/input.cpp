@@ -252,39 +252,32 @@ void InputManager::placetrack()
 
 void TextInputManager::starttextinput(UI::EditableText* textobject)
 {
-    if(!editingtext){
+    if(!iswriting()){
         SDL_StartTextInput();
         editingtextobject = textobject;
-        editingtext = &(textobject->text);
-        fallbacktext = *editingtext;
+        editingtextobject->startwriting();
     }
 }
 
 void TextInputManager::savetext()
 {
-    if(editingtext){
-        if(!(*editingtext).empty()){
-            editingtextobject->updatesource();
-            endtextinput();
-        }
-        else{
-            trashtext();
-        }
+    if(iswriting()){
+        editingtextobject->updatesource();
+        endtextinput();
     }
 }
 
 void TextInputManager::trashtext()
 {
-    if(editingtext){
-        *editingtext = fallbacktext;
+    if(iswriting()){
         endtextinput();
     }
 }
 
 void TextInputManager::endtextinput()
 {
-    if(editingtext){
-        editingtext = nullptr;
+    if(iswriting()){
+        editingtextobject->stopwriting();
         editingtextobject = nullptr;
         SDL_StopTextInput();
     }
@@ -292,7 +285,7 @@ void TextInputManager::endtextinput()
 
 bool TextInputManager::handle(SDL_Event& e)
 {
-    if(editingtext){
+    if(iswriting()){
         switch(e.type){
             case SDL_KEYDOWN:{
                 switch(e.key.keysym.sym){
@@ -305,16 +298,14 @@ bool TextInputManager::handle(SDL_Event& e)
                         break;
                     }
                     case SDLK_BACKSPACE:{
-                        if(!(*editingtext).empty()){
-                            (*editingtext).pop_back();
-                        }
+                        editingtextobject->deleteselection();
                         break;
                     }
                 }
                 return true;
             }
             case SDL_TEXTINPUT:{
-                *editingtext += e.text.text;
+                editingtextobject->addtext(e.text.text);
                 return true;
             }
             default:
