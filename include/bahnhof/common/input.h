@@ -35,10 +35,12 @@ class TextInputManager
 public:
     TextInputManager(InputManager& owner) : input(owner) {};
     void starttextinput(UI::EditableText* textobject);
-    void endtextinput();
+    void savetext();
+    void trashtext();
     bool handle(SDL_Event& e);
     bool iswriting() {return editingtext!=nullptr;};
 private:
+    void endtextinput();
     InputManager& input;
     UI::EditableText* editingtextobject = nullptr;
     std::string* editingtext = nullptr;

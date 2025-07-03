@@ -34,6 +34,9 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:{
+                if(texthandler.iswriting()){
+                    texthandler.trashtext();
+                }
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     selectednode = 0;
@@ -257,6 +260,27 @@ void TextInputManager::starttextinput(UI::EditableText* textobject)
     }
 }
 
+void TextInputManager::savetext()
+{
+    if(editingtext){
+        if(!(*editingtext).empty()){
+            editingtextobject->updatesource();
+            endtextinput();
+        }
+        else{
+            trashtext();
+        }
+    }
+}
+
+void TextInputManager::trashtext()
+{
+    if(editingtext){
+        *editingtext = fallbacktext;
+        endtextinput();
+    }
+}
+
 void TextInputManager::endtextinput()
 {
     if(editingtext){
@@ -273,15 +297,11 @@ bool TextInputManager::handle(SDL_Event& e)
             case SDL_KEYDOWN:{
                 switch(e.key.keysym.sym){
                     case SDLK_ESCAPE:{
-                        *editingtext = fallbacktext;
-                        endtextinput();
+                        trashtext();
                         break;
                     }
                     case SDLK_RETURN:{
-                        if(!(*editingtext).empty()){
-                            editingtextobject->updatesource();
-                            endtextinput();
-                        }
+                        savetext();
                         break;
                     }
                     case SDLK_BACKSPACE:{
