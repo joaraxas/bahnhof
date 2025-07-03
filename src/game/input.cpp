@@ -156,16 +156,18 @@ void InputManager::handle(int ms, int mslogic){
     if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
-    if(keyispressed(leftpanbutton))
-        cam.pan(Vec(-ms, 0));
-    if(keyispressed(rightpanbutton))
-        cam.pan(Vec(+ms, 0));
-    if(keyispressed(uppanbutton))
-        cam.pan(Vec(0, -ms));
-    if(keyispressed(downpanbutton))
-        cam.pan(Vec(0, +ms));
+    if(!texthandler.iswriting()){
+        if(keyispressed(leftpanbutton))
+            cam.pan(Vec(-ms, 0));
+        if(keyispressed(rightpanbutton))
+            cam.pan(Vec(+ms, 0));
+        if(keyispressed(uppanbutton))
+            cam.pan(Vec(0, -ms));
+        if(keyispressed(downpanbutton))
+            cam.pan(Vec(0, +ms));
 
-    trainmanager.getinput(this, mslogic);
+        trainmanager.getinput(this, mslogic);
+    }
 }
 
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)

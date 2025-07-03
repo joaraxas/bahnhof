@@ -37,6 +37,7 @@ public:
     void starttextinput(UI::EditableText* textobject);
     void endtextinput();
     bool handle(SDL_Event& e);
+    bool iswriting() {return editingtext!=nullptr;};
 private:
     InputManager& input;
     UI::EditableText* editingtextobject = nullptr;
