@@ -157,13 +157,13 @@ void InputManager::handle(int ms, int mslogic){
         ui.leftpressed(screenmousepos(), mslogic);
 
     if(!texthandler.iswriting()){
-        if(keyispressed(leftpanbutton))
+        if(iskeypressed(leftpanbutton))
             cam.pan(Vec(-ms, 0));
-        if(keyispressed(rightpanbutton))
+        if(iskeypressed(rightpanbutton))
             cam.pan(Vec(+ms, 0));
-        if(keyispressed(uppanbutton))
+        if(iskeypressed(uppanbutton))
             cam.pan(Vec(0, -ms));
-        if(keyispressed(downpanbutton))
+        if(iskeypressed(downpanbutton))
             cam.pan(Vec(0, +ms));
 
         trainmanager.getinput(this, mslogic);
@@ -207,7 +207,7 @@ Vec InputManager::screenmousepos()
     return Vec(int(logicalmousex), int(logicalmousey));
 }
 
-bool InputManager::keyispressed(const int scancode)
+bool InputManager::iskeypressed(const int scancode)
 {
 	keys = SDL_GetKeyboardState(nullptr);
     return keys[scancode];

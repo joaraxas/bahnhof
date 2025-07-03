@@ -28,17 +28,17 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 void Train::getinput(InputManager* input, int ms)
 {
 	if(selected){
-		if(input->keyispressed(gasbutton))
+		if(input->iskeypressed(gasbutton))
 			gas(ms);
-		if(input->keyispressed(brakebutton))
+		if(input->iskeypressed(brakebutton))
 			brake(ms);
-		if(input->keyispressed(gearbutton))
+		if(input->iskeypressed(gearbutton))
 			shiftdirection();
-		if(input->keyispressed(loadbutton))
+		if(input->iskeypressed(loadbutton))
 			loadall();
-		if(input->keyispressed(unloadbutton))
+		if(input->iskeypressed(unloadbutton))
 			unloadall();
-		if(input->keyispressed(couplebutton))
+		if(input->iskeypressed(couplebutton))
 			wantstocouple = true;
 	}
 }

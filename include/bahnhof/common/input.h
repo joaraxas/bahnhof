@@ -54,7 +54,7 @@ public:
     void render(Rendering*, Tracks::Tracksystem&);
     Vec screenmousepos();
     Vec mapmousepos();
-    bool keyispressed(const int scancode);
+    bool iskeypressed(const int scancode);
     bool isleftmousepressed();
     void selecttrain(Train* train);
     Train* getselectedtrain() {return selectedtrain;};
