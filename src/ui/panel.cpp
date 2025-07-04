@@ -130,13 +130,14 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	createbutton<BrakeTrain>();
 	createbutton<TurnTrain>();
 	createbutton<CoupleTrain>();
-	
-	SDL_Rect trainnamerect = {margin_x, margin_y, getlocalrect().w-2*margin_x, 20};
-	trainnametext = new Text(this, info.name, trainnamerect);
-	addelement(trainnametext);
 
 	int column_2_x = margin_x+80+elementdistance_x;
 	int columns_y = margin_y+20+elementdistance_y;
+	
+	SDL_Rect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
+	trainnametext = new EditableText(this, info.train->name, trainnamerect);
+	addelement(trainnametext);
+
 	SDL_Rect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 

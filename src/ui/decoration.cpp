@@ -19,6 +19,7 @@ EditableText::~EditableText()
     if(beingedited){
         game->getinputmanager().gettextinputmanager().trashtext();
     }
+    std::cout<<"del editable text: " <<text<<std::endl;
 }
 
 void EditableText::leftclick(Vec mousepos)
@@ -29,6 +30,9 @@ void EditableText::leftclick(Vec mousepos)
 void EditableText::render(Rendering* r)
 {
     if(beingedited){
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
+        r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         std::string rtext = text;
         rtext.insert(rtext.begin()+cursorindex, '|');
         ui->getuirendering().rendertext(r, rtext, getglobalrect(), style, centered);
@@ -36,6 +40,9 @@ void EditableText::render(Rendering* r)
     else{
         Text::render(r);
     }
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void EditableText::updatesource()

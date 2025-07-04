@@ -38,7 +38,9 @@ public:
     void movecursorleft();
     void movecursorright();
 private:
-    std::string& textreference;
+    std::string& textreference; // TODO: This is currently safe but will 
+                                // break if the referred string is destroyed 
+                                // without removing the panel with the editable text
     std::string fallbacktext;
     bool beingedited;
     int cursorindex;
