@@ -14,6 +14,13 @@ void Text::render(Rendering* r)
     ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered);
 }
 
+EditableText::~EditableText()
+{
+    if(beingedited){
+        game->getinputmanager().gettextinputmanager().trashtext();
+    }
+}
+
 void EditableText::leftclick(Vec mousepos)
 {
     ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
