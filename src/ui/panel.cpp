@@ -87,9 +87,9 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, R
 	createbutton<Routing::RemoveOrder>(route);
 	SDL_Rect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
 	yoffset += 16;
-	addelement(new EditableText(this, route->name, routenamerect));
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new OrderTable(this, tablerect, route));
+	addelement(new EditableText(this, route->name, routenamerect));
 	game->getinputmanager().editroute(route);
 }
 
@@ -133,10 +133,6 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 
 	int column_2_x = margin_x+80+elementdistance_x;
 	int columns_y = margin_y+20+elementdistance_y;
-	
-	SDL_Rect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
-	trainnametext = new EditableText(this, info.train->name, trainnamerect);
-	addelement(trainnametext);
 
 	SDL_Rect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
@@ -147,6 +143,9 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	int column_3_x = column_2_x + 100 + elementdistance_x;
 	SDL_Rect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
 	addelement(new TrainOrderTable(this, routetablerect, train));
+	
+	SDL_Rect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
+	addelement(new EditableText(this, info.train->name, trainnamerect));
 }
 
 TrainPanel::~TrainPanel()

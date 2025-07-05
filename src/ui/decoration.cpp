@@ -9,9 +9,14 @@
 
 namespace UI{
 
+Text::Text(Host* p, std::string t, SDL_Rect r) : Element(p), text(t)
+{
+    rect = r;
+}
+
 void Text::render(Rendering* r)
 {
-    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered);
+    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, 2, 1);
 }
 
 EditableText::~EditableText()
@@ -33,12 +38,12 @@ void EditableText::render(Rendering* r)
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
         r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        std::string rtext = text;
-        rtext.insert(rtext.begin()+cursorindex, '|');
-        ui->getuirendering().rendertext(r, rtext, getglobalrect(), style, centered);
+        std::string textwithcursor = text;
+        textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
+        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), style, centered, 2, 1);
     }
     else{
-        Text::render(r);
+        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, 2, 1);
     }
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
@@ -62,18 +67,22 @@ void EditableText::startwriting(){
 void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
+    rect = originalrect;
+    shortenedtext = text;
 }
 
 void EditableText::deleteselection(){
     if(!text.empty() && cursorindex>0){
         text.erase(cursorindex-1, 1);
         cursorindex--;
+        updatewritingarea();
     }
 }
 
 void EditableText::addtext(const std::string& string){
     text.insert(cursorindex, string);
     cursorindex += string.size();
+    updatewritingarea();
 }
 
 void EditableText::movecursorleft(){
@@ -82,6 +91,11 @@ void EditableText::movecursorleft(){
 
 void EditableText::movecursorright(){
     cursorindex = std::fmin(text.size(), cursorindex+1);
+}
+
+void EditableText::updatewritingarea(){
+    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, 2, 1);
+    rect.h = std::fmax(textrect.h, originalrect.h);
 }
 
 
