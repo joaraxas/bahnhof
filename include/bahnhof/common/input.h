@@ -36,11 +36,10 @@ public:
     TextInputManager(InputManager& owner) : input(owner) {};
     void starttextinput(UI::EditableText* textobject);
     void savetext();
-    void trashtext();
+    void endtextinput();
     bool handle(SDL_Event& e);
     bool iswriting() {return editingtextobject!=nullptr;};
 private:
-    void endtextinput();
     InputManager& input;
     UI::EditableText* editingtextobject = nullptr;
 };
@@ -49,7 +48,7 @@ class InputManager
 {
 public:
     InputManager(Game* whatgame);
-    TextInputManager& gettextinputmanager() {return texthandler;};
+    TextInputManager& gettextinputmanager() {return textinput;};
     void handle(int ms, int mslogic);
     void render(Rendering*, Tracks::Tracksystem&);
     Vec screenmousepos();
@@ -63,7 +62,7 @@ public:
     void placetrack();
 private:
     Game* game;
-    TextInputManager texthandler;
+    TextInputManager textinput;
     const Uint8* keys;
     bool placingsignal = false;
     bool placingtrack = false;

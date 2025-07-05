@@ -16,7 +16,7 @@ Text::Text(Host* p, std::string t, SDL_Rect r) : Element(p), text(t)
 
 void Text::render(Rendering* r)
 {
-    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, 2, 1);
+    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
 EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) : 
@@ -24,13 +24,13 @@ EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) :
         textreference(t), 
         originalrect(r),
         shortenedtext(t) {
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, 2);
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
 };
 
 EditableText::~EditableText()
 {
     if(beingedited){
-        game->getinputmanager().gettextinputmanager().trashtext();
+        game->getinputmanager().gettextinputmanager().endtextinput();
     }
     std::cout<<"del editable text: " <<text<<std::endl;
 }
@@ -48,14 +48,14 @@ void EditableText::render(Rendering* r)
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         std::string textwithcursor = text;
         textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
-        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), style, centered, 2, 1);
+        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), style, centered, margin_x, margin_y);
     }
     else{
-        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, 2, 1);
+        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, margin_x, margin_y);
     }
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void EditableText::updatesource()
@@ -77,7 +77,7 @@ void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
     rect = originalrect;
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, 2);
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
 }
 
 void EditableText::deleteselection(){
@@ -103,7 +103,7 @@ void EditableText::movecursorright(){
 }
 
 void EditableText::updatewritingarea(){
-    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, 2, 1);
+    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
     rect.h = std::fmax(textrect.h, originalrect.h);
 }
 

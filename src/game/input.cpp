@@ -11,7 +11,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame) : texthandler(*this){
+InputManager::InputManager(Game* whatgame) : textinput(*this){
     game = whatgame;
 }
 
@@ -34,8 +34,8 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:{
-                if(texthandler.iswriting()){
-                    texthandler.trashtext();
+                if(textinput.iswriting()){
+                    textinput.endtextinput();
                 }
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
@@ -106,7 +106,7 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_KEYDOWN:{
-                if(texthandler.handle(e))
+                if(textinput.handle(e))
                     break;
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
@@ -135,7 +135,7 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_TEXTINPUT:{
-                texthandler.handle(e);
+                textinput.handle(e);
                 break;
             }
             case SDL_MOUSEWHEEL:{
@@ -159,7 +159,7 @@ void InputManager::handle(int ms, int mslogic){
     if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
-    if(!texthandler.iswriting()){
+    if(!textinput.iswriting()){
         if(iskeypressed(leftpanbutton))
             cam.pan(Vec(-ms, 0));
         if(iskeypressed(rightpanbutton))
@@ -267,13 +267,6 @@ void TextInputManager::savetext()
     }
 }
 
-void TextInputManager::trashtext()
-{
-    if(iswriting()){
-        endtextinput();
-    }
-}
-
 void TextInputManager::endtextinput()
 {
     if(iswriting()){
@@ -290,7 +283,7 @@ bool TextInputManager::handle(SDL_Event& e)
             case SDL_KEYDOWN:{
                 switch(e.key.keysym.sym){
                     case SDLK_ESCAPE:{
-                        trashtext();
+                        endtextinput();
                         break;
                     }
                     case SDLK_RETURN:{
