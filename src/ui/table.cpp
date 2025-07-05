@@ -148,9 +148,12 @@ void RouteDropdown::update(int ms)
 
 void RouteDropdown::leftclick(Vec mousepos)
 {
-    if(routing.getnumberofroutes() > 0){
+    int nroutes = routing.getnumberofroutes();
+    if(nroutes > 0){
         int index = getlineindexat(mousepos);
-        if(index>=0){
+        if(index>=0 && index<nroutes){
+            names = routing.getroutenames();
+            ids = routing.getrouteids();
             dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
         }
     }
@@ -190,12 +193,15 @@ void TrainTable::leftclick(Vec mousepos)
 {
     int index = getlineindexat(mousepos);
     if(index>=0){
-        trainmanager->deselectall();
-        TrainInfo info = traininfos[index];
-        info.train->selected = true;
-        
-        SDL_Rect trainpanelrect = {300,200,400,220};
-        new TrainPanel(ui, trainpanelrect, *trainmanager, *info.train);
+        traininfos = trainmanager->gettrainsinfo();
+        if(index<traininfos.size()){
+            trainmanager->deselectall();
+            TrainInfo info = traininfos[index];
+            info.train->selected = true;
+            
+            SDL_Rect trainpanelrect = {300,200,400,220};
+            new TrainPanel(ui, trainpanelrect, *trainmanager, *info.train);
+        }
     }
 }
 
