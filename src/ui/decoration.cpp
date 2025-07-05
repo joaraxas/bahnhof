@@ -19,6 +19,14 @@ void Text::render(Rendering* r)
     ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, 2, 1);
 }
 
+EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) : 
+        Text(p, t, r), 
+        textreference(t), 
+        originalrect(r),
+        shortenedtext(t) {
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, 2);
+};
+
 EditableText::~EditableText()
 {
     if(beingedited){
@@ -35,7 +43,7 @@ void EditableText::leftclick(Vec mousepos)
 void EditableText::render(Rendering* r)
 {
     if(beingedited){
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         std::string textwithcursor = text;
@@ -62,13 +70,14 @@ void EditableText::startwriting(){
     cursorindex = text.size();
     beingedited = true;
     fallbacktext = text;
+    updatewritingarea();
 }
 
 void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
     rect = originalrect;
-    shortenedtext = text;
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, 2);
 }
 
 void EditableText::deleteselection(){

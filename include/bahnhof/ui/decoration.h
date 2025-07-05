@@ -26,7 +26,7 @@ public:
 class EditableText : public Text
 {
 public:
-    EditableText(Host* p, std::string& t, SDL_Rect r) : Text(p, t, r), textreference(t), originalrect(r), shortenedtext(t) {};
+    EditableText(Host* p, std::string& t, SDL_Rect r);
     ~EditableText();
     void leftclick(Vec mousepos);
     void render(Rendering*);
