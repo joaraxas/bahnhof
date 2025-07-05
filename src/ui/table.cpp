@@ -263,9 +263,8 @@ void OrderTable::update(int ms)
 void OrderTable::leftclick(Vec pos)
 {
     int index = getlineindexat(pos);
-    if(index>=0){
-        if(route)
-            route->selectedorderid = orderids[index];
+    if(index>=0 && route && index<orderids.size()){
+        route->selectedorderid = orderids[index];
     }
 }
 
@@ -285,9 +284,8 @@ void TrainOrderTable::update(int ms)
 void TrainOrderTable::leftclick(Vec pos)
 {
     int index = getlineindexat(pos);
-    if(index>=0){
-        if(route)
-            train.orderid = orderids[index];
+    if(index>=0 && route && index<orderids.size()){
+        train.orderid = orderids[index];
     }
 }
 
