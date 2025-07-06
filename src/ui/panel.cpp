@@ -174,4 +174,14 @@ void TrainPanel::render(Rendering* r)
 	Panel::render(r);
 }
 
+
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
+{
+}
+
+BuildingConstructionPanel::~BuildingConstructionPanel()
+{
+	std::cout<<"del buildingconstructionpanel"<<std::endl;
+}
+
 } // namespace UI

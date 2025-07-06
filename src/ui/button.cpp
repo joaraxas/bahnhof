@@ -62,7 +62,7 @@ void PlaceTrack::leftclick(Vec mousepos)
 
 void PlaceBuildings::leftclick(Vec mousepos)
 {
-    // new TrainListPanel(ui);
+    new BuildingConstructionPanel(ui, {180,0,300,200});
 }
 
 void ManageRoutes::leftclick(Vec mousepos)

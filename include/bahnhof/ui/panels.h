@@ -83,4 +83,11 @@ private:
     Train& train;
 };
 
+class BuildingConstructionPanel : public Panel
+{
+public:
+    BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect);
+    ~BuildingConstructionPanel();
+};
+
 }
