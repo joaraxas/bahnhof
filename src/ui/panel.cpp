@@ -50,6 +50,11 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	addelement(new MainInfoTable(this, tablerect));
 }
 
+MainPanel::~MainPanel()
+{
+	std::cout<<"del mainpanel"<<std::endl;
+}
+
 RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y*2-yoffset};
