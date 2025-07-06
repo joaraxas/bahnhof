@@ -37,7 +37,7 @@ protected:
 class MainPanel : public Panel
 {
 public:
-    MainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    MainPanel(InterfaceManager* newui);
 };
 
 class RoutePanel : public Panel

@@ -7,7 +7,7 @@
 
 InterfaceManager::InterfaceManager(Game* newgame) : game(newgame), uirendering(*this)
 {
-    new UI::MainPanel(this, {0,0,180,280});
+    new UI::MainPanel(this);
 }
 
 void InterfaceManager::update(int ms)

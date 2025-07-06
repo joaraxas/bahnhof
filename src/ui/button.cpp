@@ -60,6 +60,11 @@ void PlaceTrack::leftclick(Vec mousepos)
     game->getinputmanager().placetrack();
 }
 
+void PlaceBuildings::leftclick(Vec mousepos)
+{
+    // new TrainListPanel(ui);
+}
+
 void ManageRoutes::leftclick(Vec mousepos)
 {
     Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());

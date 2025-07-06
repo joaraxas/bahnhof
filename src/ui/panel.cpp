@@ -35,14 +35,16 @@ void Panel::render(Rendering* r)
 	Host::render(r);
 }
 
-MainPanel::MainPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
+MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
 	createbutton<PlaceTrack>();
 	createbutton<PlaceSignal>();
+	createbutton<PlaceBuildings>();
 	createbutton<ManageRoutes>();
 	createbutton<ManageTrains>();
 	createbutton<IncreaseUIScale>();
 	createbutton<DecreaseUIScale>();
+	rect = {0,0,180,yoffset + 2*margin_y};
 
 	SDL_Rect tablerect = {margin_x+80+elementdistance_x, margin_y, getlocalrect().w-80-elementdistance_x-2*margin_x, getlocalrect().h-2*margin_y};
 	addelement(new MainInfoTable(this, tablerect));
