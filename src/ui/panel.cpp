@@ -126,6 +126,7 @@ TrainListPanel::~TrainListPanel()
 	std::cout<<"del trainlistpanel"<<std::endl;
 }
 
+
 TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain) : 
 		Panel(newui, newrect), trainmanager(manager), train(newtrain)
 {
@@ -182,6 +183,8 @@ void TrainPanel::render(Rendering* r)
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
 {
+	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	addelement(new ConstructionTable(this, tablerect));
 }
 
 BuildingConstructionPanel::~BuildingConstructionPanel()

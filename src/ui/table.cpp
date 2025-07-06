@@ -300,4 +300,19 @@ void TrainOrderTable::leftclick(Vec pos)
     }
 }
 
+ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : Table(p, r), input(game->getinputmanager())
+{
+    lines.emplace_back(new TableTextLine(panel, this, "Post office"));
+    lines.emplace_back(new TableTextLine(panel, this, "Restaurant"));
+    lines.emplace_back(new TableTextLine(panel, this, "Hotel"));
+}
+
+void ConstructionTable::leftclick(Vec pos)
+{
+    int index = getlineindexat(pos);
+    if(index>=0){
+        std::cout<<lines[index]<<std::endl;
+    }
+}
+
 } //end namespace UI
