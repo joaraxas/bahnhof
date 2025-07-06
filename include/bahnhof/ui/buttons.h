@@ -58,6 +58,13 @@ public:
     void leftclick(Vec mousepos);
 };
 
+class PlaceBuildings : public TextButton
+{
+public:
+    PlaceBuildings(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Raise building") {};
+    void leftclick(Vec mousepos);
+};
+
 class ManageRoutes : public TextButton
 {
 public:

@@ -60,6 +60,11 @@ void PlaceTrack::leftclick(Vec mousepos)
     game->getinputmanager().placetrack();
 }
 
+void PlaceBuildings::leftclick(Vec mousepos)
+{
+    new BuildingConstructionPanel(ui, {180,0,300,200});
+}
+
 void ManageRoutes::leftclick(Vec mousepos)
 {
     Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());

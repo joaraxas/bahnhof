@@ -37,7 +37,7 @@ protected:
 class MainPanel : public Panel
 {
 public:
-    MainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    MainPanel(InterfaceManager* newui);
 };
 
 class RoutePanel : public Panel
@@ -81,6 +81,13 @@ public:
 private:
     TrainManager& trainmanager;
     Train& train;
+};
+
+class BuildingConstructionPanel : public Panel
+{
+public:
+    BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect);
+    ~BuildingConstructionPanel();
 };
 
 }
