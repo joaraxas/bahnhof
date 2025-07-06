@@ -45,6 +45,7 @@ class Host
 {
 public:
     Host(InterfaceManager* newui, SDL_Rect newrect);
+    virtual ~Host() {};
     bool checkclick(Vec pos);
     void mousehover(Vec pos, int ms);
     void click(Vec pos, int type);

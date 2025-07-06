@@ -38,6 +38,7 @@ class MainPanel : public Panel
 {
 public:
     MainPanel(InterfaceManager* newui);
+    ~MainPanel();
 };
 
 class RoutePanel : public Panel
