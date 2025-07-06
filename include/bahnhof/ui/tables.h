@@ -115,4 +115,13 @@ private:
     Train& train;
 };
 
+class ConstructionTable : public Table
+{
+public:
+    ConstructionTable(Host* p, SDL_Rect r);
+    void leftclick(Vec pos);
+private:
+    InputManager& input;
+};
+
 }
