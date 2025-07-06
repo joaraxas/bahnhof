@@ -209,7 +209,6 @@ void TrainInfoTable::update(int ms)
 {
 	TrainInfo info = train.getinfo();
     lines.clear();
-    lines.emplace_back(new TableTextLine(panel, this, info.name));
     float mps = abs(info.speed*0.001*150);
     float kmh = mps*3.6;
     lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} km/h", kmh)));

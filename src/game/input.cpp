@@ -3,6 +3,7 @@
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/decoration.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -10,7 +11,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame){
+InputManager::InputManager(Game* whatgame) : textinput(*this){
     game = whatgame;
 }
 
@@ -33,6 +34,9 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:{
+                if(textinput.iswriting()){
+                    textinput.endtextinput();
+                }
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
                     selectednode = 0;
@@ -102,6 +106,8 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             }
             case SDL_KEYDOWN:{
+                if(textinput.handle(e))
+                    break;
                 if(e.key.keysym.sym == SDLK_n){
                     nicetracks = !nicetracks;
                 }
@@ -128,6 +134,10 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 break;
             }
+            case SDL_TEXTINPUT:{
+                textinput.handle(e);
+                break;
+            }
             case SDL_MOUSEWHEEL:{
                 if(e.wheel.y > 0){
                     if(ui.scroll(screenmousepos(), e.wheel.y))
@@ -149,16 +159,18 @@ void InputManager::handle(int ms, int mslogic){
     if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
-    if(keyispressed(leftpanbutton))
-        cam.pan(Vec(-ms, 0));
-    if(keyispressed(rightpanbutton))
-        cam.pan(Vec(+ms, 0));
-    if(keyispressed(uppanbutton))
-        cam.pan(Vec(0, -ms));
-    if(keyispressed(downpanbutton))
-        cam.pan(Vec(0, +ms));
+    if(!textinput.iswriting()){
+        if(iskeypressed(leftpanbutton))
+            cam.pan(Vec(-ms, 0));
+        if(iskeypressed(rightpanbutton))
+            cam.pan(Vec(+ms, 0));
+        if(iskeypressed(uppanbutton))
+            cam.pan(Vec(0, -ms));
+        if(iskeypressed(downpanbutton))
+            cam.pan(Vec(0, +ms));
 
-    trainmanager.getinput(this, mslogic);
+        trainmanager.getinput(this, mslogic);
+    }
 }
 
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
@@ -198,7 +210,7 @@ Vec InputManager::screenmousepos()
     return Vec(int(logicalmousex), int(logicalmousey));
 }
 
-bool InputManager::keyispressed(const int scancode)
+bool InputManager::iskeypressed(const int scancode)
 {
 	keys = SDL_GetKeyboardState(nullptr);
     return keys[scancode];
@@ -231,10 +243,75 @@ void InputManager::placesignal()
     selecttrain(nullptr);
 }
 
-
 void InputManager::placetrack()
 {
     placingtrack = true;
     placingsignal = false;
     selecttrain(nullptr);
 };
+
+void TextInputManager::starttextinput(UI::EditableText* textobject)
+{
+    if(!iswriting()){
+        SDL_StartTextInput();
+        editingtextobject = textobject;
+        editingtextobject->startwriting();
+    }
+}
+
+void TextInputManager::savetext()
+{
+    if(iswriting()){
+        editingtextobject->updatesource();
+        endtextinput();
+    }
+}
+
+void TextInputManager::endtextinput()
+{
+    if(iswriting()){
+        editingtextobject->stopwriting();
+        editingtextobject = nullptr;
+        SDL_StopTextInput();
+    }
+}
+
+bool TextInputManager::handle(SDL_Event& e)
+{
+    if(iswriting()){
+        switch(e.type){
+            case SDL_KEYDOWN:{
+                switch(e.key.keysym.sym){
+                    case SDLK_ESCAPE:{
+                        endtextinput();
+                        break;
+                    }
+                    case SDLK_RETURN:{
+                        savetext();
+                        break;
+                    }
+                    case SDLK_BACKSPACE:{
+                        editingtextobject->deleteselection();
+                        break;
+                    }
+                    case SDLK_LEFT:{
+                        editingtextobject->movecursorleft();
+                        break;
+                    }
+                    case SDLK_RIGHT:{
+                        editingtextobject->movecursorright();
+                        break;
+                    }
+                }
+                return true;
+            }
+            case SDL_TEXTINPUT:{
+                editingtextobject->addtext(e.text.text);
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+    return false;
+}

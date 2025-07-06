@@ -56,25 +56,31 @@ void Rendering::render(Gamestate* gamestate)
 
 SDL_Rect Rendering::rendertext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
 {
-	SDL_Texture* tex = loadtext(text, color, maxwidth);
-	int w, h;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	SDL_Rect rect = {x, y, w, h};
-	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
-	SDL_DestroyTexture(tex);
+	SDL_Rect rect = {x, y, 0, 0};
+	if(!text.empty()){
+		SDL_Texture* tex = loadtext(text, color, maxwidth);
+		int w, h;
+		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+		rect = {x, y, w, h};
+		rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+		SDL_DestroyTexture(tex);
+	}
 	return rect;
 }
 
 SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
 {
-	TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_CENTER);
-	SDL_Texture* tex = loadtext(text, color, maxwidth);
-	int w, h;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	SDL_Rect rect = {x-int(w*0.5), y-int(h*0.5), w, h};
-	rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
-	SDL_DestroyTexture(tex);
-	TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_LEFT);
+	SDL_Rect rect = {x, y, 0, 0};
+	if(!text.empty()){
+		TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_CENTER);
+		SDL_Texture* tex = loadtext(text, color, maxwidth);
+		int w, h;
+		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+		SDL_Rect rect = {x-int(w*0.5), y-int(h*0.5), w, h};
+		rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+		SDL_DestroyTexture(tex);
+		TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_LEFT);
+	}
 	return rect;
 }
 

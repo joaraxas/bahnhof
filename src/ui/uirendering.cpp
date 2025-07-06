@@ -73,6 +73,22 @@ SDL_Rect UIRendering::gettextsize(std::string text, SDL_Rect maxrect, int margin
     return SDL_Rect({maxrect.x, maxrect.y, textuiwidth+2*margin_x, textuiheight+2*margin_y});
 }
 
+std::string UIRendering::croptexttowidth(const std::string& text, int maxwidth, int margin_x){
+    maxwidth -= 2*margin_x;
+    maxwidth = int(round(maxwidth*uiscale));
+    int ncharactersfitting;
+    TTF_MeasureText(font, text.c_str(), maxwidth, NULL, &ncharactersfitting);
+
+    if(ncharactersfitting>=text.size())
+        return text;
+
+    if(ncharactersfitting>3)
+        return text.substr(0, ncharactersfitting-3)+"...";
+
+    return text.substr(0, ncharactersfitting);
+    
+}
+
 float UIRendering::getuiscale()
 {
     return uiscale;

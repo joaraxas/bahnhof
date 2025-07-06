@@ -1,6 +1,7 @@
 #include<iostream>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/input.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -8,10 +9,104 @@
 
 namespace UI{
 
+Text::Text(Host* p, std::string t, SDL_Rect r) : Element(p), text(t)
+{
+    rect = r;
+}
+
 void Text::render(Rendering* r)
 {
-    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered);
+    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
+
+EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) : 
+        Text(p, t, r), 
+        textreference(t), 
+        originalrect(r),
+        shortenedtext(t) {
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+};
+
+EditableText::~EditableText()
+{
+    if(beingedited){
+        game->getinputmanager().gettextinputmanager().endtextinput();
+    }
+    std::cout<<"del editable text: " <<text<<std::endl;
+}
+
+void EditableText::leftclick(Vec mousepos)
+{
+    ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
+}
+
+void EditableText::render(Rendering* r)
+{
+    if(beingedited){
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        std::string textwithcursor = text;
+        textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
+        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), style, centered, margin_x, margin_y);
+    }
+    else{
+        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, margin_x, margin_y);
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
+
+void EditableText::updatesource()
+{
+    if(!text.empty()){
+        textreference = text;
+        fallbacktext = text;
+    }
+}
+
+void EditableText::startwriting(){
+    cursorindex = text.size();
+    beingedited = true;
+    fallbacktext = text;
+    updatewritingarea();
+}
+
+void EditableText::stopwriting(){
+    text = fallbacktext;
+    beingedited = false;
+    rect = originalrect;
+    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+}
+
+void EditableText::deleteselection(){
+    if(!text.empty() && cursorindex>0){
+        text.erase(cursorindex-1, 1);
+        cursorindex--;
+        updatewritingarea();
+    }
+}
+
+void EditableText::addtext(const std::string& string){
+    text.insert(cursorindex, string);
+    cursorindex += string.size();
+    updatewritingarea();
+}
+
+void EditableText::movecursorleft(){
+    cursorindex = std::fmax(0, cursorindex-1);
+}
+
+void EditableText::movecursorright(){
+    cursorindex = std::fmin(text.size(), cursorindex+1);
+}
+
+void EditableText::updatewritingarea(){
+    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
+    rect.h = std::fmax(textrect.h, originalrect.h);
+}
+
 
 void TrainIcons::render(Rendering* r)
 {

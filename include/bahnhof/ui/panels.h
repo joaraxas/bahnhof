@@ -81,7 +81,6 @@ public:
 private:
     TrainManager& trainmanager;
     Train& train;
-    Text* trainnametext;
 };
 
 }

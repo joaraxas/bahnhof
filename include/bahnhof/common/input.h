@@ -12,6 +12,9 @@ class Game;
 class Rendering;
 class Train;
 class Route;
+namespace UI{
+    class EditableText;
+}
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -25,15 +28,32 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
+class InputManager;
+
+class TextInputManager
+{
+public:
+    TextInputManager(InputManager& owner) : input(owner) {};
+    void starttextinput(UI::EditableText* textobject);
+    void savetext();
+    void endtextinput();
+    bool handle(SDL_Event& e);
+    bool iswriting() {return editingtextobject!=nullptr;};
+private:
+    InputManager& input;
+    UI::EditableText* editingtextobject = nullptr;
+};
+
 class InputManager
 {
 public:
     InputManager(Game* whatgame);
+    TextInputManager& gettextinputmanager() {return textinput;};
     void handle(int ms, int mslogic);
     void render(Rendering*, Tracks::Tracksystem&);
     Vec screenmousepos();
     Vec mapmousepos();
-    bool keyispressed(const int scancode);
+    bool iskeypressed(const int scancode);
     bool isleftmousepressed();
     void selecttrain(Train* train);
     Train* getselectedtrain() {return selectedtrain;};
@@ -42,6 +62,7 @@ public:
     void placetrack();
 private:
     Game* game;
+    TextInputManager textinput;
     const Uint8* keys;
     bool placingsignal = false;
     bool placingtrack = false;
