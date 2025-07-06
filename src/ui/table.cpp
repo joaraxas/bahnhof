@@ -2,6 +2,7 @@
 #include<format>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/tablelines.h"
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
@@ -15,6 +16,11 @@ namespace UI{
 Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
 {
     rect = newrect;
+}
+
+Table::~Table()
+{
+    std::cout<<"del table"<<std::endl;
 }
 
 bool Table::checkclick(Vec mousepos)

@@ -15,62 +15,14 @@ class Route;
 class RouteManager;
 
 namespace UI{
-class Table;
 
-class TableLine : public Element
-{
-public:
-    TableLine(Host*, Table*);
-    virtual ~TableLine() {};
-    virtual void render(Rendering* r, SDL_Rect maxarea) {};
-    SDL_Rect getglobalrect();
-protected:
-    Table* table;
-};
-
-class TableTextLine : public TableLine
-{
-public:
-    TableTextLine(Host*, Table*, std::string newstr);
-    virtual ~TableTextLine() {};
-    virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
-    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info);};
-private:
-    std::string str;
-};
-
-class RouteTableLine : public TableTextLine
-{
-public:
-    RouteTableLine(Host*, Table*, std::string routename);
-    virtual void render(Rendering* r, SDL_Rect maxarea);
-};
-
-class OrderTableLine : public TableTextLine
-{
-public:
-    OrderTableLine(Host*, Table*, bool select, int orderindex, std::string description);
-    void render(Rendering* r, SDL_Rect maxarea);
-private:
-    bool selected = false;
-    int orderid;
-};
-
-class TrainTableLine : public TableLine
-{
-public:
-    TrainTableLine(Host*, Table*, TrainInfo, TrainManager*);
-    void render(Rendering* r, SDL_Rect maxarea);
-    TrainInfo info;
-private:
-    TrainManager* trainmanager;
-};
+class TableLine;
 
 class Table : public Element
 {
 public:
     Table(Host*, SDL_Rect newrect);
-    virtual ~Table() {std::cout<<"del table"<<std::endl;};
+    virtual ~Table();
     bool checkclick(Vec pos);
     void scroll(Vec pos, int distance);
     virtual void render(Rendering*);

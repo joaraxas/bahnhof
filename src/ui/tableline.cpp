@@ -1,6 +1,7 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/tablelines.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/routing/routing.h"
