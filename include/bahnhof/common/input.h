@@ -44,6 +44,13 @@ private:
     UI::EditableText* editingtextobject = nullptr;
 };
 
+enum InputState {
+    idle,
+    placingsignals,
+    placingtracks,
+    placingbuildings
+};
+
 class InputManager
 {
 public:
@@ -55,7 +62,6 @@ public:
     Vec mapmousepos();
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
-    Train* getselectedtrain() {return selectedtrain;};
     void editroute(Route* route);
     void placesignal();
     void placetrack();
@@ -67,9 +73,8 @@ private:
     void selecttrain(Train* train);
     Game* game;
     TextInputManager textinput;
+    InputState inputstate = idle;
     const Uint8* keys;
-    bool placingsignal = false;
-    bool placingtrack = false;
     Train* selectedtrain = nullptr;
     nodeid selectednode = 0;
     Vec trackorigin;
