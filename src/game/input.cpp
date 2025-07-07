@@ -28,67 +28,68 @@ void InputManager::handle(int ms, int mslogic){
     ui.mousehover(screenmousepos(), ms);
 
     while(SDL_PollEvent(&e)){
-        switch(e.type){
-            case SDL_QUIT:{
-                game->exit();
-                break;
+        switch(e.type)
+        {
+        case SDL_QUIT:{
+            game->exit();
+            break;
+        }
+        
+        case SDL_MOUSEBUTTONDOWN:{
+            if(textinput.iswriting()){
+                textinput.endtextinput();
             }
-            
-            case SDL_MOUSEBUTTONDOWN:{
-                if(textinput.iswriting()){
-                    textinput.endtextinput();
-                }
-                if(ui.click(screenmousepos(), e.button.button))
-                    break;
-                Vec mousepos = mapmousepos();
-                if(e.button.button == SDL_BUTTON_RIGHT){
-                    rightclickmap(mousepos);
-                }
-                if(e.button.button == SDL_BUTTON_MIDDLE){
-                    resetinput();
-                    Tracks::Input::deleteat(tracksystem, mousepos);
-                }
-                if(e.button.button == SDL_BUTTON_LEFT){
-                    leftclickmap(mousepos);
-                }
+            if(ui.click(screenmousepos(), e.button.button))
                 break;
+            Vec mousepos = mapmousepos();
+            if(e.button.button == SDL_BUTTON_RIGHT){
+                rightclickmap(mousepos);
             }
+            if(e.button.button == SDL_BUTTON_MIDDLE){
+                resetinput();
+                Tracks::Input::deleteat(tracksystem, mousepos);
+            }
+            if(e.button.button == SDL_BUTTON_LEFT){
+                leftclickmap(mousepos);
+            }
+            break;
+        }
 
-            case SDL_MOUSEBUTTONUP:{
-                if(e.button.button == SDL_BUTTON_LEFT){
-                    Vec mousepos = screenmousepos();
-                    ui.leftbuttonup(mousepos);
-                }
-                break;
+        case SDL_MOUSEBUTTONUP:{
+            if(e.button.button == SDL_BUTTON_LEFT){
+                Vec mousepos = screenmousepos();
+                ui.leftbuttonup(mousepos);
             }
+            break;
+        }
 
-            case SDL_KEYDOWN:{
-                if(textinput.handle(e))
-                    break;
-                keydown(e.key.keysym.sym);
+        case SDL_KEYDOWN:{
+            if(textinput.handle(e))
                 break;
-            }
+            keydown(e.key.keysym.sym);
+            break;
+        }
 
-            case SDL_TEXTINPUT:{
-                textinput.handle(e);
-                break;
-            }
+        case SDL_TEXTINPUT:{
+            textinput.handle(e);
+            break;
+        }
 
-            case SDL_MOUSEWHEEL:{
-                if(e.wheel.y > 0){
-                    if(ui.scroll(screenmousepos(), e.wheel.y))
-                        {}
-                    else
-                        cam.zoomin(screenmousepos());
-                }
-                if(e.wheel.y < 0){
-                    if(ui.scroll(screenmousepos(), e.wheel.y))
-                        {}
-                    else
-                        cam.zoomout(screenmousepos());
-                }
-                break;
+        case SDL_MOUSEWHEEL:{
+            if(e.wheel.y > 0){
+                if(ui.scroll(screenmousepos(), e.wheel.y))
+                    {}
+                else
+                    cam.zoomin(screenmousepos());
             }
+            if(e.wheel.y < 0){
+                if(ui.scroll(screenmousepos(), e.wheel.y))
+                    {}
+                else
+                    cam.zoomout(screenmousepos());
+            }
+            break;
+        }
         }
     }
 
@@ -290,6 +291,7 @@ void InputManager::resetinput()
     placingtrack = false;
     placingsignal = false;
 }
+
 
 void TextInputManager::starttextinput(UI::EditableText* textobject)
 {
