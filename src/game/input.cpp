@@ -33,69 +33,27 @@ void InputManager::handle(int ms, int mslogic){
                 game->exit();
                 break;
             }
+            
             case SDL_MOUSEBUTTONDOWN:{
                 if(textinput.iswriting()){
                     textinput.endtextinput();
                 }
+                if(ui.click(screenmousepos(), e.button.button))
+                    break;
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
-                    resetinput();
-                    if(editingroute){
-                        Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
-                        if(neworder)
-                            editingroute->insertorderatselected(neworder);
-                    }
+                    rightclickmap(mousepos);
                 }
                 if(e.button.button == SDL_BUTTON_MIDDLE){
                     resetinput();
                     Tracks::Input::deleteat(tracksystem, mousepos);
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
-                    if(ui.click(screenmousepos(), SDL_BUTTON_LEFT)){}
-                    else if(placingsignal){
-                        if(gamestate.money>0){
-                            Tracks::Input::buildsignalat(tracksystem, mousepos);
-                            gamestate.money-=1;
-                        }
-                        placingsignal = false;
-                    }
-                    else if(placingtrack){
-                        if(trackorigin.x!=0 || trackorigin.y!=0){
-                            if(gamestate.money>0){
-                                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mousepos);
-                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-                            }
-                            trackorigin = Vec(0,0);
-                        }
-                        else if(selectednode){
-                            if(gamestate.money>0){
-                                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
-                                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-                            }
-                        }
-                        else{
-                            selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                            if(!selectednode){
-                                trackorigin = mousepos;
-                            }
-                        }
-                    }
-                    else{
-                        Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
-                        if(clickedtrain){
-                            selecttrain(clickedtrain);
-                        }
-                        else{
-                            if(!Tracks::Input::switchat(tracksystem, mousepos)){
-                                selecttrain(nullptr);
-                            }
-                        }
-                    }
+                    leftclickmap(mousepos);
                 }
                 break;
             }
+
             case SDL_MOUSEBUTTONUP:{
                 if(e.button.button == SDL_BUTTON_LEFT){
                     Vec mousepos = screenmousepos();
@@ -103,39 +61,19 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 break;
             }
+
             case SDL_KEYDOWN:{
                 if(textinput.handle(e))
                     break;
-                if(e.key.keysym.sym == SDLK_n){
-                    nicetracks = !nicetracks;
-                }
-                if(gamestate.money>0){
-                    TrainManager& trainmanager = gamestate.gettrainmanager();
-                    if(e.key.keysym.sym == SDLK_o){
-                        trainmanager.addwagon(new Openwagon(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-                        trainmanager.addtrainstoorphans();
-                        gamestate.money -= 3;
-                    }
-                    if(e.key.keysym.sym == SDLK_q){
-                        trainmanager.addwagon(new Tankwagon(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
-                        trainmanager.addtrainstoorphans();
-                        gamestate.money -= 3;
-                    }
-                    if(e.key.keysym.sym == SDLK_y){
-                        trainmanager.addwagon(new Locomotive(&tracksystem, gamestate.newwagonstate));
-                        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-                        trainmanager.addtrainstoorphans();
-                        gamestate.money -= 8;
-                    }
-                }
+                keydown(e.key.keysym.sym);
                 break;
             }
+
             case SDL_TEXTINPUT:{
                 textinput.handle(e);
                 break;
             }
+
             case SDL_MOUSEWHEEL:{
                 if(e.wheel.y > 0){
                     if(ui.scroll(screenmousepos(), e.wheel.y))
@@ -168,6 +106,105 @@ void InputManager::handle(int ms, int mslogic){
             cam.pan(Vec(0, +ms));
 
         trainmanager.getinput(this, mslogic);
+    }
+}
+
+void InputManager::leftclickmap(Vec mousepos)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    
+    if(placingsignal){
+        if(gamestate.money>0){
+            Tracks::Input::buildsignalat(tracksystem, mousepos);
+            gamestate.money-=1;
+        }
+        placingsignal = false;
+        return;
+    }
+
+    if(placingtrack){
+        if(trackorigin.x!=0 || trackorigin.y!=0){
+            if(gamestate.money>0){
+                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mousepos);
+                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+                trackorigin = Vec(0,0);
+            }
+        }
+        else if(selectednode){
+            if(gamestate.money>0){
+                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
+                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+            }
+        }
+        else{
+            selectednode = Tracks::Input::selectat(tracksystem, mousepos);
+            if(!selectednode){
+                trackorigin = mousepos;
+            }
+        }
+        return;
+    }
+
+    Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
+    if(clickedtrain){
+        selecttrain(clickedtrain);
+        return;
+    }
+    
+    if(!Tracks::Input::switchat(tracksystem, mousepos)){
+        selecttrain(nullptr);
+    }
+}
+
+void InputManager::rightclickmap(Vec mousepos)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    resetinput();
+    if(editingroute){
+        Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
+        if(neworder)
+            editingroute->insertorderatselected(neworder);
+    }
+}
+
+void InputManager::keydown(SDL_Keycode key)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    TrainManager& trainmanager = gamestate.gettrainmanager();
+    switch (key)
+    {
+    case SDLK_n:
+        nicetracks = !nicetracks;
+        break;
+    
+    case SDLK_o:
+        trainmanager.addwagon(new Openwagon(&tracksystem, gamestate.newwagonstate));
+        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
+        trainmanager.addtrainstoorphans();
+        gamestate.money -= 3;
+        break;
+    
+    case SDLK_q:
+        trainmanager.addwagon(new Tankwagon(&tracksystem, gamestate.newwagonstate));
+        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
+        trainmanager.addtrainstoorphans();
+        gamestate.money -= 3;
+        break;
+    
+    case SDLK_y:
+        trainmanager.addwagon(new Locomotive(&tracksystem, gamestate.newwagonstate));
+        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
+        trainmanager.addtrainstoorphans();
+        gamestate.money -= 8;
+        break;
+    
+    default:
+        break;
     }
 }
 

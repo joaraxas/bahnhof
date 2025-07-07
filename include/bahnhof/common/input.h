@@ -62,6 +62,9 @@ public:
     void placetrack();
 private:
     void resetinput();
+    void leftclickmap(Vec mousepos);
+    void rightclickmap(Vec mousepos);
+    void keydown(SDL_Keycode key);
     Game* game;
     TextInputManager textinput;
     const Uint8* keys;
