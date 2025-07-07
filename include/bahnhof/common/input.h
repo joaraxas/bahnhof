@@ -55,7 +55,6 @@ public:
     Vec mapmousepos();
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
-    void selecttrain(Train* train);
     Train* getselectedtrain() {return selectedtrain;};
     void editroute(Route* route);
     void placesignal();
@@ -65,6 +64,7 @@ private:
     void leftclickmap(Vec mousepos);
     void rightclickmap(Vec mousepos);
     void keydown(SDL_Keycode key);
+    void selecttrain(Train* train);
     Game* game;
     TextInputManager textinput;
     const Uint8* keys;
