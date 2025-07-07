@@ -128,7 +128,9 @@ TrainListPanel::~TrainListPanel()
 
 
 TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain) : 
-		Panel(newui, newrect), trainmanager(manager), train(newtrain)
+		Panel(newui, newrect), 
+		trainmanager(manager), 
+		train(newtrain)
 {
 	TrainInfo info = train.getinfo();
 

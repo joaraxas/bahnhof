@@ -73,6 +73,7 @@ class UIRendering{
 public:
     UIRendering(InterfaceManager& newui);
     void rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=false, bool originiscenter=false, int centerx=0, int centery=0);
+    void renderrectangle(Rendering* r, SDL_Rect rectangle, UI::TextStyle style, bool filled=false);
     SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false, int margin_x=0, int margin_y=0);
     SDL_Rect gettextsize(std::string text, SDL_Rect maxrect, int margin_x=0, int margin_y=0);
     std::string croptexttowidth(const std::string& text, int maxwidth, int margin_x=0);

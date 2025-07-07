@@ -128,7 +128,7 @@ void Dropdown::render(Rendering* r)
         rect.h += line->getlocalrect().h;
     }
 
-    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
     Table::render(r);
 }
 
@@ -302,9 +302,9 @@ void TrainOrderTable::leftclick(Vec pos)
 
 ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : Table(p, r), input(game->getinputmanager())
 {
-    lines.emplace_back(new TableTextLine(panel, this, "Post office"));
-    lines.emplace_back(new TableTextLine(panel, this, "Restaurant"));
-    lines.emplace_back(new TableTextLine(panel, this, "Hotel"));
+    lines.emplace_back(new ConstructionTableLine(panel, this, "Post office"));
+    lines.emplace_back(new ConstructionTableLine(panel, this, "Restaurant"));
+    lines.emplace_back(new ConstructionTableLine(panel, this, "Hotel"));
 }
 
 void ConstructionTable::leftclick(Vec pos)
