@@ -44,6 +44,20 @@ private:
     UI::EditableText* editingtextobject = nullptr;
 };
 
+class TrackBuilder
+{
+public:
+    TrackBuilder(InputManager& owner, Game* newgame);
+    void render(Rendering*);
+    void leftclickmap(Vec mappos);
+    void reset();
+private:
+    InputManager& input;
+    Game* game;
+    nodeid selectednode = 0;
+    Vec trackorigin{0,0};
+};
+
 enum InputState {
     idle,
     placingsignals,
@@ -57,7 +71,7 @@ public:
     InputManager(Game* whatgame);
     TextInputManager& gettextinputmanager() {return textinput;};
     void handle(int ms, int mslogic);
-    void render(Rendering*, Tracks::Tracksystem&);
+    void render(Rendering*);
     Vec screenmousepos();
     Vec mapmousepos();
     bool iskeypressed(const int scancode);
@@ -73,10 +87,8 @@ private:
     void selecttrain(Train* train);
     Game* game;
     TextInputManager textinput;
+    TrackBuilder trackbuilder;
     InputState inputstate = idle;
     const Uint8* keys;
-    Train* selectedtrain = nullptr;
-    nodeid selectednode = 0;
-    Vec trackorigin;
     Route* editingroute = nullptr;
 };
