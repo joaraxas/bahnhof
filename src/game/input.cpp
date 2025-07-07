@@ -114,17 +114,19 @@ void InputManager::leftclickmap(Vec mousepos)
 {
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    
-    if(placingsignal){
+
+    switch (inputstate)
+    {
+    case placingsignals:{
         if(gamestate.money>0){
             Tracks::Input::buildsignalat(tracksystem, mousepos);
             gamestate.money-=1;
+            resetinput();
         }
-        placingsignal = false;
-        return;
+        break;
     }
-
-    if(placingtrack){
+    
+    case placingtracks:{
         if(trackorigin.x!=0 || trackorigin.y!=0){
             if(gamestate.money>0){
                 Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mousepos);
@@ -146,18 +148,29 @@ void InputManager::leftclickmap(Vec mousepos)
                 trackorigin = mousepos;
             }
         }
-        return;
-    }
-
-    Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
-    if(clickedtrain){
-        selecttrain(clickedtrain);
-        return;
+        break;
     }
     
-    if(!Tracks::Input::switchat(tracksystem, mousepos)){
-        selecttrain(nullptr);
+    case idle:{
+        Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
+        if(clickedtrain){
+            selecttrain(clickedtrain);
+            break;
+        }
+        
+        if(!Tracks::Input::switchat(tracksystem, mousepos)){
+            selecttrain(nullptr);
+        }
+        break;
     }
+    
+    default:{
+        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager";
+        break;
+    }
+    }
+    
+
 }
 
 void InputManager::rightclickmap(Vec mousepos)
@@ -211,7 +224,7 @@ void InputManager::keydown(SDL_Keycode key)
 
 void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
 {
-    if(placingtrack)
+    if(inputstate == placingtracks)
     if(selectednode || trackorigin.x!=0){
         Tracks::Tracksection section;
         if(selectednode)
@@ -275,21 +288,21 @@ void InputManager::editroute(Route* route)
 void InputManager::placesignal()
 {
     resetinput();
-    placingsignal = true;
+    inputstate = placingsignals;
 }
 
 void InputManager::placetrack()
 {
     resetinput();
-    placingtrack = true;
+    inputstate = placingtracks;
 }
 
 void InputManager::resetinput()
 {
     selectednode = 0;
     trackorigin = Vec(0,0);
-    placingtrack = false;
-    placingsignal = false;
+    
+    inputstate = idle;
 }
 
 
