@@ -43,7 +43,7 @@ void Rendering::render(Gamestate* gamestate)
 	for(auto& storage : storages)
 		storage->render(this);
 	Tracks::render(tracksystem, this);
-	game->getinputmanager().render(this, tracksystem);
+	game->getinputmanager().render(this);
 	gamestate->gettrainmanager().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
 

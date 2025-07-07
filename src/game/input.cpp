@@ -11,8 +11,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame) : textinput(*this){
-    game = whatgame;
+InputManager::InputManager(Game* whatgame) : game(whatgame), textinput(*this), trackbuilder(*this, game){
 }
 
 void InputManager::handle(int ms, int mslogic){
@@ -127,27 +126,7 @@ void InputManager::leftclickmap(Vec mousepos)
     }
     
     case placingtracks:{
-        if(trackorigin.x!=0 || trackorigin.y!=0){
-            if(gamestate.money>0){
-                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mousepos);
-                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-                trackorigin = Vec(0,0);
-            }
-        }
-        else if(selectednode){
-            if(gamestate.money>0){
-                Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mousepos);
-                selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-                gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-            }
-        }
-        else{
-            selectednode = Tracks::Input::selectat(tracksystem, mousepos);
-            if(!selectednode){
-                trackorigin = mousepos;
-            }
-        }
+        trackbuilder.leftclickmap(mousepos);
         break;
     }
     
@@ -222,23 +201,10 @@ void InputManager::keydown(SDL_Keycode key)
     }
 }
 
-void InputManager::render(Rendering* r, Tracks::Tracksystem& tracksystem)
+void InputManager::render(Rendering* r)
 {
     if(inputstate == placingtracks)
-    if(selectednode || trackorigin.x!=0){
-        Tracks::Tracksection section;
-        if(selectednode)
-            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), mapmousepos());
-        else
-            section = Tracks::Input::planconstructionto(tracksystem, trackorigin, mapmousepos());
-        Tracks::render(section, r, 1);
-        int cost = -ceil(Tracks::Input::getcostoftracks(section));
-        r->rendertext(std::to_string(cost), screenmousepos().x, screenmousepos().y-18, {127, 0, 0}, false, false);
-        for(auto track: section.tracks)
-            delete track;
-        for(auto node: section.nodes)
-            delete node;
-    }
+        trackbuilder.render(r);
     if(editingroute)
         editingroute->render(r);
 }
@@ -277,7 +243,6 @@ void InputManager::selecttrain(Train* whattrain)
 	if(whattrain){
 		whattrain->selected = true;
     }
-	selectedtrain = whattrain;
 }
 
 void InputManager::editroute(Route* route)
@@ -299,9 +264,7 @@ void InputManager::placetrack()
 
 void InputManager::resetinput()
 {
-    selectednode = 0;
-    trackorigin = Vec(0,0);
-    
+    trackbuilder.reset();
     inputstate = idle;
 }
 
@@ -370,4 +333,62 @@ bool TextInputManager::handle(SDL_Event& e)
         }
     }
     return false;
+}
+
+TrackBuilder::TrackBuilder(InputManager& owner, Game* newgame) : input(owner), game(newgame)
+{
+}
+
+void TrackBuilder::render(Rendering* r)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    if(selectednode || trackorigin.x!=0){
+        Tracks::Tracksection section;
+        if(selectednode)
+            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), input.mapmousepos());
+        else
+            section = Tracks::Input::planconstructionto(tracksystem, trackorigin, input.mapmousepos());
+        Tracks::render(section, r, 1);
+        int cost = -ceil(Tracks::Input::getcostoftracks(section));
+        r->rendertext(std::to_string(cost), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
+        for(auto track: section.tracks)
+            delete track;
+        for(auto node: section.nodes)
+            delete node;
+    }
+}
+
+void TrackBuilder::leftclickmap(Vec mappos)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+
+    if(trackorigin.x!=0 || trackorigin.y!=0){
+        if(gamestate.money>0){
+            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mappos);
+            selectednode = Tracks::Input::selectat(tracksystem, mappos);
+            gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+            trackorigin = Vec(0,0);
+        }
+    }
+    else if(selectednode){
+        if(gamestate.money>0){
+            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mappos);
+            selectednode = Tracks::Input::selectat(tracksystem, mappos);
+            gamestate.money -= Tracks::Input::getcostoftracks(newsection);
+        }
+    }
+    else{
+        selectednode = Tracks::Input::selectat(tracksystem, mappos);
+        if(!selectednode){
+            trackorigin = mappos;
+        }
+    }
+}
+
+void TrackBuilder::reset()
+{
+    selectednode = 0;
+    trackorigin = Vec(0,0);
 }
