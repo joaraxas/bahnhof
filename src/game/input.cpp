@@ -39,10 +39,7 @@ void InputManager::handle(int ms, int mslogic){
                 }
                 Vec mousepos = mapmousepos();
                 if(e.button.button == SDL_BUTTON_RIGHT){
-                    selectednode = 0;
-                    trackorigin = Vec(0,0);
-                    placingtrack = false;
-                    placingsignal = false;
+                    resetinput();
                     if(editingroute){
                         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
                         if(neworder)
@@ -50,6 +47,7 @@ void InputManager::handle(int ms, int mslogic){
                     }
                 }
                 if(e.button.button == SDL_BUTTON_MIDDLE){
+                    resetinput();
                     Tracks::Input::deleteat(tracksystem, mousepos);
                 }
                 if(e.button.button == SDL_BUTTON_LEFT){
@@ -238,17 +236,23 @@ void InputManager::editroute(Route* route)
 
 void InputManager::placesignal()
 {
+    resetinput();
     placingsignal = true;
-    placingtrack = false;
-    selecttrain(nullptr);
 }
 
 void InputManager::placetrack()
 {
+    resetinput();
     placingtrack = true;
+}
+
+void InputManager::resetinput()
+{
+    selectednode = 0;
+    trackorigin = Vec(0,0);
+    placingtrack = false;
     placingsignal = false;
-    selecttrain(nullptr);
-};
+}
 
 void TextInputManager::starttextinput(UI::EditableText* textobject)
 {

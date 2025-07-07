@@ -61,6 +61,7 @@ public:
     void placesignal();
     void placetrack();
 private:
+    void resetinput();
     Game* game;
     TextInputManager textinput;
     const Uint8* keys;
