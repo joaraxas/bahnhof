@@ -66,5 +66,16 @@ private:
     TrainManager* trainmanager;
 };
 
+class ConstructionTableLine : public TableLine
+{
+public:
+    ConstructionTableLine(Host*, Table*, std::string newname);
+    void render(Rendering* r, SDL_Rect maxarea);
+protected:
+    Icon icon;
+    std::string name;
+    int price;
+};
+
 
 }

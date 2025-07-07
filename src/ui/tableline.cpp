@@ -3,8 +3,8 @@
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/tablelines.h"
 #include "bahnhof/ui/decoration.h"
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 
 namespace UI{
@@ -43,8 +43,7 @@ RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
 void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableTextLine::render(r, maxarea);
-    SDL_SetRenderDrawColor(renderer,0,0,0,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
 }
 
 OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
@@ -55,15 +54,13 @@ OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string d
 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
-    uint8_t intensity = 255*selected;
     TextStyle style;
     if(selected)
         style = Highlighted;
     else
         style = Info;
     TableTextLine::render(r, maxarea, style);
-    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -78,13 +75,11 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     TextStyle style = Info;
     if(info.train->selected)
         style = Highlighted;
-    Uint8 intensity = 255*info.train->selected;
     int rowoffset = 2;
     int textpadding = 5;
     int namerowwidth = 60;
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
-    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
     namerect = ui->getuirendering().rendertext(r, info.name, namerect, style, false, textpadding, rowoffset);
     rect.h = namerect.h;
@@ -96,7 +91,48 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
                               namerect.h-2*rowoffset};
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
     
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
+}
+
+ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, std::string newname) : 
+    TableLine(p, t),
+    name(newname),
+    price(99)
+{
+    SpriteManager& sprites = game->getsprites();
+    icon.setspritesheet(sprites, sprites::iconrefrigeratorcar);
+    icon.ported = false;
+}
+
+void ConstructionTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    rect = maxarea;
+    TextStyle style = Info;
+    // if(info.train->selected)
+    //     style = Highlighted;
+    int rowoffset = 2;
+    int textpadding = 5;
+    int namerowwidth = 200;
+    
+    
+    Vec screeniconsize = icon.getsize();
+    Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
+    SDL_Rect namerect = getlocalrect();
+    namerect.w = namerowwidth;
+    namerect.x += uiiconsize.x + 2*textpadding;
+    namerect = ui->getuirendering().rendertext(r, name, namerect, style, false, textpadding, rowoffset);
+    SDL_Rect pricerect = getlocalrect();
+    pricerect.x += namerowwidth;
+    pricerect.w -= namerowwidth;
+    pricerect = ui->getuirendering().rendertext(r, std::to_string(price)+" Fr", pricerect, style, false, textpadding, rowoffset);
+    rect.h = std::fmax(std::fmax(namerect.h, pricerect.h), uiiconsize.y+2*rowoffset);
+    SDL_Rect uiiconrect = rect;
+    uiiconrect.x += textpadding;
+    uiiconrect.y += rowoffset;
+    SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
+    icon.render(r, Vec(screeniconrect.x+screeniconsize.x*0.5, screeniconrect.y+screeniconsize.y*0.5));
+    
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 } //end namespace UI
