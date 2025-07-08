@@ -11,7 +11,8 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame) : game(whatgame), textinput(*this), trackbuilder(*this, game){
+InputManager::InputManager(Game* whatgame) : game(whatgame), textinput(*this), trackbuilder(*this, game), signalbuilder(*this, game)
+{
 }
 
 void InputManager::handle(int ms, int mslogic){
@@ -203,8 +204,15 @@ void InputManager::keydown(SDL_Keycode key)
 
 void InputManager::render(Rendering* r)
 {
-    if(inputstate == placingtracks)
+    switch (inputstate)
+    {
+    case placingtracks:
         trackbuilder.render(r);
+        break;
+
+    case placingsignals:
+        signalbuilder.render(r);
+    }
     if(editingroute)
         editingroute->render(r);
 }
@@ -391,4 +399,16 @@ void TrackBuilder::reset()
 {
     selectednode = 0;
     trackorigin = Vec(0,0);
+}
+
+SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : input(owner), game(newgame)
+{
+}
+
+void SignalBuilder::render(Rendering* r)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    icon.setspritesheet(game->getsprites(), sprites::signal);
+    icon.render(r, input.mapmousepos());
 }
