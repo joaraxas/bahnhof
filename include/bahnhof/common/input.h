@@ -4,6 +4,7 @@
 #include<SDL_ttf.h>
 #include "math.h"
 #include "bahnhof/track/state.h"
+#include "bahnhof/graphics/sprite.h"
 
 namespace Tracks{
     class Tracksystem;}
@@ -58,6 +59,19 @@ private:
     Vec trackorigin{0,0};
 };
 
+class SignalBuilder
+{
+public:
+    SignalBuilder(InputManager& owner, Game* newgame);
+    void render(Rendering*);
+    void leftclickmap(Vec mappos);
+    void reset();
+private:
+    InputManager& input;
+    Game* game;
+    Icon icon;
+};
+
 enum InputState {
     idle,
     placingsignals,
@@ -88,6 +102,7 @@ private:
     Game* game;
     TextInputManager textinput;
     TrackBuilder trackbuilder;
+    SignalBuilder signalbuilder;
     InputState inputstate = idle;
     const Uint8* keys;
     Route* editingroute = nullptr;
