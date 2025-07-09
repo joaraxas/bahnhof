@@ -5,6 +5,8 @@
 #include "math.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/input/textinput.h" //TODO: can we get rid of this?
+#include "bahnhof/input/builder.h" //TODO: can we get rid of this?
 
 namespace Tracks{
     class Tracksystem;}
@@ -13,9 +15,6 @@ class Game;
 class Rendering;
 class Train;
 class Route;
-namespace UI{
-    class EditableText;
-}
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -29,51 +28,6 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-class InputManager;
-
-class TextInputManager
-{
-public:
-    TextInputManager(InputManager& owner) : input(owner) {};
-    void starttextinput(UI::EditableText* textobject);
-    void savetext();
-    void endtextinput();
-    bool handle(SDL_Event& e);
-    bool iswriting() {return editingtextobject!=nullptr;};
-private:
-    InputManager& input;
-    UI::EditableText* editingtextobject = nullptr;
-};
-
-class TrackBuilder
-{
-public:
-    TrackBuilder(InputManager& owner, Game* newgame);
-    void render(Rendering*);
-    void leftclickmap(Vec mappos);
-    void reset();
-private:
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
-    nodeid selectednode = 0;
-    Vec trackorigin{0,0};
-};
-
-class SignalBuilder
-{
-public:
-    SignalBuilder(InputManager& owner, Game* newgame);
-    void render(Rendering*);
-    void leftclickmap(Vec mappos);
-    void reset();
-private:
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
-    Icon icon;
-};
-
 enum InputState {
     idle,
     placingsignals,
@@ -85,7 +39,7 @@ class InputManager
 {
 public:
     InputManager(Game* whatgame);
-    TextInputManager& gettextinputmanager() {return textinput;};
+    TextInputManager& gettextinputmanager();
     void handle(int ms, int mslogic);
     void render(Rendering*);
     Vec screenmousepos();

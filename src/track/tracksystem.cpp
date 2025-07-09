@@ -2,7 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/camera.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
