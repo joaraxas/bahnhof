@@ -25,7 +25,7 @@ void Sprite::updateframe(int ms)
 void Sprite::render(Rendering* r, Vec pos)
 {
 	if(spritesheet)
-		spritesheet->render(r, pos, ported, zoomed, imageangle, imageindex, imagetype, imagescale, imagealpha);
+		spritesheet->render(r, pos, ported, zoomed, imageangle, imageindex, imagetype, imagescale, color.a, color.r, color.g, color.b);
 	else
 		std::cout<<"Error: sprite tried rendering nonexisting spritesheet, did you forget to call setsprite?"<<std::endl;
 }
