@@ -15,7 +15,7 @@ class Spritesheet
 public:
     Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
     ~Spritesheet();
-    void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0, float imagescale=1);
+    void render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle=0, int imageindex=0, int imagetype=0, float imagescale=1, Uint8 imagealpha=255);
     int getimagenumber();
     int getimagetypes();
     void setoriginx(int);
@@ -33,6 +33,7 @@ private:
     int imagetypes;
     int origin_x;
     int origin_y;
+    Uint8 alpha = 255;
 };
 
 class SpriteManager
@@ -62,6 +63,7 @@ public:
     float imagescale = 1;
     bool ported = true;
     bool zoomed = true;
+    Uint8 imagealpha = 255;
 private:
     Spritesheet* spritesheet = nullptr;
     int imagenumber = 0;

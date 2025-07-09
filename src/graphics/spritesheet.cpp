@@ -20,12 +20,16 @@ Spritesheet::~Spritesheet()
     SDL_DestroyTexture(tex);
 }
 
-void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype, float imagescale)
+void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, int imagetype, float imagescale, Uint8 imagealpha)
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
 	srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
 	rect = {int(x - origin_x*imagescale), int(y - origin_y*imagescale), int(w*imagescale), int(h*imagescale)};
+	if(imagealpha!=alpha){
+		SDL_SetTextureAlphaMod(tex, imagealpha);
+		alpha = imagealpha;
+	}
 	if(origin_x==int(w/2) && origin_y==int(h/2))
 		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, true);
 	else
