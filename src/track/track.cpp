@@ -239,9 +239,17 @@ void Track::render(Rendering* r, int mode)
 	}*/
 	//// syllar ////
 	if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
-		if(mode==1)
-			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+		switch(mode){
+			case 0:
+				SDL_SetRenderDrawColor(renderer, 63,63,0,255);
+				break;
+			case 1:
+				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+				break;
+			case 2:
+				SDL_SetRenderDrawColor(renderer, 127,0,0,255);
+				break;
+		}
 		float sleeperwidth = 2600/150;
 		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
 		int nSleepers = round(getarclength(1)/3*fmin(1,scale));
@@ -256,9 +264,17 @@ void Track::render(Rendering* r, int mode)
 	}
 	//// rals ////
 	if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-		if(mode==1)
-			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+		switch(mode){
+			case 0:
+				SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+				break;
+			case 1:
+				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+				break;
+			case 2:
+				SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+				break;
+		}
 	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
