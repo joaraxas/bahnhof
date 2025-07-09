@@ -41,7 +41,7 @@ void setsignal(Tracksystem& tracksystem, signalid signal, int redgreenorflip)
 
 Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
 {
-	return tracksystem.getsignal(signal)->pos();
+	return getsignalposfromstate(tracksystem, tracksystem.getsignal(signal)->state);
 }
 
 void render(Tracksystem& tracksystem, Rendering* r)

@@ -13,9 +13,14 @@ namespace Tracks
 {
 namespace Input
 {
+Vec plansignalat(Tracksystem& tracksystem, Vec pos)
+{
+	State signalstate = getcloseststate(tracksystem, pos);
+	return getsignalposfromstate(tracksystem, signalstate);
+}
+
 signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 {
-	trackid clickedtrack = 0;
 	State signalstate = getcloseststate(tracksystem, pos);
 	return tracksystem.addsignal(signalstate);
 }
@@ -185,7 +190,7 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 		*signal = 0;
 		closestsignal = getclosestsignal(tracksystem, mousepos);
 		if(closestsignal)
-			signaldist = distancebetween(tracksystem.getsignal(closestsignal)->pos(), mousepos);
+			signaldist = distancebetween(tracksystem.getsignal(closestsignal)->getpos(), mousepos);
 	}
 	if(_switch){
 		*_switch = 0;
@@ -242,12 +247,12 @@ nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
 	return closestnode;
 }
 
-signalid getclosestsignal(Tracksystem& tracksystem, Vec pos)
+signalid getclosestsignal(Tracksystem& tracks, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	signalid closestsignal = 0;
-	for(auto signal: tracksystem.allsignals()){
-		float distsquared = pow(signal->pos().x-pos.x, 2) + pow(signal->pos().y-pos.y, 2);
+	for(auto signal: tracks.allsignals()){
+		float distsquared = pow(signal->getpos().x-pos.x, 2) + pow(signal->getpos().y-pos.y, 2);
 		if(distsquared < mindistsquared){
 			closestsignal = signal->id;
 			mindistsquared = distsquared;

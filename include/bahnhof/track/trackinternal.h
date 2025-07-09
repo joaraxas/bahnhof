@@ -107,26 +107,29 @@ class Signal
 {
 public:
     Signal(Tracksystem& newtracksystem, State signalstate, signalid myid);
+    Vec getpos() {return pos;};
     void addtotrack();
     void disconnectfromtrack();
     void render(Rendering* r);
     void update();
     void set(int redgreenorflip);
     int getcolorforordergeneration();
-    Vec pos();
     bool isred(Train* train);
     State state;
     Train* reservedfor = nullptr;
     signalid id;
 private:
     Tracksystem* tracksystem;
+    Vec pos;
     bool isgreen = true;
     Trackblock blocks;
     Icon sprite;
 };
 
-    State tryincrementingtrack(Tracksystem&, State state);
-    float distancebetween(Vec, Vec);
+Vec getsignalposfromstate(Tracksystem&, State state);
+
+State tryincrementingtrack(Tracksystem&, State state);
+float distancebetween(Vec, Vec);
 
 namespace Input
 {
