@@ -138,10 +138,9 @@ void InputManager::leftclickmap(Vec mousepos)
         break;
     }
     
-    default:{
+    default:
         std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager";
         break;
-    }
     }
     
 
@@ -405,6 +404,7 @@ void SignalBuilder::render(Rendering* r)
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     icon.setspritesheet(game->getsprites(), sprites::signal);
+    icon.imagealpha = 127;
     Vec signalpos = Tracks::Input::plansignalat(tracksystem, input.mapmousepos());
     if(norm(signalpos-input.mapmousepos())<100)
         icon.render(r, signalpos);
