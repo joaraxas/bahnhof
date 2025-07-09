@@ -53,8 +53,9 @@ public:
     void leftclickmap(Vec mappos);
     void reset();
 private:
-    InputManager& input;
     Game* game;
+    InputManager& input;
+    Tracks::Tracksystem& tracksystem;
     nodeid selectednode = 0;
     Vec trackorigin{0,0};
 };
@@ -67,8 +68,9 @@ public:
     void leftclickmap(Vec mappos);
     void reset();
 private:
-    InputManager& input;
     Game* game;
+    InputManager& input;
+    Tracks::Tracksystem& tracksystem;
     Icon icon;
 };
 
