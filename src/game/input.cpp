@@ -301,50 +301,50 @@ bool TextInputManager::handle(SDL_Event& e)
 {
     if(iswriting()){
         switch(e.type){
-            case SDL_KEYDOWN:{
-                switch(e.key.keysym.sym){
-                    case SDLK_ESCAPE:{
-                        endtextinput();
-                        break;
-                    }
-                    case SDLK_RETURN:{
-                        savetext();
-                        break;
-                    }
-                    case SDLK_BACKSPACE:{
-                        editingtextobject->deleteselection();
-                        break;
-                    }
-                    case SDLK_LEFT:{
-                        editingtextobject->movecursorleft();
-                        break;
-                    }
-                    case SDLK_RIGHT:{
-                        editingtextobject->movecursorright();
-                        break;
-                    }
-                }
-                return true;
+        case SDL_KEYDOWN:{
+            switch(e.key.keysym.sym){
+            case SDLK_ESCAPE:{
+                endtextinput();
+                break;
             }
-            case SDL_TEXTINPUT:{
-                editingtextobject->addtext(e.text.text);
-                return true;
+            case SDLK_RETURN:{
+                savetext();
+                break;
             }
-            default:
-                return false;
+            case SDLK_BACKSPACE:{
+                editingtextobject->deleteselection();
+                break;
+            }
+            case SDLK_LEFT:{
+                editingtextobject->movecursorleft();
+                break;
+            }
+            case SDLK_RIGHT:{
+                editingtextobject->movecursorright();
+                break;
+            }
+            }
+            return true;
+        }
+        case SDL_TEXTINPUT:{
+            editingtextobject->addtext(e.text.text);
+            return true;
+        }
+        default:
+            return false;
         }
     }
     return false;
 }
 
-TrackBuilder::TrackBuilder(InputManager& owner, Game* newgame) : input(owner), game(newgame)
-{
-}
+TrackBuilder::TrackBuilder(InputManager& owner, Game* newgame) : 
+        input(owner), 
+        game(newgame), 
+        tracksystem(game->getgamestate().gettracksystems())
+{}
 
 void TrackBuilder::render(Rendering* r)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     if(selectednode || trackorigin.x!=0){
         Tracks::Tracksection section;
         if(selectednode)
@@ -395,15 +395,16 @@ void TrackBuilder::reset()
     trackorigin = Vec(0,0);
 }
 
-SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : input(owner), game(newgame)
+SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : 
+        input(owner), 
+        game(newgame),
+        tracksystem(game->getgamestate().gettracksystems())
 {
+    icon.setspritesheet(game->getsprites(), sprites::signal);
 }
 
 void SignalBuilder::render(Rendering* r)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    icon.setspritesheet(game->getsprites(), sprites::signal);
     Vec mousepos = input.mapmousepos();
     Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
     if(norm(signalpos-mousepos)<100){
@@ -419,7 +420,6 @@ void SignalBuilder::render(Rendering* r)
 void SignalBuilder::leftclickmap(Vec mousepos)
 {
     Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     if(gamestate.money>0){
         Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
         if(norm(signalpos-mousepos)<100){
