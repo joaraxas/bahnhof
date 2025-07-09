@@ -13,6 +13,7 @@ Signal::Signal(Tracksystem& newtracksystem, State signalstate, signalid myid) : 
 	tracksystem = &newtracksystem;
 	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::signal);
 	sprite.zoomed = false;
+	pos = getsignalposfromstate(newtracksystem, state);
 }
 
 void Signal::disconnectfromtrack()
@@ -32,10 +33,10 @@ void Signal::render(Rendering* r)
 			//rendertext(reservedfor->route->name, pos.x, pos.y+14);
 		}
 		else
-			r->rendertext("noone", pos().x, pos().y+14);
+			r->rendertext("noone", pos.x, pos.y+14);
 	}
 	sprite.imagetype = isgreen;
-	sprite.render(r, pos());
+	sprite.render(r, pos);
 }
 
 void Signal::update()
@@ -68,11 +69,11 @@ bool Signal::isred(Train* fortrain)
 	return false;
 }
 
-Vec Signal::pos()
+Vec getsignalposfromstate(Tracksystem& tracksystem, State state)
 {
-	float orientation = getorientation(*tracksystem, state);
+	float orientation = getorientation(tracksystem, state);
 	float transverseoffset = -20;
-	return getpos(*tracksystem, state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
+	return getpos(tracksystem, state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
 }
 
 int Signal::getcolorforordergeneration()

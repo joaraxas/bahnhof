@@ -84,6 +84,7 @@ private:
 
 namespace Input
 {
+    Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);

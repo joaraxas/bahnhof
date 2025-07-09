@@ -117,19 +117,13 @@ void InputManager::leftclickmap(Vec mousepos)
 
     switch (inputstate)
     {
-    case placingsignals:{
-        if(gamestate.money>0){
-            Tracks::Input::buildsignalat(tracksystem, mousepos);
-            gamestate.money-=1;
-            resetinput();
-        }
+    case placingsignals:
+        signalbuilder.leftclickmap(mousepos);
         break;
-    }
     
-    case placingtracks:{
+    case placingtracks:
         trackbuilder.leftclickmap(mousepos);
         break;
-    }
     
     case idle:{
         Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
@@ -273,6 +267,7 @@ void InputManager::placetrack()
 void InputManager::resetinput()
 {
     trackbuilder.reset();
+    signalbuilder.reset();
     inputstate = idle;
 }
 
@@ -410,5 +405,22 @@ void SignalBuilder::render(Rendering* r)
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     icon.setspritesheet(game->getsprites(), sprites::signal);
-    icon.render(r, input.mapmousepos());
+    Vec signalpos = Tracks::Input::plansignalat(tracksystem, input.mapmousepos());
+    if(norm(signalpos-input.mapmousepos())<100)
+        icon.render(r, signalpos);
+}
+
+void SignalBuilder::leftclickmap(Vec mappos)
+{
+    Gamestate& gamestate = game->getgamestate();
+    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+    if(gamestate.money>0){
+        Tracks::Input::buildsignalat(tracksystem, mappos);
+        gamestate.money-=1;
+    }
+}
+
+void SignalBuilder::reset()
+{
+    // do nothing for now, there is no state to reset
 }
