@@ -13,31 +13,47 @@ class Game;
 class Rendering;
 class InputManager;
 
-class TrackBuilder
+class Builder
 {
 public:
-    TrackBuilder(InputManager& owner, Game* newgame);
+    Builder(InputManager& owner, Game* newgame);
+    virtual ~Builder() {};
+    virtual void render(Rendering*) {};
+    virtual void leftclickmap(Vec mappos) {};
+    virtual void reset() {};
+protected:
+    Game* game;
+    InputManager& input;
+    Tracks::Tracksystem& tracksystem;
+};
+
+class TrackBuilder : public Builder
+{
+public:
+    TrackBuilder(InputManager& i, Game* g) : Builder(i, g) {};
     void render(Rendering*);
     void leftclickmap(Vec mappos);
     void reset();
 private:
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
     nodeid selectednode = 0;
     Vec trackorigin{0,0};
 };
 
-class SignalBuilder
+class SignalBuilder : public Builder
 {
 public:
-    SignalBuilder(InputManager& owner, Game* newgame);
+    SignalBuilder(InputManager& i, Game* g);
     void render(Rendering*);
     void leftclickmap(Vec mappos);
-    void reset();
 private:
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
     Icon icon;
+};
+
+class BuildingBuilder : public Builder
+{
+public:
+    BuildingBuilder(InputManager& owner, Game* newgame);
+private:
+
+
 };

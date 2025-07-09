@@ -5,7 +5,8 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
 
-TrackBuilder::TrackBuilder(InputManager& owner, Game* newgame) : 
+
+Builder::Builder(InputManager& owner, Game* newgame) : 
         input(owner), 
         game(newgame), 
         tracksystem(game->getgamestate().gettracksystems())
@@ -63,10 +64,7 @@ void TrackBuilder::reset()
     trackorigin = Vec(0,0);
 }
 
-SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : 
-        input(owner), 
-        game(newgame),
-        tracksystem(game->getgamestate().gettracksystems())
+SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)
 {
     icon.setspritesheet(game->getsprites(), sprites::signal);
 }
@@ -95,9 +93,4 @@ void SignalBuilder::leftclickmap(Vec mousepos)
             gamestate.money-=1;
         }
     }
-}
-
-void SignalBuilder::reset()
-{
-    // do nothing for now, there is no state to reset
 }
