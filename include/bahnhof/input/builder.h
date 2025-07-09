@@ -19,9 +19,13 @@ public:
     Builder(InputManager& owner, Game* newgame);
     virtual ~Builder() {};
     virtual void render(Rendering*) {};
-    virtual void leftclickmap(Vec mappos) {};
+    virtual void leftclickmap(Vec mappos);
     virtual void reset() {};
 protected:
+    bool canbuild(Vec pos);
+    virtual bool canfit(Vec pos) {return true;};
+    virtual void build(Vec pos) {};
+    float cost;
     Game* game;
     InputManager& input;
     Tracks::Tracksystem& tracksystem;
@@ -32,9 +36,9 @@ class TrackBuilder : public Builder
 public:
     TrackBuilder(InputManager& i, Game* g) : Builder(i, g) {};
     void render(Rendering*);
-    void leftclickmap(Vec mappos);
     void reset();
 private:
+    void build(Vec pos);
     nodeid selectednode = 0;
     Vec trackorigin{0,0};
 };
@@ -44,8 +48,9 @@ class SignalBuilder : public Builder
 public:
     SignalBuilder(InputManager& i, Game* g);
     void render(Rendering*);
-    void leftclickmap(Vec mappos);
 private:
+    bool canfit(Vec pos);
+    void build(Vec pos);
     Icon icon;
 };
 

@@ -12,6 +12,23 @@ Builder::Builder(InputManager& owner, Game* newgame) :
         tracksystem(game->getgamestate().gettracksystems())
 {}
 
+void Builder::leftclickmap(Vec pos)
+{
+    if(canbuild(pos)){
+        build(pos);
+        game->getgamestate().money-=cost;
+    }
+}
+
+bool Builder::canbuild(Vec pos)
+{
+    if(game->getgamestate().money<cost)
+        return false;
+    if(!canfit(pos))
+        return false;
+    return true;
+}
+
 void TrackBuilder::render(Rendering* r)
 {
     if(selectednode || trackorigin.x!=0){
@@ -20,9 +37,9 @@ void TrackBuilder::render(Rendering* r)
             section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), input.mapmousepos());
         else
             section = Tracks::Input::planconstructionto(tracksystem, trackorigin, input.mapmousepos());
-        Tracks::render(section, r, 1);
-        int cost = -ceil(Tracks::Input::getcostoftracks(section));
-        r->rendertext(std::to_string(cost), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
+        cost = ceil(Tracks::Input::getcostoftracks(section));
+        Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
+        r->rendertext(std::to_string(int(cost)), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
         for(auto track: section.tracks)
             delete track;
         for(auto node: section.nodes)
@@ -30,36 +47,28 @@ void TrackBuilder::render(Rendering* r)
     }
 }
 
-void TrackBuilder::leftclickmap(Vec mappos)
+void TrackBuilder::build(Vec pos)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-
     if(trackorigin.x!=0 || trackorigin.y!=0){
-        if(gamestate.money>0){
-            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, mappos);
-            selectednode = Tracks::Input::selectat(tracksystem, mappos);
-            gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-            trackorigin = Vec(0,0);
-        }
+        Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, pos);
+        selectednode = Tracks::Input::selectat(tracksystem, pos);
+        trackorigin = Vec(0,0);
     }
     else if(selectednode){
-        if(gamestate.money>0){
-            Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), mappos);
-            selectednode = Tracks::Input::selectat(tracksystem, mappos);
-            gamestate.money -= Tracks::Input::getcostoftracks(newsection);
-        }
+        Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), pos);
+        selectednode = Tracks::Input::selectat(tracksystem, pos);
     }
     else{
-        selectednode = Tracks::Input::selectat(tracksystem, mappos);
+        selectednode = Tracks::Input::selectat(tracksystem, pos);
         if(!selectednode){
-            trackorigin = mappos;
+            trackorigin = pos;
         }
     }
 }
 
 void TrackBuilder::reset()
 {
+    Builder::reset();
     selectednode = 0;
     trackorigin = Vec(0,0);
 }
@@ -67,14 +76,15 @@ void TrackBuilder::reset()
 SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)
 {
     icon.setspritesheet(game->getsprites(), sprites::signal);
+    cost = 1;
 }
 
 void SignalBuilder::render(Rendering* r)
 {
     Vec mousepos = input.mapmousepos();
-    Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
-    if(norm(signalpos-mousepos)<100){
+    if(canbuild(mousepos)){
         icon.color = {127,255,127,255};
+        Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
         icon.render(r, signalpos);
     }
     else{
@@ -83,14 +93,15 @@ void SignalBuilder::render(Rendering* r)
     }
 }
 
-void SignalBuilder::leftclickmap(Vec mousepos)
+bool SignalBuilder::canfit(Vec pos)
 {
-    Gamestate& gamestate = game->getgamestate();
-    if(gamestate.money>0){
-        Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
-        if(norm(signalpos-mousepos)<100){
-            Tracks::Input::buildsignalat(tracksystem, mousepos);
-            gamestate.money-=1;
-        }
-    }
+    Vec signalpos = Tracks::Input::plansignalat(tracksystem, pos);
+    if(norm(signalpos-pos)<100)
+        return true;
+    return false;
+}
+
+void SignalBuilder::build(Vec pos)
+{
+    Tracks::Input::buildsignalat(tracksystem, pos);
 }
