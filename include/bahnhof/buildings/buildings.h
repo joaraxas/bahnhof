@@ -8,6 +8,7 @@ class Building
 {
 public:
     Building(Game* game, int x, int y, int w, int h, std::set<resourcetype> need, std::set<resourcetype> production);
+    virtual ~Building() {};
     virtual void render(Rendering* rendering);
     void update(int ms);
 protected:

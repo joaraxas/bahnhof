@@ -57,8 +57,10 @@ private:
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& owner, Game* newgame);
+    BuildingBuilder(InputManager& i, Game* g) : Builder(i, g) {};
+    void reset();
 private:
-
+    bool canfit();
+    void build(Vec pos);
 
 };
