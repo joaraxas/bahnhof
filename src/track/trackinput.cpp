@@ -5,7 +5,7 @@
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 

@@ -16,12 +16,14 @@ add_executable(bahnhof
     src/graphics/sprite.cpp
     src/graphics/spritesheet.cpp
     src/graphics/spritemanager.cpp
-    src/game/input.cpp
     src/game/camera.cpp
     src/game/timing.cpp
     src/game/gamestate.cpp
     src/game/game.cpp
     src/game/resources.cpp
+    src/input/input.cpp
+    src/input/textinput.cpp
+    src/input/builder.cpp
     src/ui/ui.cpp
     src/ui/uirendering.cpp
     src/ui/host.cpp
