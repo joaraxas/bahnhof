@@ -404,19 +404,28 @@ void SignalBuilder::render(Rendering* r)
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     icon.setspritesheet(game->getsprites(), sprites::signal);
-    icon.imagealpha = 127;
-    Vec signalpos = Tracks::Input::plansignalat(tracksystem, input.mapmousepos());
-    if(norm(signalpos-input.mapmousepos())<100)
+    Vec mousepos = input.mapmousepos();
+    Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
+    if(norm(signalpos-mousepos)<100){
+        icon.color = {127,255,127,255};
         icon.render(r, signalpos);
+    }
+    else{
+        icon.color = {255,127,127,255};
+        icon.render(r, mousepos);
+    }
 }
 
-void SignalBuilder::leftclickmap(Vec mappos)
+void SignalBuilder::leftclickmap(Vec mousepos)
 {
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     if(gamestate.money>0){
-        Tracks::Input::buildsignalat(tracksystem, mappos);
-        gamestate.money-=1;
+        Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
+        if(norm(signalpos-mousepos)<100){
+            Tracks::Input::buildsignalat(tracksystem, mousepos);
+            gamestate.money-=1;
+        }
     }
 }
 
