@@ -2,6 +2,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/textinput.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/rollingstock/trainmanager.h"

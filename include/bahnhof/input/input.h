@@ -5,8 +5,6 @@
 #include "math.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
-#include "bahnhof/input/textinput.h" //TODO: can we get rid of this?
-#include "bahnhof/input/builder.h" //TODO: can we get rid of this?
 
 namespace Tracks{
     class Tracksystem;}
@@ -35,10 +33,15 @@ enum InputState {
     placingbuildings
 };
 
+class TextInputManager;
+class TrackBuilder;
+class SignalBuilder;
+
 class InputManager
 {
 public:
     InputManager(Game* whatgame);
+    ~InputManager();
     TextInputManager& gettextinputmanager();
     void handle(int ms, int mslogic);
     void render(Rendering*);
@@ -56,9 +59,9 @@ private:
     void keydown(SDL_Keycode key);
     void selecttrain(Train* train);
     Game* game;
-    TextInputManager textinput;
-    TrackBuilder trackbuilder;
-    SignalBuilder signalbuilder;
+    std::unique_ptr<TextInputManager> textinput;
+    std::unique_ptr<TrackBuilder> trackbuilder;
+    std::unique_ptr<SignalBuilder> signalbuilder;
     InputState inputstate = idle;
     const Uint8* keys;
     Route* editingroute = nullptr;
