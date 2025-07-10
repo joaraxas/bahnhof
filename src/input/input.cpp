@@ -1,5 +1,7 @@
 #include<iostream>
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/textinput.h"
+#include "bahnhof/input/builder.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
@@ -10,12 +12,18 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/graphics/rendering.h"
 
-InputManager::InputManager(Game* whatgame) : game(whatgame), textinput(*this), trackbuilder(*this, game), signalbuilder(*this, game)
+InputManager::InputManager(Game* whatgame) : 
+        game(whatgame), 
+        textinput(std::make_unique<TextInputManager>(*this)), 
+        trackbuilder(std::make_unique<TrackBuilder>(*this, game)), 
+        signalbuilder(std::make_unique<SignalBuilder>(*this, game))
 {}
+
+InputManager::~InputManager() {}
 
 TextInputManager& InputManager::gettextinputmanager()
 {
-    return textinput;
+    return *textinput;
 };
 
 void InputManager::handle(int ms, int mslogic){
@@ -39,8 +47,8 @@ void InputManager::handle(int ms, int mslogic){
         }
         
         case SDL_MOUSEBUTTONDOWN:{
-            if(textinput.iswriting()){
-                textinput.endtextinput();
+            if(textinput->iswriting()){
+                textinput->endtextinput();
             }
             if(ui.click(screenmousepos(), e.button.button))
                 break;
@@ -67,14 +75,14 @@ void InputManager::handle(int ms, int mslogic){
         }
 
         case SDL_KEYDOWN:{
-            if(textinput.handle(e))
+            if(textinput->handle(e))
                 break;
             keydown(e.key.keysym.sym);
             break;
         }
 
         case SDL_TEXTINPUT:{
-            textinput.handle(e);
+            textinput->handle(e);
             break;
         }
 
@@ -99,7 +107,7 @@ void InputManager::handle(int ms, int mslogic){
     if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
-    if(!textinput.iswriting()){
+    if(!textinput->iswriting()){
         if(iskeypressed(leftpanbutton))
             cam.pan(Vec(-ms, 0));
         if(iskeypressed(rightpanbutton))
@@ -121,11 +129,11 @@ void InputManager::leftclickmap(Vec mousepos)
     switch (inputstate)
     {
     case placingsignals:
-        signalbuilder.leftclickmap(mousepos);
+        signalbuilder->leftclickmap(mousepos);
         break;
     
     case placingtracks:
-        trackbuilder.leftclickmap(mousepos);
+        trackbuilder->leftclickmap(mousepos);
         break;
     
     case idle:{
@@ -203,11 +211,11 @@ void InputManager::render(Rendering* r)
     switch (inputstate)
     {
     case placingtracks:
-        trackbuilder.render(r);
+        trackbuilder->render(r);
         break;
 
     case placingsignals:
-        signalbuilder.render(r);
+        signalbuilder->render(r);
     }
     if(editingroute)
         editingroute->render(r);
@@ -268,7 +276,7 @@ void InputManager::placetrack()
 
 void InputManager::resetinput()
 {
-    trackbuilder.reset();
-    signalbuilder.reset();
+    trackbuilder->reset();
+    signalbuilder->reset();
     inputstate = idle;
 }
