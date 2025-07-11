@@ -133,6 +133,16 @@ void BuildingBuilder::build(Vec pos)
     case barleyfield:
         game->getgamestate().buildings.emplace_back(new Barleyfield(game, pos));
         break;
+    case city:
+        game->getgamestate().buildings.emplace_back(new City(game, pos));
+        break;
+    case wagonfactory:{
+        nodeid selectednode = Tracks::Input::selectat(tracksystem, pos);
+        if(selectednode)
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, selectednode));
+        else
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, pos));
+        break;}
     default:
         std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";
         break;

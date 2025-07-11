@@ -193,4 +193,11 @@ bool isendofline(Tracksystem& tracksystem, State state)
 	return false;
 }
 
+State getstartpointstate(Tracksection& section)
+{
+	if(section.tracks.size()==0)
+		return State(0,0,true);
+	return State(section.tracks.front()->id, 0, true);
+}
+
 }

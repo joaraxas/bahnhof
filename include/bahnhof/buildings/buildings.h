@@ -34,6 +34,16 @@ private:
     std::set<resourcetype> makes;
 };
 
+class WagonFactory : public Building
+{
+public:
+    WagonFactory(Game* game, Vec pos);
+    WagonFactory(Game* game, nodeid node);
+    void trigger();
+private:
+    State state;
+};
+
 class Brewery : public Industry
 {
 public:

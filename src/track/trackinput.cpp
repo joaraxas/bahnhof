@@ -76,6 +76,32 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 	return newsection;
 }
 
+Tracksection buildat(Tracksystem& tracksystem, Vec startpos, float angle, float distance)
+{
+	// Vec endpos = startpos + Vec(distance*cos(angle), distance*sin(angle));
+	// return Construction::extendtracktopos(tracksystem, )
+}
+
+Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance)
+{
+	Vec endpos;
+	if(fromnode->trackup==nullptr)
+		endpos = fromnode->getpos() + Vec(distance*cos(fromnode->getdir()), -distance*sin(fromnode->getdir()));
+	else
+		endpos = fromnode->getpos() - Vec(distance*cos(fromnode->getdir()), -distance*sin(fromnode->getdir()));
+	Tracksection section = Construction::extendtracktopos(tracksystem, fromnode, endpos);
+	
+	for(auto node : section.nodes)
+		tracksystem.addnode(*node);
+	for(auto track : section.tracks)
+		tracksystem.addtrack(*track);
+	for(auto [node, state] : section.tracksplits){
+		Construction::splittrack(tracksystem, node, state);
+	}
+
+	return section;
+}
+
 Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	Tracksection section = planconstructionto(tracksystem, fromnode, pos);

@@ -7,6 +7,9 @@
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
+#include "bahnhof/track/track.h"
+#include "bahnhof/rollingstock/trainmanager.h"
+#include "bahnhof/rollingstock/rollingstock.h"
 
 
 Building::Building(Game* whatgame, int x, int y, int w, int h)
@@ -81,6 +84,31 @@ void Industry::trigger()
 	}
 }
 
+WagonFactory::WagonFactory(Game* g, Vec pos) : Building(g, pos.x+70, pos.y-50, 400, 100)
+{
+	color = {0,0,0,255};
+	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, {pos.x+400, pos.y}, {pos.x, pos.y});
+	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
+}
+
+WagonFactory::WagonFactory(Game* g, nodeid node) : Building(g, 0, 0, 400, 100)
+{
+	color = {0,0,0,255};
+	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(node), 400);
+	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
+}
+
+void WagonFactory::trigger()
+{
+	TrainManager& trainmanager = game->getgamestate().gettrainmanager();
+	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+	trainmanager.addwagon(new Openwagon(&tracksystem, state));
+	state = Tracks::travel(tracksystem, state, 60);
+	trainmanager.addtrainstoorphans();
+}
+
 Brewery::Brewery(Game* game, Vec pos) : Industry(game, pos.x, pos.y, 100, 50, {hops, barley}, {beer})
 {
 	color = {63, 63, 127, 255};
@@ -106,4 +134,5 @@ BuildingManager::BuildingManager(Game* g) : game(g)
 	types.push_back(BuildingType{brewery, "Brewery", sprites::beer, 120});
 	types.push_back(BuildingType{hopsfield, "Hops field", sprites::hops, 20});
 	types.push_back(BuildingType{barleyfield, "Barley field", sprites::barley, 70});
+	types.push_back(BuildingType{wagonfactory, "Locomotive works", sprites::icontankloco, 2});
 }
