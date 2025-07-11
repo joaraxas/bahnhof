@@ -12,6 +12,7 @@ namespace Tracks{
 class Game;
 class Rendering;
 class InputManager;
+class BuildingType;
 
 class Builder
 {
@@ -59,8 +60,9 @@ class BuildingBuilder : public Builder
 public:
     BuildingBuilder(InputManager& i, Game* g) : Builder(i, g) {};
     void reset();
+    void setbuildingtype(const BuildingType& b);
 private:
     bool canfit();
     void build(Vec pos);
-
+    const BuildingType* building = nullptr;
 };

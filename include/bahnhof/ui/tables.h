@@ -13,6 +13,7 @@ class Rendering;
 class InterfaceManager;
 class Route;
 class RouteManager;
+class BuildingType;
 
 namespace UI{
 
@@ -122,6 +123,7 @@ public:
     void leftclick(Vec pos);
 private:
     InputManager& input;
+    const std::vector<BuildingType>& buildingtypes;
 };
 
 }

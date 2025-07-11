@@ -5,14 +5,45 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
 
-Building::Building(Game* whatgame, int x, int y, int w, int h, 
-					std::set<resourcetype> need, 
-					std::set<resourcetype> production)
+
+Building::Building(Game* whatgame, int x, int y, int w, int h)
 {
 	game = whatgame;
 	rect = {x, y, w, h};
+	color = {0,0,0,255};
+}
+
+void Building::render(Rendering* r)
+{
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	r->renderfilledrectangle(rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
+void Building::update(int ms)
+{
+	timeleft = fmax(0,timeleft-ms);
+	if(timeleft==0){
+		trigger();
+		timeleft = 10000;
+	}
+}
+
+bool Building::checkclick(Vec pos)
+{
+	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
+		return true;
+	return false;
+}
+
+Industry::Industry(Game* whatgame, int x, int y, int w, int h, 
+					std::set<resourcetype> need, 
+					std::set<resourcetype> production) :
+					Building(whatgame, x, y, w, h)
+{
 	storage = getstorageatpoint(Vec(x,y));
 	if(!storage)
 	storage = getstorageatpoint(Vec(x+w,y));
@@ -28,14 +59,11 @@ Building::Building(Game* whatgame, int x, int y, int w, int h,
 		for(auto resource : makes)
 			storage->setproviding(resource, true);
 	}
-	color = {0,0,0,255};
 }
 
-void Building::update(int ms)
+void Industry::trigger()
 {
-	timeleft = fmax(0,timeleft-ms);
-	if(storage)
-	if(timeleft==0){
+	if(storage){
 		int got = 0;
 		for(auto want: wants)
 			got += storage->unloadstorage(want, 1);
@@ -50,33 +78,32 @@ void Building::update(int ms)
 				game->getgamestate().money+=got;
 			}
 		}
-		timeleft = 10000;
 	}
 }
 
-void Building::render(Rendering* r)
-{
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	r->renderfilledrectangle(rect);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-}
-
-Brewery::Brewery(Game* game, Vec pos) : Building(game, pos.x, pos.y, 100, 50, {hops, barley}, {beer})
+Brewery::Brewery(Game* game, Vec pos) : Industry(game, pos.x, pos.y, 100, 50, {hops, barley}, {beer})
 {
 	color = {63, 63, 127, 255};
 }
 
-Hopsfield::Hopsfield(Game* game, Vec pos) : Building(game, pos.x, pos.y, 200, 200, {}, {hops})
+Hopsfield::Hopsfield(Game* game, Vec pos) : Industry(game, pos.x, pos.y, 200, 200, {}, {hops})
 {
 	color = {63, 127, 63, 255};
 }
 
-Barleyfield::Barleyfield(Game* game, Vec pos) : Building(game, pos.x, pos.y, 200, 200, {}, {barley})
+Barleyfield::Barleyfield(Game* game, Vec pos) : Industry(game, pos.x, pos.y, 200, 200, {}, {barley})
 {
 	color = {127, 127, 31, 255};
 }
 
-City::City(Game* game, Vec pos) : Building(game, pos.x, pos.y, 100, 150, {beer}, {})
+City::City(Game* game, Vec pos) : Industry(game, pos.x, pos.y, 100, 150, {beer}, {})
 {
 	color = {63, 63, 31, 255};
+}
+
+BuildingManager::BuildingManager(Game* g) : game(g)
+{
+	types.push_back(BuildingType{brewery, "Brewery", sprites::beer, 120});
+	types.push_back(BuildingType{hopsfield, "Hops field", sprites::hops, 20});
+	types.push_back(BuildingType{barleyfield, "Barley field", sprites::barley, 70});
 }
