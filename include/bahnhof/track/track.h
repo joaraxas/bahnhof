@@ -86,6 +86,8 @@ namespace Input
 {
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
+    Tracksection buildat(Tracksystem& tracksystem, Vec pos, float angle, float distance);
+    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
@@ -121,6 +123,7 @@ namespace Construction
     State travel(Tracksystem&, State state, float pixels);
     float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(Tracksystem&, State state);
+    State getstartpointstate(Tracksection&);
 
     Vec getpos(Tracksystem&, State state, float transverseoffset=0);
     float getradius(Tracksystem&, State state);

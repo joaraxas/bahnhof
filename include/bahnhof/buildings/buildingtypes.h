@@ -9,7 +9,9 @@ enum BuildingID
 {
     brewery,
     hopsfield,
-    barleyfield
+    barleyfield,
+    city,
+    wagonfactory
 };
 
 struct BuildingType
