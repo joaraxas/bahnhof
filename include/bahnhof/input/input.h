@@ -13,6 +13,7 @@ class Game;
 class Rendering;
 class Train;
 class Route;
+struct BuildingType;
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -36,6 +37,7 @@ enum InputState {
 class TextInputManager;
 class TrackBuilder;
 class SignalBuilder;
+class BuildingBuilder;
 
 class InputManager
 {
@@ -52,6 +54,7 @@ public:
     void editroute(Route* route);
     void placesignal();
     void placetrack();
+    void placebuilding(const BuildingType& type);
 private:
     void resetinput();
     void leftclickmap(Vec mousepos);
@@ -62,6 +65,7 @@ private:
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<TrackBuilder> trackbuilder;
     std::unique_ptr<SignalBuilder> signalbuilder;
+    std::unique_ptr<BuildingBuilder> builder;
     InputState inputstate = idle;
     const Uint8* keys;
     Route* editingroute = nullptr;

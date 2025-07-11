@@ -6,6 +6,7 @@
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/ui/ui.h"
@@ -22,6 +23,7 @@ Game::Game()
 	resources = std::make_unique<ResourceManager>(this);
 	gamestate = std::make_unique<Gamestate>(this);
 	input = std::make_unique<InputManager>(this);
+	buildings = std::make_unique<BuildingManager>(this);
 	quit = false;
 }
 

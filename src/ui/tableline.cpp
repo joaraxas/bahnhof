@@ -6,6 +6,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildingtypes.h"
 
 namespace UI{
 
@@ -94,13 +95,13 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
-ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, std::string newname) : 
+ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, const BuildingType& type) : 
     TableLine(p, t),
-    name(newname),
-    price(99)
+    name(type.name),
+    price(type.cost)
 {
     SpriteManager& sprites = game->getsprites();
-    icon.setspritesheet(sprites, sprites::iconrefrigeratorcar);
+    icon.setspritesheet(sprites, type.iconname);
     icon.ported = false;
 }
 

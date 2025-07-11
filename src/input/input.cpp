@@ -13,10 +13,11 @@
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 
-        game(whatgame), 
-        textinput(std::make_unique<TextInputManager>(*this)), 
-        trackbuilder(std::make_unique<TrackBuilder>(*this, game)), 
-        signalbuilder(std::make_unique<SignalBuilder>(*this, game))
+        game(whatgame),
+        textinput(std::make_unique<TextInputManager>(*this)),
+        trackbuilder(std::make_unique<TrackBuilder>(*this, game)),
+        signalbuilder(std::make_unique<SignalBuilder>(*this, game)),
+        builder(std::make_unique<BuildingBuilder>(*this, game))
 {}
 
 InputManager::~InputManager() {}
@@ -134,6 +135,10 @@ void InputManager::leftclickmap(Vec mousepos)
     
     case placingtracks:
         trackbuilder->leftclickmap(mousepos);
+        break;
+    
+    case placingbuildings:
+        builder->leftclickmap(mousepos);
         break;
     
     case idle:{
@@ -274,9 +279,17 @@ void InputManager::placetrack()
     inputstate = placingtracks;
 }
 
+void InputManager::placebuilding(const BuildingType& type)
+{
+    resetinput();
+    inputstate = placingbuildings;
+    builder->setbuildingtype(type);
+}
+
 void InputManager::resetinput()
 {
     trackbuilder->reset();
     signalbuilder->reset();
+    builder->reset();
     inputstate = idle;
 }

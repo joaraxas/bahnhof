@@ -4,6 +4,8 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/buildings/buildings.h"
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
@@ -104,4 +106,35 @@ bool SignalBuilder::canfit(Vec pos)
 void SignalBuilder::build(Vec pos)
 {
     Tracks::Input::buildsignalat(tracksystem, pos);
+}
+
+void BuildingBuilder::reset()
+{
+    Builder::reset();
+    building = nullptr;
+}
+
+void BuildingBuilder::setbuildingtype(const BuildingType& type)
+{
+    building = &type;
+    cost = building->cost;
+}
+
+void BuildingBuilder::build(Vec pos)
+{
+    switch(building->id)
+    {
+    case brewery:
+        game->getgamestate().buildings.emplace_back(new Brewery(game, pos));
+        break;
+    case hopsfield:
+        game->getgamestate().buildings.emplace_back(new Hopsfield(game, pos));
+        break;
+    case barleyfield:
+        game->getgamestate().buildings.emplace_back(new Barleyfield(game, pos));
+        break;
+    default:
+        std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";
+        break;
+    }
 }

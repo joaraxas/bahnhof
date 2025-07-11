@@ -18,6 +18,7 @@ class RouteManager;
 class TrainManager;
 class TimeManager;
 class InterfaceManager;
+class BuildingManager;
 class Gamestate;
 namespace Tracks{
     class Tracksystem;
@@ -32,22 +33,24 @@ public:
     void exit();
     std::string gamename;
     TimeManager& gettimemanager() {return *timer;};
-    InputManager& getinputmanager() {return *input;};
     Camera& getcamera() {return *cam;};
     Rendering& getrendering() {return *rendering;};
     InterfaceManager& getui() {return *ui;};
     SpriteManager& getsprites() {return *allsprites;};
     ResourceManager& getresources() {return *resources;};
     Gamestate& getgamestate() {return *gamestate;};
+    InputManager& getinputmanager() {return *input;};
+    BuildingManager& getbuildingmanager() {return *buildings;};
 private:
     std::unique_ptr<TimeManager> timer;
-    std::unique_ptr<InputManager> input;
     std::unique_ptr<Camera> cam;
     std::unique_ptr<Rendering> rendering;
     std::unique_ptr<InterfaceManager> ui;
     std::unique_ptr<SpriteManager> allsprites;
     std::unique_ptr<ResourceManager> resources;
     std::unique_ptr<Gamestate> gamestate;
+    std::unique_ptr<InputManager> input;
+    std::unique_ptr<BuildingManager> buildings;
     bool quit;
 };
 
