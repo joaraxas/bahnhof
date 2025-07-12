@@ -221,9 +221,11 @@ void InputManager::render(Rendering* r)
 
     case placingsignals:
         signalbuilder->render(r);
+        break;
 
     case placingbuildings:
         builder->render(r);
+        break;
     }
     if(editingroute)
         editingroute->render(r);

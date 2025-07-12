@@ -53,15 +53,15 @@ void TrackBuilder::build(Vec pos)
 {
     if(trackorigin.x!=0 || trackorigin.y!=0){
         Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, trackorigin, pos);
-        selectednode = Tracks::Input::selectat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
         trackorigin = Vec(0,0);
     }
     else if(selectednode){
         Tracks::Tracksection newsection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(selectednode), pos);
-        selectednode = Tracks::Input::selectat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
     }
     else{
-        selectednode = Tracks::Input::selectat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
         if(!selectednode){
             trackorigin = pos;
         }
@@ -124,7 +124,7 @@ void BuildingBuilder::render(Rendering* r)
         shape.renderfilled(r, color);
     }
     else{
-        std::cout<<"error: no building selected when calling BuildingBuilder::render!";
+        std::cout<<"error: no building selected when calling BuildingBuilder::render!"<<std::endl;
     }
 }
 
@@ -162,7 +162,7 @@ void BuildingBuilder::build(Vec pos)
         game->getgamestate().buildings.emplace_back(new City(game, shape));
         break;
     case wagonfactory:{
-        nodeid selectednode = Tracks::Input::selectat(tracksystem, pos);
+        nodeid selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
         if(selectednode)
             game->getgamestate().buildings.emplace_back(new WagonFactory(game, shape, selectednode));
         else
@@ -176,5 +176,22 @@ void BuildingBuilder::build(Vec pos)
 
 Shape BuildingBuilder::getplacementat(Vec pos)
 {
-    return Shape(pos.x, pos.y, building->size.x, building->size.y, pi/4);
+    switch (building->id)
+    {
+    case wagonfactory:{
+        State neareststate = Tracks::Input::getstateat(tracksystem, pos);
+        if(neareststate.track!=0 &&
+                norm(pos-Tracks::getpos(tracksystem, neareststate))<40 &&
+                Tracks::isendofline(tracksystem, neareststate)){
+            float angle = Tracks::getorientation(tracksystem, neareststate);
+            Vec statepos = Tracks::getpos(tracksystem, neareststate);
+            return Shape(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle), building->size.x, building->size.y, angle);
+        }
+        else
+            return Shape(pos.x+400, pos.y, building->size.x, building->size.y);
+    }
+    
+    default:
+        return Shape(pos.x, pos.y, building->size.x, building->size.y, pi/4);
+    }
 }

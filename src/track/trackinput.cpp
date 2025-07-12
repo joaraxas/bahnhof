@@ -13,6 +13,11 @@ namespace Tracks
 {
 namespace Input
 {
+State getstateat(Tracksystem& tracksystem, Vec pos)
+{
+	return getcloseststate(tracksystem, pos);
+}
+
 Vec plansignalat(Tracksystem& tracksystem, Vec pos)
 {
 	State signalstate = getcloseststate(tracksystem, pos);
@@ -132,7 +137,7 @@ Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec topos)
 	return section;
 }
 
-nodeid selectat(Tracksystem& tracksystem, Vec pos)
+nodeid selectnodeat(Tracksystem& tracksystem, Vec pos)
 {
 	nodeid selectednode = 0;
 	whatdidiclick(tracksystem, pos, nullptr, &selectednode, nullptr, nullptr);

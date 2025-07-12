@@ -95,8 +95,8 @@ void Shape::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed
 	SDL_Vertex verts[4];
 	const float w2 = w*0.5;
 	const float h2 = h*0.5;
-	const float c = cos(angle);
-	const float s = sin(angle);
+	const float c = cos(-angle);
+	const float s = sin(-angle);
 	verts[0].position = {x - w2*c - h2*s, y + h2*c - w2*s};
 	verts[1].position = {x + w2*c - h2*s, y + h2*c + w2*s};
 	verts[2].position = {x + w2*c + h2*s, y - h2*c + w2*s};
