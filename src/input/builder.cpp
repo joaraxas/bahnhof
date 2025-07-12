@@ -146,26 +146,27 @@ void BuildingBuilder::build(Vec pos)
         std::cout<<"error: no building selected at build!";
         return;
     }
+    Shape shape(pos.x, pos.y, building->size.x, building->size.y);
     switch(building->id)
     {
     case brewery:
-        game->getgamestate().buildings.emplace_back(new Brewery(game, pos));
+        game->getgamestate().buildings.emplace_back(new Brewery(game, shape));
         break;
     case hopsfield:
-        game->getgamestate().buildings.emplace_back(new Hopsfield(game, pos));
+        game->getgamestate().buildings.emplace_back(new Hopsfield(game, shape));
         break;
     case barleyfield:
-        game->getgamestate().buildings.emplace_back(new Barleyfield(game, pos));
+        game->getgamestate().buildings.emplace_back(new Barleyfield(game, shape));
         break;
     case city:
-        game->getgamestate().buildings.emplace_back(new City(game, pos));
+        game->getgamestate().buildings.emplace_back(new City(game, shape));
         break;
     case wagonfactory:{
         nodeid selectednode = Tracks::Input::selectat(tracksystem, pos);
         if(selectednode)
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, selectednode));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, shape, selectednode));
         else
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, pos));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, shape));
         break;}
     default:
         std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";

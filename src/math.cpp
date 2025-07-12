@@ -71,6 +71,23 @@ Vec globalcoords(Vec localvec, float angle, Vec origin)
 	return globalvec;
 }
 
+Shape::Shape(float x_, float y_, int w_, int h_) : Shape(x_, y_, w_, h_, 0)
+{}
+
+Shape::Shape(float x_, float y_, int w_, int h_, float topleftrotation) : x(x_), y(y_), w(w_), h(h_), angle(topleftrotation) 
+{}
+
+Shape::Shape(SDL_Rect& rect) : Shape(rect, 0)
+{}
+
+Shape::Shape(SDL_Rect& rect, float topleftrotation) : x(rect.x), y(rect.y), w(rect.w), h(rect.h), angle(topleftrotation)
+{}
+
+Vec Shape::mid()
+{
+	return {x,y};
+}
+
 float sign(float a)
 {
 	if(a<0)
