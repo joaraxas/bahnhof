@@ -113,7 +113,8 @@ void BuildingBuilder::render(Rendering* r)
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
         if(canbuild(mousepos)){
-            SDL_SetRenderDrawColor(renderer, 0, 127, 0, 127);
+            const SDL_Color& color = building->color;
+            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 127);
         }
         else{
             SDL_SetRenderDrawColor(renderer, 127, 0, 0, 127);
@@ -148,23 +149,23 @@ void BuildingBuilder::build(Vec pos)
     switch(building->id)
     {
     case brewery:
-        game->getgamestate().buildings.emplace_back(new Brewery(game, *building, pos));
+        game->getgamestate().buildings.emplace_back(new Brewery(game, pos));
         break;
     case hopsfield:
-        game->getgamestate().buildings.emplace_back(new Hopsfield(game, *building, pos));
+        game->getgamestate().buildings.emplace_back(new Hopsfield(game, pos));
         break;
     case barleyfield:
-        game->getgamestate().buildings.emplace_back(new Barleyfield(game, *building, pos));
+        game->getgamestate().buildings.emplace_back(new Barleyfield(game, pos));
         break;
     case city:
-        game->getgamestate().buildings.emplace_back(new City(game, *building, pos));
+        game->getgamestate().buildings.emplace_back(new City(game, pos));
         break;
     case wagonfactory:{
         nodeid selectednode = Tracks::Input::selectat(tracksystem, pos);
         if(selectednode)
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, *building, selectednode));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, selectednode));
         else
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, *building, pos));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, pos));
         break;}
     default:
         std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";

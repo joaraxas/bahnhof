@@ -11,7 +11,8 @@ class BuildingManager
 {
 public:
     BuildingManager(Game* g);
-    const std::vector<BuildingType>& gettypes() {return availabletypes;}; // TODO: would be better to pass an iterator to the map
+    const std::vector<BuildingType>& gettypes() const {return availabletypes;}; // TODO: would be better to pass an iterator to the map
+    const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
 private:
     Game* game;
     std::map<BuildingID, BuildingType> types;

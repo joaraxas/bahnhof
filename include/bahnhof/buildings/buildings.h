@@ -9,7 +9,7 @@ class Game;
 class Building
 {
 public:
-    Building(Game* game, const BuildingType& type, Vec pos);
+    Building(Game* game, BuildingID id, Vec pos);
     virtual ~Building() {};
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -27,7 +27,7 @@ private:
 class Industry : public Building
 {
 public:
-    Industry(Game* game, const BuildingType& type, Vec pos, std::set<resourcetype> need, std::set<resourcetype> production);
+    Industry(Game* game, BuildingID id, Vec pos, std::set<resourcetype> need, std::set<resourcetype> production);
     void trigger();
 private:
     Storage* storage;
@@ -38,8 +38,8 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, const BuildingType& type, Vec pos);
-    WagonFactory(Game* game, const BuildingType& type, nodeid node);
+    WagonFactory(Game* game, Vec pos);
+    WagonFactory(Game* game, nodeid node);
     void trigger();
 private:
     State state;
@@ -48,24 +48,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* game, const BuildingType& type, Vec pos);
+    Brewery(Game* game, Vec pos);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* game, const BuildingType& type, Vec pos);
+    Hopsfield(Game* game, Vec pos);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* game, const BuildingType& type, Vec pos);
+    Barleyfield(Game* game, Vec pos);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* game, const BuildingType& type, Vec pos);
+    City(Game* game, Vec pos);
 };
 
