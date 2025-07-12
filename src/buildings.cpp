@@ -2,6 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/math.h"
+#include "bahnhof/common/shape.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
@@ -19,6 +20,9 @@ Building::Building(Game* whatgame, BuildingID id, const Shape& s) : shape(std::m
 	// rect = {int(pos.x), int(pos.y), int(type.size.x), int(type.size.y)};
 	color = type.color;
 }
+
+Building::~Building()
+{}
 
 void Building::render(Rendering* r)
 {

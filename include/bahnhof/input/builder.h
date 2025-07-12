@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
 

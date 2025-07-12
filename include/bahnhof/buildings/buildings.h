@@ -5,13 +5,13 @@
 
 class Storage;
 class Game;
-
+class Shape;
 
 class Building
 {
 public:
     Building(Game* game, BuildingID id, const Shape& s);
-    virtual ~Building() {};
+    virtual ~Building();
     virtual void render(Rendering* rendering);
     void update(int ms);
     virtual void trigger() {};
