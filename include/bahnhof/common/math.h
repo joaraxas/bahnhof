@@ -25,13 +25,18 @@ float norm(Vec v);
 Vec localcoords(Vec globalvec, float angle, Vec origin);
 Vec globalcoords(Vec localvec, float angle, Vec origin);
 
-struct Shape
+class Rendering;
+
+class Shape
 {
+public:
     Shape(float x, float y, int w, int h);
     Shape(float x, float y, int w, int h, float topleftrotation);
     Shape(SDL_Rect& rect);
     Shape(SDL_Rect& rect, float topleftrotation);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true);
     Vec mid();
+protected:
     float x;
     float y;
     int w;

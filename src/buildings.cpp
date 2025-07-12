@@ -12,7 +12,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 
 
-Building::Building(Game* whatgame, BuildingID id, const Shape& s) : shape(s)
+Building::Building(Game* whatgame, BuildingID id, const Shape& s) : shape(std::make_unique<Shape>(s))
 {
 	game = whatgame;
 	const BuildingType& type = game->getbuildingmanager().gettypefromid(id);
@@ -24,18 +24,7 @@ void Building::render(Rendering* r)
 {
 	// SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	// r->renderfilledrectangle(rect);
-	SDL_Vertex verts[4];
-	verts[0].position = {shape.x, shape.y};
-	verts[1].position = {shape.x+shape.w, shape.y};
-	verts[2].position = {shape.x+shape.w, shape.y+shape.h};
-	verts[3].position = {shape.x, shape.y+shape.h};
-	for (int i = 0; i < 4; ++i) {
-        verts[i].color = color;
-        verts[i].tex_coord = {0, 0}; // No texture
-    }
-	int indices[6] = {0, 1, 2, 0, 2, 3};
-
-	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+	shape->renderfilled(r, color);
 	// SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
@@ -100,7 +89,7 @@ void Industry::trigger()
 WagonFactory::WagonFactory(Game* g, Shape s) : Building(g, wagonfactory, s)
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, {s.x+400, s.y}, {s.x, s.y});
+	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, s.mid(), s.mid()+Vec{-400,0});
 	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
 }
 

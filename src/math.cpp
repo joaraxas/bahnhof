@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include "bahnhof/common/math.h"
+#include "bahnhof/graphics/rendering.h"
 
 Vec::Vec()
 {
@@ -82,6 +83,17 @@ Shape::Shape(SDL_Rect& rect) : Shape(rect, 0)
 
 Shape::Shape(SDL_Rect& rect, float topleftrotation) : x(rect.x), y(rect.y), w(rect.w), h(rect.h), angle(topleftrotation)
 {}
+
+void Shape::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
+{
+	SDL_Vertex verts[4];
+	verts[0].position = {x, y};
+	verts[1].position = {x+w, y};
+	verts[2].position = {x+w, y+h};
+	verts[3].position = {x, y+h};
+	int indices[6] = {0, 1, 2, 0, 2, 3};
+	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
+}
 
 Vec Shape::mid()
 {

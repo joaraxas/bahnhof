@@ -146,7 +146,7 @@ void BuildingBuilder::build(Vec pos)
         std::cout<<"error: no building selected at build!";
         return;
     }
-    Shape shape(pos.x, pos.y, building->size.x, building->size.y);
+    Shape shape(pos.x, pos.y, building->size.x, building->size.y, 45);
     switch(building->id)
     {
     case brewery:

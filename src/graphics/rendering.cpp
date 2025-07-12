@@ -146,6 +146,15 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
+void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported, bool zoomed)
+{
+	for (int i = 0; i < iverts; ++i) {
+        verts[i].color = color;
+        verts[i].tex_coord = {0, 0};
+    }
+	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+}
+
 Vec Rendering::getviewsize()
 {
 	// Returns renderer size in useful logical pixels
