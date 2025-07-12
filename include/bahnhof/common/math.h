@@ -13,6 +13,7 @@ struct Vec
 {
     Vec();
     Vec(float xstart, float ystart);
+    Vec(const SDL_FPoint& point);
     Vec operator+(Vec);
     Vec operator-(Vec);
     Vec operator*(float);

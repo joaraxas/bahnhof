@@ -15,6 +15,12 @@ Vec::Vec(float xstart, float ystart)
 	y = ystart;
 }
 
+Vec::Vec(const SDL_FPoint& point)
+{
+	x = point.x;
+	y = point.y;
+}
+
 Vec Vec::operator-(Vec v)
 {
 	Vec out(0,0);
