@@ -1,6 +1,7 @@
 #pragma once
 #include<set>
 #include "bahnhof/resources/resourcetypes.h"
+#include "bahnhof/buildings/buildingtypes.h"
 
 class Storage;
 class Game;
@@ -8,7 +9,7 @@ class Game;
 class Building
 {
 public:
-    Building(Game* game, int x, int y, int w, int h);
+    Building(Game* game, const BuildingType& type, Vec pos);
     virtual ~Building() {};
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -26,7 +27,7 @@ private:
 class Industry : public Building
 {
 public:
-    Industry(Game* game, int x, int y, int w, int h, std::set<resourcetype> need, std::set<resourcetype> production);
+    Industry(Game* game, const BuildingType& type, Vec pos, std::set<resourcetype> need, std::set<resourcetype> production);
     void trigger();
 private:
     Storage* storage;
@@ -37,8 +38,8 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, Vec pos);
-    WagonFactory(Game* game, nodeid node);
+    WagonFactory(Game* game, const BuildingType& type, Vec pos);
+    WagonFactory(Game* game, const BuildingType& type, nodeid node);
     void trigger();
 private:
     State state;
@@ -47,24 +48,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* game, Vec pos);
+    Brewery(Game* game, const BuildingType& type, Vec pos);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* game, Vec pos);
+    Hopsfield(Game* game, const BuildingType& type, Vec pos);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* game, Vec pos);
+    Barleyfield(Game* game, const BuildingType& type, Vec pos);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* game, Vec pos);
+    City(Game* game, const BuildingType& type, Vec pos);
 };
 

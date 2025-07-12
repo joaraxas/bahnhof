@@ -108,6 +108,25 @@ void SignalBuilder::build(Vec pos)
     Tracks::Input::buildsignalat(tracksystem, pos);
 }
 
+void BuildingBuilder::render(Rendering* r)
+{
+    if(building){ // this should always be true
+        Vec mousepos = input.mapmousepos();
+        if(canbuild(mousepos)){
+            SDL_SetRenderDrawColor(renderer, 0, 127, 0, 127);
+        }
+        else{
+            SDL_SetRenderDrawColor(renderer, 127, 0, 0, 127);
+        }
+        const Vec& size = building->size;
+        SDL_Rect rect = {int(mousepos.x), int(mousepos.y), int(size.x), int(size.y)};
+        r->renderfilledrectangle(rect);
+    }
+    else{
+        std::cout<<"error: no building selected when calling BuildingBuilder::render!";
+    }
+}
+
 void BuildingBuilder::reset()
 {
     Builder::reset();
@@ -122,26 +141,30 @@ void BuildingBuilder::setbuildingtype(const BuildingType& type)
 
 void BuildingBuilder::build(Vec pos)
 {
+    if(!building){
+        std::cout<<"error: no building selected at build!";
+        return;
+    }
     switch(building->id)
     {
     case brewery:
-        game->getgamestate().buildings.emplace_back(new Brewery(game, pos));
+        game->getgamestate().buildings.emplace_back(new Brewery(game, *building, pos));
         break;
     case hopsfield:
-        game->getgamestate().buildings.emplace_back(new Hopsfield(game, pos));
+        game->getgamestate().buildings.emplace_back(new Hopsfield(game, *building, pos));
         break;
     case barleyfield:
-        game->getgamestate().buildings.emplace_back(new Barleyfield(game, pos));
+        game->getgamestate().buildings.emplace_back(new Barleyfield(game, *building, pos));
         break;
     case city:
-        game->getgamestate().buildings.emplace_back(new City(game, pos));
+        game->getgamestate().buildings.emplace_back(new City(game, *building, pos));
         break;
     case wagonfactory:{
         nodeid selectednode = Tracks::Input::selectat(tracksystem, pos);
         if(selectednode)
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, selectednode));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, *building, selectednode));
         else
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, pos));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, *building, pos));
         break;}
     default:
         std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";

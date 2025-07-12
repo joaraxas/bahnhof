@@ -6,6 +6,7 @@
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/rollingstock/trainmanager.h"
+#include "bahnhof/buildings/buildingtypes.h"
 
 class Game;
 class Gamestate;

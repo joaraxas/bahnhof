@@ -6,7 +6,7 @@
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
-#include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/ui/ui.h"
