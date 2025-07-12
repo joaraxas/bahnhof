@@ -12,9 +12,10 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 
 
-Building::Building(Game* whatgame, const BuildingType& type, Vec pos)
+Building::Building(Game* whatgame, BuildingID id, Vec pos)
 {
 	game = whatgame;
+	const BuildingType& type = game->getbuildingmanager().gettypefromid(id);
 	rect = {int(pos.x), int(pos.y), int(type.size.x), int(type.size.y)};
 	color = type.color;
 }
@@ -42,10 +43,10 @@ bool Building::checkclick(Vec pos)
 	return false;
 }
 
-Industry::Industry(Game* whatgame, const BuildingType& type, Vec pos, 
+Industry::Industry(Game* whatgame, BuildingID id, Vec pos, 
 					std::set<resourcetype> need, 
 					std::set<resourcetype> production) :
-					Building(whatgame, type, pos)
+					Building(whatgame, id, pos)
 {
 	storage = getstorageatpoint(pos);
 	// if(!storage)
@@ -84,17 +85,15 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, const BuildingType& type, Vec pos) : Building(g, type, pos + Vec(70,-50))
+WagonFactory::WagonFactory(Game* g, Vec pos) : Building(g, wagonfactory, pos + Vec(70,-50))
 {
-	color = {0,0,0,255};
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, {pos.x+400, pos.y}, {pos.x, pos.y});
 	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
 }
 
-WagonFactory::WagonFactory(Game* g, const BuildingType& type, nodeid node) : Building(g, type, Vec(0,0))
+WagonFactory::WagonFactory(Game* g, nodeid node) : Building(g, wagonfactory, Vec(0,0))
 {
-	color = {0,0,0,255};
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(node), 400);
 	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
@@ -109,32 +108,25 @@ void WagonFactory::trigger()
 	trainmanager.addtrainstoorphans();
 }
 
-Brewery::Brewery(Game* game, const BuildingType& type, Vec pos) : Industry(game, type, pos, {hops, barley}, {beer})
-{
-	color = {63, 63, 127, 255};
-}
+Brewery::Brewery(Game* game, Vec pos) : Industry(game, brewery, pos, {hops, barley}, {beer})
+{}
 
-Hopsfield::Hopsfield(Game* game, const BuildingType& type, Vec pos) : Industry(game, type, pos, {}, {hops})
-{
-	color = {63, 127, 63, 255};
-}
+Hopsfield::Hopsfield(Game* game, Vec pos) : Industry(game, hopsfield, pos, {}, {hops})
+{}
 
-Barleyfield::Barleyfield(Game* game, const BuildingType& type, Vec pos) : Industry(game, type, pos, {}, {barley})
-{
-	color = {127, 127, 31, 255};
-}
+Barleyfield::Barleyfield(Game* game, Vec pos) : Industry(game, barleyfield, pos, {}, {barley})
+{}
 
-City::City(Game* game, const BuildingType& type, Vec pos) : Industry(game, type, pos, {beer}, {})
-{
-	color = {63, 63, 31, 255};
-}
+City::City(Game* game, Vec pos) : Industry(game, city, pos, {beer}, {})
+{}
 
 BuildingManager::BuildingManager(Game* g) : game(g)
 {
-	types[brewery] = BuildingType{brewery, "Brewery", Vec(100,50), {100,200,150,255}, sprites::beer, 120};
-	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(100,100), {50,230,50,255}, sprites::hops, 20};
-	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(100,100), {230,230,50,255}, sprites::barley, 70};
-	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(400,100), {50,50,50,255}, sprites::icontankloco, 2};
+	types[brewery] = BuildingType{brewery, "Brewery", Vec(100,50), {63,63,127,255}, sprites::beer, 120};
+	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(100,100), {63,127,63,255}, sprites::hops, 20};
+	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(100,100), {127,127,31,255}, sprites::barley, 70};
+	types[city] = BuildingType{city, "City", Vec(50,100), {63,63,31,255}, sprites::iconopenwagon, 70};
+	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(400,100), {127,127,127,255}, sprites::icontankloco, 2};
 
 	for(auto type: types){
 		availabletypes.push_back(type.second);

@@ -21,9 +21,9 @@ Game::Game()
 	ui = std::make_unique<InterfaceManager>(this);
 	allsprites = std::make_unique<SpriteManager>(this);
 	resources = std::make_unique<ResourceManager>(this);
+	buildings = std::make_unique<BuildingManager>(this);
 	gamestate = std::make_unique<Gamestate>(this);
 	input = std::make_unique<InputManager>(this);
-	buildings = std::make_unique<BuildingManager>(this);
 	quit = false;
 }
 
