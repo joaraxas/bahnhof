@@ -6,10 +6,11 @@
 class Storage;
 class Game;
 
+
 class Building
 {
 public:
-    Building(Game* game, BuildingID id, Vec pos);
+    Building(Game* game, BuildingID id, const Shape& s);
     virtual ~Building() {};
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -20,14 +21,14 @@ protected:
     SDL_Color color;
     Game* game;
 private:
-    SDL_Rect rect;
+    Shape shape;
     int timeleft = 3000;
 };
 
 class Industry : public Building
 {
 public:
-    Industry(Game* game, BuildingID id, Vec pos, std::set<resourcetype> need, std::set<resourcetype> production);
+    Industry(Game* game, BuildingID id, Shape s, std::set<resourcetype> need, std::set<resourcetype> production);
     void trigger();
 private:
     Storage* storage;
@@ -38,8 +39,8 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, Vec pos);
-    WagonFactory(Game* game, nodeid node);
+    WagonFactory(Game* game, Shape s);
+    WagonFactory(Game* game, Shape s, nodeid node);
     void trigger();
 private:
     State state;
@@ -48,24 +49,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* game, Vec pos);
+    Brewery(Game* game, Shape s);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* game, Vec pos);
+    Hopsfield(Game* game, Shape s);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* game, Vec pos);
+    Barleyfield(Game* game, Shape s);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* game, Vec pos);
+    City(Game* game, Shape s);
 };
 

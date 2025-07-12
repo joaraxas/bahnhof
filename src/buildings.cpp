@@ -12,19 +12,31 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 
 
-Building::Building(Game* whatgame, BuildingID id, Vec pos)
+Building::Building(Game* whatgame, BuildingID id, const Shape& s) : shape(s)
 {
 	game = whatgame;
 	const BuildingType& type = game->getbuildingmanager().gettypefromid(id);
-	rect = {int(pos.x), int(pos.y), int(type.size.x), int(type.size.y)};
+	// rect = {int(pos.x), int(pos.y), int(type.size.x), int(type.size.y)};
 	color = type.color;
 }
 
 void Building::render(Rendering* r)
 {
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	r->renderfilledrectangle(rect);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	// r->renderfilledrectangle(rect);
+	SDL_Vertex verts[4];
+	verts[0].position = {shape.x, shape.y};
+	verts[1].position = {shape.x+shape.w, shape.y};
+	verts[2].position = {shape.x+shape.w, shape.y+shape.h};
+	verts[3].position = {shape.x, shape.y+shape.h};
+	for (int i = 0; i < 4; ++i) {
+        verts[i].color = color;
+        verts[i].tex_coord = {0, 0}; // No texture
+    }
+	int indices[6] = {0, 1, 2, 0, 2, 3};
+
+	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+	// SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 void Building::update(int ms)
@@ -38,17 +50,17 @@ void Building::update(int ms)
 
 bool Building::checkclick(Vec pos)
 {
-	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
-		return true;
+	// if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
+	// 	return true;
 	return false;
 }
 
-Industry::Industry(Game* whatgame, BuildingID id, Vec pos, 
+Industry::Industry(Game* whatgame, BuildingID id, Shape s, 
 					std::set<resourcetype> need, 
 					std::set<resourcetype> production) :
-					Building(whatgame, id, pos)
+					Building(whatgame, id, s)
 {
-	storage = getstorageatpoint(pos);
+	storage = getstorageatpoint(s.mid());
 	// if(!storage)
 	// storage = getstorageatpoint(Vec(x+w,y));
 	// if(!storage)
@@ -85,14 +97,14 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, Vec pos) : Building(g, wagonfactory, pos + Vec(70,-50))
+WagonFactory::WagonFactory(Game* g, Shape s) : Building(g, wagonfactory, s)
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, {pos.x+400, pos.y}, {pos.x, pos.y});
+	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, {s.x+400, s.y}, {s.x, s.y});
 	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
 }
 
-WagonFactory::WagonFactory(Game* g, nodeid node) : Building(g, wagonfactory, Vec(0,0))
+WagonFactory::WagonFactory(Game* g, Shape s, nodeid node) : Building(g, wagonfactory, s)
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(node), 400);
@@ -108,16 +120,16 @@ void WagonFactory::trigger()
 	trainmanager.addtrainstoorphans();
 }
 
-Brewery::Brewery(Game* game, Vec pos) : Industry(game, brewery, pos, {hops, barley}, {beer})
+Brewery::Brewery(Game* game, Shape s) : Industry(game, brewery, s, {hops, barley}, {beer})
 {}
 
-Hopsfield::Hopsfield(Game* game, Vec pos) : Industry(game, hopsfield, pos, {}, {hops})
+Hopsfield::Hopsfield(Game* game, Shape s) : Industry(game, hopsfield, s, {}, {hops})
 {}
 
-Barleyfield::Barleyfield(Game* game, Vec pos) : Industry(game, barleyfield, pos, {}, {barley})
+Barleyfield::Barleyfield(Game* game, Shape s) : Industry(game, barleyfield, s, {}, {barley})
 {}
 
-City::City(Game* game, Vec pos) : Industry(game, city, pos, {beer}, {})
+City::City(Game* game, Shape s) : Industry(game, city, s, {beer}, {})
 {}
 
 BuildingManager::BuildingManager(Game* g) : game(g)

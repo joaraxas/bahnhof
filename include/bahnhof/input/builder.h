@@ -65,5 +65,6 @@ public:
 private:
     bool canfit();
     void build(Vec pos);
+    Shape getplacementat(Vec pos);
     const BuildingType* building = nullptr;
 };
