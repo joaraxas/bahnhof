@@ -87,10 +87,14 @@ Shape::Shape(SDL_Rect& rect, float topleftrotation) : x(rect.x), y(rect.y), w(re
 void Shape::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
 {
 	SDL_Vertex verts[4];
-	verts[0].position = {x, y};
-	verts[1].position = {x+w, y};
-	verts[2].position = {x+w, y+h};
-	verts[3].position = {x, y+h};
+	const float w2 = w*0.5;
+	const float h2 = h*0.5;
+	const float c = cos(angle);
+	const float s = sin(angle);
+	verts[0].position = {x - w2*c - h2*s, y + h2*c - w2*s};
+	verts[1].position = {x + w2*c - h2*s, y + h2*c + w2*s};
+	verts[2].position = {x + w2*c + h2*s, y - h2*c + w2*s};
+	verts[3].position = {x - w2*c + h2*s, y - h2*c - w2*s};
 	int indices[6] = {0, 1, 2, 0, 2, 3};
 	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
 }
