@@ -29,6 +29,7 @@ public:
     void renderline(Vec pos1, Vec pos2, bool ported=true);
     void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
+    void renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported=true, bool zoomed=true);
     Vec getviewsize();
     float getcamscale();
     int getlogicalscale();

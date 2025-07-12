@@ -21,7 +21,7 @@ protected:
     SDL_Color color;
     Game* game;
 private:
-    Shape shape;
+    std::unique_ptr<Shape> shape;
     int timeleft = 3000;
 };
 
