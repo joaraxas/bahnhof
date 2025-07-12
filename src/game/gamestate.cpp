@@ -52,8 +52,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildings.emplace_back(new Brewery(game, newpos));
+		// storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		// buildings.emplace_back(new Brewery(game, newpos));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -61,8 +61,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildings.emplace_back(new Hopsfield(game, newpos));
+		// storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		// buildings.emplace_back(new Hopsfield(game, newpos));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -70,8 +70,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildings.emplace_back(new Barleyfield(game, newpos));
+		// storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		// buildings.emplace_back(new Barleyfield(game, newpos));
 	}
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
@@ -79,8 +79,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-randint(storageextraw);
 		int storagey = newpos.y-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildings.emplace_back(new City(game, newpos));
+		// storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		// buildings.emplace_back(new City(game, newpos));
 	}
 }
 

@@ -8,7 +8,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/input/input.h"
-#include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 
@@ -306,8 +306,8 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
         input(game->getinputmanager()),
         buildingtypes(game->getbuildingmanager().gettypes())
 {
-    for(auto& type : buildingtypes){
-        lines.emplace_back(new ConstructionTableLine(panel, this, type));
+    for(int i=0; i<buildingtypes.size(); i++){
+        lines.emplace_back(new ConstructionTableLine(panel, this, buildingtypes[i]));
     }
 }
 
@@ -316,7 +316,7 @@ void ConstructionTable::leftclick(Vec pos)
     BuildingManager& buildings = game->getbuildingmanager();
     int index = getlineindexat(pos);
     if(index>=0){
-        const BuildingType& clickedbuilding = buildingtypes[index];
+        const BuildingType& clickedbuilding = buildingtypes.at(index);
         input.placebuilding(clickedbuilding);
     }
 }

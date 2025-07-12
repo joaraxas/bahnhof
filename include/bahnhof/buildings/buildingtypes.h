@@ -3,7 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "bahnhof/common/math.h"
-#include "bahnhof/graphics/sprite.h"
+#include "bahnhof/graphics/spritenames.h"
 
 enum BuildingID
 {
@@ -18,18 +18,8 @@ struct BuildingType
 {
     BuildingID id;
     std::string name;
-    // Vec size;
-    // SDL_Color color;
+    Vec size;
+    SDL_Color color;
     sprites::name iconname;
     float cost;
-};
-
-class BuildingManager
-{
-public:
-    BuildingManager(Game* g);
-    const std::vector<BuildingType>& gettypes() {return types;};
-private:
-    Game* game;
-    std::vector<BuildingType> types;
 };

@@ -59,6 +59,7 @@ class BuildingBuilder : public Builder
 {
 public:
     BuildingBuilder(InputManager& i, Game* g) : Builder(i, g) {};
+    void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType& b);
 private:
