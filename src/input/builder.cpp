@@ -192,6 +192,6 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     }
     
     default:
-        return std::make_unique<RotatedRectangle>(pos.x, pos.y, building->size.x, building->size.y, pi/4);
+        return std::make_unique<Rectangle>(pos, building->size.x, building->size.y);
     }
 }

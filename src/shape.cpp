@@ -3,18 +3,37 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/graphics/rendering.h"
 
+Rectangle::Rectangle(int x, int y, int w, int h) : 
+	rect{x, y, w, h}
+{}
+
+Rectangle::Rectangle(const SDL_Rect& rect_) : 
+	rect(rect_)
+{}
+
+Rectangle::Rectangle(Vec pos, int w, int h) : 
+	rect{int(pos.x-w*0.5), int(pos.y-h*0.5), w, h}
+{}
+
+void Rectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
+{
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	r->renderfilledrectangle(rect, ported, zoomed);
+}
+
+Vec Rectangle::mid()
+{
+	float x_mid = rect.x+rect.w*0.5;
+	float y_mid = rect.y+rect.h*0.5;
+	return {x_mid, y_mid};
+}
+
+
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
 {}
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float topleftrotation) : 
-	x(x_), y(y_), w(w_), h(h_), angle(topleftrotation)
-{}
-
-RotatedRectangle::RotatedRectangle(SDL_Rect& rect) : RotatedRectangle(rect, 0)
-{}
-
-RotatedRectangle::RotatedRectangle(SDL_Rect& rect, float topleftrotation) : 
-	x(rect.x), y(rect.y), w(rect.w), h(rect.h), angle(topleftrotation)
+	mid_x(x_), mid_y(y_), w(w_), h(h_), angle(topleftrotation)
 {}
 
 void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
@@ -24,15 +43,15 @@ void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, 
 	const float h2 = h*0.5;
 	const float c = cos(-angle);
 	const float s = sin(-angle);
-	verts[0].position = {x - w2*c - h2*s, y + h2*c - w2*s};
-	verts[1].position = {x + w2*c - h2*s, y + h2*c + w2*s};
-	verts[2].position = {x + w2*c + h2*s, y - h2*c + w2*s};
-	verts[3].position = {x - w2*c + h2*s, y - h2*c - w2*s};
+	verts[0].position = {mid_x - w2*c - h2*s, mid_y + h2*c - w2*s};
+	verts[1].position = {mid_x + w2*c - h2*s, mid_y + h2*c + w2*s};
+	verts[2].position = {mid_x + w2*c + h2*s, mid_y - h2*c + w2*s};
+	verts[3].position = {mid_x - w2*c + h2*s, mid_y - h2*c - w2*s};
 	int indices[6] = {0, 1, 2, 0, 2, 3};
 	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
 }
 
 Vec RotatedRectangle::mid()
 {
-	return {x,y};
+	return {mid_x,mid_y};
 }

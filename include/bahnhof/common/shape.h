@@ -13,18 +13,28 @@ public:
     virtual Vec mid() {return Vec(0,0);};
 };
 
-class RotatedRectangle : public Shape
+class Rectangle : public Shape
 {
 public:
-    RotatedRectangle(float x, float y, int w, int h);
-    RotatedRectangle(float x, float y, int w, int h, float topleftrotation);
-    RotatedRectangle(SDL_Rect& rect);
-    RotatedRectangle(SDL_Rect& rect, float topleftrotation);
+    Rectangle(const SDL_Rect& rect);
+    Rectangle(int x, int y, int w, int h);
+    Rectangle(Vec pos, int w, int h);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
     Vec mid();
 protected:
-    float x;
-    float y;
+    SDL_Rect rect;
+};
+
+class RotatedRectangle : public Shape
+{
+public:
+    RotatedRectangle(float mid_x, float mid_y, int w, int h);
+    RotatedRectangle(float mid_x, float mid_y, int w, int h, float topleftrotation);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
+    Vec mid();
+protected:
+    float mid_x;
+    float mid_y;
     int w;
     int h;
     float angle;
