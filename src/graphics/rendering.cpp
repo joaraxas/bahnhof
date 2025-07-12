@@ -148,6 +148,19 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 
 void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported, bool zoomed)
 {
+	if(ported && zoomed){
+		for (int i = 0; i < iverts; ++i) {
+			Vec scaledv = cam->screencoord(verts[i].position);
+			verts[i].position.x = scaledv.x;
+			verts[i].position.y = scaledv.y;
+		}
+	}
+	else{
+		if(ported)
+			std::cout<<"error: ported non-zoomed polygon rendering is not supported yet!"<<std::endl;
+		if(zoomed)
+			std::cout<<"error: zoomed non-ported polygon rendering is not supported yet!"<<std::endl;
+	}
 	for (int i = 0; i < iverts; ++i) {
         verts[i].color = color;
         verts[i].tex_coord = {0, 0};
