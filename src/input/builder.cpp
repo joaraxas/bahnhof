@@ -112,7 +112,7 @@ void BuildingBuilder::render(Rendering* r)
 {
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
-        Shape shape = getplacementat(mousepos);
+        std::unique_ptr<Shape> shape = getplacementat(mousepos);
         SDL_Color color;
         if(canbuild(mousepos)){
             color = building->color;
@@ -121,7 +121,7 @@ void BuildingBuilder::render(Rendering* r)
         else{
             color = {127, 0, 0, 127};
         }
-        shape.renderfilled(r, color);
+        shape.get()->renderfilled(r, color);
     }
     else{
         std::cout<<"error: no building selected when calling BuildingBuilder::render!"<<std::endl;
@@ -146,27 +146,27 @@ void BuildingBuilder::build(Vec pos)
         std::cout<<"error: no building selected at build!";
         return;
     }
-    Shape shape = getplacementat(pos);
+    std::unique_ptr<Shape> shape = getplacementat(pos);
     switch(building->id)
     {
     case brewery:
-        game->getgamestate().buildings.emplace_back(new Brewery(game, shape));
+        game->getgamestate().buildings.emplace_back(new Brewery(game, std::move(shape)));
         break;
     case hopsfield:
-        game->getgamestate().buildings.emplace_back(new Hopsfield(game, shape));
+        game->getgamestate().buildings.emplace_back(new Hopsfield(game, std::move(shape)));
         break;
     case barleyfield:
-        game->getgamestate().buildings.emplace_back(new Barleyfield(game, shape));
+        game->getgamestate().buildings.emplace_back(new Barleyfield(game, std::move(shape)));
         break;
     case city:
-        game->getgamestate().buildings.emplace_back(new City(game, shape));
+        game->getgamestate().buildings.emplace_back(new City(game, std::move(shape)));
         break;
     case wagonfactory:{
         nodeid selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
         if(selectednode)
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, shape, selectednode));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), selectednode));
         else
-            game->getgamestate().buildings.emplace_back(new WagonFactory(game, shape));
+            game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape)));
         break;}
     default:
         std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";
@@ -174,7 +174,7 @@ void BuildingBuilder::build(Vec pos)
     }
 }
 
-Shape BuildingBuilder::getplacementat(Vec pos)
+std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
 {
     switch (building->id)
     {
@@ -185,13 +185,13 @@ Shape BuildingBuilder::getplacementat(Vec pos)
                 Tracks::isendofline(tracksystem, neareststate)){
             float angle = Tracks::getorientation(tracksystem, neareststate);
             Vec statepos = Tracks::getpos(tracksystem, neareststate);
-            return Shape(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle), building->size.x, building->size.y, angle);
+            return std::make_unique<RotatedRectangle>(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle), building->size.x, building->size.y, angle);
         }
         else
-            return Shape(pos.x+400, pos.y, building->size.x, building->size.y);
+            return std::make_unique<RotatedRectangle>(pos.x+400, pos.y, building->size.x, building->size.y);
     }
     
     default:
-        return Shape(pos.x, pos.y, building->size.x, building->size.y, pi/4);
+        return std::make_unique<RotatedRectangle>(pos.x, pos.y, building->size.x, building->size.y, pi/4);
     }
 }

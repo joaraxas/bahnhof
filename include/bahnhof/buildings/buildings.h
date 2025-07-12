@@ -10,7 +10,7 @@ class Shape;
 class Building
 {
 public:
-    Building(Game* game, BuildingID id, const Shape& s);
+    Building(Game* game, BuildingID id, std::unique_ptr<Shape> s);
     virtual ~Building();
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -20,15 +20,15 @@ public:
 protected:
     SDL_Color color;
     Game* game;
-private:
     std::unique_ptr<Shape> shape;
+private:
     int timeleft = 3000;
 };
 
 class Industry : public Building
 {
 public:
-    Industry(Game* game, BuildingID id, Shape s, std::set<resourcetype> need, std::set<resourcetype> production);
+    Industry(Game* game, BuildingID id, std::unique_ptr<Shape> s, std::set<resourcetype> need, std::set<resourcetype> production);
     void trigger();
 private:
     Storage* storage;
@@ -39,8 +39,8 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, Shape s);
-    WagonFactory(Game* game, Shape s, nodeid node);
+    WagonFactory(Game* game, std::unique_ptr<Shape> s);
+    WagonFactory(Game* game, std::unique_ptr<Shape> s, nodeid node);
     void trigger();
 private:
     State state;
@@ -49,24 +49,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* game, Shape s);
+    Brewery(Game* game, std::unique_ptr<Shape> s);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* game, Shape s);
+    Hopsfield(Game* game, std::unique_ptr<Shape> s);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* game, Shape s);
+    Barleyfield(Game* game, std::unique_ptr<Shape> s);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* game, Shape s);
+    City(Game* game, std::unique_ptr<Shape> s);
 };
 

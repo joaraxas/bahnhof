@@ -3,19 +3,21 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/graphics/rendering.h"
 
-Shape::Shape(float x_, float y_, int w_, int h_) : Shape(x_, y_, w_, h_, 0)
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
 {}
 
-Shape::Shape(float x_, float y_, int w_, int h_, float topleftrotation) : x(x_), y(y_), w(w_), h(h_), angle(topleftrotation) 
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float topleftrotation) : 
+	x(x_), y(y_), w(w_), h(h_), angle(topleftrotation)
 {}
 
-Shape::Shape(SDL_Rect& rect) : Shape(rect, 0)
+RotatedRectangle::RotatedRectangle(SDL_Rect& rect) : RotatedRectangle(rect, 0)
 {}
 
-Shape::Shape(SDL_Rect& rect, float topleftrotation) : x(rect.x), y(rect.y), w(rect.w), h(rect.h), angle(topleftrotation)
+RotatedRectangle::RotatedRectangle(SDL_Rect& rect, float topleftrotation) : 
+	x(rect.x), y(rect.y), w(rect.w), h(rect.h), angle(topleftrotation)
 {}
 
-void Shape::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
+void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
 {
 	SDL_Vertex verts[4];
 	const float w2 = w*0.5;
@@ -30,7 +32,7 @@ void Shape::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed
 	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
 }
 
-Vec Shape::mid()
+Vec RotatedRectangle::mid()
 {
 	return {x,y};
 }

@@ -13,7 +13,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 
 
-Building::Building(Game* whatgame, BuildingID id, const Shape& s) : shape(std::make_unique<Shape>(s))
+Building::Building(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s) : shape(std::move(s))
 {
 	game = whatgame;
 	const BuildingType& type = game->getbuildingmanager().gettypefromid(id);
@@ -48,12 +48,12 @@ bool Building::checkclick(Vec pos)
 	return false;
 }
 
-Industry::Industry(Game* whatgame, BuildingID id, Shape s, 
+Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s, 
 					std::set<resourcetype> need, 
 					std::set<resourcetype> production) :
-					Building(whatgame, id, s)
+					Building(whatgame, id, std::move(s))
 {
-	storage = getstorageatpoint(s.mid());
+	storage = getstorageatpoint(shape->mid());
 	// if(!storage)
 	// storage = getstorageatpoint(Vec(x+w,y));
 	// if(!storage)
@@ -90,14 +90,14 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, Shape s) : Building(g, wagonfactory, s)
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s) : Building(g, wagonfactory, std::move(s))
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, s.mid(), s.mid()+Vec{-400,0});
+	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, shape->mid(), shape->mid()+Vec{-400,0});
 	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
 }
 
-WagonFactory::WagonFactory(Game* g, Shape s, nodeid node) : Building(g, wagonfactory, s)
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, nodeid node) : Building(g, wagonfactory, std::move(s))
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(node), 400);
@@ -113,16 +113,16 @@ void WagonFactory::trigger()
 	trainmanager.addtrainstoorphans();
 }
 
-Brewery::Brewery(Game* game, Shape s) : Industry(game, brewery, s, {hops, barley}, {beer})
+Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
 {}
 
-Hopsfield::Hopsfield(Game* game, Shape s) : Industry(game, hopsfield, s, {}, {hops})
+Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, hopsfield, std::move(s), {}, {hops})
 {}
 
-Barleyfield::Barleyfield(Game* game, Shape s) : Industry(game, barleyfield, s, {}, {barley})
+Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, barleyfield, std::move(s), {}, {barley})
 {}
 
-City::City(Game* game, Shape s) : Industry(game, city, s, {beer}, {})
+City::City(Game* game, std::unique_ptr<Shape> s) : Industry(game, city, std::move(s), {beer}, {})
 {}
 
 BuildingManager::BuildingManager(Game* g) : game(g)

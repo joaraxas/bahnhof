@@ -9,11 +9,18 @@ class Rendering;
 class Shape
 {
 public:
-    Shape(float x, float y, int w, int h);
-    Shape(float x, float y, int w, int h, float topleftrotation);
-    Shape(SDL_Rect& rect);
-    Shape(SDL_Rect& rect, float topleftrotation);
-    void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true);
+    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) {};
+    virtual Vec mid() {return Vec(0,0);};
+};
+
+class RotatedRectangle : public Shape
+{
+public:
+    RotatedRectangle(float x, float y, int w, int h);
+    RotatedRectangle(float x, float y, int w, int h, float topleftrotation);
+    RotatedRectangle(SDL_Rect& rect);
+    RotatedRectangle(SDL_Rect& rect, float topleftrotation);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
     Vec mid();
 protected:
     float x;
