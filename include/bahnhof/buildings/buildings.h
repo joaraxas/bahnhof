@@ -39,8 +39,7 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, std::unique_ptr<Shape> s);
-    WagonFactory(Game* game, std::unique_ptr<Shape> s, nodeid node);
+    WagonFactory(Game* game, std::unique_ptr<Shape> s, State st);
     void trigger();
 private:
     State state;

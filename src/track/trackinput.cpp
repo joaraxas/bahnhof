@@ -109,15 +109,8 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 	return newsection;
 }
 
-Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance)
+void buildsection(Tracksystem& tracksystem, const Tracksection& section)
 {
-	Vec endpos;
-	if(fromnode->trackup==nullptr)
-		endpos = fromnode->getpos() + Vec(distance*cos(fromnode->getdir()), -distance*sin(fromnode->getdir()));
-	else
-		endpos = fromnode->getpos() - Vec(distance*cos(fromnode->getdir()), -distance*sin(fromnode->getdir()));
-	Tracksection section = Construction::extendtracktopos(tracksystem, fromnode, endpos);
-	
 	for(auto node : section.nodes)
 		tracksystem.addnode(*node);
 	for(auto track : section.tracks)
@@ -125,38 +118,20 @@ Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance)
 	for(auto [node, state] : section.tracksplits){
 		Construction::splittrack(tracksystem, node, state);
 	}
-
-	return section;
 }
 
-Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+void discardsection(Tracksection& section)
 {
-	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
-	
-	for(auto node : section.nodes)
-		tracksystem.addnode(*node);
-	for(auto track : section.tracks)
-		tracksystem.addtrack(*track);
-	for(auto [node, state] : section.tracksplits){
-		Construction::splittrack(tracksystem, node, state);
+	std::cout << "Num tracks: " << section.tracks.size() << "\n";
+	for(int i=0; i<section.tracks.size(); i++){
+		delete section.tracks[i];
+		section.tracks[i]=nullptr;
 	}
-
-	return section;
-}
-
-Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec topos)
-{
-	Tracksection section = planconstructionto(tracksystem, frompos, topos);
-	
-	for(auto node : section.nodes)
-		tracksystem.addnode(*node);
-	for(auto track : section.tracks)
-		tracksystem.addtrack(*track);
-	for(auto [node, state] : section.tracksplits){
-		Construction::splittrack(tracksystem, node, state);
+	std::cout << "Num nodes: " << section.nodes.size() << "\n";
+	for(int i=0; i<section.nodes.size(); i++){
+		delete section.nodes[i];
+		section.nodes[i]=nullptr;
 	}
-
-	return section;
 }
 
 nodeid selectnodeat(Tracksystem& tracksystem, Vec pos)

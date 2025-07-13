@@ -90,19 +90,8 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s) : Building(g, wagonfactory, std::move(s))
-{
-	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, shape->mid(), shape->mid()+Vec{-400,0});
-	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
-}
-
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, nodeid node) : Building(g, wagonfactory, std::move(s))
-{
-	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	Tracks::Tracksection tracksection = Tracks::Input::buildat(tracksystem, tracksystem.getnode(node), 400);
-	state = Tracks::travel(tracksystem, Tracks::getstartpointstate(tracksection), 200);
-}
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st) : Building(g, wagonfactory, std::move(s)), state(st)
+{}
 
 void WagonFactory::trigger()
 {

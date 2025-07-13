@@ -88,12 +88,12 @@ namespace Input
     State getendpointat(Tracksystem& tracksystem, Vec pos);
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance);
-    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
-    Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
-    nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should be replaced with getstateat
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend);
+    void buildsection(Tracksystem& tracksystem, const Tracksection& section);
+    void discardsection(Tracksection& section);
+    nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should maybe be replaced with getstateat
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
@@ -108,13 +108,6 @@ namespace Signaling
     void runoverblocks(Tracksystem& tracksystem, State state, float pixels, Train* fortrain);
     bool checkblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
     bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
-};
-
-namespace Construction
-{
-    Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
-    Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
-    void splittrack(Tracksystem&, Node* node, State state);
 };
 
     void render(Tracksystem&, Rendering* r);

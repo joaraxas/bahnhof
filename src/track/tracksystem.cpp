@@ -44,7 +44,8 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), 0, -1);
 	addnode(*newnode);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		Tracksection section = Input::buildat(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		Tracksection section = Input::planconstructionto(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		Input::buildsection(*this, section);
 		newnode = section.nodes.back();
 	}
 	references = std::make_unique<Referencehandler>(this);

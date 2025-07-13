@@ -29,7 +29,8 @@ class RotatedRectangle : public Shape
 {
 public:
     RotatedRectangle(float mid_x, float mid_y, int w, int h);
-    RotatedRectangle(float mid_x, float mid_y, int w, int h, float topleftrotation);
+    RotatedRectangle(Vec mid, int w, int h, float rotation);
+    RotatedRectangle(float mid_x, float mid_y, int w, int h, float rotation);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
     Vec mid();
 protected:

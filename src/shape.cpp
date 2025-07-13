@@ -32,8 +32,11 @@ Vec Rectangle::mid()
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
 {}
 
-RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float topleftrotation) : 
-	mid_x(x_), mid_y(y_), w(w_), h(h_), angle(topleftrotation)
+RotatedRectangle::RotatedRectangle(Vec mid, int w_, int h_, float rotation) : RotatedRectangle(mid.x, mid.y, w_, h_, rotation)
+{}
+
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float rotation) : 
+	mid_x(x_), mid_y(y_), w(w_), h(h_), angle(rotation)
 {}
 
 void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
