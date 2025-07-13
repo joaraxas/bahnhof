@@ -18,6 +18,34 @@ State getstateat(Tracksystem& tracksystem, Vec pos)
 	return getcloseststate(tracksystem, pos);
 }
 
+State getendpointat(Tracksystem& tracksystem, Vec pos)
+{
+	float mindistsquared = INFINITY;
+	Node* closestnode = nullptr;
+	for(auto const node: tracksystem.allnodes()){
+		if(node->trackdown && node->trackup)
+			continue;
+		if(!node->trackdown && !node->trackup) // this should never happen
+			continue;
+		float distsquared = pow(node->getpos().x-pos.x, 2) + pow(node->getpos().y-pos.y, 2);
+		if(distsquared < mindistsquared){
+			closestnode = node;
+			mindistsquared = distsquared;
+		}
+	}
+	State nearestendstate;
+	if(!closestnode)
+	return State();
+	if(closestnode->trackup){
+		if(closestnode->trackup->nextnode==closestnode)
+			return State(closestnode->trackup->id, 1, true);
+		return State(closestnode->trackup->id, 0, false);
+	}
+	if(closestnode->trackdown->nextnode==closestnode)
+		return State(closestnode->trackdown->id, 1, true);
+	return State(closestnode->trackdown->id, 0, false);
+}
+
 Vec plansignalat(Tracksystem& tracksystem, Vec pos)
 {
 	State signalstate = getcloseststate(tracksystem, pos);
@@ -79,12 +107,6 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
 	newsection = newsection + Tracksection({},{fromnode});
 	return newsection;
-}
-
-Tracksection buildat(Tracksystem& tracksystem, Vec startpos, float angle, float distance)
-{
-	// Vec endpos = startpos + Vec(distance*cos(angle), distance*sin(angle));
-	// return Construction::extendtracktopos(tracksystem, )
 }
 
 Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance)

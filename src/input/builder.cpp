@@ -179,7 +179,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     switch (building->id)
     {
     case wagonfactory:{
-        State neareststate = Tracks::Input::getstateat(tracksystem, pos);
+        State neareststate = Tracks::Input::getendpointat(tracksystem, pos);
         if(neareststate.track!=0 &&
                 norm(pos-Tracks::getpos(tracksystem, neareststate))<40 &&
                 Tracks::isendofline(tracksystem, neareststate)){
@@ -187,8 +187,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
             Vec statepos = Tracks::getpos(tracksystem, neareststate);
             return std::make_unique<RotatedRectangle>(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle), building->size.x, building->size.y, angle);
         }
-        else
-            return std::make_unique<RotatedRectangle>(pos.x+400, pos.y, building->size.x, building->size.y);
+        return std::make_unique<Rectangle>(pos + Vec(400,0), building->size.x, building->size.y);
     }
     
     default:

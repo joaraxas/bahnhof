@@ -85,15 +85,15 @@ private:
 namespace Input
 {
     State getstateat(Tracksystem& tracksystem, Vec pos); // TODO: just expose getcloseststate instead?
+    State getendpointat(Tracksystem& tracksystem, Vec pos);
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    Tracksection buildat(Tracksystem& tracksystem, Vec pos, float angle, float distance);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, float distance);
     Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
-    nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should be internal and replaced with getstateat
+    nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should be replaced with getstateat
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
