@@ -118,6 +118,7 @@ namespace Signaling
     float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(Tracksystem&, State state);
     State getstartpointstate(Tracksection&);
+    Vec gettrackextension(Tracksystem&, State fromstate, float distance, float& angle);
 
     Vec getpos(Tracksystem&, State state, float transverseoffset=0);
     float getradius(Tracksystem&, State state);

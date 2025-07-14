@@ -112,8 +112,13 @@ void BuildingBuilder::render(Rendering* r)
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
         if(building->id==wagonfactory){
-            float angle=0;
-            Vec trackextensionpoint = gettrackextension(mousepos, 400, angle);
+            float angle;
+            Vec trackextensionpoint;
+            State neareststate = Tracks::Input::getendpointat(tracksystem, mousepos);
+            if(norm(Tracks::getpos(tracksystem, neareststate) - mousepos) < 20)
+                trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
+            else
+                trackextensionpoint = mousepos + Vec(400,0);
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, trackextensionpoint, mousepos);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
             Tracks::Input::discardsection(section);
@@ -169,7 +174,12 @@ void BuildingBuilder::build(Vec pos)
         break;
     case wagonfactory:{
         float angle=0;
-        Vec trackextensionpoint = gettrackextension(pos, 400, angle);
+        Vec trackextensionpoint;
+        State neareststate = Tracks::Input::getendpointat(tracksystem, pos);
+        if(norm(Tracks::getpos(tracksystem, neareststate) - pos) < 20)
+            trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
+        else
+            trackextensionpoint = pos + Vec(400,0);
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, trackextensionpoint, pos);
         Tracks::Input::buildsection(tracksystem, section);
         State endpoint = Tracks::Input::getendpointat(tracksystem, trackextensionpoint);
@@ -189,22 +199,15 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     {
     case wagonfactory:{
         float angle=0;
-        Vec trackextensionpoint = gettrackextension(pos, 400, angle);
-        return std::make_unique<RotatedRectangle>(trackextensionpoint, building->size.x, building->size.y, angle);
+        State neareststate = Tracks::Input::getendpointat(tracksystem, pos);
+        if(norm(Tracks::getpos(tracksystem, neareststate) - pos) < 20){
+            Vec trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
+            return std::make_unique<RotatedRectangle>(trackextensionpoint, building->size.x, building->size.y, angle);
+        }
+        return std::make_unique<Rectangle>(pos + Vec(400,0), building->size.x, building->size.y);
     }
     
     default:
         return std::make_unique<Rectangle>(pos, building->size.x, building->size.y);
     }
-}
-
-Vec BuildingBuilder::gettrackextension(Vec frompos, float distance, float& angle){
-    State neareststate = Tracks::Input::getendpointat(tracksystem, frompos);
-    if(neareststate.track!=0 &&
-            norm(frompos-Tracks::getpos(tracksystem, neareststate))<40){
-        angle = Tracks::getorientation(tracksystem, neareststate);
-        Vec statepos = Tracks::getpos(tracksystem, neareststate);
-        return Vec(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle));
-    }
-    return frompos + Vec(distance,0);
 }

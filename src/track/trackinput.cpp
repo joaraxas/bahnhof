@@ -109,6 +109,15 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 	return newsection;
 }
 
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend)
+{
+	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos);
+    float angle=0;
+	Vec trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
+	Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos));
+	return Construction::extendtracktopos(tracksystem, nearestnode, frompos);
+}
+
 void buildsection(Tracksystem& tracksystem, const Tracksection& section)
 {
 	for(auto node : section.nodes)

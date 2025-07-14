@@ -67,6 +67,5 @@ private:
     bool canfit();
     void build(Vec pos);
     std::unique_ptr<Shape> getplacementat(Vec pos);
-    Vec gettrackextension(Vec frompos, float distance, float& angle);
     const BuildingType* building = nullptr;
 };

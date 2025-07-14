@@ -43,6 +43,7 @@ void Referencehandler::removewagonreference(Wagon* wagon)
 		wagons.erase(it);
 	else
 		std::cout<<"Warning: tried to erase non-existing reference to wagon"<<std::endl;
+	// TODO: We will need one for buildings now as well
 }
 
 void Referencehandler::validatereferences()
@@ -66,6 +67,7 @@ void Referencehandler::validatereferences()
 			removeswitchorderreference(order);
 		}
 	}
+	// TODO: We will need one for buildings now as well
 }
 
 
