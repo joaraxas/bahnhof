@@ -29,16 +29,20 @@ Track::~Track()
 {
 	for(auto [state, signal]: signals)
 		tracksystem->removesignal(signal);
+}
+
+void Track::connecttonodes()
+{
+	previousnode->connecttrack(this, isabovepreviousnode());
+	nextnode->connecttrack(this, !isbelownextnode());
+}
+
+void Track::disconnectfromnodes()
+{
 	bool aboveprevious = isabovepreviousnode();
 	bool abovenext = !isbelownextnode();
 	previousnode->disconnecttrack(this, aboveprevious);
 	nextnode->disconnecttrack(this, abovenext);
-}
-
-void Track::initnodes()
-{
-	previousnode->connecttrack(this, isabovepreviousnode());
-	nextnode->connecttrack(this, !isbelownextnode());
 }
 
 Vec Track::getpos(float nodedist, float transverseoffset)

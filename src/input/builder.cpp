@@ -42,10 +42,7 @@ void TrackBuilder::render(Rendering* r)
         cost = ceil(Tracks::Input::getcostoftracks(section));
         Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
         r->rendertext(std::to_string(int(cost)), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
-        for(auto track: section.tracks)
-            delete track;
-        for(auto node: section.nodes)
-            delete node;
+        Tracks::Input::discardsection(section);
     }
 }
 
@@ -119,10 +116,7 @@ void BuildingBuilder::render(Rendering* r)
             Vec trackextensionpoint = gettrackextension(mousepos, 400, angle);
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, trackextensionpoint, mousepos);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
-            for(auto track: section.tracks)
-                delete track;
-            for(auto node: section.nodes)
-                delete node;
+            Tracks::Input::discardsection(section);
         }
         std::unique_ptr<Shape> shape = getplacementat(mousepos);
         SDL_Color color;

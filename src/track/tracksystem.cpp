@@ -75,7 +75,7 @@ trackid Tracksystem::addtrack(Track& track){
 	trackcounter++;
 	tracks[trackcounter] = &track;
 	track.id = trackcounter;
-	track.initnodes();
+	track.connecttonodes();
 	return trackcounter;
 }
 
@@ -100,6 +100,7 @@ void Tracksystem::removenode(nodeid toremove)
 
 void Tracksystem::removetrack(trackid toremove)
 {
+	tracks[toremove]->disconnectfromnodes();
 	delete tracks[toremove];
 	tracks.erase(toremove);
 }

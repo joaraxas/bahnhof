@@ -122,12 +122,10 @@ void buildsection(Tracksystem& tracksystem, const Tracksection& section)
 
 void discardsection(Tracksection& section)
 {
-	std::cout << "Num tracks: " << section.tracks.size() << "\n";
 	for(int i=0; i<section.tracks.size(); i++){
 		delete section.tracks[i];
 		section.tracks[i]=nullptr;
 	}
-	std::cout << "Num nodes: " << section.nodes.size() << "\n";
 	for(int i=0; i<section.nodes.size(); i++){
 		delete section.nodes[i];
 		section.nodes[i]=nullptr;

@@ -71,7 +71,8 @@ class Track
 public:
     Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid);
     ~Track();
-    void initnodes();
+    void connecttonodes();
+    void disconnectfromnodes();
     void render(Rendering* r, int mode);
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
