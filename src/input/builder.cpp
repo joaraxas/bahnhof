@@ -2,6 +2,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/builder.h"
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/camera.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/buildings/buildingtypes.h"
@@ -14,12 +15,24 @@ Builder::Builder(InputManager& owner, Game* newgame) :
         tracksystem(game->getgamestate().gettracksystems())
 {}
 
-void Builder::leftclickmap(Vec pos)
+void Builder::leftclickmap(Vec mappos)
 {
-    if(canbuild(pos)){
-        build(pos);
+    anchorpoint = mappos;
+}
+
+void Builder::leftreleasedmap(Vec mappos)
+{
+    if(canbuild(mappos)){
+        build(mappos);
         game->getgamestate().money-=cost;
     }
+    Builder::reset();
+}
+
+void Builder::reset()
+{
+    anchorpoint = Vec(0,0);
+    angle = 0;
 }
 
 bool Builder::canbuild(Vec pos)
@@ -31,14 +44,24 @@ bool Builder::canbuild(Vec pos)
     return true;
 }
 
+void Builder::updateangle(Vec pos)
+{
+    if(anchorpoint.x!=0){
+        Vec diff = pos-anchorpoint;
+        if(norm(diff) > 20/game->getcamera().getscale()){
+            angle = atan2(-diff.y, diff.x);
+        }
+    }
+}
+
 void TrackBuilder::render(Rendering* r)
 {
-    if(selectednode || trackorigin.x!=0){
+    if(selectednode || origin.x!=0){
         Tracks::Tracksection section;
         if(selectednode)
             section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), input.mapmousepos());
         else
-            section = Tracks::Input::planconstructionto(tracksystem, trackorigin, input.mapmousepos());
+            section = Tracks::Input::planconstructionto(tracksystem, origin, input.mapmousepos());
         cost = ceil(Tracks::Input::getcostoftracks(section));
         Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
         r->rendertext(std::to_string(int(cost)), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
@@ -48,11 +71,11 @@ void TrackBuilder::render(Rendering* r)
 
 void TrackBuilder::build(Vec pos)
 {
-    if(trackorigin.x!=0 || trackorigin.y!=0){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, trackorigin, pos);
+    if(origin.x!=0 || origin.y!=0){
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, origin, pos);
         Tracks::Input::buildsection(tracksystem, section);
         selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
-        trackorigin = Vec(0,0);
+        origin = Vec(0,0);
     }
     else if(selectednode){
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
@@ -62,7 +85,7 @@ void TrackBuilder::build(Vec pos)
     else{
         selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
         if(!selectednode){
-            trackorigin = pos;
+            origin = pos;
         }
     }
 }
@@ -70,8 +93,8 @@ void TrackBuilder::build(Vec pos)
 void TrackBuilder::reset()
 {
     Builder::reset();
+    origin = Vec(0,0);
     selectednode = 0;
-    trackorigin = Vec(0,0);
 }
 
 SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)
@@ -111,8 +134,11 @@ void BuildingBuilder::render(Rendering* r)
 {
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
+        if(anchorpoint.x!=0){
+            Builder::updateangle(mousepos);
+            mousepos = anchorpoint;
+        }
         if(building->id==wagonfactory){
-            float angle = pi/4;
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, mousepos, 500, angle);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
             Tracks::Input::discardsection(section);
@@ -151,7 +177,8 @@ void BuildingBuilder::build(Vec pos)
         std::cout<<"error: no building selected at build!";
         return;
     }
-    std::unique_ptr<Shape> shape = getplacementat(pos);
+    Builder::updateangle(pos);
+    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building->id)
     {
     case brewery:
@@ -167,8 +194,7 @@ void BuildingBuilder::build(Vec pos)
         game->getgamestate().buildings.emplace_back(new City(game, std::move(shape)));
         break;
     case wagonfactory:{
-        float angle = pi/4;
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, pos, 500, angle);
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
         midpointstate = Tracks::travel(tracksystem, midpointstate, 400);
@@ -187,7 +213,6 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     switch (building->id)
     {
     case wagonfactory:{
-        float angle=pi/4;
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
         Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
         if(neareststate.track)
@@ -197,6 +222,6 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     }
     
     default:
-        return std::make_unique<Rectangle>(pos, building->size.x, building->size.y);
+        return std::make_unique<RotatedRectangle>(pos, building->size.x, building->size.y, angle);
     }
 }

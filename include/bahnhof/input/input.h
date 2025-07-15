@@ -59,6 +59,7 @@ private:
     void resetinput();
     void leftclickmap(Vec mousepos);
     void rightclickmap(Vec mousepos);
+    void leftreleasedmap(Vec mouspos);
     void keydown(SDL_Keycode key);
     void selecttrain(Train* train);
     Game* game;

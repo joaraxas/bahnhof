@@ -69,8 +69,9 @@ void InputManager::handle(int ms, int mslogic){
 
         case SDL_MOUSEBUTTONUP:{
             if(e.button.button == SDL_BUTTON_LEFT){
-                Vec mousepos = screenmousepos();
-                ui.leftbuttonup(mousepos);
+                if(ui.leftbuttonup(screenmousepos()))
+                    break;
+                leftreleasedmap(mapmousepos());
             }
             break;
         }
@@ -124,9 +125,6 @@ void InputManager::handle(int ms, int mslogic){
 
 void InputManager::leftclickmap(Vec mousepos)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-
     switch (inputstate)
     {
     case placingsignals:
@@ -142,6 +140,8 @@ void InputManager::leftclickmap(Vec mousepos)
         break;
     
     case idle:{
+        Gamestate& gamestate = game->getgamestate();
+        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
         Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
         if(clickedtrain){
             selecttrain(clickedtrain);
@@ -158,8 +158,6 @@ void InputManager::leftclickmap(Vec mousepos)
         std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager";
         break;
     }
-    
-
 }
 
 void InputManager::rightclickmap(Vec mousepos)
@@ -171,6 +169,31 @@ void InputManager::rightclickmap(Vec mousepos)
         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
         if(neworder)
             editingroute->insertorderatselected(neworder);
+    }
+}
+
+void InputManager::leftreleasedmap(Vec mousepos)
+{
+    switch (inputstate)
+    {
+    case placingsignals:
+        signalbuilder->leftreleasedmap(mousepos);
+        break;
+    
+    case placingtracks:
+        trackbuilder->leftreleasedmap(mousepos);
+        break;
+    
+    case placingbuildings:
+        builder->leftreleasedmap(mousepos);
+        break;
+    
+    case idle:
+        break;
+    
+    default:
+        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager at left mouse release";
+        break;
     }
 }
 

@@ -22,15 +22,19 @@ public:
     virtual ~Builder() {};
     virtual void render(Rendering*) {};
     virtual void leftclickmap(Vec mappos);
-    virtual void reset() {};
+    virtual void leftreleasedmap(Vec mappos);
+    virtual void reset();
 protected:
     bool canbuild(Vec pos);
     virtual bool canfit(Vec pos) {return true;};
     virtual void build(Vec pos) {};
-    float cost;
+    void updateangle(Vec pos);
     Game* game;
     InputManager& input;
     Tracks::Tracksystem& tracksystem;
+    Vec anchorpoint{0,0};
+    float angle;
+    float cost;
 };
 
 class TrackBuilder : public Builder
@@ -41,8 +45,8 @@ public:
     void reset();
 private:
     void build(Vec pos);
+    Vec origin{0,0};
     nodeid selectednode = 0;
-    Vec trackorigin{0,0};
 };
 
 class SignalBuilder : public Builder

@@ -99,7 +99,7 @@ public:
     bool mousehover(Vec pos, int ms);
     bool click(Vec pos, int type);
     bool scroll(Vec pos, int distance);
-    void leftbuttonup(Vec pos);
+    bool leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
     void addpanel(UI::Host*);
