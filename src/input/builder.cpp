@@ -18,11 +18,13 @@ Builder::Builder(InputManager& owner, Game* newgame) :
 void Builder::leftclickmap(Vec mappos)
 {
     anchorpoint = mappos;
+    droppedanchor = true;
 }
 
 void Builder::leftreleasedmap(Vec mappos)
 {
     if(canbuild(mappos)){
+        updateangle(mappos);
         build(mappos);
         game->getgamestate().money-=cost;
     }
@@ -33,6 +35,7 @@ void Builder::reset()
 {
     anchorpoint = Vec(0,0);
     angle = 0;
+    droppedanchor = false;
 }
 
 bool Builder::canbuild(Vec pos)
@@ -46,7 +49,7 @@ bool Builder::canbuild(Vec pos)
 
 void Builder::updateangle(Vec pos)
 {
-    if(anchorpoint.x!=0){
+    if(droppedanchor){
         Vec diff = pos-anchorpoint;
         if(norm(diff) > 20/game->getcamera().getscale()){
             angle = atan2(-diff.y, diff.x);
@@ -134,18 +137,16 @@ void BuildingBuilder::render(Rendering* r)
 {
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
-        if(anchorpoint.x!=0){
-            Builder::updateangle(mousepos);
-            mousepos = anchorpoint;
-        }
+        if(!droppedanchor) anchorpoint = mousepos;
+        Builder::updateangle(mousepos);
         if(building->id==wagonfactory){
-            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, mousepos, 500, angle);
+            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
             Tracks::Input::discardsection(section);
         }
-        std::unique_ptr<Shape> shape = getplacementat(mousepos);
+        std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
         SDL_Color color;
-        if(canbuild(mousepos)){
+        if(canbuild(anchorpoint)){
             color = building->color;
             color.a = 127;
         }
@@ -177,7 +178,6 @@ void BuildingBuilder::build(Vec pos)
         std::cout<<"error: no building selected at build!";
         return;
     }
-    Builder::updateangle(pos);
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building->id)
     {

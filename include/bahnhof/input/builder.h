@@ -34,6 +34,7 @@ protected:
     Tracks::Tracksystem& tracksystem;
     Vec anchorpoint{0,0};
     float angle;
+    bool droppedanchor = false;
     float cost;
 };
 
