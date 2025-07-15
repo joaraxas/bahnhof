@@ -10,6 +10,16 @@
 namespace Tracks{
 namespace Construction{
 
+Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec pos)
+{
+	Vec posdiff = pos - frompos;
+	float dir = atan2(-posdiff.y,posdiff.x);
+	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
+	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
+	newsection = newsection + Tracksection({},{fromnode});
+	return newsection;
+}
+
 Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 {
 	Vec posdiff = pos - fromnode->getpos();

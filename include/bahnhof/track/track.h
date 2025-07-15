@@ -85,7 +85,7 @@ private:
 namespace Input
 {
     State getstateat(Tracksystem& tracksystem, Vec pos); // TODO: just expose getcloseststate instead?
-    State getendpointat(Tracksystem& tracksystem, Vec pos);
+    State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);

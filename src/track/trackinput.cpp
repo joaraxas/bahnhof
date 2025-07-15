@@ -18,9 +18,9 @@ State getstateat(Tracksystem& tracksystem, Vec pos)
 	return getcloseststate(tracksystem, pos);
 }
 
-State getendpointat(Tracksystem& tracksystem, Vec pos)
+State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
 {
-	float mindistsquared = INFINITY;
+	float mindistsquared = mindist*mindist/tracksystem.game->getcamera().getscale();
 	Node* closestnode = nullptr;
 	for(auto const node: tracksystem.allnodes()){
 		if(node->trackdown && node->trackup)
@@ -101,21 +101,16 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 		}
 		return section;
 	}
-	Vec posdiff = pos - frompos;
-	float dir = atan2(-posdiff.y,posdiff.x);
-	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
-	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
-	newsection = newsection + Tracksection({},{fromnode});
-	return newsection;
+	return Construction::extendtracktopos(tracksystem, frompos, pos);
 }
 
 Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend)
 {
-	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos);
+	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
     float angle=0;
 	Vec trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
-	Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos));
-	return Construction::extendtracktopos(tracksystem, nearestnode, frompos);
+	Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos)); // TODO: should be able to infer this from neareststate instead, this is risky
+	return Construction::extendtracktopos(tracksystem, nearestnode, trackextensionpoint);
 }
 
 void buildsection(Tracksystem& tracksystem, const Tracksection& section)
