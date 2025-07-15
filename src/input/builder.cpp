@@ -15,6 +15,15 @@ Builder::Builder(InputManager& owner, Game* newgame) :
         tracksystem(game->getgamestate().gettracksystems())
 {}
 
+void Builder::render(Rendering* r)
+{
+    Vec mousepos = input.mapmousepos();
+    if(!droppedanchor)
+        anchorpoint = mousepos;
+    else
+        updateangle(mousepos);
+}
+
 void Builder::leftclickmap(Vec mappos)
 {
     anchorpoint = mappos;
@@ -25,7 +34,7 @@ void Builder::leftreleasedmap(Vec mappos)
 {
     if(canbuild(mappos)){
         updateangle(mappos);
-        build(mappos);
+        build();
         game->getgamestate().money-=cost;
     }
     Builder::reset();
@@ -49,46 +58,46 @@ bool Builder::canbuild(Vec pos)
 
 void Builder::updateangle(Vec pos)
 {
-    if(droppedanchor){
-        Vec diff = pos-anchorpoint;
-        if(norm(diff) > 20/game->getcamera().getscale()){
-            angle = atan2(-diff.y, diff.x);
-        }
+    Vec diff = pos-anchorpoint;
+    if(norm(diff) > 20/game->getcamera().getscale()){
+        angle = atan2(-diff.y, diff.x);
     }
 }
 
 void TrackBuilder::render(Rendering* r)
 {
+    Builder::render(r);
     if(selectednode || origin.x!=0){
         Tracks::Tracksection section;
         if(selectednode)
-            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), input.mapmousepos());
+            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), anchorpoint);
         else
-            section = Tracks::Input::planconstructionto(tracksystem, origin, input.mapmousepos());
+            section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
         cost = ceil(Tracks::Input::getcostoftracks(section));
-        Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
-        r->rendertext(std::to_string(int(cost)), input.screenmousepos().x, input.screenmousepos().y-18, {127, 0, 0}, false, false);
+        Tracks::render(section, r, 2-canbuild(anchorpoint));
+        Vec screenpoint = game->getcamera().screencoord(anchorpoint);
+        r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
         Tracks::Input::discardsection(section);
     }
 }
 
-void TrackBuilder::build(Vec pos)
+void TrackBuilder::build()
 {
     if(origin.x!=0 || origin.y!=0){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, origin, pos);
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
         Tracks::Input::buildsection(tracksystem, section);
-        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
         origin = Vec(0,0);
     }
     else if(selectednode){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), anchorpoint);
         Tracks::Input::buildsection(tracksystem, section);
-        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
     }
     else{
-        selectednode = Tracks::Input::selectnodeat(tracksystem, pos);
+        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
         if(!selectednode){
-            origin = pos;
+            origin = anchorpoint;
         }
     }
 }
@@ -108,15 +117,15 @@ SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner
 
 void SignalBuilder::render(Rendering* r)
 {
-    Vec mousepos = input.mapmousepos();
-    if(canbuild(mousepos)){
+    Builder::render(r);
+    if(canbuild(anchorpoint)){
         icon.color = {127,255,127,255};
-        Vec signalpos = Tracks::Input::plansignalat(tracksystem, mousepos);
+        Vec signalpos = Tracks::Input::plansignalat(tracksystem, anchorpoint);
         icon.render(r, signalpos);
     }
     else{
         icon.color = {255,127,127,255};
-        icon.render(r, mousepos);
+        icon.render(r, anchorpoint);
     }
 }
 
@@ -128,17 +137,15 @@ bool SignalBuilder::canfit(Vec pos)
     return false;
 }
 
-void SignalBuilder::build(Vec pos)
+void SignalBuilder::build()
 {
-    Tracks::Input::buildsignalat(tracksystem, pos);
+    Tracks::Input::buildsignalat(tracksystem, anchorpoint);
 }
 
 void BuildingBuilder::render(Rendering* r)
 {
+    Builder::render(r);
     if(building){ // this should always be true
-        Vec mousepos = input.mapmousepos();
-        if(!droppedanchor) anchorpoint = mousepos;
-        Builder::updateangle(mousepos);
         if(building->id==wagonfactory){
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
@@ -172,7 +179,7 @@ void BuildingBuilder::setbuildingtype(const BuildingType& type)
     cost = building->cost;
 }
 
-void BuildingBuilder::build(Vec pos)
+void BuildingBuilder::build()
 {
     if(!building){
         std::cout<<"error: no building selected at build!";

@@ -20,14 +20,14 @@ class Builder
 public:
     Builder(InputManager& owner, Game* newgame);
     virtual ~Builder() {};
-    virtual void render(Rendering*) {};
+    virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos);
     virtual void reset();
 protected:
     bool canbuild(Vec pos);
     virtual bool canfit(Vec pos) {return true;};
-    virtual void build(Vec pos) {};
+    virtual void build() {};
     void updateangle(Vec pos);
     Game* game;
     InputManager& input;
@@ -45,7 +45,7 @@ public:
     void render(Rendering*);
     void reset();
 private:
-    void build(Vec pos);
+    void build();
     Vec origin{0,0};
     nodeid selectednode = 0;
 };
@@ -57,7 +57,7 @@ public:
     void render(Rendering*);
 private:
     bool canfit(Vec pos);
-    void build(Vec pos);
+    void build();
     Icon icon;
 };
 
@@ -70,7 +70,7 @@ public:
     void setbuildingtype(const BuildingType& b);
 private:
     bool canfit();
-    void build(Vec pos);
+    void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;
 };
