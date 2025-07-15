@@ -25,8 +25,8 @@ public:
     virtual void leftreleasedmap(Vec mappos);
     virtual void reset();
 protected:
-    bool canbuild(Vec pos);
-    virtual bool canfit(Vec pos) {return true;};
+    bool canbuild();
+    virtual bool canfit() {return true;};
     virtual void build() {};
     void updateangle(Vec pos);
     Game* game;
@@ -56,7 +56,7 @@ public:
     SignalBuilder(InputManager& i, Game* g);
     void render(Rendering*);
 private:
-    bool canfit(Vec pos);
+    bool canfit();
     void build();
     Icon icon;
 };
@@ -69,7 +69,7 @@ public:
     void reset();
     void setbuildingtype(const BuildingType& b);
 private:
-    bool canfit();
+    bool canfit() {return Builder::canfit();};
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;

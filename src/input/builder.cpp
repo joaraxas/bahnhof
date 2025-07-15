@@ -32,8 +32,8 @@ void Builder::leftclickmap(Vec mappos)
 
 void Builder::leftreleasedmap(Vec mappos)
 {
-    if(canbuild(mappos)){
-        updateangle(mappos);
+    updateangle(mappos);
+    if(canbuild()){
         build();
         game->getgamestate().money-=cost;
     }
@@ -47,11 +47,11 @@ void Builder::reset()
     droppedanchor = false;
 }
 
-bool Builder::canbuild(Vec pos)
+bool Builder::canbuild()
 {
     if(game->getgamestate().money<cost)
         return false;
-    if(!canfit(pos))
+    if(!canfit())
         return false;
     return true;
 }
@@ -74,7 +74,7 @@ void TrackBuilder::render(Rendering* r)
         else
             section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
         cost = ceil(Tracks::Input::getcostoftracks(section));
-        Tracks::render(section, r, 2-canbuild(anchorpoint));
+        Tracks::render(section, r, 2-canbuild());
         Vec screenpoint = game->getcamera().screencoord(anchorpoint);
         r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
         Tracks::Input::discardsection(section);
@@ -118,7 +118,7 @@ SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner
 void SignalBuilder::render(Rendering* r)
 {
     Builder::render(r);
-    if(canbuild(anchorpoint)){
+    if(canbuild()){
         icon.color = {127,255,127,255};
         Vec signalpos = Tracks::Input::plansignalat(tracksystem, anchorpoint);
         icon.render(r, signalpos);
@@ -129,10 +129,10 @@ void SignalBuilder::render(Rendering* r)
     }
 }
 
-bool SignalBuilder::canfit(Vec pos)
+bool SignalBuilder::canfit()
 {
-    Vec signalpos = Tracks::Input::plansignalat(tracksystem, pos);
-    if(norm(signalpos-pos)<100)
+    Vec signalpos = Tracks::Input::plansignalat(tracksystem, anchorpoint);
+    if(norm(signalpos-anchorpoint)<100)
         return true;
     return false;
 }
@@ -148,12 +148,12 @@ void BuildingBuilder::render(Rendering* r)
     if(building){ // this should always be true
         if(building->id==wagonfactory){
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
-            Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
+            Tracks::render(section, r, 2-canbuild());
             Tracks::Input::discardsection(section);
         }
         std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
         SDL_Color color;
-        if(canbuild(anchorpoint)){
+        if(canbuild()){
             color = building->color;
             color.a = 127;
         }
