@@ -170,7 +170,8 @@ void BuildingBuilder::build(Vec pos)
         float angle = pi/4;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, pos, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
-        State midpointstate = Tracks::Input::getstateat(tracksystem, shape->mid());
+        State midpointstate = Tracks::getstartpointstate(section);
+        midpointstate = Tracks::travel(tracksystem, midpointstate, 400);
         midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack; // make inward-pointing
         game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
         break;
