@@ -201,12 +201,10 @@ State getstartpointstate(Tracksection& section)
 }
 
 Vec gettrackextension(Tracksystem& tracksystem, State fromstate, float distance, float& angle){
-    if(fromstate.track!=0){
+    if(fromstate.track){
         angle = Tracks::getorientation(tracksystem, fromstate);
-        Vec statepos = Tracks::getpos(tracksystem, fromstate);
-        return Vec(statepos.x+400*cos(-angle), statepos.y+400*sin(-angle));
     }
-    return Vec(distance,0);
+    return Vec(distance*cos(-angle),distance*sin(-angle));
 }
 
 }

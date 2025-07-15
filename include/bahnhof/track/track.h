@@ -90,7 +90,7 @@ namespace Input
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle);
     void buildsection(Tracksystem& tracksystem, const Tracksection& section);
     void discardsection(Tracksection& section);
     nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should maybe be replaced with getstateat

@@ -112,18 +112,8 @@ void BuildingBuilder::render(Rendering* r)
     if(building){ // this should always be true
         Vec mousepos = input.mapmousepos();
         if(building->id==wagonfactory){
-            Tracks::Tracksection section;
-            float angle;
-            Vec trackextensionpoint;
-            State neareststate = Tracks::Input::getendpointat(tracksystem, mousepos, 20);
-            if(neareststate.track){
-                trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
-                section = Tracks::Input::planconstructionto(tracksystem, mousepos, 400);
-            }
-            else{
-                trackextensionpoint = mousepos + Vec(400,0);
-                section = Tracks::Input::planconstructionto(tracksystem, mousepos, trackextensionpoint); // TODO: will probs break if pointing at node
-            }
+            float angle = pi/4;
+            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, mousepos, 500, angle);
             Tracks::render(section, r, 2-canbuild(input.mapmousepos()));
             Tracks::Input::discardsection(section);
         }
@@ -177,18 +167,12 @@ void BuildingBuilder::build(Vec pos)
         game->getgamestate().buildings.emplace_back(new City(game, std::move(shape)));
         break;
     case wagonfactory:{
-        float angle=0;
-        Vec trackextensionpoint;
-        State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
-        if(neareststate.track)
-            trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
-        else
-            trackextensionpoint = pos + Vec(400,0);
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, trackextensionpoint, pos);
+        float angle = pi/4;
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, pos, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
-        State endpoint = Tracks::Input::getendpointat(tracksystem, trackextensionpoint);
-        endpoint.alignedwithtrack = !endpoint.alignedwithtrack; // make inward-pointing
-        game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), endpoint));
+        State midpointstate = Tracks::Input::getstateat(tracksystem, shape->mid());
+        midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack; // make inward-pointing
+        game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
         break;
     }
     default:
@@ -202,13 +186,13 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     switch (building->id)
     {
     case wagonfactory:{
-        float angle=0;
+        float angle=pi/4;
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
-        if(neareststate.track){
-            Vec trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
-            return std::make_unique<RotatedRectangle>(trackextensionpoint, building->size.x, building->size.y, angle);
-        }
-        return std::make_unique<Rectangle>(pos + Vec(400,0), building->size.x, building->size.y);
+        Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
+        if(neareststate.track)
+            return std::make_unique<RotatedRectangle>(Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, building->size.x, building->size.y, angle);
+        else
+            return std::make_unique<RotatedRectangle>(pos + buildingmidpoint, building->size.x, building->size.y, angle);
     }
     
     default:

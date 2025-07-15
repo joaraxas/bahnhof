@@ -104,13 +104,17 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 	return Construction::extendtracktopos(tracksystem, frompos, pos);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle)
 {
 	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
-    float angle=0;
-	Vec trackextensionpoint = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
-	Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos)); // TODO: should be able to infer this from neareststate instead, this is risky
-	return Construction::extendtracktopos(tracksystem, nearestnode, trackextensionpoint);
+	Vec trackextension = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
+	if(neareststate.track){
+		Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos)); // TODO: should be able to infer this from neareststate instead, this is risky
+		return Construction::extendtracktopos(tracksystem, nearestnode, getpos(tracksystem, neareststate)+trackextension);
+	}
+	else{
+		return Construction::extendtracktopos(tracksystem, frompos, frompos+trackextension);
+	}
 }
 
 void buildsection(Tracksystem& tracksystem, const Tracksection& section)
