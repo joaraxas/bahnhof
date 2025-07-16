@@ -65,8 +65,8 @@ public:
     void removetrack(trackid toremove);
     void removeswitchfromlist(switchid toremove);
     void removesignal(signalid toremove);
-    std::vector<Track*> alltracks();
     std::vector<Node*> allnodes();
+    std::vector<Track*> alltracks();
     std::vector<Switch*> allswitches();
     std::vector<Signal*> allsignals();
     Game* game;

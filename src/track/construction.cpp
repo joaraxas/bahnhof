@@ -44,7 +44,7 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 	float tanth1 = tan(node1->getdir());
 	float tanth2 = tan(node2->getdir());
 
-	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2);
+	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2); // TODO: This looks like it will fail if nodes are parallel
 	float intersecty = -(y1 + (intersectx - x1)*tanth1);
 	if(abs(tanth1)>1e5){
 		intersectx = x1;
@@ -57,7 +57,7 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
 	else
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-	if(distancebetween(pos1, newnodepoint)> 10 && distancebetween(pos2, newnodepoint)> 10){ //TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
+	if(distancebetween(pos1, newnodepoint)> 10 && distancebetween(pos2, newnodepoint)> 10){ // TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
 		Tracksection section = extendtracktopos(tracksystem, node1, newnodepoint);
 		section.tracks.push_back(new Track(tracksystem, *section.nodes.back(), *node2, -1));
 		return section;
@@ -71,10 +71,8 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	Track* trackpointer = tracksystem.gettrack(state.track);
 	Node* previousnode = trackpointer->previousnode;
 	Node* nextnode = trackpointer->nextnode;
-	Tracksection section1 = connecttwonodes(tracksystem, previousnode, node);
-	Tracksection section2 = connecttwonodes(tracksystem, node, nextnode);
-	Track* track1 = section1.tracks[0];
-	Track* track2 = section2.tracks[0];
+	Track* track1 = new Track(tracksystem, *previousnode, *node, -1);
+	Track* track2 = new Track(tracksystem, *node, *nextnode, -1);
 	tracksystem.addtrack(*track1);
 	tracksystem.addtrack(*track2);
 	trackpointer->split(*track1, *track2, state);
