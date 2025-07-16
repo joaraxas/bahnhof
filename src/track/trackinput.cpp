@@ -108,7 +108,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float dis
 {
 	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
 	Vec trackextension = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
-	if(neareststate.track){
+	if(neareststate){
 		Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos)); // TODO: should be able to infer this from neareststate instead, this is risky
 		return Construction::extendtracktopos(tracksystem, nearestnode, getpos(tracksystem, neareststate)+trackextension);
 	}
@@ -211,7 +211,7 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 	if(track){
 		*track = 0;
 		closeststate = getcloseststate(tracksystem, mousepos);
-		if(closeststate.track)
+		if(closeststate)
 			trackdist = distancebetween(getpos(tracksystem, closeststate), mousepos);
 	}
 	if(node){

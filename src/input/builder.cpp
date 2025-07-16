@@ -204,8 +204,7 @@ void BuildingBuilder::build()
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
-        midpointstate = Tracks::travel(tracksystem, midpointstate, 400);
-        midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack; // make inward-pointing
+        midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 400));
         game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
         break;
     }
@@ -222,7 +221,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     case wagonfactory:{
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
         Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
-        if(neareststate.track)
+        if(neareststate)
             return std::make_unique<RotatedRectangle>(Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, building->size.x, building->size.y, angle);
         else
             return std::make_unique<RotatedRectangle>(pos + buildingmidpoint, building->size.x, building->size.y, angle);
