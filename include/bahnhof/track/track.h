@@ -37,6 +37,7 @@ struct Tracksection
 struct Referencehandler
 {
     Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
+    bool maytrackberemoved(trackid track);
     void removewagonreference(Wagon*);
     void removebuildingreference(WagonFactory*);
     void removetrackorderreference(Gotostate*);

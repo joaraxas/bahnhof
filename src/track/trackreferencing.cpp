@@ -55,6 +55,21 @@ void Referencehandler::removebuildingreference(WagonFactory* building)
 		std::cout<<"Warning: tried to erase non-existing reference to building"<<std::endl;
 }
 
+bool Referencehandler::maytrackberemoved(trackid track)
+{
+	for(auto wagon: wagons){
+		for(State* stateptr: wagon->getstates()){
+			if(stateptr->track==track)
+				return false;
+		}
+	}
+	for(auto item: buildings){
+		if(item->getstate().track==track)
+			return false;
+	}
+	return true;
+}
+
 void Referencehandler::validatereferences()
 {
 	for(auto order: trackorders){
@@ -76,7 +91,6 @@ void Referencehandler::validatereferences()
 			removeswitchorderreference(order);
 		}
 	}
-	// TODO: We will need one for buildings now as well
 }
 
 void Referencehandler::movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2)
