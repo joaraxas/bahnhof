@@ -41,6 +41,7 @@ struct Referencehandler
     void removesignalorderreference(Setsignal*);
     void removeswitchorderreference(Setswitch*);
     void validatereferences();
+    void movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2);
     std::vector<Wagon*> wagons;
     std::vector<Gotostate*> trackorders;
     std::vector<Setsignal*> signalorders;

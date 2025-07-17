@@ -70,5 +70,22 @@ void Referencehandler::validatereferences()
 	// TODO: We will need one for buildings now as well
 }
 
+void Referencehandler::movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2)
+{
+	Track* oldtrack = tracksystem->gettrack(splitstate.track);
+	oldtrack->split(newtrack1, newtrack2, splitstate);
+	for(auto order: trackorders){
+		if(order->state.track == splitstate.track){
+			order->state = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, order->state);
+		}
+	}
+	for(auto wagon: wagons){
+		for(State* stateptr: wagon->getstates()){
+			if(stateptr->track == splitstate.track)
+				*stateptr = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, *stateptr);
+		}
+	}
+}
+
 
 }

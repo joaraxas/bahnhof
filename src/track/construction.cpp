@@ -71,22 +71,14 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	Track* trackpointer = tracksystem.gettrack(state.track);
 	Node* previousnode = trackpointer->previousnode;
 	Node* nextnode = trackpointer->nextnode;
+	
 	Track* track1 = new Track(tracksystem, *previousnode, *node, -1);
 	Track* track2 = new Track(tracksystem, *node, *nextnode, -1);
 	tracksystem.addtrack(*track1);
 	tracksystem.addtrack(*track2);
-	trackpointer->split(*track1, *track2, state);
-	for(auto order: tracksystem.references->trackorders){
-		if(order->state.track == state.track){
-			order->state = trackpointer->getsplitstate(*track1, *track2, state, order->state);
-		}
-	}
-	for(auto wagon: tracksystem.references->wagons){
-		for(State* stateptr: wagon->getstates()){
-			if(stateptr->track == state.track)
-				*stateptr = trackpointer->getsplitstate(*track1, *track2, state, *stateptr);
-		}
-	}
+
+	tracksystem.references->movereferenceswhentracksplits(state, *track1, *track2);
+
 	tracksystem.removetrack(state.track);
 }	
 

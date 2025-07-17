@@ -157,13 +157,13 @@ void Track::split(Track& track1, Track& track2, State where)
 {
 	for(auto& [nodedist, signal]: signals){
 		Signal* signalptr = tracksystem->getsignal(signal);
-		signalptr->state = getsplitstate(track1, track2, where, signalptr->state);
+		signalptr->state = getnewstateaftersplit(track1, track2, where, signalptr->state);
 		signalptr->addtotrack();
 	}
 	signals.clear();
 }
 
-State Track::getsplitstate(Track& track1, Track& track2, State wheresplit, State oldstate)
+State Track::getnewstateaftersplit(Track& track1, Track& track2, State wheresplit, State oldstate)
 {
 	if(oldstate.track == id){
 		if(oldstate.nodedist<wheresplit.nodedist){

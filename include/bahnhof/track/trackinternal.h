@@ -82,7 +82,7 @@ public:
     Track* nexttrack();
     Track* previoustrack();
     void split(Track& track1, Track& track2, State where);
-    State getsplitstate(Track& track1, Track& track2, State where, State oldstate);
+    State getnewstateaftersplit(Track& track1, Track& track2, State where, State oldstate);
     void connectsignal(State signalstate, signalid signal);
     void disconnectsignal(signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
