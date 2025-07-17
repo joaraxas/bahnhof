@@ -1,11 +1,13 @@
 #pragma once
 #include<set>
+#include "bahnhof/track/state.h"
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 
 class Storage;
 class Game;
 class Shape;
+class Rendering;
 
 class Building
 {
@@ -41,6 +43,7 @@ class WagonFactory : public Building
 public:
     WagonFactory(Game* game, std::unique_ptr<Shape> s, State st);
     void trigger();
+    State& getstate() {return state;};
 private:
     State state;
 };

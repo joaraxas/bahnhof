@@ -91,7 +91,10 @@ void Industry::trigger()
 }
 
 WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st) : Building(g, wagonfactory, std::move(s)), state(st)
-{}
+{
+	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+	tracksystem.references->buildings.push_back(this);
+}
 
 void WagonFactory::trigger()
 {

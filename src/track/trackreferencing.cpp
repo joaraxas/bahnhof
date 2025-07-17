@@ -5,6 +5,7 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/buildings/buildings.h"
 
 
 namespace Tracks{
@@ -43,7 +44,15 @@ void Referencehandler::removewagonreference(Wagon* wagon)
 		wagons.erase(it);
 	else
 		std::cout<<"Warning: tried to erase non-existing reference to wagon"<<std::endl;
-	// TODO: We will need one for buildings now as well
+}
+
+void Referencehandler::removebuildingreference(WagonFactory* building)
+{
+	auto it = find(buildings.begin(), buildings.end(), building);
+	if(it!=buildings.end())
+		buildings.erase(it);
+	else
+		std::cout<<"Warning: tried to erase non-existing reference to building"<<std::endl;
 }
 
 void Referencehandler::validatereferences()
@@ -74,15 +83,22 @@ void Referencehandler::movereferenceswhentracksplits(State splitstate, Track& ne
 {
 	Track* oldtrack = tracksystem->gettrack(splitstate.track);
 	oldtrack->split(newtrack1, newtrack2, splitstate);
-	for(auto order: trackorders){
-		if(order->state.track == splitstate.track){
-			order->state = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, order->state);
+	for(auto item: trackorders){
+		if(item->state.track == splitstate.track){
+			item->state = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, item->state);
 		}
 	}
 	for(auto wagon: wagons){
 		for(State* stateptr: wagon->getstates()){
 			if(stateptr->track == splitstate.track)
 				*stateptr = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, *stateptr);
+		}
+	}
+	for(auto item: buildings){
+		if(item->getstate().track == splitstate.track){
+			std::cout<<item->getstate().track <<std::endl;
+			item->getstate() = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, item->getstate());
+			std::cout<<item->getstate().track <<std::endl;
 		}
 	}
 }

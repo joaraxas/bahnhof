@@ -9,6 +9,7 @@ class Setsignal;
 class Setswitch;
 class Train;
 class Wagon;
+class WagonFactory;
 class Gamestate;
 class Game;
 class Rendering;
@@ -37,12 +38,14 @@ struct Referencehandler
 {
     Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
     void removewagonreference(Wagon*);
+    void removebuildingreference(WagonFactory*);
     void removetrackorderreference(Gotostate*);
     void removesignalorderreference(Setsignal*);
     void removeswitchorderreference(Setswitch*);
     void validatereferences();
     void movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2);
     std::vector<Wagon*> wagons;
+    std::vector<WagonFactory*> buildings;
     std::vector<Gotostate*> trackorders;
     std::vector<Setsignal*> signalorders;
     std::vector<Setswitch*> switchorders;
