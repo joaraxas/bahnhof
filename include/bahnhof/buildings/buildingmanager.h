@@ -11,8 +11,11 @@ class BuildingManager
 {
 public:
     BuildingManager(Game* g);
+    void update(int ms);
+    void render(Rendering* r);
     const std::vector<BuildingType>& gettypes() const {return availabletypes;}; // TODO: would be better to pass an iterator to the map
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
+    std::vector<std::unique_ptr<Building>> buildings; // TODO: make private and abstract away construction
 private:
     Game* game;
     std::map<BuildingID, BuildingType> types;

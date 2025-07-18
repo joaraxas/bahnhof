@@ -40,7 +40,6 @@ public:
     ResourceManager& getresources() {return *resources;};
     Gamestate& getgamestate() {return *gamestate;};
     InputManager& getinputmanager() {return *input;};
-    BuildingManager& getbuildingmanager() {return *buildings;};
 private:
     std::unique_ptr<TimeManager> timer;
     std::unique_ptr<Camera> cam;
@@ -50,7 +49,6 @@ private:
     std::unique_ptr<ResourceManager> resources;
     std::unique_ptr<Gamestate> gamestate;
     std::unique_ptr<InputManager> input;
-    std::unique_ptr<BuildingManager> buildings;
     bool quit;
 };
 
@@ -65,7 +63,7 @@ public:
     Tracks::Tracksystem& gettracksystems() {return *tracksystem;};
     RouteManager& getrouting() {return *routing;};
     TrainManager& gettrainmanager() {return *trainmanager;};
-    std::vector<std::unique_ptr<Building>> buildings;
+    BuildingManager& getbuildingmanager() {return *buildingmanager;};
     int time = 0;
     float money = 10;
     int revenue = 0;
@@ -75,6 +73,7 @@ private:
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
     std::unique_ptr<RouteManager> routing;
     std::unique_ptr<TrainManager> trainmanager;
+    std::unique_ptr<BuildingManager> buildingmanager;
     //Map* map;
 };
 

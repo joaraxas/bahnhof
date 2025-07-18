@@ -7,6 +7,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
+#include "bahnhof/buildings/buildingmanager.h"
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
@@ -189,23 +190,23 @@ void BuildingBuilder::build()
     switch(building->id)
     {
     case brewery:
-        game->getgamestate().buildings.emplace_back(new Brewery(game, std::move(shape)));
+        buildingmanager.buildings.emplace_back(new Brewery(game, std::move(shape)));
         break;
     case hopsfield:
-        game->getgamestate().buildings.emplace_back(new Hopsfield(game, std::move(shape)));
+        buildingmanager.buildings.emplace_back(new Hopsfield(game, std::move(shape)));
         break;
     case barleyfield:
-        game->getgamestate().buildings.emplace_back(new Barleyfield(game, std::move(shape)));
+        buildingmanager.buildings.emplace_back(new Barleyfield(game, std::move(shape)));
         break;
     case city:
-        game->getgamestate().buildings.emplace_back(new City(game, std::move(shape)));
+        buildingmanager.buildings.emplace_back(new City(game, std::move(shape)));
         break;
     case wagonfactory:{
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
         midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 400));
-        game->getgamestate().buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
+        buildingmanager.buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
         break;
     }
     default:

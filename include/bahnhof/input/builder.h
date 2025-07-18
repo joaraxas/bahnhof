@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
@@ -13,6 +14,7 @@ namespace Tracks{
 class Game;
 class Rendering;
 class InputManager;
+class BuildingManager;
 class BuildingType;
 
 class Builder
@@ -64,7 +66,7 @@ private:
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& i, Game* g) : Builder(i, g) {};
+    BuildingBuilder(InputManager& i, Game* g) : Builder(i, g), buildingmanager(g->getgamestate().getbuildingmanager()) {};
     void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType& b);
@@ -73,4 +75,5 @@ private:
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;
+    BuildingManager& buildingmanager;
 };

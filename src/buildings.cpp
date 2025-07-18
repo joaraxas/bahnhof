@@ -16,8 +16,7 @@
 Building::Building(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s) : shape(std::move(s))
 {
 	game = whatgame;
-	const BuildingType& type = game->getbuildingmanager().gettypefromid(id);
-	// rect = {int(pos.x), int(pos.y), int(type.size.x), int(type.size.y)};
+	const BuildingType& type = game->getgamestate().getbuildingmanager().gettypefromid(id);
 	color = type.color;
 }
 
@@ -26,10 +25,7 @@ Building::~Building()
 
 void Building::render(Rendering* r)
 {
-	// SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	// r->renderfilledrectangle(rect);
 	shape->renderfilled(r, color);
-	// SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
 void Building::update(int ms)
@@ -128,4 +124,16 @@ BuildingManager::BuildingManager(Game* g) : game(g)
 	for(auto type: types){
 		availabletypes.push_back(type.second);
 	}
+}
+
+void BuildingManager::update(int ms)
+{
+	for(auto& building : buildings)
+		building->update(ms);
+}
+
+void BuildingManager::render(Rendering* r)
+{
+	for(auto& building : buildings)
+		building->render(r);
 }

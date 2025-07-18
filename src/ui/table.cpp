@@ -304,7 +304,7 @@ void TrainOrderTable::leftclick(Vec pos)
 ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : 
         Table(p, r), 
         input(game->getinputmanager()),
-        buildingtypes(game->getbuildingmanager().gettypes())
+        buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
         lines.emplace_back(new ConstructionTableLine(panel, this, buildingtypes[i]));
@@ -313,7 +313,7 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
 
 void ConstructionTable::leftclick(Vec pos)
 {
-    BuildingManager& buildings = game->getbuildingmanager();
+    BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     int index = getlineindexat(pos);
     if(index>=0){
         const BuildingType& clickedbuilding = buildingtypes.at(index);

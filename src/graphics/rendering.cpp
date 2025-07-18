@@ -11,7 +11,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/trainmanager.h"
-#include "bahnhof/buildings/buildings.h"
+#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/resources/storage.h"
 
 Vec randpos(int xoffset, int yoffset)
@@ -38,8 +38,7 @@ void Rendering::render(Gamestate* gamestate)
 		SDL_Rect rect = {x,y,128,128};
 		rendertexture(fieldtex, &rect);
 	}}
-	for(auto& building : gamestate->buildings)
-		building->render(this);
+	gamestate->getbuildingmanager().render(this);
 	for(auto& storage : storages)
 		storage->render(this);
 	Tracks::render(tracksystem, this);
