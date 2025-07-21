@@ -33,12 +33,14 @@ void Builder::leftclickmap(Vec mappos)
 
 void Builder::leftreleasedmap(Vec mappos)
 {
-    updateangle(mappos);
-    if(canbuild()){
-        build();
-        game->getgamestate().money-=cost;
+    if(droppedanchor){
+        updateangle(mappos);
+        if(canbuild()){
+            build();
+            game->getgamestate().money-=cost;
+        }
+        Builder::reset();
     }
-    Builder::reset();
 }
 
 void Builder::reset()

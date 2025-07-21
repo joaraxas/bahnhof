@@ -70,8 +70,7 @@ void InputManager::handle(int ms, int mslogic){
 
         case SDL_MOUSEBUTTONUP:{
             if(e.button.button == SDL_BUTTON_LEFT){
-                if(ui.leftbuttonup(screenmousepos()))
-                    break;
+                ui.leftbuttonup(screenmousepos());
                 leftreleasedmap(mapmousepos());
             }
             break;
