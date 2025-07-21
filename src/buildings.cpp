@@ -39,9 +39,7 @@ void Building::update(int ms)
 
 bool Building::checkclick(Vec pos)
 {
-	// if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
-	// 	return true;
-	return false;
+	return shape->contains(pos);
 }
 
 Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s, 
@@ -136,4 +134,15 @@ void BuildingManager::render(Rendering* r)
 {
 	for(auto& building : buildings)
 		building->render(r);
+}
+
+bool BuildingManager::leftclick(Vec mappos)
+{
+	for(auto& building : buildings){
+		if(building->checkclick(mappos)){
+			building->leftclick(mappos);
+			return true;
+		}
+	}
+	return false;
 }

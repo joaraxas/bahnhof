@@ -10,6 +10,7 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 
@@ -148,9 +149,14 @@ void InputManager::leftclickmap(Vec mousepos)
             break;
         }
         
-        if(!Tracks::Input::switchat(tracksystem, mousepos)){
-            selecttrain(nullptr);
+        if(Tracks::Input::switchat(tracksystem, mousepos)){
+            break;
         }
+
+        selecttrain(nullptr);
+
+        if(gamestate.getbuildingmanager().leftclick(mousepos))
+            break;
         break;
     }
     

@@ -9,8 +9,10 @@ class Rendering;
 class Shape
 {
 public:
+    virtual ~Shape() {};
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) {};
     virtual Vec mid() {return Vec(0,0);};
+    virtual bool contains(Vec) {return false;};
 };
 
 class Rectangle : public Shape
@@ -21,6 +23,7 @@ public:
     Rectangle(Vec pos, int w, int h);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
     Vec mid();
+    bool contains(Vec);
 protected:
     SDL_Rect rect;
 };
@@ -33,6 +36,7 @@ public:
     RotatedRectangle(float mid_x, float mid_y, int w, int h, float rotation);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
     Vec mid();
+    bool contains(Vec);
 protected:
     float mid_x;
     float mid_y;

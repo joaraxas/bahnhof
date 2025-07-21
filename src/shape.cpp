@@ -28,6 +28,13 @@ Vec Rectangle::mid()
 	return {x_mid, y_mid};
 }
 
+bool Rectangle::contains(Vec pos)
+{
+	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
+		return true;
+	return false;
+}
+
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
 {}
@@ -57,4 +64,12 @@ void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, 
 Vec RotatedRectangle::mid()
 {
 	return {mid_x,mid_y};
+}
+
+bool RotatedRectangle::contains(Vec pos)
+{
+	Vec diff = localcoords(pos, angle, mid());
+	if(diff.x>=-w*0.5 && diff.x<=w*0.5 && diff.y>=-h*0.5 && diff.y<=h*0.5)
+		return true;
+	return false;
 }
