@@ -91,4 +91,11 @@ public:
     ~BuildingConstructionPanel();
 };
 
+class BuildingPanel : public Panel
+{
+public:
+    BuildingPanel(InterfaceManager* newui);
+    ~BuildingPanel();
+};
+
 }

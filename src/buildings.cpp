@@ -11,6 +11,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/ui/panels.h"
 
 
 Building::Building(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s) : shape(std::move(s))
@@ -41,6 +42,12 @@ bool Building::checkclick(Vec pos)
 {
 	return shape->contains(pos);
 }
+
+bool Building::leftclick(Vec pos)
+{
+	new UI::BuildingPanel(&game->getui());
+}
+
 
 Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s, 
 					std::set<resourcetype> need, 

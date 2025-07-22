@@ -18,7 +18,7 @@ public:
     void update(int ms);
     virtual void trigger() {};
     bool checkclick(Vec pos);
-    virtual bool leftclick(Vec pos) {};
+    virtual bool leftclick(Vec pos);
 protected:
     SDL_Color color;
     Game* game;

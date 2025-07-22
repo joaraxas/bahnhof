@@ -194,4 +194,15 @@ BuildingConstructionPanel::~BuildingConstructionPanel()
 	std::cout<<"del buildingconstructionpanel"<<std::endl;
 }
 
+BuildingPanel::BuildingPanel(InterfaceManager* newui) : Panel(newui, {200,300,300,150})
+{
+	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	addelement(new ConstructionTable(this, tablerect));
+}
+
+BuildingPanel::~BuildingPanel()
+{
+	std::cout<<"del buildingpanel"<<std::endl;
+}
+
 } // namespace UI
