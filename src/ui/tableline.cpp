@@ -95,13 +95,13 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
-ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, const BuildingType& type) : 
+ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, std::string name, sprites::name iconname, float cost) : 
     TableLine(p, t),
-    name(type.name),
-    price(type.cost)
+    name(name),
+    price(cost)
 {
     SpriteManager& sprites = game->getsprites();
-    icon.setspritesheet(sprites, type.iconname);
+    icon.setspritesheet(sprites, iconname);
     icon.ported = false;
 }
 

@@ -127,4 +127,13 @@ private:
     const std::vector<BuildingType>& buildingtypes;
 };
 
+class WagonTable : public Table
+{
+public:
+    WagonTable(Host* p, SDL_Rect r);
+    void leftclick(Vec pos);
+private:
+    InputManager& input;
+};
+
 }

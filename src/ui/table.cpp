@@ -307,7 +307,11 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
         buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
-        lines.emplace_back(new ConstructionTableLine(panel, this, buildingtypes[i]));
+        const BuildingType& type = buildingtypes[i];
+        lines.emplace_back(new ConstructionTableLine(panel, 
+                this, type.name, 
+                type.iconname,
+                type.cost));
     }
 }
 
@@ -318,6 +322,27 @@ void ConstructionTable::leftclick(Vec pos)
     if(index>=0){
         const BuildingType& clickedbuilding = buildingtypes.at(index);
         input.placebuilding(clickedbuilding);
+    }
+}
+
+WagonTable::WagonTable(Host* p, SDL_Rect r) : 
+        Table(p, r), 
+        input(game->getinputmanager())
+{
+    // for(int i=0; i<buildingtypes.size(); i++){
+    //     const BuildingType& type = buildingtypes[i];
+    //     lines.emplace_back(new ConstructionTableLine(panel, 
+    //             this, type.name, 
+    //             type.iconname,
+    //             type.cost));
+    // }
+}
+
+void WagonTable::leftclick(Vec pos)
+{
+    int index = getlineindexat(pos);
+    if(index>=0){
+        
     }
 }
 

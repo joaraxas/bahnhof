@@ -69,7 +69,7 @@ private:
 class ConstructionTableLine : public TableLine
 {
 public:
-    ConstructionTableLine(Host*, Table*, const BuildingType&);
+    ConstructionTableLine(Host* p, Table* t, std::string name, sprites::name iconname, float cost);
     void render(Rendering* r, SDL_Rect maxarea);
 protected:
     Icon icon;
