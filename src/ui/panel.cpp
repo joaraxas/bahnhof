@@ -35,6 +35,7 @@ void Panel::render(Rendering* r)
 	Host::render(r);
 }
 
+
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
 	createbutton<PlaceTrack>();
@@ -54,6 +55,7 @@ MainPanel::~MainPanel()
 {
 	std::cout<<"del mainpanel"<<std::endl;
 }
+
 
 RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
 {
@@ -81,6 +83,7 @@ void RouteListPanel::addroutepanel(int routeindex)
     SDL_Rect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
 	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
 }
+
 
 RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp) :
 	Panel(newui, newrect), routelistpanel(rlp)
@@ -113,6 +116,7 @@ void RoutePanel::erase()
 	Panel::erase();
 }
 
+
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
     Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
@@ -132,8 +136,6 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 		trainmanager(manager), 
 		train(newtrain)
 {
-	TrainInfo info = train.getinfo();
-
 	createbutton<SetRoute>();
 	createbutton<GoTrain>();
 	createbutton<GasTrain>();
@@ -155,7 +157,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	addelement(new TrainOrderTable(this, routetablerect, train));
 	
 	SDL_Rect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
-	addelement(new EditableText(this, info.train->name, trainnamerect));
+	addelement(new EditableText(this, train.name, trainnamerect));
 }
 
 TrainPanel::~TrainPanel()

@@ -181,6 +181,7 @@ void MainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
+
 TrainTable::TrainTable(Host* newpanel, SDL_Rect newrect) : 
     Table(newpanel, newrect)
 {
@@ -212,6 +213,7 @@ void TrainTable::leftclick(Vec mousepos)
     }
 }
 
+
 void TrainInfoTable::update(int ms)
 {
 	TrainInfo info = train.getinfo();
@@ -221,6 +223,7 @@ void TrainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} km/h", kmh)));
     // lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
 }
+
 
 RouteTable::RouteTable(Host* p, SDL_Rect r) : 
     Table(p, r), 
@@ -253,6 +256,7 @@ void RouteTable::leftclick(Vec mousepos)
     }
 }
 
+
 void OrderTable::update(int ms)
 {
 	lines.clear();
@@ -280,6 +284,7 @@ void OrderTable::leftclick(Vec pos)
     }
 }
 
+
 void TrainOrderTable::update(int ms)
 {
     route = train.route;
@@ -300,6 +305,7 @@ void TrainOrderTable::leftclick(Vec pos)
         train.orderid = orderids[index];
     }
 }
+
 
 ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : 
         Table(p, r), 
@@ -324,6 +330,7 @@ void ConstructionTable::leftclick(Vec pos)
         input.placebuilding(clickedbuilding);
     }
 }
+
 
 WagonTable::WagonTable(Host* p, SDL_Rect r) : 
         Table(p, r), 
