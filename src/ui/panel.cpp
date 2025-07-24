@@ -9,6 +9,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildings.h"
 
 namespace UI{
 
@@ -196,8 +197,11 @@ BuildingConstructionPanel::~BuildingConstructionPanel()
 	std::cout<<"del buildingconstructionpanel"<<std::endl;
 }
 
-BuildingPanel::BuildingPanel(InterfaceManager* newui) : Panel(newui, {200,300,300,150})
+BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
+		Panel(newui, {200,300,300,150}),
+		building(b)
 {
+	addelement(new Text(this, building->name, {50, 10, rect.w-100, 20}));
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new WagonTable(this, tablerect));
 }

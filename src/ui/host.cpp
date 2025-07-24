@@ -1,5 +1,6 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/panels.h"
 
 namespace UI{
 
@@ -8,6 +9,13 @@ Host::Host(InterfaceManager* newui, SDL_Rect newrect)
     ui = newui;
     game = &ui->getgame();
 	rect = newrect;
+}
+
+Host::~Host()
+{
+	if(owner){
+		owner->resetreference();
+	}
 }
 
 InterfaceManager& Host::getui()

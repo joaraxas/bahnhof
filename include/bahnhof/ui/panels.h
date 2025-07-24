@@ -12,12 +12,25 @@ class InterfaceManager;
 class Route;
 class TrainManager;
 class Train;
+class Building;
 
 namespace UI{
 
 class Dropdown;
 class RouteListPanel;
 class Text;
+
+class Owner
+{
+public:
+    ~Owner() {deletereference();};
+    void set(Host* newhost) {deletereference(); host=newhost; host->owner = this;};
+    bool exists() {return host!=nullptr;};
+    void deletereference() {if(host) host->erase();}
+    void resetreference() {host = nullptr;};
+private:
+    Host* host = nullptr;
+};
 
 class Panel : public Host
 {
@@ -94,8 +107,10 @@ public:
 class BuildingPanel : public Panel
 {
 public:
-    BuildingPanel(InterfaceManager* newui);
+    BuildingPanel(InterfaceManager* newui, Building* b);
     ~BuildingPanel();
+private:
+    Building* building;
 };
 
 }

@@ -2,6 +2,7 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<SDL_ttf.h>
+#include<stdio.h>
 #include "bahnhof/common/math.h"
 
 class Game;
@@ -12,6 +13,7 @@ namespace UI{
 
 class Host;
 class Dropdown;
+class Owner;
 
 enum TextStyle{
     Info,
@@ -45,7 +47,7 @@ class Host
 {
 public:
     Host(InterfaceManager* newui, SDL_Rect newrect);
-    virtual ~Host() {};
+    virtual ~Host();
     bool checkclick(Vec pos);
     void mousehover(Vec pos, int ms);
     void click(Vec pos, int type);
@@ -59,6 +61,7 @@ public:
     InterfaceManager& getui();
     SDL_Rect getglobalrect();
     SDL_Rect getlocalrect();
+    Owner* owner = nullptr;
 protected:
     Element* getelementat(Vec pos);
     Game* game;

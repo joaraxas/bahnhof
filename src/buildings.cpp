@@ -19,6 +19,7 @@ Building::Building(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s) : sh
 	game = whatgame;
 	const BuildingType& type = game->getgamestate().getbuildingmanager().gettypefromid(id);
 	color = type.color;
+	panel = std::make_unique<UI::Owner>();
 }
 
 Building::~Building()
@@ -45,7 +46,9 @@ bool Building::checkclick(Vec pos)
 
 bool Building::leftclick(Vec pos)
 {
-	new UI::BuildingPanel(&game->getui());
+	if(!panel->exists()){
+		panel->set(new UI::BuildingPanel(&game->getui(), this));
+	}
 }
 
 
@@ -107,7 +110,15 @@ void WagonFactory::trigger()
 }
 
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
-{}
+{
+	generatename();
+}
+
+void Brewery::generatename()
+{
+	name = "Augustator";
+	std::cout<<"named"<<std::endl;
+}
 
 Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, hopsfield, std::move(s), {}, {hops})
 {}

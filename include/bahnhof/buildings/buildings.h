@@ -1,4 +1,5 @@
 #pragma once
+#include<stdio.h>
 #include<set>
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resourcetypes.h"
@@ -8,6 +9,9 @@ class Storage;
 class Game;
 class Shape;
 class Rendering;
+namespace UI{
+    class Owner;
+}
 
 class Building
 {
@@ -19,7 +23,9 @@ public:
     virtual void trigger() {};
     bool checkclick(Vec pos);
     virtual bool leftclick(Vec pos);
+    std::string name;
 protected:
+    std::unique_ptr<UI::Owner> panel;
     SDL_Color color;
     Game* game;
     std::unique_ptr<Shape> shape;
@@ -52,6 +58,8 @@ class Brewery : public Industry
 {
 public:
     Brewery(Game* game, std::unique_ptr<Shape> s);
+private:
+    void generatename();
 };
 
 class Hopsfield : public Industry
