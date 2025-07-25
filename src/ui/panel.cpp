@@ -198,10 +198,10 @@ BuildingConstructionPanel::~BuildingConstructionPanel()
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
-		Panel(newui, {200,300,300,150}),
+		Panel(newui, {200,400,400,150}),
 		building(b)
 {
-	addelement(new Text(this, building->name, {50, 10, rect.w-100, 20}));
+	addelement(new Text(this, building->name, {100, 10, rect.w-200, 20}));
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new WagonTable(this, tablerect));
 }

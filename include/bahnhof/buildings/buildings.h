@@ -51,6 +51,7 @@ public:
     void trigger();
     State& getstate() {return state;};
 private:
+    void generatename();
     State state;
 };
 

@@ -98,6 +98,7 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st) : Buildi
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	tracksystem.references->buildings.push_back(this);
+	generatename();
 }
 
 void WagonFactory::trigger()
@@ -109,6 +110,11 @@ void WagonFactory::trigger()
 	trainmanager.addtrainstoorphans();
 }
 
+void WagonFactory::generatename()
+{
+	name = "Schweizerische Wagons- und Aufzügefabrik AG";
+}
+
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
 {
 	generatename();
@@ -117,7 +123,6 @@ Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery,
 void Brewery::generatename()
 {
 	name = "Augustator";
-	std::cout<<"named"<<std::endl;
 }
 
 Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, hopsfield, std::move(s), {}, {hops})
