@@ -51,7 +51,6 @@ public:
     void trigger();
     State& getstate() {return state;};
 private:
-    void generatename();
     State state;
 };
 
@@ -59,8 +58,6 @@ class Brewery : public Industry
 {
 public:
     Brewery(Game* game, std::unique_ptr<Shape> s);
-private:
-    void generatename();
 };
 
 class Hopsfield : public Industry
