@@ -4,8 +4,13 @@
 #include "bahnhof/graphics/sprite.h"
 
 
+class InputManager;
 class Route;
+class Wagon;
 struct TrainInfo;
+namespace Tracks{
+    struct Tracksystem;
+}
 
 class Train
 {

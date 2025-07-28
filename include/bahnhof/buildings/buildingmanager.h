@@ -6,6 +6,8 @@
 #include "bahnhof/buildings/buildingtypes.h"
 
 class Game;
+class Rendering;
+class Building;
 
 class BuildingManager
 {

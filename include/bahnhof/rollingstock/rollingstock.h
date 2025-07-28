@@ -14,7 +14,7 @@ class Wagon
 {
 public:
     Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconname);
-    ~Wagon(); //TODO: should be virtual
+    virtual ~Wagon();
     void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -53,9 +53,6 @@ public:
 private:
     float P[2] = {0.2,0.2};
     float maxspeed[2] = {90,180}; //backwards, forwards
-    int imagenumber = 4;
-    float imageindex = 0;
-    float imagespeed = 2;
 };
 
 class Openwagon : public Wagon
