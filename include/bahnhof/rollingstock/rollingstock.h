@@ -10,6 +10,42 @@ namespace Tracks{
     class Tracksystem;
 }
 
+namespace RollingStock{
+class Axes
+{
+public:
+    virtual State frontendstate();
+    virtual State backendstate();
+    virtual std::vector<State*> getstates();
+private:
+    bool alignedforward = true;
+};
+
+class Cargo
+{
+public:
+    virtual int load(resourcetype type, int amount);
+    virtual int unload(resourcetype* type);
+    resourcetype getloadedresource();
+private:
+    ResourceManager& allresources;
+    resourcetype loadedresource = none;
+    int loadamount = 0;
+    int maxamount = 1;
+};
+
+class Engine
+{
+public:
+    virtual float getpower();
+    bool hasdriver = true;
+private:
+    float P[2] = {0.2,0.2};
+    float maxspeed[2] = {90,180};
+};
+
+} // namespace RollingStock
+
 class Wagon
 {
 public:
