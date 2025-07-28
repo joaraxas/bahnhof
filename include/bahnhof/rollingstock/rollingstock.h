@@ -4,6 +4,7 @@
 #include "bahnhof/graphics/sprite.h"
 
 class Train;
+class Wagon;
 struct WagonInfo;
 
 namespace Tracks{
@@ -14,20 +15,23 @@ namespace RollingStock{
 class Axes
 {
 public:
+    Axes(Wagon& w) : wagon(w) {};
     virtual State frontendstate();
     virtual State backendstate();
     virtual std::vector<State*> getstates();
 private:
-    bool alignedforward = true;
+    Wagon& wagon;
 };
 
 class Cargo
 {
 public:
+    Cargo(Wagon& w, ResourceManager& r) : wagon(w), allresources(r) {};
     virtual int load(resourcetype type, int amount);
     virtual int unload(resourcetype* type);
     resourcetype getloadedresource();
 private:
+    Wagon& wagon;
     ResourceManager& allresources;
     resourcetype loadedresource = none;
     int loadamount = 0;
@@ -37,9 +41,11 @@ private:
 class Engine
 {
 public:
+    Engine(Wagon& w) : wagon(w) {};
     virtual float getpower();
     bool hasdriver = true;
 private:
+    Wagon& wagon;
     float P[2] = {0.2,0.2};
     float maxspeed[2] = {90,180};
 };
@@ -66,6 +72,9 @@ public:
     bool alignedforward = true;
     bool hasdriver = false;
     int w;
+    std::unique_ptr<RollingStock::Axes> axes;
+    std::unique_ptr<RollingStock::Cargo> cargo;
+    std::unique_ptr<RollingStock::Engine> engine;
 protected:
     Tracks::Tracksystem* tracksystem = nullptr;
     State state;
@@ -82,13 +91,8 @@ class Locomotive : public Wagon
 {
 public:
     Locomotive(Tracks::Tracksystem* mytracks, State trackstate);
-    void update(int ms);
     int loadwagon(resourcetype type, int amount);
-    int unloadwagon(resourcetype* type);
-    float getpower();
-private:
-    float P[2] = {0.2,0.2};
-    float maxspeed[2] = {90,180}; //backwards, forwards
+    int unloadwagon(resourcetype* type); 
 };
 
 class Openwagon : public Wagon

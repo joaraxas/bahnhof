@@ -38,6 +38,8 @@ void Wagon::update(int ms)
 {
 	pos = getpos(*tracksystem, state);
 	sprite.imageangle = getorientation(*tracksystem, state);
+	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
+	sprite.updateframe(ms);
 }
 
 void Wagon::render(Rendering* r)
@@ -93,6 +95,8 @@ int Wagon::unloadwagon(resourcetype* unloadedresource)
 
 float Wagon::getpower()
 {
+	if(engine)
+		return engine->getpower();
 	return 0;
 }
 
@@ -104,22 +108,18 @@ WagonInfo Wagon::getinfo()
 
 Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
 {
-	hasdriver = true;
+	engine = std::make_unique<RollingStock::Engine>(*this);
 }
 
-void Locomotive::update(int ms)
-{
-	Wagon::update(ms);
-	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
-	sprite.updateframe(ms);
-}
 
-float Locomotive::getpower()
+namespace RollingStock{
+float Engine::getpower()
 {
-	if(abs(train->speed)<maxspeed[alignedforward==train->gasisforward])
-		return P[alignedforward==train->gasisforward];
+	if(abs(wagon.train->speed)<maxspeed[wagon.alignedforward==wagon.train->gasisforward])
+		return P[wagon.alignedforward==wagon.train->gasisforward];
 	else
 		return 0;
+}
 }
 
 int Locomotive::loadwagon(resourcetype resource, int amount)
