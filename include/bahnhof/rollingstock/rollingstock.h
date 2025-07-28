@@ -16,12 +16,18 @@ namespace RollingStock{
 class Axes
 {
 public:
-    Axes(Wagon& w) : wagon(w) {};
+    Axes(Wagon& w, Tracks::Tracksystem& t, State midstate);
+    ~Axes();
+    virtual Vec getpos();
+    virtual float getorientation();
+    virtual void travel(float pixels);
     virtual State frontendstate();
     virtual State backendstate();
     virtual std::vector<State*> getstates();
 private:
     Wagon& wagon;
+    Tracks::Tracksystem& tracks;
+    State state;
 };
 
 class Cargo
@@ -35,12 +41,12 @@ public:
     resourcetype getloadedresourcetype() {return loadedresource;};
     int getloadedamount() {return loadamount;};
 private:
-    std::unordered_set<resourcetype> storableresources;
+    const std::unordered_set<resourcetype> storableresources;
     Wagon& wagon;
     ResourceManager& allresources;
     resourcetype loadedresource = none;
     int loadamount = 0;
-    int maxamount = 1;
+    const int maxamount = 1;
 };
 
 class Engine
@@ -50,8 +56,8 @@ public:
     virtual float getpower();
 private:
     Wagon& wagon;
-    float P[2] = {0.2,0.2};
-    float maxspeed[2] = {90,180};
+    const float P[2] = {0.2,0.2};
+    const float maxspeed[2] = {90,180};
 };
 
 } // namespace RollingStock
@@ -61,12 +67,8 @@ class Wagon
 public:
     Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconname);
     virtual ~Wagon();
-    void travel(float pixels);
     virtual void update(int ms);
     virtual void render(Rendering* r);
-    virtual State frontendstate();
-    virtual State backendstate();
-    virtual std::vector<State*> getstates();
     virtual int loadwagon(resourcetype type, int amount);
     virtual int unloadwagon(resourcetype& type);
     virtual float getpower();
@@ -77,11 +79,9 @@ public:
     bool hasdriver = false;
     int w;
     std::unique_ptr<RollingStock::Axes> axes;
+protected:
     std::unique_ptr<RollingStock::Cargo> cargo;
     std::unique_ptr<RollingStock::Engine> engine;
-protected:
-    Tracks::Tracksystem* tracksystem = nullptr;
-    State state;
     Sprite sprite;
     Icon icon;
 };

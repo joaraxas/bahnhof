@@ -53,7 +53,7 @@ void Train::update(int ms)
 	// uncomment to remove radius speed restriction
 	// /*
 	for(auto w : wagons)
-		minradius = fmin(minradius, abs(getradius(*tracksystem, w->frontendstate())));
+		minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
 	// */
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
@@ -71,7 +71,7 @@ void Train::update(int ms)
 	Tracks::Signaling::runoverblocks(*tracksystem, forwardstate(), pixels, this);
 	Tracks::Signaling::runoverblocks(*tracksystem, flipstate(backwardstate()), pixels, nullptr);
 	for(auto& wagon : wagons)
-		wagon->travel(sign(speed)*pixels);
+		wagon->axes->travel(sign(speed)*pixels);
 }
 
 bool Train::perform(int ms)
@@ -171,15 +171,15 @@ State Train::forwardstate()
 {
 	if(gasisforward){
 		if(wagons.front()->alignedforward)
-			return wagons.front()->frontendstate();
+			return wagons.front()->axes->frontendstate();
 		else
-			return flipstate(wagons.front()->backendstate());
+			return flipstate(wagons.front()->axes->backendstate());
 	}
 	else{
 		if(wagons.back()->alignedforward)
-			return flipstate(wagons.back()->backendstate());
+			return flipstate(wagons.back()->axes->backendstate());
 		else
-			return wagons.back()->frontendstate();
+			return wagons.back()->axes->frontendstate();
 	}
 }
 
@@ -187,15 +187,15 @@ State Train::backwardstate()
 {
 	if(gasisforward){
 		if(wagons.back()->alignedforward)
-			return flipstate(wagons.back()->backendstate());
+			return flipstate(wagons.back()->axes->backendstate());
 		else
-			return wagons.back()->frontendstate();
+			return wagons.back()->axes->frontendstate();
 	}
 	else{
 		if(wagons.front()->alignedforward)
-			return wagons.front()->frontendstate();
+			return wagons.front()->axes->frontendstate();
 		else
-			return flipstate(wagons.front()->backendstate());
+			return flipstate(wagons.front()->axes->backendstate());
 	}
 }
 
@@ -207,14 +207,14 @@ void Train::checkcollision(int ms, Train* train)
 		float distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->forwardstate()), pixels, true);
 		if(distance<pixels){
 			for(auto wagon: wagons)
-				wagon->travel(distance*sign(speed));
+				wagon->axes->travel(distance*sign(speed));
 			couple(*train, gasisforward, train->gasisforward);
 		}
 		else{
 			distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->backwardstate()), pixels, true);
 			if(distance<pixels){
 				for(auto wagon: wagons)
-					wagon->travel(distance*sign(speed));
+					wagon->axes->travel(distance*sign(speed));
 				couple(*train, gasisforward, !train->gasisforward);
 			}
 		}

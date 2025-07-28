@@ -10,39 +10,30 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 
-Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname)
+Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname) :
+	axes(std::make_unique<RollingStock::Axes>(*this, *mytracks, trackstate))
 {
-	tracksystem = mytracks;
-	state = trackstate;
-	pos = getpos(*tracksystem, state);
-	SpriteManager& spritemanager = tracksystem->game->getsprites();
+	pos = axes->getpos();
+	SpriteManager& spritemanager = mytracks->game->getsprites();
 	sprite.setspritesheet(spritemanager, spritename);
 	w = sprite.getsize().x;
 	icon.setspritesheet(spritemanager, iconname);
 	icon.zoomed = false;
-	tracksystem->references->wagons.push_back(this);
 }
 
 Wagon::~Wagon()
-{
-	tracksystem->references->removewagonreference(this);
-}
-
-void Wagon::travel(float pixels)
-{
-	state = Tracks::travel(*tracksystem, state, pixels*(2*alignedforward-1));	
-}
+{}
 
 void Wagon::update(int ms)
 {
-	pos = getpos(*tracksystem, state);
-	sprite.imageangle = getorientation(*tracksystem, state);
 	sprite.imagespeed = train->speed*0.2*(2*alignedforward-1);
 	sprite.updateframe(ms);
+	pos = axes->getpos();
 }
 
 void Wagon::render(Rendering* r)
 {
+	sprite.imageangle = axes->getorientation();
 	float scale = r->getcamscale();
 	if(scale<0.3)
 		icon.render(r, pos);
@@ -52,23 +43,6 @@ void Wagon::render(Rendering* r)
 		Resource* resource = cargo->getloadedresource();
 		resource->render(r, pos);
 	}
-}
-
-State Wagon::frontendstate()
-{
-	State frontstate = state;
-	return Tracks::travel(*tracksystem, frontstate, w/2);
-}
-
-State Wagon::backendstate()
-{
-	State backstate = state;
-	return Tracks::travel(*tracksystem, backstate, (-1)*w/2);
-}
-
-std::vector<State*> Wagon::getstates()
-{
-	return std::vector<State*>({&state});
 }
 
 int Wagon::loadwagon(resourcetype resource, int amount)
@@ -104,15 +78,48 @@ WagonInfo Wagon::getinfo()
 	return info;
 }
 
-Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
-{
-	engine = std::make_unique<RollingStock::Engine>(*this);
-}
-
-
 namespace RollingStock{
 
-Engine::Engine(Wagon& w) : wagon(w) {w.hasdriver = true;};
+Axes::Axes(Wagon& w, Tracks::Tracksystem& t, State midstate) : wagon(w), tracks(t), state(midstate) {
+	tracks.references->wagons.push_back(this);
+}
+
+Axes::~Axes(){
+	tracks.references->removewagonreference(this);
+}
+
+Vec Axes::getpos(){
+	return Tracks::getpos(tracks, state);
+}
+
+float Axes::getorientation(){
+	return Tracks::getorientation(tracks, state);
+}
+
+void Axes::travel(float pixels){
+	state = Tracks::travel(tracks, state, pixels*(2*wagon.alignedforward-1));
+}
+
+State Axes::frontendstate()
+{
+	State frontstate = state;
+	return Tracks::travel(tracks, frontstate, wagon.w/2);
+}
+
+State Axes::backendstate()
+{
+	State backstate = state;
+	return Tracks::travel(tracks, backstate, (-1)*wagon.w/2);
+}
+
+std::vector<State*> Axes::getstates()
+{
+	return std::vector<State*>({&state});
+}
+
+Engine::Engine(Wagon& w) : wagon(w) {
+	wagon.hasdriver = true;
+};
 
 float Engine::getpower()
 {
@@ -149,11 +156,16 @@ Resource* Cargo::getloadedresource(){
 
 }
 
+Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::tankloco, sprites::icontankloco)
+{
+	engine = std::make_unique<RollingStock::Engine>(*this);
+}
+
 Openwagon::Openwagon(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::openwagon, sprites::iconopenwagon)
 {
 	std::unordered_set<resourcetype> s = {hops, barley};
 	cargo = std::make_unique<RollingStock::Cargo>(*this, 
-												tracksystem->game->getresources(), 
+												mytracks->game->getresources(), 
 												s);
 }
 
@@ -161,6 +173,6 @@ Tankwagon::Tankwagon(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(my
 {
 	std::unordered_set<resourcetype> s = {beer};
 	cargo = std::make_unique<RollingStock::Cargo>(*this, 
-												tracksystem->game->getresources(), 
+												mytracks->game->getresources(), 
 												s);
 }

@@ -37,7 +37,7 @@ void Referencehandler::removeswitchorderreference(Setswitch* order)
 		std::cout<<"Warning: tried to erase non-existing reference to Setswitch order"<<std::endl;
 }
 
-void Referencehandler::removewagonreference(Wagon* wagon)
+void Referencehandler::removewagonreference(RollingStock::Axes* wagon)
 {
 	auto it = find(wagons.begin(), wagons.end(), wagon);
 	if(it!=wagons.end())

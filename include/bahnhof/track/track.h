@@ -8,7 +8,9 @@ class Gotostate;
 class Setsignal;
 class Setswitch;
 class Train;
-class Wagon;
+namespace RollingStock{
+    class Axes;
+}
 class WagonFactory;
 class Gamestate;
 class Game;
@@ -38,14 +40,14 @@ struct Referencehandler
 {
     Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
     bool maytrackberemoved(trackid track);
-    void removewagonreference(Wagon*);
+    void removewagonreference(RollingStock::Axes*);
     void removebuildingreference(WagonFactory*);
     void removetrackorderreference(Gotostate*);
     void removesignalorderreference(Setsignal*);
     void removeswitchorderreference(Setswitch*);
     void validatereferences();
     void movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2);
-    std::vector<Wagon*> wagons;
+    std::vector<RollingStock::Axes*> wagons;
     std::vector<WagonFactory*> buildings;
     std::vector<Gotostate*> trackorders;
     std::vector<Setsignal*> signalorders;
