@@ -1,4 +1,5 @@
 #pragma once
+#include<unordered_set>
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/graphics/sprite.h"
@@ -26,11 +27,15 @@ private:
 class Cargo
 {
 public:
-    Cargo(Wagon& w, ResourceManager& r) : wagon(w), allresources(r) {};
-    virtual int load(resourcetype type, int amount);
-    virtual int unload(resourcetype* type);
-    resourcetype getloadedresource();
+    Cargo(Wagon& w, ResourceManager& r, std::unordered_set<resourcetype> s) : 
+        wagon(w), allresources(r), storableresources(s) {};
+    virtual int load(const resourcetype type, const int amount);
+    virtual int unload(resourcetype& type);
+    Resource* getloadedresource();
+    resourcetype getloadedresourcetype() {return loadedresource;};
+    int getloadedamount() {return loadamount;};
 private:
+    std::unordered_set<resourcetype> storableresources;
     Wagon& wagon;
     ResourceManager& allresources;
     resourcetype loadedresource = none;
@@ -41,9 +46,8 @@ private:
 class Engine
 {
 public:
-    Engine(Wagon& w) : wagon(w) {};
+    Engine(Wagon& w);
     virtual float getpower();
-    bool hasdriver = true;
 private:
     Wagon& wagon;
     float P[2] = {0.2,0.2};
@@ -64,7 +68,7 @@ public:
     virtual State backendstate();
     virtual std::vector<State*> getstates();
     virtual int loadwagon(resourcetype type, int amount);
-    virtual int unloadwagon(resourcetype* type);
+    virtual int unloadwagon(resourcetype& type);
     virtual float getpower();
     virtual WagonInfo getinfo();
     Train* train;
@@ -80,33 +84,24 @@ protected:
     State state;
     Sprite sprite;
     Icon icon;
-    ResourceManager* allresources = nullptr;
-private:
-    resourcetype loadedresource = none;
-    int loadamount = 0;
-    int maxamount = 1;
 };
 
 class Locomotive : public Wagon
 {
 public:
     Locomotive(Tracks::Tracksystem* mytracks, State trackstate);
-    int loadwagon(resourcetype type, int amount);
-    int unloadwagon(resourcetype* type); 
 };
 
 class Openwagon : public Wagon
 {
 public:
     Openwagon(Tracks::Tracksystem* mytracks, State trackstate);
-    int loadwagon(resourcetype type, int amount);
 };
 
 class Tankwagon : public Wagon
 {
 public:
     Tankwagon(Tracks::Tracksystem* mytracks, State trackstate);
-    int loadwagon(resourcetype type, int amount);
 };
 
 

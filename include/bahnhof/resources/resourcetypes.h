@@ -2,6 +2,9 @@
 
 enum resourcetype
 {
-    none=-1, beer, hops, barley
+    none=-1, 
+    beer, 
+    hops, 
+    barley
 };
 

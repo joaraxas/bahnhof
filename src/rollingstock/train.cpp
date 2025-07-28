@@ -297,7 +297,7 @@ bool Train::unloadall()
 		Storage* storage = getstorageatpoint(w->pos);
 		if(storage){
 			resourcetype beingunloaded;
-			int unloadedamount = w->unloadwagon(&beingunloaded);
+			int unloadedamount = w->unloadwagon(beingunloaded);
 			if(storage->accepts(beingunloaded)){
 				int loadedamount = storage->loadstorage(beingunloaded, unloadedamount);
 				if(loadedamount==unloadedamount && loadedamount!=0)

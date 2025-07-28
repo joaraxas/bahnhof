@@ -13,7 +13,6 @@
 Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name spritename, sprites::name iconname)
 {
 	tracksystem = mytracks;
-	allresources = &tracksystem->game->getresources();
 	state = trackstate;
 	pos = getpos(*tracksystem, state);
 	SpriteManager& spritemanager = tracksystem->game->getsprites();
@@ -49,8 +48,8 @@ void Wagon::render(Rendering* r)
 		icon.render(r, pos);
 	else
 		sprite.render(r, pos);
-	if(loadedresource!=none){
-		Resource* resource = allresources->get(loadedresource);
+	if(cargo && cargo->getloadedresourcetype()!=none){
+		Resource* resource = cargo->getloadedresource();
 		resource->render(r, pos);
 	}
 }
@@ -74,23 +73,16 @@ std::vector<State*> Wagon::getstates()
 
 int Wagon::loadwagon(resourcetype resource, int amount)
 {
-	int loadedamount = 0;
-	if(loadedresource == resource || loadedresource == none){
-		loadedamount = fmin(amount, maxamount - loadamount);
-		loadamount += loadedamount;
-		if(loadedamount>0)
-			loadedresource = resource;
-	}
-	return loadedamount;
+	if(cargo)
+		return cargo->load(resource, amount);
+	return 0;
 }
 
-int Wagon::unloadwagon(resourcetype* unloadedresource)
+int Wagon::unloadwagon(resourcetype& unloadedresource)
 {
-	*unloadedresource = loadedresource;
-	loadedresource = none;
-	int unloadedamount = loadamount;
-	loadamount = 0;
-	return unloadedamount;
+	if(cargo)
+		return cargo->unload(unloadedresource);
+	return 0;
 }
 
 float Wagon::getpower()
@@ -102,6 +94,12 @@ float Wagon::getpower()
 
 WagonInfo Wagon::getinfo()
 {
+	resourcetype loadedresource = none;
+	int loadamount = 0;
+	if(cargo){
+		loadamount = cargo->getloadedamount();
+		loadedresource = cargo->getloadedresourcetype();
+	}
 	WagonInfo info(icon.getname(), loadedresource, loadamount);
 	return info;
 }
@@ -113,6 +111,9 @@ Locomotive::Locomotive(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(
 
 
 namespace RollingStock{
+
+Engine::Engine(Wagon& w) : wagon(w) {w.hasdriver = true;};
+
 float Engine::getpower()
 {
 	if(abs(wagon.train->speed)<maxspeed[wagon.alignedforward==wagon.train->gasisforward])
@@ -120,39 +121,46 @@ float Engine::getpower()
 	else
 		return 0;
 }
-}
 
-int Locomotive::loadwagon(resourcetype resource, int amount)
-{
+int Cargo::load(const resourcetype type,  const int amount){
 	int loadedamount = 0;
+	if(storableresources.contains(type)){
+		if(loadedresource == type || loadedresource == none){
+			loadedamount = fmin(amount, maxamount - loadamount);
+			loadamount += loadedamount;
+			if(loadedamount>0)
+				loadedresource = type;
+		}
+	}
 	return loadedamount;
 }
 
-int Locomotive::unloadwagon(resourcetype* unloadedresource)
-{
-	*unloadedresource = none;
-	int unloadedamount = 0;
+int Cargo::unload(resourcetype& type){
+	type = loadedresource;
+	loadedresource = none;
+	int unloadedamount = loadamount;
+	loadamount = 0;
 	return unloadedamount;
 }
 
-Openwagon::Openwagon(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::openwagon, sprites::iconopenwagon)
-{}
+Resource* Cargo::getloadedresource(){
+	return allresources.get(loadedresource);
+}
 
-int Openwagon::loadwagon(resourcetype type, int amount)
+}
+
+Openwagon::Openwagon(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::openwagon, sprites::iconopenwagon)
 {
-	int loadedamount = 0;
-	if(type==hops||type==barley)
-		loadedamount = Wagon::loadwagon(type, amount);
-	return loadedamount;
+	std::unordered_set<resourcetype> s = {hops, barley};
+	cargo = std::make_unique<RollingStock::Cargo>(*this, 
+												tracksystem->game->getresources(), 
+												s);
 }
 
 Tankwagon::Tankwagon(Tracks::Tracksystem* mytracks, State trackstate) : Wagon(mytracks, trackstate, sprites::refrigeratorcar, sprites::iconrefrigeratorcar)
-{}
-
-int Tankwagon::loadwagon(resourcetype type, int amount)
 {
-	int loadedamount = 0;
-	if(type==beer)
-		loadedamount = Wagon::loadwagon(type, amount);
-	return loadedamount;
+	std::unordered_set<resourcetype> s = {beer};
+	cargo = std::make_unique<RollingStock::Cargo>(*this, 
+												tracksystem->game->getresources(), 
+												s);
 }
