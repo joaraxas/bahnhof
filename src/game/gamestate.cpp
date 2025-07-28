@@ -3,6 +3,7 @@
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
@@ -21,10 +22,10 @@ Gamestate::Gamestate(Game* whatgame)
 	newwagonstate = State(1, 0.2, true);
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());
-	trainmanager = std::make_unique<TrainManager>(tracksystem.get());
+	rollingstockmanager = std::make_unique<RollingStockManager>(game);
+	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-
 }
 
 Gamestate::~Gamestate()

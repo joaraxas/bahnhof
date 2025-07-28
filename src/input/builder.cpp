@@ -8,6 +8,7 @@
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/rollingstock/rollingstockmanager.h"
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
@@ -204,11 +205,12 @@ void BuildingBuilder::build()
         buildingmanager.buildings.emplace_back(new City(game, std::move(shape)));
         break;
     case wagonfactory:{
+        RollingStockManager& r = game->getgamestate().getrollingstockmanager();
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
         midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 400));
-        buildingmanager.buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate));
+        buildingmanager.buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate, r));
         break;
     }
     default:

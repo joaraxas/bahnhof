@@ -11,6 +11,7 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/ui/panels.h"
 
 
@@ -94,7 +95,10 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st) : Building(g, wagonfactory, std::move(s)), state(st)
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r) : 
+	Building(g, wagonfactory, std::move(s)), 
+	state(st),
+	rollingstock(r)
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
 	tracksystem.references->buildings.push_back(this);
@@ -105,7 +109,7 @@ void WagonFactory::trigger()
 {
 	TrainManager& trainmanager = game->getgamestate().gettrainmanager();
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	trainmanager.addwagon(new Openwagon(&tracksystem, state));
+	trainmanager.addwagon(new Wagon(&tracksystem, state, rollingstock.gettypefromid(WagonID::openwagon)));
 	state = Tracks::travel(tracksystem, state, 60);
 	trainmanager.addtrainstoorphans();
 }

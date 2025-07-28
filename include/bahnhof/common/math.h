@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <map>
+#include <unordered_set>
 
 struct SDL_FPoint;
 

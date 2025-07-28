@@ -9,6 +9,7 @@ class Storage;
 class Game;
 class Shape;
 class Rendering;
+class RollingStockManager;
 namespace UI{
     class Owner;
 }
@@ -47,11 +48,12 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, std::unique_ptr<Shape> s, State st);
+    WagonFactory(Game* game, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
     void trigger();
     State& getstate() {return state;};
 private:
     State state;
+    RollingStockManager& rollingstock;
 };
 
 class Brewery : public Industry

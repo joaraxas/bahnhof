@@ -1,5 +1,5 @@
 #pragma once
-#include<unordered_set>
+#include "bahnhof/common/math.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/graphics/sprite.h"
@@ -7,6 +7,7 @@
 class Train;
 class Wagon;
 struct WagonInfo;
+struct WagonType;
 
 namespace Tracks{
     class Tracksystem;
@@ -52,12 +53,12 @@ private:
 class Engine
 {
 public:
-    Engine(Wagon& w);
+    Engine(Wagon& w, const WagonType& type);
     virtual float getpower();
 private:
     Wagon& wagon;
-    const float P[2] = {0.2,0.2};
-    const float maxspeed[2] = {90,180};
+    float P[2] = {0,0};
+    float maxspeed[2] = {90,180};
 };
 
 } // namespace RollingStock
@@ -65,7 +66,7 @@ private:
 class Wagon
 {
 public:
-    Wagon(Tracks::Tracksystem* mytracks, State trackstate, sprites::name sprname, sprites::name iconname);
+    Wagon(Tracks::Tracksystem* mytracks, State trackstate, const WagonType& type);
     virtual ~Wagon();
     virtual void update(int ms);
     virtual void render(Rendering* r);
@@ -85,23 +86,3 @@ protected:
     Sprite sprite;
     Icon icon;
 };
-
-class Locomotive : public Wagon
-{
-public:
-    Locomotive(Tracks::Tracksystem* mytracks, State trackstate);
-};
-
-class Openwagon : public Wagon
-{
-public:
-    Openwagon(Tracks::Tracksystem* mytracks, State trackstate);
-};
-
-class Tankwagon : public Wagon
-{
-public:
-    Tankwagon(Tracks::Tracksystem* mytracks, State trackstate);
-};
-
-

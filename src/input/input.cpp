@@ -10,6 +10,7 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
@@ -207,6 +208,7 @@ void InputManager::keydown(SDL_Keycode key)
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     TrainManager& trainmanager = gamestate.gettrainmanager();
+    RollingStockManager& rollingstock = gamestate.getrollingstockmanager();
     switch (key)
     {
     case SDLK_n:
@@ -214,21 +216,27 @@ void InputManager::keydown(SDL_Keycode key)
         break;
     
     case SDLK_o:
-        trainmanager.addwagon(new Openwagon(&tracksystem, gamestate.newwagonstate));
+        trainmanager.addwagon(new Wagon(&tracksystem, 
+                                        gamestate.newwagonstate, 
+                                        rollingstock.gettypefromid(WagonID::openwagon)));
         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
         trainmanager.addtrainstoorphans();
         gamestate.money -= 3;
         break;
     
     case SDLK_q:
-        trainmanager.addwagon(new Tankwagon(&tracksystem, gamestate.newwagonstate));
+        trainmanager.addwagon(new Wagon(&tracksystem, 
+                                        gamestate.newwagonstate, 
+                                        rollingstock.gettypefromid(WagonID::refrigeratorcar)));
         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
         trainmanager.addtrainstoorphans();
         gamestate.money -= 3;
         break;
     
     case SDLK_y:
-        trainmanager.addwagon(new Locomotive(&tracksystem, gamestate.newwagonstate));
+        trainmanager.addwagon(new Wagon(&tracksystem, 
+                                        gamestate.newwagonstate, 
+                                        rollingstock.gettypefromid(WagonID::tanklocomotive)));
         gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
         trainmanager.addtrainstoorphans();
         gamestate.money -= 8;

@@ -49,6 +49,7 @@ add_executable(bahnhof
     src/rollingstock/rollingstock.cpp
     src/rollingstock/train.cpp
     src/rollingstock/trainmanager.cpp
+    src/rollingstock/rollingstockmanager.cpp
     src/buildings.cpp
 )
 

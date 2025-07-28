@@ -19,6 +19,7 @@ class TrainManager;
 class TimeManager;
 class InterfaceManager;
 class BuildingManager;
+class RollingStockManager;
 class Gamestate;
 namespace Tracks{
     class Tracksystem;
@@ -64,6 +65,7 @@ public:
     RouteManager& getrouting() {return *routing;};
     TrainManager& gettrainmanager() {return *trainmanager;};
     BuildingManager& getbuildingmanager() {return *buildingmanager;};
+    RollingStockManager& getrollingstockmanager() {return *rollingstockmanager;};
     int time = 0;
     float money = 10;
     int revenue = 0;
@@ -74,6 +76,7 @@ private:
     std::unique_ptr<RouteManager> routing;
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
+    std::unique_ptr<RollingStockManager> rollingstockmanager;
     //Map* map;
 };
 
