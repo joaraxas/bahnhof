@@ -54,6 +54,7 @@ public:
     bool leftclick(Vec pos);
     State& getstate() {return state;};
     const std::vector<WagonType*> getavailabletypes();
+    void orderwagon(const WagonType& type);
 private:
     State state;
     RollingStockManager& rollingstock;

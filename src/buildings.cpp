@@ -107,11 +107,6 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingS
 
 void WagonFactory::trigger()
 {
-	TrainManager& trainmanager = game->getgamestate().gettrainmanager();
-	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	trainmanager.addwagon(new Wagon(&tracksystem, state, rollingstock.gettypefromid(WagonID::openwagon)));
-	state = Tracks::travel(tracksystem, state, 60);
-	trainmanager.addtrainstoorphans();
 }
 
 bool WagonFactory::leftclick(Vec pos)
@@ -124,6 +119,18 @@ bool WagonFactory::leftclick(Vec pos)
 const std::vector<WagonType*> WagonFactory::getavailabletypes()
 {
 	return rollingstock.gettypes();
+}
+
+void WagonFactory::orderwagon(const WagonType& type)
+{
+	if(type.cost<=game->getgamestate().money){
+		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
+		Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+		trainmanager.addwagon(new Wagon(&tracksystem, state, type));
+		state = Tracks::travel(tracksystem, state, 60);
+		trainmanager.addtrainstoorphans();
+		game->getgamestate().money -= type.cost;
+	}
 }
 
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})

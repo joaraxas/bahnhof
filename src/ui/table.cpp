@@ -9,8 +9,10 @@
 #include "bahnhof/common/timing.h"
 #include "bahnhof/input/input.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/wagontypes.h"
 
 namespace UI{
 
@@ -314,10 +316,14 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
 {
     for(int i=0; i<buildingtypes.size(); i++){
         const BuildingType& type = buildingtypes[i];
-        lines.emplace_back(new ConstructionTableLine(panel, 
-                this, type.name, 
+        lines.emplace_back(
+            new ConstructionTableLine(panel, 
+                this,
+                type.name, 
                 type.iconname,
-                type.cost));
+                type.cost
+            )
+        );
     }
 }
 
@@ -337,13 +343,24 @@ WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) :
         input(game->getinputmanager()),
         factory(f)
 {
+    for(WagonType* type : factory.getavailabletypes()){
+        lines.emplace_back(
+            new ConstructionTableLine(panel, 
+                this,
+                type->name, 
+                type->iconname,
+                type->cost
+            )
+        );
+    }
 }
 
 void WagonTable::leftclick(Vec pos)
 {
     int index = getlineindexat(pos);
     if(index>=0){
-        
+        const WagonType* clickedwagon = factory.getavailabletypes().at(index);
+        factory.orderwagon(*clickedwagon);
     }
 }
 
