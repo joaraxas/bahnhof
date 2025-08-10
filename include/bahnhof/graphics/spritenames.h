@@ -20,6 +20,7 @@ enum name
     light,
     hops,
     barley,
-    beer
+    beer,
+    brewery
 };
 }

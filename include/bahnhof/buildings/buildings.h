@@ -31,8 +31,10 @@ protected:
     SDL_Color color;
     Game* game;
     std::unique_ptr<Shape> shape;
+    Sprite sprite;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
+    bool hassprite = false;
 };
 
 class Industry : public Building

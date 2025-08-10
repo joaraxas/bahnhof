@@ -20,6 +20,7 @@ struct BuildingType
     std::string name;
     Vec size;
     SDL_Color color;
+    sprites::name spritename;
     sprites::name iconname;
     float cost;
 };
