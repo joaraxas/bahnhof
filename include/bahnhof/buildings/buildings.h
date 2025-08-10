@@ -31,8 +31,8 @@ protected:
     SDL_Color color;
     Game* game;
     std::unique_ptr<Shape> shape;
-private:
     int timeleft = 3000;
+    int timebetweentriggers = 10000;
 };
 
 class Industry : public Building
@@ -58,6 +58,8 @@ public:
 private:
     State state;
     RollingStockManager& rollingstock;
+    std::queue<const WagonType*> productionqueue;
+    int msleft;
 };
 
 class Brewery : public Industry

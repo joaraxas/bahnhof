@@ -59,11 +59,13 @@ void TrainManager::addtrain(Train* newtrain)
 	std::cout<<newtrain->name<<" added"<<std::endl;
 }
 
-void TrainManager::addtrainstoorphans()
+void TrainManager::addtrainstoorphans(float speed)
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
-			addtrain(new Train(*tracks, {wagons[iWagon].get()}));
+			Train* train = new Train(*tracks, {wagons[iWagon].get()});
+			addtrain(train);
+			train->speed = speed;
 		}
 	}
 }

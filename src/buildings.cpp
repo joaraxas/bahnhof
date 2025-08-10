@@ -36,7 +36,7 @@ void Building::update(int ms)
 	timeleft = fmax(0,timeleft-ms);
 	if(timeleft==0){
 		trigger();
-		timeleft = 10000;
+		timeleft = timebetweentriggers;
 	}
 }
 
@@ -107,6 +107,20 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingS
 
 void WagonFactory::trigger()
 {
+	if(!productionqueue.empty()){
+		const WagonType& type = *productionqueue.front();
+		productionqueue.pop();
+
+		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
+		Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
+		trainmanager.addwagon(new Wagon(&tracksystem, state, type));
+		trainmanager.addtrainstoorphans(20);
+	}
+
+	if(!productionqueue.empty())
+		timebetweentriggers = 3500;
+	else
+		timebetweentriggers = 100;
 }
 
 bool WagonFactory::leftclick(Vec pos)
@@ -124,11 +138,9 @@ const std::vector<WagonType*> WagonFactory::getavailabletypes()
 void WagonFactory::orderwagon(const WagonType& type)
 {
 	if(type.cost<=game->getgamestate().money){
-		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
-		Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-		trainmanager.addwagon(new Wagon(&tracksystem, state, type));
-		state = Tracks::travel(tracksystem, state, 60);
-		trainmanager.addtrainstoorphans();
+		if(productionqueue.empty())
+			timeleft = 3500;
+		productionqueue.push(&type);
 		game->getgamestate().money -= type.cost;
 	}
 }

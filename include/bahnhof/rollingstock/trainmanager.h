@@ -44,7 +44,7 @@ public:
     std::vector<TrainInfo> gettrainsinfo();
     bool trainexists(Train& train);
     void inittrain(State startstate);
-    void addtrainstoorphans();
+    void addtrainstoorphans(float speed=0);
 private:
     RollingStockManager& rollingstock;
     std::string generatetrainname();
