@@ -50,6 +50,7 @@ class WagonFactory : public Building
 public:
     WagonFactory(Game* game, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
     void trigger();
+    bool leftclick(Vec pos);
     State& getstate() {return state;};
 private:
     State state;

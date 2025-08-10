@@ -15,6 +15,7 @@ class InterfaceManager;
 class Route;
 class RouteManager;
 class BuildingType;
+class WagonFactory;
 
 namespace UI{
 
@@ -130,10 +131,11 @@ private:
 class WagonTable : public Table
 {
 public:
-    WagonTable(Host* p, SDL_Rect r);
+    WagonTable(Host* p, SDL_Rect r, WagonFactory& f);
     void leftclick(Vec pos);
 private:
     InputManager& input;
+    WagonFactory& factory;
 };
 
 }

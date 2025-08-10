@@ -13,6 +13,7 @@ class Route;
 class TrainManager;
 class Train;
 class Building;
+class WagonFactory;
 
 namespace UI{
 
@@ -111,6 +112,15 @@ public:
     ~BuildingPanel();
 private:
     Building* building;
+};
+
+class FactoryPanel : public BuildingPanel
+{
+public:
+    FactoryPanel(InterfaceManager* newui, WagonFactory* f);
+    ~FactoryPanel();
+private:
+    WagonFactory* factory;
 };
 
 }

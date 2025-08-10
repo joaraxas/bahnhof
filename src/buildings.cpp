@@ -114,6 +114,13 @@ void WagonFactory::trigger()
 	trainmanager.addtrainstoorphans();
 }
 
+bool WagonFactory::leftclick(Vec pos)
+{
+	if(!panel->exists()){
+		panel->set(new UI::FactoryPanel(&game->getui(), this));
+	}
+}
+
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
 {
 	name = "Augustator";

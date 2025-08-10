@@ -332,17 +332,11 @@ void ConstructionTable::leftclick(Vec pos)
 }
 
 
-WagonTable::WagonTable(Host* p, SDL_Rect r) : 
+WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) : 
         Table(p, r), 
-        input(game->getinputmanager())
+        input(game->getinputmanager()),
+        factory(f)
 {
-    // for(int i=0; i<buildingtypes.size(); i++){
-    //     const BuildingType& type = buildingtypes[i];
-    //     lines.emplace_back(new ConstructionTableLine(panel, 
-    //             this, type.name, 
-    //             type.iconname,
-    //             type.cost));
-    // }
 }
 
 void WagonTable::leftclick(Vec pos)

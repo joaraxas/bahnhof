@@ -202,13 +202,24 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		building(b)
 {
 	addelement(new Text(this, building->name, {100, 10, rect.w-200, 20}));
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new WagonTable(this, tablerect));
 }
 
 BuildingPanel::~BuildingPanel()
 {
 	std::cout<<"del buildingpanel"<<std::endl;
+}
+
+FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) : 
+		BuildingPanel(newui, f),
+		factory(f)
+{
+	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	addelement(new WagonTable(this, tablerect, *f));
+}
+
+FactoryPanel::~FactoryPanel()
+{
+	std::cout<<"del factorypanel"<<std::endl;
 }
 
 } // namespace UI

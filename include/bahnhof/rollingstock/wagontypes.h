@@ -27,6 +27,7 @@ struct WagonType
     std::string name;
     sprites::name iconname;
     sprites::name spritename;
+    float cost = 0;
     enginetype engine;
     std::unordered_set<resourcetype> storableresources;
     int storagecapacity;
