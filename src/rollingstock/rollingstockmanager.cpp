@@ -37,4 +37,8 @@ RollingStockManager::RollingStockManager(Game* g) : game(g)
 	wagon->cost = 6;
 	wagon->storableresources = {beer};
 	wagon->storagecapacity = 1;
+
+	for(auto& [id, type] : types){
+		availabletypes.push_back(&type);
+	}
 }

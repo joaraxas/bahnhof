@@ -121,6 +121,11 @@ bool WagonFactory::leftclick(Vec pos)
 	}
 }
 
+const std::vector<WagonType*> WagonFactory::getavailabletypes()
+{
+	return rollingstock.gettypes();
+}
+
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
 {
 	name = "Augustator";

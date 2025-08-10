@@ -4,6 +4,7 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/rollingstock/wagontypes.h"
 
 class Storage;
 class Game;
@@ -52,6 +53,7 @@ public:
     void trigger();
     bool leftclick(Vec pos);
     State& getstate() {return state;};
+    const std::vector<WagonType*> getavailabletypes();
 private:
     State state;
     RollingStockManager& rollingstock;
