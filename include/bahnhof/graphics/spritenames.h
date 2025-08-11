@@ -21,6 +21,10 @@ enum name
     hops,
     barley,
     beer,
-    brewery
+    brewery,
+    tavern,
+    hopsfield,
+    barleyfield,
+    wagonfactory
 };
 }

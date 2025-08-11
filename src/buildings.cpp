@@ -169,11 +169,11 @@ City::City(Game* game, std::unique_ptr<Shape> s) : Industry(game, city, std::mov
 
 BuildingManager::BuildingManager(Game* g) : game(g)
 {
-	types[brewery] = BuildingType{brewery, "Brewery", Vec(128,64), {63,63,127,255}, sprites::brewery, sprites::beer, 120};
-	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(100,100), {63,127,63,255}, {}, sprites::hops, 20};
-	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(100,100), {127,127,31,255}, {}, sprites::barley, 70};
-	types[city] = BuildingType{city, "City", Vec(50,100), {63,63,31,255}, {}, sprites::iconopenwagon, 70};
-	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(400,100), {127,127,127,255}, {}, sprites::icontankloco, 2};
+	types[brewery] = BuildingType{brewery, "Brewery", Vec(232,150), {63,63,127,255}, sprites::brewery, sprites::beer, 120};
+	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(248,168), {63,127,63,255}, sprites::hopsfield, sprites::hops, 20};
+	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(300,450), {127,127,31,255}, sprites::barleyfield, sprites::barley, 70};
+	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 70};
+	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(370,185), {127,127,127,255}, sprites::wagonfactory, sprites::icontankloco, 2};
 
 	for(auto type: types){
 		availabletypes.push_back(type.second);
