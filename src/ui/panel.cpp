@@ -10,6 +10,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
+#include "bahnhof/buildings/buildingmanager.h"
 
 namespace UI{
 
@@ -202,6 +203,8 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		building(b)
 {
 	addelement(new Text(this, building->name, {100, 10, rect.w-200, 20}));
+	const BuildingManager& bm = game->getgamestate().getbuildingmanager();
+	addelement(new Text(this, bm.gettypefromid(building->typeID).name, {300, 10, rect.w-300, 20}));
 }
 
 BuildingPanel::~BuildingPanel()

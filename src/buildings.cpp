@@ -15,10 +15,12 @@
 #include "bahnhof/ui/panels.h"
 
 
-Building::Building(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s) : shape(std::move(s))
+Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) : 
+	shape(std::move(s)),
+	game(g),
+	typeID(id)
 {
-	game = whatgame;
-	const BuildingType& type = game->getgamestate().getbuildingmanager().gettypefromid(id);
+	const BuildingType& type = game->getgamestate().getbuildingmanager().gettypefromid(typeID);
 	color = type.color;
 	panel = std::make_unique<UI::Owner>();
 	if(type.spritename){
