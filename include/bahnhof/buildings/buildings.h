@@ -26,7 +26,7 @@ public:
     bool checkclick(Vec pos);
     virtual bool leftclick(Vec pos);
     std::string name;
-    const BuildingID typeID; // TODO: would be better to use the type
+    const BuildingType& type;
 protected:
     std::unique_ptr<UI::Owner> panel;
     SDL_Color color;
