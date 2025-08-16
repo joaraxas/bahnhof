@@ -103,6 +103,7 @@ class BuildingConstructionPanel : public Panel
 public:
     BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect);
     ~BuildingConstructionPanel();
+    void erase() override;
 };
 
 class BuildingPanel : public Panel

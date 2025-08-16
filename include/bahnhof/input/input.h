@@ -55,8 +55,8 @@ public:
     void placesignal();
     void placetrack();
     void placebuilding(const BuildingType& type);
-private:
     void resetinput();
+private:
     void leftclickmap(Vec mousepos);
     void rightclickmap(Vec mousepos);
     void leftreleasedmap(Vec mouspos);

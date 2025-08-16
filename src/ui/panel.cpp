@@ -198,6 +198,12 @@ BuildingConstructionPanel::~BuildingConstructionPanel()
 	std::cout<<"del buildingconstructionpanel"<<std::endl;
 }
 
+void BuildingConstructionPanel::erase()
+{
+	game->getinputmanager().resetinput();
+	Panel::erase();
+}
+
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
 		Panel(newui, {200,400,400,150}),
 		building(b)
