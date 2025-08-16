@@ -193,16 +193,16 @@ void BuildingBuilder::build()
     switch(building->id)
     {
     case brewery:
-        buildingmanager.buildings.emplace_back(new Brewery(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Brewery>(game, std::move(shape)));
         break;
     case hopsfield:
-        buildingmanager.buildings.emplace_back(new Hopsfield(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Hopsfield>(game, std::move(shape)));
         break;
     case barleyfield:
-        buildingmanager.buildings.emplace_back(new Barleyfield(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Barleyfield>(game, std::move(shape)));
         break;
     case city:
-        buildingmanager.buildings.emplace_back(new City(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<City>(game, std::move(shape)));
         break;
     case wagonfactory:{
         RollingStockManager& r = game->getgamestate().getrollingstockmanager();
@@ -210,7 +210,7 @@ void BuildingBuilder::build()
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
         midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 400));
-        buildingmanager.buildings.emplace_back(new WagonFactory(game, std::move(shape), midpointstate, r));
+        buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), midpointstate, r));
         break;
     }
     default:

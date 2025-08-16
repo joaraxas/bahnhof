@@ -207,3 +207,8 @@ bool BuildingManager::leftclick(Vec mappos)
 	}
 	return false;
 }
+
+void BuildingManager::addbuilding(std::unique_ptr<Building> b)
+{
+	buildings.emplace_back(std::move(b));
+}
