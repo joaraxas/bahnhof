@@ -90,8 +90,6 @@ class TrainPanel : public Panel
 public:
     TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain);
     ~TrainPanel();
-    void update(int ms);
-    void render(Rendering* r);
     Train& gettrain() {return train;};
 private:
     TrainManager& trainmanager;

@@ -42,7 +42,6 @@ public:
     void deselectall();
     Train* gettrainatpos(Vec pos);
     std::vector<TrainInfo> gettrainsinfo();
-    bool trainexists(Train& train);
     void inittrain(State startstate);
     void addtrainstoorphans(float speed=0);
 private:

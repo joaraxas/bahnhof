@@ -167,26 +167,6 @@ TrainPanel::~TrainPanel()
 	std::cout<<"del trainpanel"<<std::endl;
 }
 
-void TrainPanel::update(int ms)
-{
-	if(!trainmanager.trainexists(train)){
-		Panel::erase();
-		return; // TODO: Replace these functions with the Owner-reference system
-	}
-
-	Panel::update(ms);
-}
-
-void TrainPanel::render(Rendering* r)
-{
-	if(!trainmanager.trainexists(train)){
-		return; // TODO: Replace these functions with the Owner-reference system
-	}
-
-	Panel::render(r);
-}
-
-
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
 {
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
