@@ -1,5 +1,4 @@
 #pragma once
-#include<stdio.h>
 #include<set>
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resourcetypes.h"

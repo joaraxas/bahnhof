@@ -47,7 +47,6 @@ void Builder::leftreleasedmap(Vec mappos)
 void Builder::reset()
 {
     anchorpoint = Vec(0,0);
-    angle = 0;
     droppedanchor = false;
 }
 
@@ -151,7 +150,8 @@ void BuildingBuilder::render(Rendering* r)
     Builder::render(r);
     if(building){ // this should always be true
         if(building->id==wagonfactory){
-            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
+            float newangle = angle;
+            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
             Tracks::render(section, r, 2-canbuild());
             Tracks::Input::discardsection(section);
         }
@@ -175,6 +175,7 @@ void BuildingBuilder::reset()
 {
     Builder::reset();
     building = nullptr;
+    angle = 0;
 }
 
 void BuildingBuilder::setbuildingtype(const BuildingType& type)
@@ -206,10 +207,11 @@ void BuildingBuilder::build()
         break;
     case wagonfactory:{
         RollingStockManager& r = game->getgamestate().getrollingstockmanager();
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 500, angle);
+        float newangle = angle;
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
-        midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 400));
+        midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 500));
         buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), midpointstate, r));
         break;
     }
@@ -224,12 +226,13 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     switch (building->id)
     {
     case wagonfactory:{
+        float newangle = angle;
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
-        Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 400, angle);
+        Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 500, newangle);
         if(neareststate)
-            return std::make_unique<RotatedRectangle>(Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, building->size.x, building->size.y, angle);
+            return std::make_unique<RotatedRectangle>(Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, building->size.x, building->size.y, newangle);
         else
-            return std::make_unique<RotatedRectangle>(pos + buildingmidpoint, building->size.x, building->size.y, angle);
+            return std::make_unique<RotatedRectangle>(pos + buildingmidpoint, building->size.x, building->size.y, newangle);
     }
     
     default:
