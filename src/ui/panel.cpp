@@ -189,7 +189,7 @@ void TrainPanel::render(Rendering* r)
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
 {
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
 	addelement(new ConstructionTable(this, tablerect));
 }
 
@@ -205,11 +205,15 @@ void BuildingConstructionPanel::erase()
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
-		Panel(newui, {200,400,400,150}),
+		Panel(newui, {200,400,500,150}),
 		building(b)
 {
-	addelement(new Text(this, building->name, {100, 10, rect.w-200, 20}));
-	addelement(new Text(this, building->type.name, {300, 10, rect.w-300, 20}));
+	int column_2_x = margin_x + 80 + elementdistance_x;
+	int typenamewidth = 80;
+	int column_3_x = rect.w - typenamewidth - margin_x;
+	int namewidth = column_3_x - column_2_x - elementdistance_x;
+	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
+	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
 }
 
 BuildingPanel::~BuildingPanel()

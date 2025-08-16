@@ -110,25 +110,26 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
     TextStyle style = Info;
+    Vec screeniconsize = icon.getsize();
+    Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
     // if(info.train->selected)
     //     style = Highlighted;
     int rowoffset = 2;
     int textpadding = 5;
-    int namerowwidth = 200;
+    int pricerowwidth = 50;
+    int iconwidth = uiiconsize.x + textpadding;
+    int namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
     
-    
-    Vec screeniconsize = icon.getsize();
-    Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
-    namerect.x += uiiconsize.x + 2*textpadding;
+    namerect.x += iconwidth;
     namerect = ui->getuirendering().rendertext(r, name, namerect, style, false, textpadding, rowoffset);
     SDL_Rect pricerect = getlocalrect();
-    pricerect.x += namerowwidth;
-    pricerect.w -= namerowwidth;
+    pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
+    pricerect.w = pricerowwidth;
     pricerect = ui->getuirendering().rendertext(r, std::to_string(price)+" Fr", pricerect, style, false, textpadding, rowoffset);
     rect.h = std::fmax(std::fmax(namerect.h, pricerect.h), uiiconsize.y+2*rowoffset);
-    SDL_Rect uiiconrect = rect;
+    SDL_Rect uiiconrect = getlocalrect();
     uiiconrect.x += textpadding;
     uiiconrect.y += rowoffset;
     SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
