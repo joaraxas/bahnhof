@@ -227,11 +227,11 @@ void FactoryPanel::render(Rendering* r)
 						  getlocalrect().w-2*margin_x, 
 						  20};
 	std::vector<WagonInfo> wagoninfos;
-	for(const WagonType* type : factory->productionqueue){
+	for(const WagonType* type : factory->getqueue()){
 		WagonInfo info(type->iconname, none, 0);
 		wagoninfos.push_back(info);
 	}
-	rendertrainicons(r, *ui, wagoninfos, ui->getuirendering().uitoscreen(queuerect));
+	rendertrainicons(r, *ui, wagoninfos, queuerect);
 }
 
 FactoryPanel::~FactoryPanel()

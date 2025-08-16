@@ -87,9 +87,9 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     
     SDL_Rect trainiconrect = getlocalrect();
     trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
-                              trainiconrect.y+rowoffset, 
-                              trainiconrect.w-namerowwidth-2*textpadding, 
-                              namerect.h-2*rowoffset};
+                     trainiconrect.y+rowoffset, 
+                     trainiconrect.w-namerowwidth-2*textpadding, 
+                     namerect.h-2*rowoffset};
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
     
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);

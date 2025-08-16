@@ -154,6 +154,11 @@ void WagonFactory::orderwagon(const WagonType& type)
 	}
 }
 
+const std::deque<const WagonType*>& WagonFactory::getqueue()
+{
+	return productionqueue;
+}
+
 Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
 {
 	name = "Augustator";

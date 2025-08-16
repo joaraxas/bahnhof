@@ -58,8 +58,9 @@ public:
     State& getstate() {return state;};
     const std::vector<WagonType*> getavailabletypes();
     void orderwagon(const WagonType& type);
-    std::deque<const WagonType*> productionqueue;
+    const std::deque<const WagonType*>& getqueue();
 private:
+    std::deque<const WagonType*> productionqueue;
     State state;
     RollingStockManager& rollingstock;
     int msleft;
