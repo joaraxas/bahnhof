@@ -215,33 +215,6 @@ void InputManager::keydown(SDL_Keycode key)
         nicetracks = !nicetracks;
         break;
     
-    case SDLK_o:
-        trainmanager.addwagon(new Wagon(&tracksystem, 
-                                        gamestate.newwagonstate, 
-                                        rollingstock.gettypefromid(WagonID::openwagon)));
-        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-        trainmanager.addtrainstoorphans();
-        gamestate.money -= 3;
-        break;
-    
-    case SDLK_q:
-        trainmanager.addwagon(new Wagon(&tracksystem, 
-                                        gamestate.newwagonstate, 
-                                        rollingstock.gettypefromid(WagonID::refrigeratorcar)));
-        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 72);
-        trainmanager.addtrainstoorphans();
-        gamestate.money -= 3;
-        break;
-    
-    case SDLK_y:
-        trainmanager.addwagon(new Wagon(&tracksystem, 
-                                        gamestate.newwagonstate, 
-                                        rollingstock.gettypefromid(WagonID::tanklocomotive)));
-        gamestate.newwagonstate = Tracks::travel(tracksystem, gamestate.newwagonstate, 60);
-        trainmanager.addtrainstoorphans();
-        gamestate.money -= 8;
-        break;
-    
     default:
         break;
     }

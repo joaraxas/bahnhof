@@ -19,7 +19,6 @@ Gamestate::Gamestate(Game* whatgame)
 {
 	game = whatgame;
 	money = 600;
-	newwagonstate = State(1, 0.2, true);
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());
 	rollingstockmanager = std::make_unique<RollingStockManager>(game);

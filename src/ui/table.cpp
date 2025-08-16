@@ -336,7 +336,7 @@ void ConstructionTable::leftclick(Vec pos)
     BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     int index = getlineindexat(pos);
     if(index>=0){
-        const BuildingType& clickedbuilding = buildingtypes.at(index);
+        const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
         input.placebuilding(clickedbuilding);
     }
 }

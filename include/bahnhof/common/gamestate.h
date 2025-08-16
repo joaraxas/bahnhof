@@ -69,7 +69,6 @@ public:
     int time = 0;
     float money = 10;
     int revenue = 0;
-    State newwagonstate; //TODO: remove this as it is not protected from track splitting
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
