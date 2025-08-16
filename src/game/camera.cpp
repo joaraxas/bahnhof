@@ -7,7 +7,7 @@
 
 Camera::Camera(Game* whatgame){
     game = whatgame;
-    Vec viewsize = game->getrendering().getviewsize();
+    Vec viewsize = getviewsize();
     cam = {0,0,int(viewsize.x), int(viewsize.y)};
 }
 
@@ -20,7 +20,7 @@ Vec Camera::screencoord(Vec mappos){
 }
 
 void Camera::zoomin(Vec centerpoint){
-    Vec viewsize = game->getrendering().getviewsize();
+    Vec viewsize = getviewsize();
     cam.x+=cam.w/2*centerpoint.x/viewsize.x;
     cam.y+=cam.h/2*centerpoint.y/viewsize.y;
     logscale++;
@@ -30,7 +30,7 @@ void Camera::zoomin(Vec centerpoint){
 
 void Camera::zoomout(Vec centerpoint){
     if(2*cam.w<=MAP_WIDTH && 2*cam.h<=MAP_HEIGHT){
-        Vec viewsize = game->getrendering().getviewsize();
+        Vec viewsize = getviewsize();
         cam.x-=cam.w*centerpoint.x/viewsize.x;
         cam.y-=cam.h*centerpoint.y/viewsize.y;
         logscale--;
@@ -47,7 +47,7 @@ void Camera::pan(Vec direction){
 }
 
 void Camera::restricttomap(){
-    Vec viewsize = game->getrendering().getviewsize();
+    Vec viewsize = getviewsize();
     cam.w = viewsize.x/getscale();
     cam.h = viewsize.y/getscale();
     if(cam.x<0) cam.x = 0;

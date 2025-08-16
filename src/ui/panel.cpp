@@ -81,7 +81,7 @@ void RouteListPanel::addroutepanel(int routeindex)
 {
 	if(routepanel)
 		routepanel->erase();
-    Vec viewsize = game->getrendering().getviewsize();
+    Vec viewsize = getviewsize();
     SDL_Rect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
 	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
 }
@@ -121,7 +121,7 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
+    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
     rect = {int(viewsize.x*0.5-150),int(viewsize.y)-150,300,150};
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new TrainTable(this, tablerect));

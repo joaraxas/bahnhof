@@ -7,7 +7,7 @@
 
 UIRendering::UIRendering(InterfaceManager& newui) : ui(newui)
 {
-    setuiscale(ui.getgame().getrendering().getlogicalscale());
+    setuiscale(getlogicalscale());
 }
 
 void UIRendering::rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool originiscenter, int centerx, int centery)

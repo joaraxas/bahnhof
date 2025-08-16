@@ -167,7 +167,12 @@ void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices,
 	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
 }
 
-Vec Rendering::getviewsize()
+float Rendering::getcamscale()
+{
+	return cam->getscale();
+}
+
+Vec getviewsize()
 {
 	// Returns renderer size in useful logical pixels
 	// Use this instead of SDL native functions
@@ -176,7 +181,7 @@ Vec Rendering::getviewsize()
 	return Vec(windowwidthinpixels, windowheightinpixels);
 }
 
-int Rendering::getlogicalscale()
+int getlogicalscale()
 {
 	// Returns ratio of logical to input pixels, which is 2 on retina displays and 1 otherwise.
 	// This function is only used to determine the initial UI scaling.
@@ -189,9 +194,4 @@ int Rendering::getlogicalscale()
 	if(xscale!=yscale)
 		std::cout<<"warning: Rendering::getlogicalsize() returns different yscale from xscale"<<std::endl;
 	return xscale;
-}
-
-float Rendering::getcamscale()
-{
-	return cam->getscale();
 }

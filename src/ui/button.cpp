@@ -67,7 +67,7 @@ void PlaceBuildings::leftclick(Vec mousepos)
 
 void ManageRoutes::leftclick(Vec mousepos)
 {
-    Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
+    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
     SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
     new RouteListPanel(ui, routepanelrect);
 }
