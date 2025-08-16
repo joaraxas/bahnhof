@@ -119,6 +119,7 @@ class FactoryPanel : public BuildingPanel
 public:
     FactoryPanel(InterfaceManager* newui, WagonFactory* f);
     ~FactoryPanel();
+    void render(Rendering* r);
 private:
     WagonFactory* factory;
 };

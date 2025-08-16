@@ -118,7 +118,7 @@ void WagonFactory::trigger()
 {
 	if(!productionqueue.empty()){
 		const WagonType& type = *productionqueue.front();
-		productionqueue.pop();
+		productionqueue.pop_front();
 
 		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
 		Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
@@ -149,7 +149,7 @@ void WagonFactory::orderwagon(const WagonType& type)
 	if(type.cost<=game->getgamestate().money){
 		if(productionqueue.empty())
 			timeleft = 3500;
-		productionqueue.push(&type);
+		productionqueue.push_back(&type);
 		game->getgamestate().money -= type.cost;
 	}
 }

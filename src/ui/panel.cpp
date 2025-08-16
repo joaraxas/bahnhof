@@ -171,7 +171,7 @@ void TrainPanel::update(int ms)
 {
 	if(!trainmanager.trainexists(train)){
 		Panel::erase();
-		return;
+		return; // TODO: Replace these functions with the Owner-reference system
 	}
 
 	Panel::update(ms);
@@ -180,7 +180,7 @@ void TrainPanel::update(int ms)
 void TrainPanel::render(Rendering* r)
 {
 	if(!trainmanager.trainexists(train)){
-		return;
+		return; // TODO: Replace these functions with the Owner-reference system
 	}
 
 	Panel::render(r);
@@ -217,6 +217,21 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 {
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new WagonTable(this, tablerect, *f));
+}
+
+void FactoryPanel::render(Rendering* r)
+{
+	BuildingPanel::render(r);
+	SDL_Rect queuerect = {rect.x + margin_x, 
+						  rect.y + getlocalrect().h - margin_y - 20, 
+						  getlocalrect().w-2*margin_x, 
+						  20};
+	std::vector<WagonInfo> wagoninfos;
+	for(const WagonType* type : factory->productionqueue){
+		WagonInfo info(type->iconname, none, 0);
+		wagoninfos.push_back(info);
+	}
+	rendertrainicons(r, *ui, wagoninfos, ui->getuirendering().uitoscreen(queuerect));
 }
 
 FactoryPanel::~FactoryPanel()
