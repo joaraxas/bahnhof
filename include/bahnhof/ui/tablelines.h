@@ -66,10 +66,10 @@ private:
     TrainManager* trainmanager;
 };
 
-class ConstructionTableLine : public TableLine
+class PurchaseOptionTableLine : public TableLine
 {
 public:
-    ConstructionTableLine(Host* p, Table* t, std::string name, sprites::name iconname, float cost);
+    PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost);
     void render(Rendering* r, SDL_Rect maxarea);
 protected:
     Icon icon;

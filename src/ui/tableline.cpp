@@ -96,7 +96,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
-ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, std::string name, sprites::name iconname, float cost) : 
+PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost) : 
     TableLine(p, t),
     name(name),
     price(cost)
@@ -106,7 +106,7 @@ ConstructionTableLine::ConstructionTableLine(Host* p, Table* t, std::string name
     icon.ported = false;
 }
 
-void ConstructionTableLine::render(Rendering* r, SDL_Rect maxarea)
+void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
     TextStyle style = Info;

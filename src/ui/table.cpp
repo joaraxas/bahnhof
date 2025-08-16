@@ -321,10 +321,10 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
     for(int i=0; i<buildingtypes.size(); i++){
         const BuildingType& type = buildingtypes[i];
         lines.emplace_back(
-            new ConstructionTableLine(panel, 
+            new PurchaseOptionTableLine(panel, 
                 this,
-                type.name, 
                 type.iconname,
+                type.name,
                 type.cost
             )
         );
@@ -349,10 +349,10 @@ WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) :
 {
     for(WagonType* type : factory.getavailabletypes()){
         lines.emplace_back(
-            new ConstructionTableLine(panel, 
+            new PurchaseOptionTableLine(panel, 
                 this,
-                type->name, 
                 type->iconname,
+                type->name,
                 type->cost
             )
         );
