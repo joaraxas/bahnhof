@@ -16,7 +16,7 @@ public:
     void update(int ms);
     void render(Rendering* r);
     bool leftclick(Vec mappos);
-    const std::vector<BuildingType>& gettypes() const {return availabletypes;}; // TODO: would be better to pass an iterator to the map
+    const std::vector<BuildingType>& gettypes() const {return availabletypes;};
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
     std::vector<std::unique_ptr<Building>> buildings; // TODO: make private and abstract away construction
 private:

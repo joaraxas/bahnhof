@@ -181,9 +181,8 @@ BuildingManager::BuildingManager(Game* g) : game(g)
 	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 70};
 	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(370,185), {127,127,127,255}, sprites::wagonfactory, sprites::icontankloco, 2};
 
-	for(auto type: types){
-		availabletypes.push_back(type.second);
-	}
+	availabletypes.push_back(types[brewery]);
+	availabletypes.push_back(types[wagonfactory]);
 }
 
 void BuildingManager::update(int ms)
