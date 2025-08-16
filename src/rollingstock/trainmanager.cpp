@@ -73,7 +73,7 @@ void TrainManager::addtrainstoorphans(float speed)
 void TrainManager::deselectall()
 {
 	for(auto& train: trains){
-		train->selected = false;
+		train->deselect();
 	}
 }
 

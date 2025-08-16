@@ -12,6 +12,7 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/ui/panels.h"
 
 
 Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons)
@@ -19,11 +20,15 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
+	panel = std::make_unique<UI::Owner>();
 	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;
 	light.setspritesheet(game->getsprites(), sprites::light);
 }
+
+Train::~Train()
+{}
 
 void Train::getinput(InputManager* input, int ms)
 {
@@ -386,10 +391,27 @@ bool Train::split(int where, Route* assignedroute)
 	return true;
 }
 
-TrainInfo Train::getinfo(){
+TrainInfo Train::getinfo()
+{
 	std::vector<WagonInfo> wagoninfos;
 	for(auto& wagon : wagons){
 		wagoninfos.push_back(wagon->getinfo());
 	}
 	return TrainInfo(this, name, speed, wagoninfos);
+}
+
+void Train::select()
+{
+	selected = true;
+	if(!panel->exists()){
+		panel->set(new UI::TrainPanel(&game->getui(), 
+									  {300,200,400,220}, 
+									  game->getgamestate().gettrainmanager(), 
+									  *this));
+	}
+}
+
+void Train::deselect()
+{
+	selected = false;
 }

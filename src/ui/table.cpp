@@ -211,10 +211,7 @@ void TrainTable::leftclick(Vec mousepos)
         if(index<traininfos.size()){
             trainmanager->deselectall();
             TrainInfo info = traininfos[index];
-            info.train->selected = true;
-            
-            SDL_Rect trainpanelrect = {300,200,400,220};
-            new TrainPanel(ui, trainpanelrect, *trainmanager, *info.train);
+            info.train->select();
         }
     }
 }

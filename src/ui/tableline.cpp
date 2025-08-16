@@ -74,7 +74,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
     TextStyle style = Info;
-    if(info.train->selected)
+    if(info.train->isselected())
         style = Highlighted;
     int rowoffset = 2;
     int textpadding = 5;

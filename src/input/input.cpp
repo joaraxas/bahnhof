@@ -272,7 +272,7 @@ void InputManager::selecttrain(Train* whattrain)
     Gamestate& gamestate = game->getgamestate();
 	gamestate.gettrainmanager().deselectall();
 	if(whattrain){
-		whattrain->selected = true;
+		whattrain->select();
     }
 }
 
