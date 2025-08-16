@@ -359,6 +359,7 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 			wagon->train = this;
 		if(train.selected)
 			selected = true;
+		panel->takeoveranyreferenceiffree(train.panel.get());
 		wantstocouple = false;
 	}
 	else{

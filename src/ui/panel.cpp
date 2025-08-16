@@ -14,6 +14,21 @@
 
 namespace UI{
 
+bool Owner::takeoveranyreferenceiffree(Owner* oldowner)
+{
+	// Intended for cases where an object owning a panel is copied into another object
+	// TODO: This also has to update the reference in the panel, currently it won't work
+	return false;
+
+	
+	if(oldowner->exists() && !exists()){
+		set(oldowner->host);
+		oldowner->resetreference();
+		return true;
+	}
+	return false;
+}
+
 Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
 {
     ui->addpanel(this);

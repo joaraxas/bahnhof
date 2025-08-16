@@ -12,6 +12,8 @@ InterfaceManager::InterfaceManager(Game* newgame) : game(newgame), uirendering(*
 
 void InterfaceManager::update(int ms)
 {
+    cleanup();
+
     if(dropdown){
         dropdown->update(ms);
     }
@@ -24,6 +26,8 @@ void InterfaceManager::update(int ms)
 
 void InterfaceManager::render(Rendering* r)
 {
+    cleanup();
+
     int viewheight = uirendering.screentoui(getviewsize()).y;
     uirendering.renderscaleruler(r, 20, viewheight-20, 200);
 
@@ -36,6 +40,8 @@ void InterfaceManager::render(Rendering* r)
 
 UI::Host* InterfaceManager::getpanelat(Vec screenpos)
 {
+    cleanup();
+    
     for(auto& panel: panels){
         if(panel->checkclick(screenpos))
             return panel.get();
