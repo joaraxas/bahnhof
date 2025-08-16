@@ -231,7 +231,7 @@ void FactoryPanel::render(Rendering* r)
 		WagonInfo info(type->iconname, none, 0);
 		wagoninfos.push_back(info);
 	}
-	rendertrainicons(r, *ui, wagoninfos, queuerect);
+	rendertrainicons(r, *ui, wagoninfos, queuerect); // TODO: This should be delegated to a queue decoration class accessing the waiting objects, but that requires abstracting the queue into its own class. We'll do this when needed.
 }
 
 FactoryPanel::~FactoryPanel()

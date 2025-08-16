@@ -90,6 +90,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
                      trainiconrect.y+rowoffset, 
                      trainiconrect.w-namerowwidth-2*textpadding, 
                      namerect.h-2*rowoffset};
+    // The local rectangle works here because we are rendering to a separate table target
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
     
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);

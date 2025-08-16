@@ -86,9 +86,13 @@ void Table::render(Rendering* r)
     SDL_Rect maxarea = {0,-linescrolloffset,rect.w,rect.h};
 
     float scale = ui->getuirendering().getuiscale();
-	SDL_Texture* result = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ceil(maxarea.w*scale), ceil(maxarea.h*scale));
-  	SDL_SetTextureBlendMode(result, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderTarget(renderer, result);
+	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
+                                                       SDL_PIXELFORMAT_RGBA8888, 
+                                                       SDL_TEXTUREACCESS_TARGET, 
+                                                       ceil(maxarea.w*scale), 
+                                                       ceil(maxarea.h*scale));
+  	SDL_SetTextureBlendMode(tablerendertarget, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderTarget(renderer, tablerendertarget);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     SDL_RenderFillRect(renderer, NULL);
 
@@ -110,11 +114,11 @@ void Table::render(Rendering* r)
         }
     }
 
-    SDL_SetTextureAlphaMod(result, 255);
+    SDL_SetTextureAlphaMod(tablerendertarget, 255);
 	SDL_SetRenderTarget(renderer, NULL);
     SDL_Rect global = getglobalrect();
-    ui->getuirendering().rendertexture(r, result, &global);
-    SDL_DestroyTexture(result);
+    ui->getuirendering().rendertexture(r, tablerendertarget, &global);
+    SDL_DestroyTexture(tablerendertarget);
 }
 
 Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
