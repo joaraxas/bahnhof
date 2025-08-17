@@ -17,7 +17,7 @@ namespace UI{
 class Building
 {
 public:
-    Building(Game* game, BuildingID id, std::unique_ptr<Shape> s);
+    Building(Game* g, BuildingID id, std::unique_ptr<Shape> s);
     virtual ~Building();
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -40,7 +40,7 @@ protected:
 class Industry : public Building
 {
 public:
-    Industry(Game* game, BuildingID id, std::unique_ptr<Shape> s, std::set<resourcetype> need, std::set<resourcetype> production);
+    Industry(Game* g, BuildingID id, std::unique_ptr<Shape> s, std::set<resourcetype> need, std::set<resourcetype> production);
     void trigger();
 private:
     Storage* storage;
@@ -51,7 +51,7 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* game, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
+    WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
     void trigger();
     bool leftclick(Vec pos);
     State& getstate() {return state;};
@@ -68,24 +68,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* game, std::unique_ptr<Shape> s);
+    Brewery(Game* g, std::unique_ptr<Shape> s);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* game, std::unique_ptr<Shape> s);
+    Hopsfield(Game* g, std::unique_ptr<Shape> s);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* game, std::unique_ptr<Shape> s);
+    Barleyfield(Game* g, std::unique_ptr<Shape> s);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* game, std::unique_ptr<Shape> s);
+    City(Game* g, std::unique_ptr<Shape> s);
 };
 

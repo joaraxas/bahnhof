@@ -230,9 +230,19 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
         Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 500, newangle);
         if(neareststate)
-            return std::make_unique<RotatedRectangle>(Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, building->size.x, building->size.y, newangle);
+            return std::make_unique<RotatedRectangle>(
+                Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, 
+                building->size.x, 
+                building->size.y, 
+                newangle
+            );
         else
-            return std::make_unique<RotatedRectangle>(pos + buildingmidpoint, building->size.x, building->size.y, newangle);
+            return std::make_unique<RotatedRectangle>(
+                pos + buildingmidpoint, 
+                building->size.x, 
+                building->size.y, 
+                newangle
+            );
     }
     
     default:
