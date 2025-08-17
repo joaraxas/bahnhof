@@ -1,6 +1,7 @@
 #pragma once
 #include<map>
 #include "state.h"
+#include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/graphics/sprite.h"
 
@@ -73,7 +74,7 @@ public:
     ~Track();
     void connecttonodes();
     void disconnectfromnodes();
-    void render(Rendering* r, int mode);
+    void render(Rendering* r, TracksDisplayMode mode);
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);

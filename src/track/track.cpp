@@ -220,7 +220,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	return reachedsignal;
 }
 
-void Track::render(Rendering* r, int mode)
+void Track::render(Rendering* r, TracksDisplayMode mode)
 {
 	float scale = r->getcamscale();
 	//// banvall ////
@@ -244,13 +244,13 @@ void Track::render(Rendering* r, int mode)
 	//// syllar ////
 	if(nicetracks){
 		switch(mode){
-			case 0:
+			case TracksDisplayMode::normal:
 				SDL_SetRenderDrawColor(renderer, 63,63,0,255);
 				break;
-			case 1:
+			case TracksDisplayMode::planned:
 				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 				break;
-			case 2:
+			case TracksDisplayMode::impossible:
 				SDL_SetRenderDrawColor(renderer, 127,0,0,255);
 				break;
 		}
@@ -269,13 +269,13 @@ void Track::render(Rendering* r, int mode)
 	//// rals ////
 	if(nicetracks){
 		switch(mode){
-			case 0:
+			case TracksDisplayMode::normal:
 				SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 				break;
-			case 1:
+			case TracksDisplayMode::planned:
 				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 				break;
-			case 2:
+			case TracksDisplayMode::impossible:
 				SDL_SetRenderDrawColor(renderer, 255,0,0,255);
 				break;
 		}

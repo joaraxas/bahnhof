@@ -77,7 +77,10 @@ void TrackBuilder::render(Rendering* r)
         else
             section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
         cost = ceil(Tracks::Input::getcostoftracks(section));
-        Tracks::render(section, r, 2-canbuild());
+        TracksDisplayMode mode = TracksDisplayMode::planned;
+        if(!canbuild())
+            mode = TracksDisplayMode::impossible;
+        Tracks::render(section, r, mode);
         Vec screenpoint = game->getcamera().screencoord(anchorpoint);
         r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
         Tracks::Input::discardsection(section);
@@ -152,7 +155,10 @@ void BuildingBuilder::render(Rendering* r)
         if(building->id==wagonfactory){
             float newangle = angle;
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
-            Tracks::render(section, r, 2-canbuild());
+            TracksDisplayMode mode = TracksDisplayMode::planned;
+            if(!canbuild())
+                mode = TracksDisplayMode::impossible;
+            Tracks::render(section, r, mode);
             Tracks::Input::discardsection(section);
         }
         std::unique_ptr<Shape> shape = getplacementat(anchorpoint);

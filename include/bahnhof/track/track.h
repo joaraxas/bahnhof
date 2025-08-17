@@ -1,6 +1,7 @@
 #pragma once
 #include<map>
 #include "state.h"
+#include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 
 class Order;
@@ -118,7 +119,7 @@ namespace Signaling
 };
 
     void render(Tracksystem&, Rendering* r);
-    void render(Tracksection section, Rendering* r, int mode=0);
+    void render(Tracksection section, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
     void renderabovetrains(Tracksystem&, Rendering* r);
 
     State travel(Tracksystem&, State state, float pixels);
