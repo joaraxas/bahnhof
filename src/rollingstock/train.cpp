@@ -20,7 +20,7 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
-	panel = std::make_unique<UI::Owner>();
+	panel = std::make_unique<UI::Ownership>();
 	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;

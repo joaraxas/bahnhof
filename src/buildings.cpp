@@ -21,7 +21,7 @@ Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) :
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id))
 {
 	color = type.color;
-	panel = std::make_unique<UI::Owner>();
+	panel = std::make_unique<UI::Ownership>();
 	if(type.spritename){
 		sprite.setspritesheet(game->getsprites(), type.spritename);
 		sprite.imageangle = shape->getorientation();

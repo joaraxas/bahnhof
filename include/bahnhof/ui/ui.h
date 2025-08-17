@@ -13,7 +13,7 @@ namespace UI{
 
 class Host;
 class Dropdown;
-class Owner;
+class Ownership;
 
 enum TextStyle{
     Info,
@@ -61,7 +61,7 @@ public:
     InterfaceManager& getui();
     SDL_Rect getglobalrect();
     SDL_Rect getlocalrect();
-    Owner* owner = nullptr;
+    Ownership* owner = nullptr;
 protected:
     Element* getelementat(Vec pos);
     Game* game;

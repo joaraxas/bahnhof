@@ -21,10 +21,10 @@ class Dropdown;
 class RouteListPanel;
 class Text;
 
-class Owner
+class Ownership
 {
 public:
-    ~Owner();
+    ~Ownership();
     void set(Host* newhost);
     bool exists();
     void deletereference();
@@ -73,7 +73,7 @@ public:
     void erase();
     void addroutepanel(int routeindex);
 private:
-    std::unique_ptr<UI::Owner> routepanelref;
+    std::unique_ptr<UI::Ownership> routepanelref;
 };
 
 class TrainListPanel : public Panel

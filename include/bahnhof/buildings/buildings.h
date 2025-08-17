@@ -11,7 +11,7 @@ class Shape;
 class Rendering;
 class RollingStockManager;
 namespace UI{
-    class Owner;
+    class Ownership;
 }
 
 class Building
@@ -27,7 +27,7 @@ public:
     std::string name;
     const BuildingType& type;
 protected:
-    std::unique_ptr<UI::Owner> panel;
+    std::unique_ptr<UI::Ownership> panel;
     SDL_Color color;
     Game* game;
     std::unique_ptr<Shape> shape;

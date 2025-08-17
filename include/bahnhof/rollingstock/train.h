@@ -12,7 +12,7 @@ namespace Tracks{
     struct Tracksystem;
 }
 namespace UI{
-    class Owner;
+    class Ownership;
 }
 
 class Train
@@ -50,7 +50,7 @@ public:
     std::string name = "no name";
 private:
     bool checkifreachedstate(State goalstate, int ms);
-    std::unique_ptr<UI::Owner> panel;
+    std::unique_ptr<UI::Ownership> panel;
     bool selected = false;
     Sprite light;
     Game* game = nullptr;

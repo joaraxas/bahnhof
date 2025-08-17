@@ -14,24 +14,24 @@
 
 namespace UI{
 
-Owner::~Owner()
+Ownership::~Ownership()
 {
 	deletereference();
 }
 
-void Owner::set(Host* newhost)
+void Ownership::set(Host* newhost)
 {
 	deletereference();
 	host = newhost;
 	host->owner = this;
 }
 
-bool Owner::exists()
+bool Ownership::exists()
 {
 	return host!=nullptr;
 }
 
-void Owner::deletereference()
+void Ownership::deletereference()
 {
 	if(host){
 		host->erase();
@@ -39,7 +39,7 @@ void Owner::deletereference()
 	}
 }
 
-void Owner::resetreference()
+void Ownership::resetreference()
 {
 	host = nullptr;
 }
@@ -91,7 +91,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Pane
 {
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y*2-yoffset};
 	addelement(new RouteTable(this, tablerect));
-	routepanelref = std::make_unique<Owner>();
+	routepanelref = std::make_unique<Ownership>();
 }
 
 RouteListPanel::~RouteListPanel()
