@@ -34,7 +34,7 @@ Building::~Building()
 
 void Building::render(Rendering* r)
 {
-	if(hassprite)
+	if(hassprite && nicetracks)
 		sprite.render(r, shape->mid());
 	else
 		shape->renderfilled(r, color);
