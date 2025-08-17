@@ -108,6 +108,7 @@ void RouteListPanel::erase()
 void RouteListPanel::addroutepanel(int routeindex)
 {
     SDL_Rect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
+	routepanelref->deletereference();
 	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
 }
 
