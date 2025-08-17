@@ -95,7 +95,12 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Pane
 }
 
 RouteListPanel::~RouteListPanel()
-{}
+{
+	// This prevents calling RoutePanel::erase() in case the RouteListPanel was deleted for an unexpected reason, 
+	// like closing the game window. Calling RoutePanel::erase() will throw a segfault as it needs the InputManager
+	// which has already been destroyed at this point.
+	routepanelref->resetreference();
+}
 
 void RouteListPanel::erase()
 {
