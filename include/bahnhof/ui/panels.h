@@ -24,11 +24,11 @@ class Text;
 class Owner
 {
 public:
-    ~Owner() {deletereference();};
-    void set(Host* newhost) {deletereference(); host=newhost; host->owner = this;};
-    bool exists() {return host!=nullptr;};
-    void deletereference() {if(host) host->erase();}
-    void resetreference() {host = nullptr;};
+    ~Owner();
+    void set(Host* newhost);
+    bool exists();
+    void deletereference();
+    void resetreference();
     bool takeoveranyreferenceiffree(Owner* oldowner);
 private:
     Host* host = nullptr;
@@ -59,12 +59,11 @@ public:
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp);
+    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid);
     ~RoutePanel();
     void erase();
 private:
     Route* route;
-    RouteListPanel* routelistpanel;
 };
 
 class RouteListPanel : public Panel
@@ -72,11 +71,10 @@ class RouteListPanel : public Panel
 public:
     RouteListPanel(InterfaceManager* newui, SDL_Rect newrect);
     ~RouteListPanel();
-    void addroutepanel(int routeindex);
-    void deselectroutepanel() {routepanel = nullptr;};
     void erase();
+    void addroutepanel(int routeindex);
 private:
-    RoutePanel* routepanel = nullptr;
+    std::unique_ptr<UI::Owner> routepanelref;
 };
 
 class TrainListPanel : public Panel

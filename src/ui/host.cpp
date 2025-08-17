@@ -12,11 +12,7 @@ Host::Host(InterfaceManager* newui, SDL_Rect newrect)
 }
 
 Host::~Host()
-{
-	if(owner){
-		owner->resetreference();
-	}
-}
+{}
 
 InterfaceManager& Host::getui()
 {
@@ -26,6 +22,9 @@ InterfaceManager& Host::getui()
 void Host::erase()
 {
     ui->removepanel(this);
+	if(owner){
+		owner->resetreference();
+	}
 }
 
 SDL_Rect Host::getglobalrect()

@@ -14,13 +14,42 @@
 
 namespace UI{
 
+Owner::~Owner()
+{
+	deletereference();
+}
+
+void Owner::set(Host* newhost)
+{
+	deletereference();
+	host=newhost;
+	host->owner = this;
+}
+
+bool Owner::exists()
+{
+	return host!=nullptr;
+}
+
+void Owner::deletereference()
+{
+	if(host){
+		host->erase();
+	}
+}
+
+void Owner::resetreference()
+{
+	host = nullptr;
+}
+
 bool Owner::takeoveranyreferenceiffree(Owner* oldowner)
 {
 	// Intended for cases where an object owning a panel is copied into another object
 	// TODO: This also has to update the reference in the panel, currently it won't work
 	return false;
 
-	
+
 	if(oldowner->exists() && !exists()){
 		set(oldowner->host);
 		oldowner->resetreference();
@@ -78,6 +107,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Pane
 {
 	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y*2-yoffset};
 	addelement(new RouteTable(this, tablerect));
+	routepanelref = std::make_unique<Owner>();
 }
 
 RouteListPanel::~RouteListPanel()
@@ -87,23 +117,21 @@ RouteListPanel::~RouteListPanel()
 
 void RouteListPanel::erase()
 {
-	if(routepanel)
-		routepanel->erase();
+	// We need to do this here and not in the destructor because this just adds the route panel to the list of
+	// hosts to be deleted, and that list is being iterated through when the destructor is called.
+	routepanelref->deletereference();
 	Panel::erase();
 }
 
 void RouteListPanel::addroutepanel(int routeindex)
 {
-	if(routepanel)
-		routepanel->erase();
-    Vec viewsize = getviewsize();
     SDL_Rect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
-	routepanel = new RoutePanel(ui, routepanelrect, routeindex, this);
+	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
 }
 
 
-RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp) :
-	Panel(newui, newrect), routelistpanel(rlp)
+RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid) :
+	Panel(newui, newrect)
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
@@ -127,8 +155,6 @@ RoutePanel::~RoutePanel()
 
 void RoutePanel::erase()
 {
-	if(routelistpanel)
-		routelistpanel->deselectroutepanel();
     game->getinputmanager().editroute(nullptr);
 	Panel::erase();
 }
