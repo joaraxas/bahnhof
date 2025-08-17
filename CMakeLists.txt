@@ -50,7 +50,8 @@ add_executable(bahnhof
     src/rollingstock/train.cpp
     src/rollingstock/trainmanager.cpp
     src/rollingstock/rollingstockmanager.cpp
-    src/buildings.cpp
+    src/buildings/buildings.cpp
+    src/buildings/buildingmanager.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)
