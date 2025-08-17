@@ -353,9 +353,11 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		train.wagons = {};
 		for(auto wagon : wagons)
 			wagon->train = this;
-		if(train.selected)
-			selected = true;
-		panel->takeoveranyreferenceiffree(train.panel.get());
+		std::cout<<"couple me: "<<name<<std::endl;
+		std::cout<<"to other train: "<<train.name<<std::endl;
+		if(train.panel->exists()){
+			select();
+		}
 		wantstocouple = false;
 	}
 	else{

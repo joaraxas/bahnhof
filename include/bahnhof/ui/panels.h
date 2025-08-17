@@ -29,7 +29,6 @@ public:
     bool exists();
     void deletereference();
     void resetreference();
-    bool takeoveranyreferenceiffree(Owner* oldowner);
 private:
     Host* host = nullptr;
 };
