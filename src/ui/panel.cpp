@@ -98,9 +98,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 }
 
 MainPanel::~MainPanel()
-{
-	std::cout<<"del mainpanel"<<std::endl;
-}
+{}
 
 
 RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
@@ -111,9 +109,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Pane
 }
 
 RouteListPanel::~RouteListPanel()
-{
-	std::cout<<"del routelistpanel"<<std::endl;
-}
+{}
 
 void RouteListPanel::erase()
 {
@@ -149,9 +145,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid) :
 }
 
 RoutePanel::~RoutePanel()
-{
-	std::cout<<"del routepanel"<<std::endl;
-}
+{}
 
 void RoutePanel::erase()
 {
@@ -169,9 +163,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 }
 
 TrainListPanel::~TrainListPanel()
-{
-	std::cout<<"del trainlistpanel"<<std::endl;
-}
+{}
 
 
 TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain) : 
@@ -204,9 +196,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 }
 
 TrainPanel::~TrainPanel()
-{
-	std::cout<<"del trainpanel"<<std::endl;
-}
+{}
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
 {
@@ -215,9 +205,7 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SD
 }
 
 BuildingConstructionPanel::~BuildingConstructionPanel()
-{
-	std::cout<<"del buildingconstructionpanel"<<std::endl;
-}
+{}
 
 void BuildingConstructionPanel::erase()
 {
@@ -238,9 +226,7 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 }
 
 BuildingPanel::~BuildingPanel()
-{
-	std::cout<<"del buildingpanel"<<std::endl;
-}
+{}
 
 FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) : 
 		BuildingPanel(newui, f),
@@ -266,8 +252,6 @@ void FactoryPanel::render(Rendering* r)
 }
 
 FactoryPanel::~FactoryPanel()
-{
-	std::cout<<"del factorypanel"<<std::endl;
-}
+{}
 
 } // namespace UI

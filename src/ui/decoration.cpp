@@ -33,7 +33,6 @@ EditableText::~EditableText()
     if(beingedited){
         game->getinputmanager().gettextinputmanager().endtextinput();
     }
-    std::cout<<"del editable text: " <<text<<std::endl;
 }
 
 void EditableText::leftclick(Vec mousepos)

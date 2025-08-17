@@ -110,9 +110,7 @@ void Referencehandler::movereferenceswhentracksplits(State splitstate, Track& ne
 	}
 	for(auto item: buildings){
 		if(item->getstate().track == splitstate.track){
-			std::cout<<item->getstate().track <<std::endl;
 			item->getstate() = oldtrack->getnewstateaftersplit(newtrack1, newtrack2, splitstate, item->getstate());
-			std::cout<<item->getstate().track <<std::endl;
 		}
 	}
 }

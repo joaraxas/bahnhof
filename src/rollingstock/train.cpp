@@ -326,25 +326,21 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		bool ismyback = !ismyfront;
 		if(ismyback){
 			if(ishisfront){
-				std::cout << "couple back front" << std::endl;
 				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 			}
 			else{
-				std::cout << "couple back back" << std::endl;
 				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 				flipdirection = true;
 			}
 		}
 		else{
 			if(ishisfront){
-				std::cout << "couple front front" << std::endl;
 				std::reverse(wagons.begin(), wagons.end());
 				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 				std::reverse(wagons.begin(), wagons.end());
 				flipdirection = true;
 			}
 			else{
-				std::cout << "couple front back" << std::endl;
 				std::reverse(wagons.begin(), wagons.end());
 				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 				std::reverse(wagons.begin(), wagons.end());
@@ -388,7 +384,6 @@ bool Train::split(int where, Route* assignedroute)
 		trainmanager.addtrain(newtrain);
 		newtrain->route = assignedroute;
 	}
-	std::cout << "split" << std::endl;
 	return true;
 }
 

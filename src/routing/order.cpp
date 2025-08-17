@@ -17,7 +17,6 @@ void Order::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 void Order::invalidate()
 {
-	std::cout<<"Order invalidated"<<std::endl;
 	if(valid){
 		valid = false;
 		description = "Invalid: " + description;

@@ -22,9 +22,7 @@ Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
 }
 
 Table::~Table()
-{
-    std::cout<<"del table"<<std::endl;
-}
+{}
 
 bool Table::checkclick(Vec mousepos)
 {
