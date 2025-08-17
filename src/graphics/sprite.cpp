@@ -16,9 +16,9 @@ void Sprite::setspritesheet(SpriteManager& s, sprites::name name)
 void Sprite::updateframe(int ms)
 {
 	imageindex += imagespeed*ms*0.001;
-	if(imageindex>=imagenumber)
+	while(imageindex>=imagenumber)
 		imageindex -= imagenumber;
-	if(imageindex<0)
+	while(imageindex<0)
 		imageindex += imagenumber;
 }
 
