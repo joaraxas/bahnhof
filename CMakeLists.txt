@@ -11,17 +11,20 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 add_executable(bahnhof
     src/main.cpp
     src/math.cpp
+    src/shape.cpp
     src/graphics/rendering.cpp
     src/graphics/graphics.cpp
     src/graphics/sprite.cpp
     src/graphics/spritesheet.cpp
     src/graphics/spritemanager.cpp
-    src/game/input.cpp
     src/game/camera.cpp
     src/game/timing.cpp
     src/game/gamestate.cpp
     src/game/game.cpp
     src/game/resources.cpp
+    src/input/input.cpp
+    src/input/textinput.cpp
+    src/input/builder.cpp
     src/ui/ui.cpp
     src/ui/uirendering.cpp
     src/ui/host.cpp
@@ -46,7 +49,9 @@ add_executable(bahnhof
     src/rollingstock/rollingstock.cpp
     src/rollingstock/train.cpp
     src/rollingstock/trainmanager.cpp
-    src/buildings.cpp
+    src/rollingstock/rollingstockmanager.cpp
+    src/buildings/buildings.cpp
+    src/buildings/buildingmanager.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)

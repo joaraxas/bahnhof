@@ -1,3 +1,6 @@
+#include<SDL.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
 #include<iostream>
 #include<string>
 #include "bahnhof/common/math.h"
@@ -12,6 +15,12 @@ Vec::Vec(float xstart, float ystart)
 {
 	x = xstart;
 	y = ystart;
+}
+
+Vec::Vec(const SDL_FPoint& point)
+{
+	x = point.x;
+	y = point.y;
 }
 
 Vec Vec::operator-(Vec v)

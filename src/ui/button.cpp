@@ -6,7 +6,7 @@
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 
@@ -60,9 +60,14 @@ void PlaceTrack::leftclick(Vec mousepos)
     game->getinputmanager().placetrack();
 }
 
+void PlaceBuildings::leftclick(Vec mousepos)
+{
+    new BuildingConstructionPanel(ui, {180,0,300,200});
+}
+
 void ManageRoutes::leftclick(Vec mousepos)
 {
-    Vec viewsize = ui->getuirendering().screentoui(game->getrendering().getviewsize());
+    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
     SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
     new RouteListPanel(ui, routepanelrect);
 }

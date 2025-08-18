@@ -5,6 +5,7 @@
 
 
 class InputManager;
+class RollingStockManager;
 class Train;
 class Wagon;
 
@@ -32,7 +33,7 @@ struct TrainInfo
 class TrainManager
 {
 public:
-    TrainManager(Tracks::Tracksystem* newtracks);
+    TrainManager(Tracks::Tracksystem* newtracks, RollingStockManager& r);
     void update(int ms);
     void getinput(InputManager* input, int mslogic); 
     void render(Rendering* r);
@@ -41,10 +42,10 @@ public:
     void deselectall();
     Train* gettrainatpos(Vec pos);
     std::vector<TrainInfo> gettrainsinfo();
-    bool trainexists(Train& train);
     void inittrain(State startstate);
-    void addtrainstoorphans();
+    void addtrainstoorphans(float speed=0);
 private:
+    RollingStockManager& rollingstock;
     std::string generatetrainname();
     std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<std::unique_ptr<Train>> trains;

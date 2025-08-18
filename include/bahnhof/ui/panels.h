@@ -12,12 +12,26 @@ class InterfaceManager;
 class Route;
 class TrainManager;
 class Train;
+class Building;
+class WagonFactory;
 
 namespace UI{
 
 class Dropdown;
 class RouteListPanel;
 class Text;
+
+class Ownership
+{
+public:
+    ~Ownership();
+    void set(Host* newhost);
+    bool exists();
+    void deletereference();
+    void resetreference();
+private:
+    Host* host = nullptr;
+};
 
 class Panel : public Host
 {
@@ -37,18 +51,18 @@ protected:
 class MainPanel : public Panel
 {
 public:
-    MainPanel(InterfaceManager* newui, SDL_Rect newrect);
+    MainPanel(InterfaceManager* newui);
+    ~MainPanel();
 };
 
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid, RouteListPanel* rlp);
+    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid);
     ~RoutePanel();
     void erase();
 private:
     Route* route;
-    RouteListPanel* routelistpanel;
 };
 
 class RouteListPanel : public Panel
@@ -56,11 +70,10 @@ class RouteListPanel : public Panel
 public:
     RouteListPanel(InterfaceManager* newui, SDL_Rect newrect);
     ~RouteListPanel();
-    void addroutepanel(int routeindex);
-    void deselectroutepanel() {routepanel = nullptr;};
     void erase();
+    void addroutepanel(int routeindex);
 private:
-    RoutePanel* routepanel = nullptr;
+    std::unique_ptr<UI::Ownership> routepanelref;
 };
 
 class TrainListPanel : public Panel
@@ -75,12 +88,37 @@ class TrainPanel : public Panel
 public:
     TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain);
     ~TrainPanel();
-    void update(int ms);
-    void render(Rendering* r);
     Train& gettrain() {return train;};
 private:
     TrainManager& trainmanager;
     Train& train;
+};
+
+class BuildingConstructionPanel : public Panel
+{
+public:
+    BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect);
+    ~BuildingConstructionPanel();
+    void erase() override;
+};
+
+class BuildingPanel : public Panel
+{
+public:
+    BuildingPanel(InterfaceManager* newui, Building* b);
+    ~BuildingPanel();
+private:
+    Building* building;
+};
+
+class FactoryPanel : public BuildingPanel
+{
+public:
+    FactoryPanel(InterfaceManager* newui, WagonFactory* f);
+    ~FactoryPanel();
+    void render(Rendering* r);
+private:
+    WagonFactory* factory;
 };
 
 }

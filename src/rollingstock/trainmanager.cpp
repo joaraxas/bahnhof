@@ -4,11 +4,12 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/rollingstock/rollingstock.h"
+#include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/routing/routing.h"
 
-TrainManager::TrainManager(Tracks::Tracksystem* newtracks)
+TrainManager::TrainManager(Tracks::Tracksystem* newtracks, RollingStockManager& r) : rollingstock(r)
 {
 	tracks = newtracks;
 	addtrainstoorphans();
@@ -58,11 +59,13 @@ void TrainManager::addtrain(Train* newtrain)
 	std::cout<<newtrain->name<<" added"<<std::endl;
 }
 
-void TrainManager::addtrainstoorphans()
+void TrainManager::addtrainstoorphans(float speed)
 {
 	for(int iWagon=0; iWagon<wagons.size(); iWagon++){
 		if(!wagons[iWagon]->train){
-			addtrain(new Train(*tracks, {wagons[iWagon].get()}));
+			Train* train = new Train(*tracks, {wagons[iWagon].get()});
+			addtrain(train);
+			train->speed = speed;
 		}
 	}
 }
@@ -70,7 +73,7 @@ void TrainManager::addtrainstoorphans()
 void TrainManager::deselectall()
 {
 	for(auto& train: trains){
-		train->selected = false;
+		train->deselect();
 	}
 }
 
@@ -95,20 +98,13 @@ std::vector<TrainInfo> TrainManager::gettrainsinfo()
 	return infos;
 }
 
-bool TrainManager::trainexists(Train& train){
-	for(auto& tr : trains)
-		if(tr.get() == &train)
-			return true;
-	return false;
-}
-
 void TrainManager::inittrain(State startstate)
 {
 	int nWagons = wagons.size();
-	addwagon(new Locomotive(tracks, startstate));
+	addwagon(new Wagon(tracks, startstate, rollingstock.gettypefromid(WagonID::tanklocomotive)));
 	for(int iWagon=0; iWagon<3; iWagon++){
 		State state = Tracks::travel(*tracks, startstate, -(53+49)/2-iWagon*49);
-		addwagon(new Openwagon(tracks, state));
+		addwagon(new Wagon(tracks, state, rollingstock.gettypefromid(WagonID::openwagon)));
 	}
     std::vector<Wagon*> newwagonset;
     for(auto it = wagons.begin()+nWagons; it!=wagons.end(); ++it){

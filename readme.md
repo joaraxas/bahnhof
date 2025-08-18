@@ -24,12 +24,8 @@ and run the binary with
 build/bahnhof
 ```
 ### Gameplay
-Admittedly the gameplay is not entirely self-explanatory at the moment. 
-This will get better soon now that the UI is in place and as I create more graphics. 
-Here are the basics.
-
-Breweries (blue buildings) require hops from farms (green) to produce beer. 
-Beer should be delivered to cities (gray) to generate income.
+Breweries require either hops or barley from farms to produce beer. 
+Beer should be delivered to cities to generate income.
 Wagons must stop within the designated areas and be ordered to unload/load all cargo via the train's route.
 
 When devising a route, right click on a piece of track to generate an order to travel there. 
@@ -39,8 +35,6 @@ The train must be assigned to the route and ordered to start it via its UI panel
 Signals allow a routed train passage if the way up to the next signal is unblocked. 
 Only one train is allowed passage at a time. 
 The signaling system must be designed to prevent deadlocks; for example, build double tracks. 
-
-Building new wagons is not yet supported by the UI, but can be achieved with the keyboard buttons `Y`, `Q`, and `O`.
 
 The maximal train speed is determined by the curve radius, the locomotive orientation and whether the locomotive travels first in the train. 
 You can couple more locomotives after one another to haul longer trains faster.

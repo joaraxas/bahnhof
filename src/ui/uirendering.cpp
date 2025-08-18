@@ -7,13 +7,25 @@
 
 UIRendering::UIRendering(InterfaceManager& newui) : ui(newui)
 {
-    setuiscale(ui.getgame().getrendering().getlogicalscale());
+    setuiscale(getlogicalscale());
 }
 
 void UIRendering::rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool originiscenter, int centerx, int centery)
 {
     SDL_Rect screenrect = uitoscreen(*rect);
     r->rendertexture(tex, &screenrect, srcrect, angle, ported, false, originiscenter, centerx, centery);
+}
+
+void UIRendering::renderrectangle(Rendering* r, SDL_Rect rectangle, UI::TextStyle style, bool filled)
+{
+    SDL_Color color = getcolorfromstyle(style);
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    if(filled){
+        r->renderfilledrectangle(uitoscreen(rectangle), false, false);
+    }
+    else{
+        r->renderrectangle(uitoscreen(rectangle), false, false);
+    }
 }
 
 SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)

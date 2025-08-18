@@ -20,6 +20,11 @@ enum name
     light,
     hops,
     barley,
-    beer
+    beer,
+    brewery,
+    tavern,
+    hopsfield,
+    barleyfield,
+    wagonfactory
 };
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include<map>
 #include "state.h"
+#include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 
 class Order;
@@ -8,7 +9,10 @@ class Gotostate;
 class Setsignal;
 class Setswitch;
 class Train;
-class Wagon;
+namespace RollingStock{
+    class Axes;
+}
+class WagonFactory;
 class Gamestate;
 class Game;
 class Rendering;
@@ -36,12 +40,16 @@ struct Tracksection
 struct Referencehandler
 {
     Referencehandler(Tracksystem* tracks): tracksystem(tracks){};
-    void removewagonreference(Wagon*);
+    bool maytrackberemoved(trackid track);
+    void removewagonreference(RollingStock::Axes*);
+    void removebuildingreference(WagonFactory*);
     void removetrackorderreference(Gotostate*);
     void removesignalorderreference(Setsignal*);
     void removeswitchorderreference(Setswitch*);
     void validatereferences();
-    std::vector<Wagon*> wagons;
+    void movereferenceswhentracksplits(State splitstate, Track& newtrack1, Track& newtrack2);
+    std::vector<RollingStock::Axes*> wagons;
+    std::vector<WagonFactory*> buildings;
     std::vector<Gotostate*> trackorders;
     std::vector<Setsignal*> signalorders;
     std::vector<Setswitch*> switchorders;
@@ -65,8 +73,8 @@ public:
     void removetrack(trackid toremove);
     void removeswitchfromlist(switchid toremove);
     void removesignal(signalid toremove);
-    std::vector<Track*> alltracks();
     std::vector<Node*> allnodes();
+    std::vector<Track*> alltracks();
     std::vector<Switch*> allswitches();
     std::vector<Signal*> allsignals();
     Game* game;
@@ -84,12 +92,16 @@ private:
 
 namespace Input
 {
+    State getstateat(Tracksystem& tracksystem, Vec pos); // TODO: just expose getcloseststate instead?
+    State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
+    Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos);
-    Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
-    nodeid selectat(Tracksystem& tracksystem, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle);
+    void buildsection(Tracksystem& tracksystem, const Tracksection& section);
+    void discardsection(Tracksection& section);
+    nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should maybe be replaced with getstateat
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
@@ -106,20 +118,15 @@ namespace Signaling
     bool claimblocks(Tracksystem&, Trackblock blocks, Train* fortrain);
 };
 
-namespace Construction
-{
-    Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
-    Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
-    void splittrack(Tracksystem&, Node* node, State state);
-};
-
     void render(Tracksystem&, Rendering* r);
-    void render(Tracksection section, Rendering* r, int mode=0);
+    void render(Tracksection section, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
     void renderabovetrains(Tracksystem&, Rendering* r);
 
     State travel(Tracksystem&, State state, float pixels);
     float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(Tracksystem&, State state);
+    State getstartpointstate(Tracksection&);
+    Vec gettrackextension(Tracksystem&, State fromstate, float distance, float& angle);
 
     Vec getpos(Tracksystem&, State state, float transverseoffset=0);
     float getradius(Tracksystem&, State state);

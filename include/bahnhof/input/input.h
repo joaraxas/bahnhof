@@ -4,6 +4,7 @@
 #include<SDL_ttf.h>
 #include "math.h"
 #include "bahnhof/track/state.h"
+#include "bahnhof/graphics/sprite.h"
 
 namespace Tracks{
     class Tracksystem;}
@@ -12,9 +13,7 @@ class Game;
 class Rendering;
 class Train;
 class Route;
-namespace UI{
-    class EditableText;
-}
+struct BuildingType;
 
 const int gasbutton = SDL_SCANCODE_RIGHT;
 const int brakebutton = SDL_SCANCODE_LEFT;
@@ -28,46 +27,47 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-class InputManager;
-
-class TextInputManager
-{
-public:
-    TextInputManager(InputManager& owner) : input(owner) {};
-    void starttextinput(UI::EditableText* textobject);
-    void savetext();
-    void endtextinput();
-    bool handle(SDL_Event& e);
-    bool iswriting() {return editingtextobject!=nullptr;};
-private:
-    InputManager& input;
-    UI::EditableText* editingtextobject = nullptr;
+enum InputState {
+    idle,
+    placingsignals,
+    placingtracks,
+    placingbuildings
 };
+
+class TextInputManager;
+class TrackBuilder;
+class SignalBuilder;
+class BuildingBuilder;
 
 class InputManager
 {
 public:
     InputManager(Game* whatgame);
-    TextInputManager& gettextinputmanager() {return textinput;};
+    ~InputManager();
+    TextInputManager& gettextinputmanager();
     void handle(int ms, int mslogic);
-    void render(Rendering*, Tracks::Tracksystem&);
+    void render(Rendering*);
     Vec screenmousepos();
     Vec mapmousepos();
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
-    void selecttrain(Train* train);
-    Train* getselectedtrain() {return selectedtrain;};
     void editroute(Route* route);
     void placesignal();
     void placetrack();
+    void placebuilding(const BuildingType& type);
+    void resetinput();
 private:
+    void leftclickmap(Vec mousepos);
+    void rightclickmap(Vec mousepos);
+    void leftreleasedmap(Vec mouspos);
+    void keydown(SDL_Keycode key);
+    void selecttrain(Train* train);
     Game* game;
-    TextInputManager textinput;
+    std::unique_ptr<TextInputManager> textinput;
+    std::unique_ptr<TrackBuilder> trackbuilder;
+    std::unique_ptr<SignalBuilder> signalbuilder;
+    std::unique_ptr<BuildingBuilder> builder;
+    InputState inputstate = idle;
     const Uint8* keys;
-    bool placingsignal = false;
-    bool placingtrack = false;
-    Train* selectedtrain = nullptr;
-    nodeid selectednode = 0;
-    Vec trackorigin;
     Route* editingroute = nullptr;
 };

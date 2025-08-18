@@ -12,6 +12,7 @@ namespace UI{
 
 class Host;
 class Dropdown;
+class Ownership;
 
 enum TextStyle{
     Info,
@@ -45,6 +46,7 @@ class Host
 {
 public:
     Host(InterfaceManager* newui, SDL_Rect newrect);
+    virtual ~Host();
     bool checkclick(Vec pos);
     void mousehover(Vec pos, int ms);
     void click(Vec pos, int type);
@@ -58,6 +60,7 @@ public:
     InterfaceManager& getui();
     SDL_Rect getglobalrect();
     SDL_Rect getlocalrect();
+    Ownership* owner = nullptr;
 protected:
     Element* getelementat(Vec pos);
     Game* game;
@@ -72,6 +75,7 @@ class UIRendering{
 public:
     UIRendering(InterfaceManager& newui);
     void rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, float angle=0, bool ported=false, bool originiscenter=false, int centerx=0, int centery=0);
+    void renderrectangle(Rendering* r, SDL_Rect rectangle, UI::TextStyle style, bool filled=false);
     SDL_Rect rendertext(Rendering*, std::string, SDL_Rect, UI::TextStyle, bool centered=false, int margin_x=0, int margin_y=0);
     SDL_Rect gettextsize(std::string text, SDL_Rect maxrect, int margin_x=0, int margin_y=0);
     std::string croptexttowidth(const std::string& text, int maxwidth, int margin_x=0);
@@ -97,7 +101,7 @@ public:
     bool mousehover(Vec pos, int ms);
     bool click(Vec pos, int type);
     bool scroll(Vec pos, int distance);
-    void leftbuttonup(Vec pos);
+    bool leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
     void addpanel(UI::Host*);

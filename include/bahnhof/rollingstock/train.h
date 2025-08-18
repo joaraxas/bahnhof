@@ -4,13 +4,22 @@
 #include "bahnhof/graphics/sprite.h"
 
 
+class InputManager;
 class Route;
+class Wagon;
 struct TrainInfo;
+namespace Tracks{
+    struct Tracksystem;
+}
+namespace UI{
+    class Ownership;
+}
 
 class Train
 {
 public:
     Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons);
+    ~Train();
     void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
@@ -27,6 +36,9 @@ public:
     bool split(int where, Route* assignedroute=nullptr);
     void couple(Train& train, bool ismyback, bool ishisback);
     TrainInfo getinfo();
+    void select();
+    void deselect();
+    bool isselected() {return selected;};
     Tracks::Tracksystem* tracksystem;
     float speed;
     bool gasisforward = true;
@@ -35,10 +47,11 @@ public:
     int orderid = 0;
     bool go = false;
     bool wantstocouple = false;
-    bool selected = false;
     std::string name = "no name";
 private:
     bool checkifreachedstate(State goalstate, int ms);
+    std::unique_ptr<UI::Ownership> panel;
+    bool selected = false;
     Sprite light;
     Game* game = nullptr;
 };

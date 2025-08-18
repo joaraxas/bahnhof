@@ -1,7 +1,8 @@
 #include<iostream>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
+#include "bahnhof/input/textinput.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -32,7 +33,6 @@ EditableText::~EditableText()
     if(beingedited){
         game->getinputmanager().gettextinputmanager().endtextinput();
     }
-    std::cout<<"del editable text: " <<text<<std::endl;
 }
 
 void EditableText::leftclick(Vec mousepos)
@@ -43,19 +43,15 @@ void EditableText::leftclick(Vec mousepos)
 void EditableText::render(Rendering* r)
 {
     if(beingedited){
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
         std::string textwithcursor = text;
         textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
-        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), style, centered, margin_x, margin_y);
+        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), Info, centered, margin_x, margin_y);
     }
     else{
         ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, margin_x, margin_y);
     }
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
 
 void EditableText::updatesource()

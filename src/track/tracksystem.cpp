@@ -2,7 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/camera.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
@@ -44,7 +44,8 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), 0, -1);
 	addnode(*newnode);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
-		Tracksection section = Input::buildat(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		Tracksection section = Input::planconstructionto(*this, newnode, Vec(xs[iNode], ys[iNode]));
+		Input::buildsection(*this, section);
 		newnode = section.nodes.back();
 	}
 	references = std::make_unique<Referencehandler>(this);
@@ -74,7 +75,7 @@ trackid Tracksystem::addtrack(Track& track){
 	trackcounter++;
 	tracks[trackcounter] = &track;
 	track.id = trackcounter;
-	track.initnodes();
+	track.connecttonodes();
 	return trackcounter;
 }
 
@@ -99,6 +100,7 @@ void Tracksystem::removenode(nodeid toremove)
 
 void Tracksystem::removetrack(trackid toremove)
 {
+	tracks[toremove]->disconnectfromnodes();
 	delete tracks[toremove];
 	tracks.erase(toremove);
 }

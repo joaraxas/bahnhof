@@ -41,7 +41,7 @@ void setsignal(Tracksystem& tracksystem, signalid signal, int redgreenorflip)
 
 Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
 {
-	return tracksystem.getsignal(signal)->pos();
+	return getsignalposfromstate(tracksystem, tracksystem.getsignal(signal)->state);
 }
 
 void render(Tracksystem& tracksystem, Rendering* r)
@@ -49,7 +49,7 @@ void render(Tracksystem& tracksystem, Rendering* r)
 	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
 }
 
-void render(Tracksection section, Rendering* r, int mode)
+void render(Tracksection section, Rendering* r, TracksDisplayMode mode)
 {
 	for(auto const track : section.tracks)
 		track->render(r, mode);
@@ -191,6 +191,20 @@ bool isendofline(Tracksystem& tracksystem, State state)
 			if(tracksystem.gettrack(state.track)->nexttrack()==nullptr)
 				return true;
 	return false;
+}
+
+State getstartpointstate(Tracksection& section)
+{
+	if(section.tracks.size()==0)
+		return State(0,0,true);
+	return State(section.tracks.front()->id, 0, true);
+}
+
+Vec gettrackextension(Tracksystem& tracksystem, State fromstate, float distance, float& angle){
+    if(fromstate){
+        angle = Tracks::getorientation(tracksystem, fromstate);
+    }
+    return Vec(distance*cos(-angle),distance*sin(-angle));
 }
 
 }

@@ -5,13 +5,14 @@
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/resources/storage.h"
+#include "bahnhof/ui/panels.h"
 
 
 Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons)
@@ -19,11 +20,15 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
+	panel = std::make_unique<UI::Ownership>();
 	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;
 	light.setspritesheet(game->getsprites(), sprites::light);
 }
+
+Train::~Train()
+{}
 
 void Train::getinput(InputManager* input, int ms)
 {
@@ -53,7 +58,7 @@ void Train::update(int ms)
 	// uncomment to remove radius speed restriction
 	// /*
 	for(auto w : wagons)
-		minradius = fmin(minradius, abs(getradius(*tracksystem, w->frontendstate())));
+		minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
 	// */
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
@@ -71,7 +76,7 @@ void Train::update(int ms)
 	Tracks::Signaling::runoverblocks(*tracksystem, forwardstate(), pixels, this);
 	Tracks::Signaling::runoverblocks(*tracksystem, flipstate(backwardstate()), pixels, nullptr);
 	for(auto& wagon : wagons)
-		wagon->travel(sign(speed)*pixels);
+		wagon->axes->travel(sign(speed)*pixels);
 }
 
 bool Train::perform(int ms)
@@ -171,15 +176,15 @@ State Train::forwardstate()
 {
 	if(gasisforward){
 		if(wagons.front()->alignedforward)
-			return wagons.front()->frontendstate();
+			return wagons.front()->axes->frontendstate();
 		else
-			return flipstate(wagons.front()->backendstate());
+			return flipstate(wagons.front()->axes->backendstate());
 	}
 	else{
 		if(wagons.back()->alignedforward)
-			return flipstate(wagons.back()->backendstate());
+			return flipstate(wagons.back()->axes->backendstate());
 		else
-			return wagons.back()->frontendstate();
+			return wagons.back()->axes->frontendstate();
 	}
 }
 
@@ -187,15 +192,15 @@ State Train::backwardstate()
 {
 	if(gasisforward){
 		if(wagons.back()->alignedforward)
-			return flipstate(wagons.back()->backendstate());
+			return flipstate(wagons.back()->axes->backendstate());
 		else
-			return wagons.back()->frontendstate();
+			return wagons.back()->axes->frontendstate();
 	}
 	else{
 		if(wagons.front()->alignedforward)
-			return wagons.front()->frontendstate();
+			return wagons.front()->axes->frontendstate();
 		else
-			return flipstate(wagons.front()->backendstate());
+			return flipstate(wagons.front()->axes->backendstate());
 	}
 }
 
@@ -207,14 +212,14 @@ void Train::checkcollision(int ms, Train* train)
 		float distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->forwardstate()), pixels, true);
 		if(distance<pixels){
 			for(auto wagon: wagons)
-				wagon->travel(distance*sign(speed));
+				wagon->axes->travel(distance*sign(speed));
 			couple(*train, gasisforward, train->gasisforward);
 		}
 		else{
 			distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->backwardstate()), pixels, true);
 			if(distance<pixels){
 				for(auto wagon: wagons)
-					wagon->travel(distance*sign(speed));
+					wagon->axes->travel(distance*sign(speed));
 				couple(*train, gasisforward, !train->gasisforward);
 			}
 		}
@@ -297,7 +302,7 @@ bool Train::unloadall()
 		Storage* storage = getstorageatpoint(w->pos);
 		if(storage){
 			resourcetype beingunloaded;
-			int unloadedamount = w->unloadwagon(&beingunloaded);
+			int unloadedamount = w->unloadwagon(beingunloaded);
 			if(storage->accepts(beingunloaded)){
 				int loadedamount = storage->loadstorage(beingunloaded, unloadedamount);
 				if(loadedamount==unloadedamount && loadedamount!=0)
@@ -321,25 +326,21 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		bool ismyback = !ismyfront;
 		if(ismyback){
 			if(ishisfront){
-				std::cout << "couple back front" << std::endl;
 				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 			}
 			else{
-				std::cout << "couple back back" << std::endl;
 				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 				flipdirection = true;
 			}
 		}
 		else{
 			if(ishisfront){
-				std::cout << "couple front front" << std::endl;
 				std::reverse(wagons.begin(), wagons.end());
 				wagons.insert(wagons.end(), train.wagons.begin(), train.wagons.end());
 				std::reverse(wagons.begin(), wagons.end());
 				flipdirection = true;
 			}
 			else{
-				std::cout << "couple front back" << std::endl;
 				std::reverse(wagons.begin(), wagons.end());
 				wagons.insert(wagons.end(), train.wagons.rbegin(), train.wagons.rend());
 				std::reverse(wagons.begin(), wagons.end());
@@ -352,8 +353,11 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		train.wagons = {};
 		for(auto wagon : wagons)
 			wagon->train = this;
-		if(train.selected)
-			selected = true;
+		std::cout<<"couple me: "<<name<<std::endl;
+		std::cout<<"to other train: "<<train.name<<std::endl;
+		if(train.panel->exists()){
+			select();
+		}
 		wantstocouple = false;
 	}
 	else{
@@ -382,14 +386,30 @@ bool Train::split(int where, Route* assignedroute)
 		trainmanager.addtrain(newtrain);
 		newtrain->route = assignedroute;
 	}
-	std::cout << "split" << std::endl;
 	return true;
 }
 
-TrainInfo Train::getinfo(){
+TrainInfo Train::getinfo()
+{
 	std::vector<WagonInfo> wagoninfos;
 	for(auto& wagon : wagons){
 		wagoninfos.push_back(wagon->getinfo());
 	}
 	return TrainInfo(this, name, speed, wagoninfos);
+}
+
+void Train::select()
+{
+	selected = true;
+	if(!panel->exists()){
+		panel->set(new UI::TrainPanel(&game->getui(), 
+									  {300,200,400,220}, 
+									  game->getgamestate().gettrainmanager(), 
+									  *this));
+	}
+}
+
+void Train::deselect()
+{
+	selected = false;
 }

@@ -18,6 +18,9 @@ extern bool nicetracks;
 
 class Game; class Camera; class Gamestate;
 
+int getlogicalscale();
+Vec getviewsize();
+
 class Rendering
 {
 public:
@@ -29,9 +32,8 @@ public:
     void renderline(Vec pos1, Vec pos2, bool ported=true);
     void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
-    Vec getviewsize();
+    void renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported=true, bool zoomed=true);
     float getcamscale();
-    int getlogicalscale();
     Game& getgame() {return *game;};
 private:
     Game* game;

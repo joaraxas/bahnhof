@@ -6,12 +6,12 @@
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/trainmanager.h"
-#include "bahnhof/buildings/buildings.h"
+#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/resources/storage.h"
 
 Vec randpos(int xoffset, int yoffset)
@@ -38,14 +38,13 @@ void Rendering::render(Gamestate* gamestate)
 		SDL_Rect rect = {x,y,128,128};
 		rendertexture(fieldtex, &rect);
 	}}
-	for(auto& building : gamestate->buildings)
-		building->render(this);
+	Tracks::render(tracksystem, this);
+	gamestate->gettrainmanager().render(this);
+	gamestate->getbuildingmanager().render(this);
 	for(auto& storage : storages)
 		storage->render(this);
-	Tracks::render(tracksystem, this);
-	game->getinputmanager().render(this, tracksystem);
-	gamestate->gettrainmanager().render(this);
 	Tracks::renderabovetrains(tracksystem, this);
+	game->getinputmanager().render(this);
 
 	InterfaceManager& ui = game->getui();
 	ui.render(this);
@@ -146,7 +145,34 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-Vec Rendering::getviewsize()
+void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported, bool zoomed)
+{
+	if(ported && zoomed){
+		for (int i = 0; i < iverts; ++i) {
+			Vec scaledv = cam->screencoord(verts[i].position);
+			verts[i].position.x = scaledv.x;
+			verts[i].position.y = scaledv.y;
+		}
+	}
+	else{
+		if(ported)
+			std::cout<<"error: ported non-zoomed polygon rendering is not supported yet!"<<std::endl;
+		if(zoomed)
+			std::cout<<"error: zoomed non-ported polygon rendering is not supported yet!"<<std::endl;
+	}
+	for (int i = 0; i < iverts; ++i) {
+        verts[i].color = color;
+        verts[i].tex_coord = {0, 0};
+    }
+	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+}
+
+float Rendering::getcamscale()
+{
+	return cam->getscale();
+}
+
+Vec getviewsize()
 {
 	// Returns renderer size in useful logical pixels
 	// Use this instead of SDL native functions
@@ -155,7 +181,7 @@ Vec Rendering::getviewsize()
 	return Vec(windowwidthinpixels, windowheightinpixels);
 }
 
-int Rendering::getlogicalscale()
+int getlogicalscale()
 {
 	// Returns ratio of logical to input pixels, which is 2 on retina displays and 1 otherwise.
 	// This function is only used to determine the initial UI scaling.
@@ -168,9 +194,4 @@ int Rendering::getlogicalscale()
 	if(xscale!=yscale)
 		std::cout<<"warning: Rendering::getlogicalsize() returns different yscale from xscale"<<std::endl;
 	return xscale;
-}
-
-float Rendering::getcamscale()
-{
-	return cam->getscale();
 }

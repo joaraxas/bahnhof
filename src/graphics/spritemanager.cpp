@@ -26,6 +26,12 @@ SpriteManager::SpriteManager(Game* g) : game(g)
 	addspritesheet(beer, "resources/beer.png");
 	addspritesheet(hops, "resources/hops.png");
 	addspritesheet(barley, "resources/barley.png");
+
+	addspritesheet(brewery, "buildings/brewery2.png");
+	addspritesheet(tavern, "buildings/tavern.png");
+	addspritesheet(hopsfield, "buildings/hopsfield.png");
+	addspritesheet(barleyfield, "buildings/barleyfield.png");
+	addspritesheet(wagonfactory, "buildings/wagonfactory.png");
 }
 
 void SpriteManager::addspritesheet(sprites::name name, std::string pathtopng, int imagenumber, int imagetypes)

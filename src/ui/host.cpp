@@ -1,5 +1,6 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/panels.h"
 
 namespace UI{
 
@@ -10,6 +11,9 @@ Host::Host(InterfaceManager* newui, SDL_Rect newrect)
 	rect = newrect;
 }
 
+Host::~Host()
+{}
+
 InterfaceManager& Host::getui()
 {
     return *ui;
@@ -18,6 +22,9 @@ InterfaceManager& Host::getui()
 void Host::erase()
 {
     ui->removepanel(this);
+	if(owner){
+		owner->resetreference();
+	}
 }
 
 SDL_Rect Host::getglobalrect()

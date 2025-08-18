@@ -4,12 +4,16 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+#include <map>
+#include <unordered_set>
 
-class Vec
+struct SDL_FPoint;
+
+struct Vec
 {
-    public:
     Vec();
     Vec(float xstart, float ystart);
+    Vec(const SDL_FPoint& point);
     Vec operator+(Vec);
     Vec operator-(Vec);
     Vec operator*(float);

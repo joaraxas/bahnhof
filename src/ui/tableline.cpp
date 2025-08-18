@@ -1,10 +1,12 @@
 #include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/tablelines.h"
 #include "bahnhof/ui/decoration.h"
+#include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildingtypes.h"
 
 namespace UI{
 
@@ -42,8 +44,7 @@ RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
 void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableTextLine::render(r, maxarea);
-    SDL_SetRenderDrawColor(renderer,0,0,0,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
 }
 
 OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
@@ -54,15 +55,13 @@ OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string d
 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
-    uint8_t intensity = 255*selected;
     TextStyle style;
     if(selected)
         style = Highlighted;
     else
         style = Info;
     TableTextLine::render(r, maxarea, style);
-    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
@@ -75,27 +74,68 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     rect = maxarea;
     TextStyle style = Info;
-    if(info.train->selected)
+    if(info.train->isselected())
         style = Highlighted;
-    Uint8 intensity = 255*info.train->selected;
     int rowoffset = 2;
     int textpadding = 5;
     int namerowwidth = 60;
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
-    SDL_SetRenderDrawColor(renderer,intensity,intensity,intensity,255);
     
     namerect = ui->getuirendering().rendertext(r, info.name, namerect, style, false, textpadding, rowoffset);
     rect.h = namerect.h;
     
     SDL_Rect trainiconrect = getlocalrect();
     trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
-                              trainiconrect.y+rowoffset, 
-                              trainiconrect.w-namerowwidth-2*textpadding, 
-                              namerect.h-2*rowoffset};
+                     trainiconrect.y+rowoffset, 
+                     trainiconrect.w-namerowwidth-2*textpadding, 
+                     namerect.h-2*rowoffset};
+    // The local rectangle works here because we are rendering to a separate table target
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
     
-    r->renderrectangle(ui->getuirendering().uitoscreen(getlocalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
+}
+
+PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost) : 
+    TableLine(p, t),
+    name(name),
+    price(cost)
+{
+    SpriteManager& sprites = game->getsprites();
+    icon.setspritesheet(sprites, iconname);
+    icon.ported = false;
+}
+
+void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
+{
+    rect = maxarea;
+    TextStyle style = Info;
+    Vec screeniconsize = icon.getsize();
+    Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
+    // if(info.train->selected)
+    //     style = Highlighted;
+    int rowoffset = 2;
+    int textpadding = 5;
+    int pricerowwidth = 50;
+    int iconwidth = uiiconsize.x + textpadding;
+    int namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
+    
+    SDL_Rect namerect = getlocalrect();
+    namerect.w = namerowwidth;
+    namerect.x += iconwidth;
+    namerect = ui->getuirendering().rendertext(r, name, namerect, style, false, textpadding, rowoffset);
+    SDL_Rect pricerect = getlocalrect();
+    pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
+    pricerect.w = pricerowwidth;
+    pricerect = ui->getuirendering().rendertext(r, std::to_string(price)+" Fr", pricerect, style, false, textpadding, rowoffset);
+    rect.h = std::fmax(std::fmax(namerect.h, pricerect.h), uiiconsize.y+2*rowoffset);
+    SDL_Rect uiiconrect = getlocalrect();
+    uiiconrect.x += textpadding;
+    uiiconrect.y += rowoffset;
+    SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
+    icon.render(r, Vec(screeniconrect.x+screeniconsize.x*0.5, screeniconrect.y+screeniconsize.y*0.5));
+    
+    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 } //end namespace UI

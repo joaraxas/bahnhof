@@ -1,6 +1,7 @@
 #pragma once
 #include<map>
 #include "state.h"
+#include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/graphics/sprite.h"
 
@@ -71,8 +72,9 @@ class Track
 public:
     Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid myid);
     ~Track();
-    void initnodes();
-    void render(Rendering* r, int mode);
+    void connecttonodes();
+    void disconnectfromnodes();
+    void render(Rendering* r, TracksDisplayMode mode);
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);
@@ -81,7 +83,7 @@ public:
     Track* nexttrack();
     Track* previoustrack();
     void split(Track& track1, Track& track2, State where);
-    State getsplitstate(Track& track1, Track& track2, State where, State oldstate);
+    State getnewstateaftersplit(Track& track1, Track& track2, State where, State oldstate);
     void connectsignal(State signalstate, signalid signal);
     void disconnectsignal(signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
@@ -107,26 +109,29 @@ class Signal
 {
 public:
     Signal(Tracksystem& newtracksystem, State signalstate, signalid myid);
+    Vec getpos() {return pos;};
     void addtotrack();
     void disconnectfromtrack();
     void render(Rendering* r);
     void update();
     void set(int redgreenorflip);
     int getcolorforordergeneration();
-    Vec pos();
     bool isred(Train* train);
     State state;
     Train* reservedfor = nullptr;
     signalid id;
 private:
     Tracksystem* tracksystem;
+    Vec pos;
     bool isgreen = true;
     Trackblock blocks;
     Icon sprite;
 };
 
-    State tryincrementingtrack(Tracksystem&, State state);
-    float distancebetween(Vec, Vec);
+Vec getsignalposfromstate(Tracksystem&, State state);
+
+State tryincrementingtrack(Tracksystem&, State state);
+float distancebetween(Vec, Vec);
 
 namespace Input
 {
@@ -136,5 +141,13 @@ namespace Input
     signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
     nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);
 }
+
+namespace Construction
+{
+    Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec pos);
+    Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
+    Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
+    void splittrack(Tracksystem&, Node* node, State state);
+};
 
 }

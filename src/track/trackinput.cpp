@@ -5,7 +5,7 @@
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
@@ -13,9 +13,47 @@ namespace Tracks
 {
 namespace Input
 {
+State getstateat(Tracksystem& tracksystem, Vec pos)
+{
+	return getcloseststate(tracksystem, pos);
+}
+
+State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
+{
+	float mindistsquared = mindist*mindist/tracksystem.game->getcamera().getscale();
+	Node* closestnode = nullptr;
+	for(auto const node: tracksystem.allnodes()){
+		if(node->trackdown && node->trackup)
+			continue;
+		if(!node->trackdown && !node->trackup) // this should never happen
+			continue;
+		float distsquared = pow(node->getpos().x-pos.x, 2) + pow(node->getpos().y-pos.y, 2);
+		if(distsquared < mindistsquared){
+			closestnode = node;
+			mindistsquared = distsquared;
+		}
+	}
+	State nearestendstate;
+	if(!closestnode)
+	return State();
+	if(closestnode->trackup){
+		if(closestnode->trackup->nextnode==closestnode)
+			return State(closestnode->trackup->id, 1, true);
+		return State(closestnode->trackup->id, 0, false);
+	}
+	if(closestnode->trackdown->nextnode==closestnode)
+		return State(closestnode->trackdown->id, 1, true);
+	return State(closestnode->trackdown->id, 0, false);
+}
+
+Vec plansignalat(Tracksystem& tracksystem, Vec pos)
+{
+	State signalstate = getcloseststate(tracksystem, pos);
+	return getsignalposfromstate(tracksystem, signalstate);
+}
+
 signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 {
-	trackid clickedtrack = 0;
 	State signalstate = getcloseststate(tracksystem, pos);
 	return tracksystem.addsignal(signalstate);
 }
@@ -63,18 +101,24 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 		}
 		return section;
 	}
-	Vec posdiff = pos - frompos;
-	float dir = atan2(-posdiff.y,posdiff.x);
-	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
-	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
-	newsection = newsection + Tracksection({},{fromnode});
-	return newsection;
+	return Construction::extendtracktopos(tracksystem, frompos, pos);
 }
 
-Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle)
 {
-	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
-	
+	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
+	Vec trackextension = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
+	if(neareststate){
+		Node* nearestnode = tracksystem.getnode(getclosestnode(tracksystem, frompos)); // TODO: should be able to infer this from neareststate instead, this is risky
+		return Construction::extendtracktopos(tracksystem, nearestnode, getpos(tracksystem, neareststate)+trackextension);
+	}
+	else{
+		return Construction::extendtracktopos(tracksystem, frompos, frompos+trackextension);
+	}
+}
+
+void buildsection(Tracksystem& tracksystem, const Tracksection& section)
+{
 	for(auto node : section.nodes)
 		tracksystem.addnode(*node);
 	for(auto track : section.tracks)
@@ -82,26 +126,21 @@ Tracksection buildat(Tracksystem& tracksystem, Node* fromnode, Vec pos)
 	for(auto [node, state] : section.tracksplits){
 		Construction::splittrack(tracksystem, node, state);
 	}
-
-	return section;
 }
 
-Tracksection buildat(Tracksystem& tracksystem, Vec frompos, Vec topos)
+void discardsection(Tracksection& section)
 {
-	Tracksection section = planconstructionto(tracksystem, frompos, topos);
-	
-	for(auto node : section.nodes)
-		tracksystem.addnode(*node);
-	for(auto track : section.tracks)
-		tracksystem.addtrack(*track);
-	for(auto [node, state] : section.tracksplits){
-		Construction::splittrack(tracksystem, node, state);
+	for(int i=0; i<section.tracks.size(); i++){
+		delete section.tracks[i];
+		section.tracks[i]=nullptr;
 	}
-
-	return section;
+	for(int i=0; i<section.nodes.size(); i++){
+		delete section.nodes[i];
+		section.nodes[i]=nullptr;
+	}
 }
 
-nodeid selectat(Tracksystem& tracksystem, Vec pos)
+nodeid selectnodeat(Tracksystem& tracksystem, Vec pos)
 {
 	nodeid selectednode = 0;
 	whatdidiclick(tracksystem, pos, nullptr, &selectednode, nullptr, nullptr);
@@ -137,17 +176,8 @@ void deleteat(Tracksystem& tracks, Vec pos)
 {
 	trackid clickedtrack=0; signalid clickedsignal=0;
 	State clickedstate = whatdidiclick(tracks, pos, &clickedtrack, nullptr, &clickedsignal, nullptr);
-	if(clickedtrack){
-		bool mayremove = true;
-		for(auto wagon: tracks.references->wagons){
-			for(State* stateptr: wagon->getstates()){
-				if(stateptr->track==clickedtrack)
-					mayremove = false;
-			}
-		}
-		if(mayremove){
-			tracks.removetrack(clickedtrack);
-		}
+	if(clickedtrack && tracks.references->maytrackberemoved(clickedtrack)){
+		tracks.removetrack(clickedtrack);
 	}
 	if(clickedsignal){
 		Signal* signalptr = tracks.getsignal(clickedsignal);
@@ -172,7 +202,7 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 	if(track){
 		*track = 0;
 		closeststate = getcloseststate(tracksystem, mousepos);
-		if(closeststate.track)
+		if(closeststate)
 			trackdist = distancebetween(getpos(tracksystem, closeststate), mousepos);
 	}
 	if(node){
@@ -185,7 +215,7 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 		*signal = 0;
 		closestsignal = getclosestsignal(tracksystem, mousepos);
 		if(closestsignal)
-			signaldist = distancebetween(tracksystem.getsignal(closestsignal)->pos(), mousepos);
+			signaldist = distancebetween(tracksystem.getsignal(closestsignal)->getpos(), mousepos);
 	}
 	if(_switch){
 		*_switch = 0;
@@ -242,12 +272,12 @@ nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
 	return closestnode;
 }
 
-signalid getclosestsignal(Tracksystem& tracksystem, Vec pos)
+signalid getclosestsignal(Tracksystem& tracks, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	signalid closestsignal = 0;
-	for(auto signal: tracksystem.allsignals()){
-		float distsquared = pow(signal->pos().x-pos.x, 2) + pow(signal->pos().y-pos.y, 2);
+	for(auto signal: tracks.allsignals()){
+		float distsquared = pow(signal->getpos().x-pos.x, 2) + pow(signal->getpos().y-pos.y, 2);
 		if(distsquared < mindistsquared){
 			closestsignal = signal->id;
 			mindistsquared = distsquared;

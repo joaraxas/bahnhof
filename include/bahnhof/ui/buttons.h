@@ -29,7 +29,7 @@ class TextButton : public Button
 {
 public:
     TextButton(Host*, Vec newpos, std::string text, int width=80);
-    virtual ~TextButton() {std::cout<<"del textbutton"<<std::endl;};
+    virtual ~TextButton() {};
     virtual void render(Rendering*);
 protected:
     std::string text;
@@ -55,6 +55,13 @@ class PlaceTrack : public TextButton
 {
 public:
     PlaceTrack(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {};
+    void leftclick(Vec mousepos);
+};
+
+class PlaceBuildings : public TextButton
+{
+public:
+    PlaceBuildings(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Raise building") {};
     void leftclick(Vec mousepos);
 };
 

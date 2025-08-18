@@ -2,13 +2,17 @@
 #include<format>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
+#include "bahnhof/ui/tablelines.h"
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
-#include "bahnhof/common/input.h"
+#include "bahnhof/input/input.h"
+#include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/rollingstock/wagontypes.h"
 
 namespace UI{
 
@@ -16,6 +20,9 @@ Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
 {
     rect = newrect;
 }
+
+Table::~Table()
+{}
 
 bool Table::checkclick(Vec mousepos)
 {
@@ -77,9 +84,13 @@ void Table::render(Rendering* r)
     SDL_Rect maxarea = {0,-linescrolloffset,rect.w,rect.h};
 
     float scale = ui->getuirendering().getuiscale();
-	SDL_Texture* result = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ceil(maxarea.w*scale), ceil(maxarea.h*scale));
-  	SDL_SetTextureBlendMode(result, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderTarget(renderer, result);
+	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
+                                                       SDL_PIXELFORMAT_RGBA8888, 
+                                                       SDL_TEXTUREACCESS_TARGET, 
+                                                       ceil(maxarea.w*scale), 
+                                                       ceil(maxarea.h*scale));
+  	SDL_SetTextureBlendMode(tablerendertarget, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderTarget(renderer, tablerendertarget);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     SDL_RenderFillRect(renderer, NULL);
 
@@ -101,11 +112,11 @@ void Table::render(Rendering* r)
         }
     }
 
-    SDL_SetTextureAlphaMod(result, 255);
+    SDL_SetTextureAlphaMod(tablerendertarget, 255);
 	SDL_SetRenderTarget(renderer, NULL);
     SDL_Rect global = getglobalrect();
-    ui->getuirendering().rendertexture(r, result, &global);
-    SDL_DestroyTexture(result);
+    ui->getuirendering().rendertexture(r, tablerendertarget, &global);
+    SDL_DestroyTexture(tablerendertarget);
 }
 
 Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
@@ -122,7 +133,7 @@ void Dropdown::render(Rendering* r)
         rect.h += line->getlocalrect().h;
     }
 
-    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
     Table::render(r);
 }
 
@@ -174,6 +185,7 @@ void MainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
+
 TrainTable::TrainTable(Host* newpanel, SDL_Rect newrect) : 
     Table(newpanel, newrect)
 {
@@ -197,13 +209,11 @@ void TrainTable::leftclick(Vec mousepos)
         if(index<traininfos.size()){
             trainmanager->deselectall();
             TrainInfo info = traininfos[index];
-            info.train->selected = true;
-            
-            SDL_Rect trainpanelrect = {300,200,400,220};
-            new TrainPanel(ui, trainpanelrect, *trainmanager, *info.train);
+            info.train->select();
         }
     }
 }
+
 
 void TrainInfoTable::update(int ms)
 {
@@ -214,6 +224,7 @@ void TrainInfoTable::update(int ms)
     lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} km/h", kmh)));
     // lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
 }
+
 
 RouteTable::RouteTable(Host* p, SDL_Rect r) : 
     Table(p, r), 
@@ -246,6 +257,7 @@ void RouteTable::leftclick(Vec mousepos)
     }
 }
 
+
 void OrderTable::update(int ms)
 {
 	lines.clear();
@@ -273,6 +285,7 @@ void OrderTable::leftclick(Vec pos)
     }
 }
 
+
 void TrainOrderTable::update(int ms)
 {
     route = train.route;
@@ -291,6 +304,62 @@ void TrainOrderTable::leftclick(Vec pos)
     int index = getlineindexat(pos);
     if(index>=0 && route && index<orderids.size()){
         train.orderid = orderids[index];
+    }
+}
+
+
+ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : 
+        Table(p, r), 
+        input(game->getinputmanager()),
+        buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
+{
+    for(int i=0; i<buildingtypes.size(); i++){
+        const BuildingType& type = buildingtypes[i];
+        lines.emplace_back(
+            new PurchaseOptionTableLine(panel, 
+                this,
+                type.iconname,
+                type.name,
+                type.cost
+            )
+        );
+    }
+}
+
+void ConstructionTable::leftclick(Vec pos)
+{
+    BuildingManager& buildings = game->getgamestate().getbuildingmanager();
+    int index = getlineindexat(pos);
+    if(index>=0){
+        const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
+        input.placebuilding(clickedbuilding);
+    }
+}
+
+
+WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) : 
+        Table(p, r), 
+        input(game->getinputmanager()),
+        factory(f)
+{
+    for(WagonType* type : factory.getavailabletypes()){
+        lines.emplace_back(
+            new PurchaseOptionTableLine(panel, 
+                this,
+                type->iconname,
+                type->name,
+                type->cost
+            )
+        );
+    }
+}
+
+void WagonTable::leftclick(Vec pos)
+{
+    int index = getlineindexat(pos);
+    if(index>=0){
+        const WagonType* clickedwagon = factory.getavailabletypes().at(index);
+        factory.orderwagon(*clickedwagon);
     }
 }
 

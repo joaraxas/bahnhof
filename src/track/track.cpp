@@ -29,16 +29,20 @@ Track::~Track()
 {
 	for(auto [state, signal]: signals)
 		tracksystem->removesignal(signal);
+}
+
+void Track::connecttonodes()
+{
+	previousnode->connecttrack(this, isabovepreviousnode());
+	nextnode->connecttrack(this, !isbelownextnode());
+}
+
+void Track::disconnectfromnodes()
+{
 	bool aboveprevious = isabovepreviousnode();
 	bool abovenext = !isbelownextnode();
 	previousnode->disconnecttrack(this, aboveprevious);
 	nextnode->disconnecttrack(this, abovenext);
-}
-
-void Track::initnodes()
-{
-	previousnode->connecttrack(this, isabovepreviousnode());
-	nextnode->connecttrack(this, !isbelownextnode());
 }
 
 Vec Track::getpos(float nodedist, float transverseoffset)
@@ -153,13 +157,13 @@ void Track::split(Track& track1, Track& track2, State where)
 {
 	for(auto& [nodedist, signal]: signals){
 		Signal* signalptr = tracksystem->getsignal(signal);
-		signalptr->state = getsplitstate(track1, track2, where, signalptr->state);
+		signalptr->state = getnewstateaftersplit(track1, track2, where, signalptr->state);
 		signalptr->addtotrack();
 	}
 	signals.clear();
 }
 
-State Track::getsplitstate(Track& track1, Track& track2, State wheresplit, State oldstate)
+State Track::getnewstateaftersplit(Track& track1, Track& track2, State wheresplit, State oldstate)
 {
 	if(oldstate.track == id){
 		if(oldstate.nodedist<wheresplit.nodedist){
@@ -216,7 +220,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	return reachedsignal;
 }
 
-void Track::render(Rendering* r, int mode)
+void Track::render(Rendering* r, TracksDisplayMode mode)
 {
 	float scale = r->getcamscale();
 	//// banvall ////
@@ -239,9 +243,17 @@ void Track::render(Rendering* r, int mode)
 	}*/
 	//// syllar ////
 	if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 63,63,0,255);
-		if(mode==1)
-			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+		switch(mode){
+			case TracksDisplayMode::normal:
+				SDL_SetRenderDrawColor(renderer, 63,63,0,255);
+				break;
+			case TracksDisplayMode::planned:
+				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+				break;
+			case TracksDisplayMode::impossible:
+				SDL_SetRenderDrawColor(renderer, 127,0,0,255);
+				break;
+		}
 		float sleeperwidth = 2600/150;
 		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
 		int nSleepers = round(getarclength(1)/3*fmin(1,scale));
@@ -256,9 +268,17 @@ void Track::render(Rendering* r, int mode)
 	}
 	//// rals ////
 	if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-		if(mode==1)
-			SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+		switch(mode){
+			case TracksDisplayMode::normal:
+				SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+				break;
+			case TracksDisplayMode::planned:
+				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
+				break;
+			case TracksDisplayMode::impossible:
+				SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+				break;
+		}
 	}
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;

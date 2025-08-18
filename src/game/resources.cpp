@@ -29,6 +29,8 @@ ResourceManager::~ResourceManager()
 
 Resource* ResourceManager::get(resourcetype type)
 {
+	if(type == none)
+		return nullptr;
 	auto it = resourcemap.find(type);
     return (it != resourcemap.end()) ? it->second : nullptr;
 }

@@ -16,16 +16,16 @@ void Sprite::setspritesheet(SpriteManager& s, sprites::name name)
 void Sprite::updateframe(int ms)
 {
 	imageindex += imagespeed*ms*0.001;
-	if(imageindex>=imagenumber)
+	while(imageindex>=imagenumber)
 		imageindex -= imagenumber;
-	if(imageindex<0)
+	while(imageindex<0)
 		imageindex += imagenumber;
 }
 
 void Sprite::render(Rendering* r, Vec pos)
 {
 	if(spritesheet)
-		spritesheet->render(r, pos, ported, zoomed, imageangle, imageindex, imagetype, imagescale);
+		spritesheet->render(r, pos, ported, zoomed, imageangle, imageindex, imagetype, imagescale, color.a, color.r, color.g, color.b);
 	else
 		std::cout<<"Error: sprite tried rendering nonexisting spritesheet, did you forget to call setsprite?"<<std::endl;
 }

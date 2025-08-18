@@ -9,6 +9,7 @@ struct State
 {
     State();
     State(trackid trackstart, float nodediststart, bool alignedwithtrack);
+    operator bool() const {return track>0;};
     trackid track;
     float nodedist;
     bool alignedwithtrack;
