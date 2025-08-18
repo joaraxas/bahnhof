@@ -7,9 +7,13 @@
 #include "bahnhof/common/gamestate.h"
 
 namespace Tracks{
+
+Sprite Node::sprite;
+
 Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
 {
 	dir = truncate(dirstart);
+	Node::sprite.setspritesheet(tracksystem->game->getsprites(), sprites::bufferstop);
 }
 
 void Node::connecttrack(Track* track, bool fromabove){
@@ -75,6 +79,16 @@ void Node::render(Rendering* r)
 		if(trackup)
 			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14/scale);
 		r->rendertext(std::to_string(dir), pos.x, pos.y+4*14/scale);
+	}
+	else if(scale>=0.3){
+		if(!trackdown && trackup){
+			Node::sprite.imageangle = dir + pi;
+			Node::sprite.render(r, pos);
+		}
+		if(!trackup && trackdown){
+			Node::sprite.imageangle = dir;
+			Node::sprite.render(r, pos);
+		}
 	}
 }
 

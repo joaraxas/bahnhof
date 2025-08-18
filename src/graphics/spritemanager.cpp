@@ -2,6 +2,7 @@
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/track/trackinternal.h"
 
 
 SpriteManager::SpriteManager(Game* g) : game(g)
@@ -20,6 +21,8 @@ SpriteManager::SpriteManager(Game* g) : game(g)
 	addspritesheet(sprites::signal, "track/signal.png", 1, 2);
 	get(sprites::signal)->setoriginx(3);
 	get(sprites::signal)->setoriginy(31);
+	addspritesheet(bufferstop, "track/bufferstop.png");
+	get(bufferstop)->setoriginx(0);
 
 	addspritesheet(light, "effects/light.png", 1, 2);
 

@@ -17,6 +17,7 @@ enum name
     icontankloco,
     switchsprite,
     signal,
+    bufferstop,
     light,
     hops,
     barley,
