@@ -2,7 +2,6 @@
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"
-#include "bahnhof/track/trackinternal.h"
 
 
 SpriteManager::SpriteManager(Game* g) : game(g)
