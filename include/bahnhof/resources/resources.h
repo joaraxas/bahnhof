@@ -6,16 +6,23 @@
 
 class Game;
 class Rendering;
+class Shape;
 
 class Resource
 {
 public:
-    Resource(SpriteManager& s, resourcetype newtype, std::string newname, sprites::name spritename);
+    Resource(SpriteManager& s,
+        resourcetype newtype,
+        std::string newname,
+        sprites::name iconname,
+        sprites::name texturename);
     void render(Rendering* r, Vec pos);
+    void renderasshape(Rendering* r, const Shape* shape);
     resourcetype type;
 private:
     std::string name;
     Icon icon;
+    Sprite fillingtexture;
     Game* game;
 };
 

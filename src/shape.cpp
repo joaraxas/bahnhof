@@ -15,20 +15,20 @@ Rectangle::Rectangle(Vec pos, int w, int h) :
 	rect{int(pos.x-w*0.5), int(pos.y-h*0.5), w, h}
 {}
 
-void Rectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
+void Rectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	r->renderfilledrectangle(rect, ported, zoomed);
 }
 
-Vec Rectangle::mid()
+Vec Rectangle::mid() const
 {
 	float x_mid = rect.x+rect.w*0.5;
 	float y_mid = rect.y+rect.h*0.5;
 	return {x_mid, y_mid};
 }
 
-bool Rectangle::contains(Vec pos)
+bool Rectangle::contains(Vec pos) const
 {
 	if(pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h)
 		return true;
@@ -46,7 +46,7 @@ RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float rot
 	mid_x(x_), mid_y(y_), w(w_), h(h_), angle(rotation)
 {}
 
-void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed)
+void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
 	SDL_Vertex verts[4];
 	const float w2 = w*0.5;
@@ -61,12 +61,12 @@ void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, 
 	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
 }
 
-Vec RotatedRectangle::mid()
+Vec RotatedRectangle::mid() const
 {
 	return {mid_x,mid_y};
 }
 
-bool RotatedRectangle::contains(Vec pos)
+bool RotatedRectangle::contains(Vec pos) const
 {
 	Vec diff = localcoords(pos, angle, mid());
 	if(diff.x>=-w*0.5 && diff.x<=w*0.5 && diff.y>=-h*0.5 && diff.y<=h*0.5)
