@@ -20,6 +20,7 @@ enum name
     bufferstop,
     light,
     hops,
+    hopsbgr,
     barley,
     barleybgr,
     beer,

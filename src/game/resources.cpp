@@ -17,7 +17,7 @@ ResourceManager::ResourceManager(Game* whatgame)
 	game = whatgame;
 	SpriteManager& s = game->getsprites();
 	resourcemap[beer] = new Resource(s, beer, "Beer", sprites::beer, sprites::barleybgr);
-	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops, sprites::barleybgr);
+	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops, sprites::hopsbgr);
 	resourcemap[barley] = new Resource(s, barley, "Barley", sprites::barley, sprites::barleybgr);
 }
 

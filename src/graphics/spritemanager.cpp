@@ -30,6 +30,7 @@ SpriteManager::SpriteManager(Game* g) : game(g)
 	addspritesheet(barley, "resources/icons/barley.png");
 
 	addspritesheet(barleybgr, "resources/textures/barley.png");
+	addspritesheet(hopsbgr, "resources/textures/hops.png");
 
 	addspritesheet(brewery, "buildings/brewery2.png");
 	addspritesheet(tavern, "buildings/tavern.png");
