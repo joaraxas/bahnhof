@@ -25,9 +25,11 @@ SpriteManager::SpriteManager(Game* g) : game(g)
 
 	addspritesheet(light, "effects/light.png", 1, 2);
 
-	addspritesheet(beer, "resources/beer.png");
-	addspritesheet(hops, "resources/hops.png");
-	addspritesheet(barley, "resources/barley.png");
+	addspritesheet(beer, "resources/icons/beer.png");
+	addspritesheet(hops, "resources/icons/hops.png");
+	addspritesheet(barley, "resources/icons/barley.png");
+
+	addspritesheet(barleybgr, "resources/textures/barley.png");
 
 	addspritesheet(brewery, "buildings/brewery2.png");
 	addspritesheet(tavern, "buildings/tavern.png");

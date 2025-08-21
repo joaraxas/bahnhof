@@ -11,9 +11,9 @@ class Shape
 public:
     virtual ~Shape() {};
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
-    virtual Vec mid() {return Vec(0,0);};
-    virtual bool contains(Vec) {return false;};
-    virtual float getorientation() {return 0;};
+    virtual Vec mid() const {return Vec(0,0);};
+    virtual bool contains(Vec) const {return false;};
+    virtual float getorientation() const {return 0;};
 };
 
 class Rectangle : public Shape

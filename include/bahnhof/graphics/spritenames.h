@@ -21,6 +21,7 @@ enum name
     light,
     hops,
     barley,
+    barleybgr,
     beer,
     brewery,
     tavern,

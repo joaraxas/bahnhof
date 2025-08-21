@@ -104,7 +104,9 @@ void TrainManager::inittrain(State startstate)
 	addwagon(new Wagon(tracks, startstate, rollingstock.gettypefromid(WagonID::tanklocomotive)));
 	for(int iWagon=0; iWagon<3; iWagon++){
 		State state = Tracks::travel(*tracks, startstate, -(53+49)/2-iWagon*49);
-		addwagon(new Wagon(tracks, state, rollingstock.gettypefromid(WagonID::openwagon)));
+		Wagon* newwagon = new Wagon(tracks, state, rollingstock.gettypefromid(WagonID::openwagon));
+		addwagon(newwagon);
+		newwagon->loadwagon(barley, 1);
 	}
     std::vector<Wagon*> newwagonset;
     for(auto it = wagons.begin()+nWagons; it!=wagons.end(); ++it){

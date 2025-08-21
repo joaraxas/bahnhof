@@ -16,9 +16,9 @@ ResourceManager::ResourceManager(Game* whatgame)
 {
 	game = whatgame;
 	SpriteManager& s = game->getsprites();
-	resourcemap[beer] = new Resource(s, beer, "Beer", sprites::beer, sprites::beer);
-	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops, sprites::hops);
-	resourcemap[barley] = new Resource(s, barley, "Barley", sprites::barley, sprites::barley);
+	resourcemap[beer] = new Resource(s, beer, "Beer", sprites::beer, sprites::barleybgr);
+	resourcemap[hops] = new Resource(s, hops, "Hops", sprites::hops, sprites::barleybgr);
+	resourcemap[barley] = new Resource(s, barley, "Barley", sprites::barley, sprites::barleybgr);
 }
 
 ResourceManager::~ResourceManager()
@@ -58,8 +58,9 @@ void Resource::render(Rendering* r, Vec pos)
 
 void Resource::renderasshape(Rendering* r, const Shape* shape)
 {
-	// fillingtexture.render(r, shape);
-	shape->renderfilled(r, {0,0,0,255});
+	fillingtexture.imageangle = shape->getorientation();
+	fillingtexture.render(r, shape->mid());
+	// shape->renderfilled(r, {0,0,255,255});
 }
 
 Storage::Storage(Game* whatgame, int x, int y, int w, int h)

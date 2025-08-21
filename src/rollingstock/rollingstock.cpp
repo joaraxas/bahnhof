@@ -2,6 +2,7 @@
 #include<string>
 #include<map>
 #include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/shape.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
@@ -50,7 +51,12 @@ void Wagon::render(Rendering* r)
 		sprite.render(r, pos);
 	if(cargo && cargo->getloadedresourcetype()!=none){
 		Resource* resource = cargo->getloadedresource();
-		resource->render(r, pos);
+		if(scale<0.3)
+			resource->render(r, Vec(int(pos.x), int(pos.y)));
+		else{
+			RotatedRectangle space(pos, 41, 16, sprite.imageangle);
+			resource->renderasshape(r, &space);
+		}
 	}
 }
 
