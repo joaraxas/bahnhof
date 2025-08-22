@@ -28,7 +28,7 @@ Wagon::Wagon(Tracks::Tracksystem* mytracks, State trackstate, const WagonType& t
 	if(type.storagecapacity>0)
 		cargo = std::make_unique<RollingStock::Cargo>(*this, 
 													mytracks->game->getresources(), 
-													type.storableresources);
+													type);
 }
 
 Wagon::~Wagon()
@@ -49,15 +49,8 @@ void Wagon::render(Rendering* r)
 		icon.render(r, pos);
 	else
 		sprite.render(r, pos);
-	if(cargo && cargo->getloadedresourcetype()!=none){
-		Resource* resource = cargo->getloadedresource();
-		if(scale<0.3)
-			resource->render(r, Vec(int(pos.x), int(pos.y)));
-		else{
-			RotatedRectangle space(pos, 41, 16, sprite.imageangle);
-			resource->renderasshape(r, &space);
-		}
-	}
+	if(cargo)
+		cargo->render(r, pos, sprite.imageangle, scale);
 }
 
 int Wagon::loadwagon(resourcetype resource, int amount)
@@ -146,6 +139,26 @@ float Engine::getpower()
 		return P[wagon.alignedforward==wagon.train->gasisforward];
 	else
 		return 0;
+}
+
+Cargo::Cargo(Wagon& w, ResourceManager& r, const WagonType& type) : 
+    wagon(w), 
+	allresources(r), 
+	storableresources(type.storableresources),
+    renderstorage(type.renderstorage)
+{}
+
+void Cargo::render(Rendering* r, Vec pos, float angle, float scale)
+{
+	if(getloadedresourcetype()!=none){
+		Resource* resource = getloadedresource();
+		if(scale<0.3)
+			resource->render(r, pos);
+		else if(renderstorage){
+			RotatedRectangle space(pos, 41, 16, angle);
+			resource->renderasshape(r, &space);
+		}
+	}
 }
 
 int Cargo::load(const resourcetype type,  const int amount){

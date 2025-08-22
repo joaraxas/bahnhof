@@ -34,8 +34,8 @@ private:
 class Cargo
 {
 public:
-    Cargo(Wagon& w, ResourceManager& r, std::unordered_set<resourcetype> s) : 
-        wagon(w), allresources(r), storableresources(s) {};
+    Cargo(Wagon& w, ResourceManager& r, const WagonType& type);
+    virtual void render(Rendering* r, Vec pos, float angle, float scale);
     virtual int load(const resourcetype type, const int amount);
     virtual int unload(resourcetype& type);
     Resource* getloadedresource();
@@ -48,6 +48,7 @@ private:
     resourcetype loadedresource = none;
     int loadamount = 0;
     const int maxamount = 1;
+    bool renderstorage;
 };
 
 class Engine

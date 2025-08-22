@@ -28,6 +28,7 @@ RollingStockManager::RollingStockManager(Game* g) : game(g)
 	wagon->cost = 4;
 	wagon->storableresources = {hops, barley};
 	wagon->storagecapacity = 1;
+	wagon->renderstorage = true;
 
 	wagon = &types[WagonID::refrigeratorcar];
 	wagon->id = WagonID::refrigeratorcar;
