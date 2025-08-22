@@ -10,10 +10,10 @@ class Shape
 {
 public:
     virtual ~Shape() {};
-    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) {};
-    virtual Vec mid() {return Vec(0,0);};
-    virtual bool contains(Vec) {return false;};
-    virtual float getorientation() {return 0;};
+    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
+    virtual Vec mid() const {return Vec(0,0);};
+    virtual bool contains(Vec) const {return false;};
+    virtual float getorientation() const {return 0;};
 };
 
 class Rectangle : public Shape
@@ -22,9 +22,9 @@ public:
     Rectangle(const SDL_Rect& rect);
     Rectangle(int x, int y, int w, int h);
     Rectangle(Vec pos, int w, int h);
-    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
-    Vec mid();
-    bool contains(Vec);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
+    Vec mid() const;
+    bool contains(Vec) const;
 protected:
     SDL_Rect rect;
 };
@@ -35,10 +35,10 @@ public:
     RotatedRectangle(float mid_x, float mid_y, int w, int h);
     RotatedRectangle(Vec mid, int w, int h, float rotation);
     RotatedRectangle(float mid_x, float mid_y, int w, int h, float rotation);
-    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed);
-    Vec mid();
-    float getorientation() {return angle;};
-    bool contains(Vec);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
+    Vec mid() const;
+    float getorientation() const {return angle;};
+    bool contains(Vec) const;
 protected:
     float mid_x;
     float mid_y;

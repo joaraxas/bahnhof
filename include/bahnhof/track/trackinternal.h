@@ -39,7 +39,7 @@ private:
     std::unique_ptr<Switch> switchdown = nullptr;
     Vec pos;
     float dir;
-    static Sprite sprite;
+    inline static Sprite sprite;
 };
 
 Vec getswitchpos(Vec nodepos, float nodedir, bool updown);

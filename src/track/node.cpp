@@ -8,12 +8,11 @@
 
 namespace Tracks{
 
-Sprite Node::sprite;
-
 Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
 {
 	dir = truncate(dirstart);
-	Node::sprite.setspritesheet(tracksystem->game->getsprites(), sprites::bufferstop);
+	if(!Node::sprite.hasspritesheet())
+		Node::sprite.setspritesheet(tracksystem->game->getsprites(), sprites::bufferstop);
 }
 
 void Node::connecttrack(Track* track, bool fromabove){

@@ -31,6 +31,7 @@ struct WagonType
     enginetype engine;
     std::unordered_set<resourcetype> storableresources;
     int storagecapacity;
+    bool renderstorage = false;
     float forwardpower;
     float backwardpower;
     float forwardmaxspeed;
