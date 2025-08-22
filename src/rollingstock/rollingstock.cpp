@@ -155,7 +155,7 @@ void Cargo::render(Rendering* r, Vec pos, float angle, float scale)
 		if(scale<0.3)
 			resource->render(r, pos);
 		else if(renderstorage){
-			RotatedRectangle space(pos, 41, 16, angle);
+			RotatedRectangle space(pos, 41, 16, angle); // note: the size currently does nothing. We could replace this with rendering a subrect of the texture. Let's do that when necessary.
 			resource->renderasshape(r, &space);
 		}
 	}
