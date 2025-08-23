@@ -148,7 +148,7 @@ void RouteDropdown::update(int ms)
     names = routing.getroutenames();
     ids = routing.getrouteids();
     if(names.size()==0){
-        lines.emplace_back(new TableTextLine(panel, this, "No routes created yet"));
+        lines.emplace_back(new TableLine(panel, this, "No routes created yet"));
     }
     else
         for(int iRoute = 0; iRoute<names.size(); iRoute++){
@@ -177,12 +177,12 @@ void MainInfoTable::update(int ms)
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
     lines.clear();
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate.money)) + " Fr"));
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.money)) + " Fr"));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     int income = int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60));
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(income) + " Fr/h"));
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
-    lines.emplace_back(new TableTextLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(income) + " Fr/h"));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
 
@@ -221,8 +221,8 @@ void TrainInfoTable::update(int ms)
     lines.clear();
     float mps = abs(info.speed*0.001*150);
     float kmh = mps*3.6;
-    lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} km/h", kmh)));
-    // lines.emplace_back(new TableTextLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
+    lines.emplace_back(new TableLine(panel, this, std::format("{0:.1f} km/h", kmh)));
+    // lines.emplace_back(new TableLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
 }
 
 
@@ -270,11 +270,11 @@ void OrderTable::update(int ms)
             std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
             int id = orderids[iOrder];
             bool isselected = (id==route->selectedorderid);
-            lines.emplace_back(new OrderTableLine(panel, this, isselected, id, str));
+            lines.emplace_back(new OrderTableLine(panel, this, isselected, str));
         }
     }
     if(lines.size() == 0)
-        lines.emplace_back(new TableTextLine(panel, this, "No orders yet"));
+        lines.emplace_back(new TableLine(panel, this, "No orders yet"));
 }
 
 void OrderTable::leftclick(Vec pos)

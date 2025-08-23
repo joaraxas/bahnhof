@@ -10,11 +10,15 @@
 
 namespace UI{
 
-TableLine::TableLine(Host* newpanel, Table* newtable) : Element(newpanel)
+TableLine::TableLine(Host* p, Table* t, std::string s) : 
+    Element(p),
+    table(t),
+    str(s)
 {
-    table = newtable;
     SDL_Rect tablerect = table->getlocalrect();
     rect = {tablerect.x, tablerect.y, tablerect.w, 20};
+    SDL_Rect textrect = ui->getuirendering().gettextsize(str, rect, 1, 1);
+    rect.h = textrect.h;
 }
 
 SDL_Rect TableLine::getglobalrect()
@@ -23,14 +27,7 @@ SDL_Rect TableLine::getglobalrect()
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
-TableTextLine::TableTextLine(Host* newpanel, Table* newtable, std::string newstr) : TableLine(newpanel, newtable)
-{
-    str = newstr;
-    SDL_Rect textrect = ui->getuirendering().gettextsize(str, rect, 1, 1);
-    rect.h = textrect.h;
-}
-
-void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
+void TableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect.x = maxarea.x;
     rect.y = maxarea.y;
@@ -38,19 +35,18 @@ void TableTextLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 }
 
 RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
-    TableTextLine(p, t, routename)
+    TableLine(p, t, routename)
 {}
 
 void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
-    TableTextLine::render(r, maxarea);
+    TableLine::render(r, maxarea);
     ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
 }
 
-OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, int i, std::string description) :
+OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, std::string description) :
     selected(sel),
-    orderid(i),
-    TableTextLine(p, t, description)
+    TableLine(p, t, description)
 {}
 
 void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
@@ -60,12 +56,12 @@ void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
         style = Highlighted;
     else
         style = Info;
-    TableTextLine::render(r, maxarea, style);
+    TableLine::render(r, maxarea, style);
     ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
-    TableLine(p, t), 
+    TableLine(p, t, traininfo.name), 
     info(traininfo),
     trainmanager(manager)
 {}
@@ -82,7 +78,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
     
-    namerect = ui->getuirendering().rendertext(r, info.name, namerect, style, false, textpadding, rowoffset);
+    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, rowoffset);
     rect.h = namerect.h;
     
     SDL_Rect trainiconrect = getlocalrect();
@@ -97,8 +93,7 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
 }
 
 PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost) : 
-    TableLine(p, t),
-    name(name),
+    TableLine(p, t, name),
     price(cost)
 {
     SpriteManager& sprites = game->getsprites();
@@ -123,7 +118,7 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x += iconwidth;
-    namerect = ui->getuirendering().rendertext(r, name, namerect, style, false, textpadding, rowoffset);
+    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, rowoffset);
     SDL_Rect pricerect = getlocalrect();
     pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
     pricerect.w = pricerowwidth;

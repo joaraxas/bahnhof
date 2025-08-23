@@ -20,36 +20,27 @@ class Table;
 class TableLine : public Element
 {
 public:
-    TableLine(Host*, Table*);
+    TableLine(Host*, Table*, std::string);
     virtual ~TableLine() {};
-    virtual void render(Rendering* r, SDL_Rect maxarea) {};
     SDL_Rect getglobalrect();
-protected:
-    Table* table;
-};
-
-class TableTextLine : public TableLine
-{
-public:
-    TableTextLine(Host*, Table*, std::string newstr);
-    virtual ~TableTextLine() {};
     virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
     virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info);};
-private:
+protected:
+    Table* table;
     std::string str;
 };
 
-class RouteTableLine : public TableTextLine
+class RouteTableLine : public TableLine
 {
 public:
     RouteTableLine(Host*, Table*, std::string routename);
     virtual void render(Rendering* r, SDL_Rect maxarea);
 };
 
-class OrderTableLine : public TableTextLine
+class OrderTableLine : public TableLine
 {
 public:
-    OrderTableLine(Host*, Table*, bool select, int orderindex, std::string description);
+    OrderTableLine(Host*, Table*, bool select, std::string description);
     void render(Rendering* r, SDL_Rect maxarea);
 private:
     bool selected = false;
@@ -73,7 +64,6 @@ public:
     void render(Rendering* r, SDL_Rect maxarea);
 protected:
     Icon icon;
-    std::string name;
     int price;
 };
 
