@@ -17,8 +17,6 @@ TableLine::TableLine(Host* p, Table* t, std::string s) :
 {
     SDL_Rect tablerect = table->getlocalrect();
     rect = {tablerect.x, tablerect.y, tablerect.w, 20};
-    SDL_Rect textrect = ui->getuirendering().gettextsize(str, rect, 1, 1);
-    rect.h = textrect.h;
 }
 
 SDL_Rect TableLine::getglobalrect()
@@ -27,11 +25,12 @@ SDL_Rect TableLine::getglobalrect()
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
-void TableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
+void TableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect.x = maxarea.x;
     rect.y = maxarea.y;
-    ui->getuirendering().rendertext(r, str, getlocalrect(), style);
+    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style, false, xmargin, ymargin);
+    rect.h = textrect.h;
 }
 
 TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo) : 
@@ -39,23 +38,23 @@ TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo) :
     info(traininfo)
 {}
 
-void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
+void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect = maxarea;
-    int rowoffset = 2;
     int textpadding = 5;
     int namerowwidth = 60;
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
+    namerect.x = xmargin;
     
-    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, rowoffset);
+    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, ymargin);
     rect.h = namerect.h;
     
     SDL_Rect trainiconrect = getlocalrect();
-    trainiconrect = {trainiconrect.x+namerowwidth+textpadding, 
-                     trainiconrect.y+rowoffset, 
-                     trainiconrect.w-namerowwidth-2*textpadding, 
-                     namerect.h-2*rowoffset};
+    trainiconrect = {trainiconrect.x+xmargin+namerowwidth, 
+                     trainiconrect.y+ymargin, 
+                     trainiconrect.w-namerowwidth-2*xmargin, 
+                     namerect.h-2*ymargin};
     // The local rectangle works here because we are rendering to a separate table target
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
 }
@@ -69,28 +68,30 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::nam
     icon.ported = false;
 }
 
-void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
+void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect = maxarea;
     Vec screeniconsize = icon.getsize();
     Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
-    int rowoffset = 2;
+    int rowoffset = ymargin;
     int textpadding = 5;
     int pricerowwidth = 50;
-    int iconwidth = uiiconsize.x + textpadding;
+    int iconwidth = uiiconsize.x + xmargin + textpadding;
     int namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
     
     SDL_Rect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x += iconwidth;
+    namerect.y += uiiconsize.y * 0.5 - 12 * 0.5 - 1;
     namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, rowoffset);
     SDL_Rect pricerect = getlocalrect();
     pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
     pricerect.w = pricerowwidth;
+    pricerect.y = namerect.y;
     pricerect = ui->getuirendering().rendertext(r, std::to_string(price)+" Fr", pricerect, style, false, textpadding, rowoffset);
     rect.h = std::fmax(std::fmax(namerect.h, pricerect.h), uiiconsize.y+2*rowoffset);
     SDL_Rect uiiconrect = getlocalrect();
-    uiiconrect.x += textpadding;
+    uiiconrect.x += xmargin + textpadding;
     uiiconrect.y += rowoffset;
     SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
     icon.render(r, Vec(screeniconrect.x+screeniconsize.x*0.5, screeniconrect.y+screeniconsize.y*0.5));

@@ -143,7 +143,7 @@ void ClickableTable::render(Rendering* r)
         TextStyle style = Info;
         if(index==selectedlineindex)
             style = Highlighted;
-        line->render(r, maxarea, style);
+        line->render(r, maxarea, style, 2, 2);
         if(linescrolloffset>0 && index==toplineindex){
             /* small hack: render line as rectangle here to ensure same integer rounding 
             as for other rect renders */

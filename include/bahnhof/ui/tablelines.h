@@ -23,8 +23,8 @@ public:
     TableLine(Host*, Table*, std::string);
     virtual ~TableLine() {};
     SDL_Rect getglobalrect();
-    virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
-    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info);};
+    virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
+    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info, 1, 1);};
 protected:
     Table* table;
     std::string str;
@@ -34,7 +34,7 @@ class TrainTableLine : public TableLine
 {
 public:
     TrainTableLine(Host*, Table*, TrainInfo);
-    void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
+    void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
 private:
     TrainInfo info;
 };
@@ -43,7 +43,7 @@ class PurchaseOptionTableLine : public TableLine
 {
 public:
     PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost);
-    void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
+    void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
 private:
     Icon icon;
     int price;
