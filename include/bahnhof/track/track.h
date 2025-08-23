@@ -30,6 +30,7 @@ struct Tracksection
 {
     Tracksection() {};
     Tracksection(std::vector<Track*> t, std::vector<Node*> n) : tracks(t), nodes(n) {};
+    operator bool() const {return !(tracks.empty() && nodes.empty() && tracksplits.empty());};
     Tracksection& operator +=(const Tracksection& rhs);
     friend Tracksection operator +(Tracksection lhs, const Tracksection& rhs){lhs+=rhs; return lhs;};
     std::vector<Track*> tracks;

@@ -9,7 +9,9 @@
 #include "bahnhof/graphics/sprite.h"
 
 namespace Tracks{
-    class Tracksystem;}
+    class Tracksystem;
+    struct Tracksection;
+}
 
 class Game;
 class Rendering;
@@ -48,6 +50,7 @@ public:
     void reset();
 private:
     void build();
+    Tracks::Tracksection planconstruction(Vec pos);
     Vec origin{0,0};
     nodeid selectednode = 0;
 };

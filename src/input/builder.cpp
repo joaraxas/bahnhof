@@ -67,44 +67,44 @@ void Builder::updateangle(Vec pos)
     }
 }
 
+Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
+{
+    Tracks::Tracksection section;
+    if(origin.x!=0 || origin.y!=0){
+        section = Tracks::Input::planconstructionto(tracksystem, origin, pos);
+    }
+    else if(selectednode){
+        section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
+    }
+    return section;
+}
+
 void TrackBuilder::render(Rendering* r)
 {
     Builder::render(r);
-    if(selectednode || origin.x!=0){
-        Tracks::Tracksection section;
-        if(selectednode)
-            section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), anchorpoint);
-        else
-            section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
-        cost = ceil(Tracks::Input::getcostoftracks(section));
-        TracksDisplayMode mode = TracksDisplayMode::planned;
-        if(!canbuild())
-            mode = TracksDisplayMode::impossible;
-        Tracks::render(section, r, mode);
-        Vec screenpoint = game->getcamera().screencoord(anchorpoint);
-        r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
-        Tracks::Input::discardsection(section);
-    }
+    Tracks::Tracksection section = planconstruction(anchorpoint);
+    cost = ceil(Tracks::Input::getcostoftracks(section));
+    TracksDisplayMode mode = TracksDisplayMode::planned;
+    if(!canbuild())
+        mode = TracksDisplayMode::impossible;
+    Tracks::render(section, r, mode);
+    Vec screenpoint = game->getcamera().screencoord(anchorpoint);
+    r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
+    Tracks::Input::discardsection(section);
 }
 
 void TrackBuilder::build()
 {
-    if(origin.x!=0 || origin.y!=0){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, origin, anchorpoint);
+    Tracks::Tracksection section = planconstruction(anchorpoint);
+    if(section){
         Tracks::Input::buildsection(tracksystem, section);
         selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
         origin = Vec(0,0);
+        cost = Tracks::Input::getcostoftracks(section);
     }
-    else if(selectednode){
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), anchorpoint);
-        Tracks::Input::buildsection(tracksystem, section);
-        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
-    }
-    else{
-        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
-        if(!selectednode){
-            origin = anchorpoint;
-        }
+    selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
+    if(!selectednode){
+        origin = anchorpoint;
     }
 }
 
