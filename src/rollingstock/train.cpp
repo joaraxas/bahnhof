@@ -57,8 +57,8 @@ void Train::update(int ms)
 	float minradius = INFINITY;
 	// uncomment to remove radius speed restriction
 	// /*
-	for(auto w : wagons)
-		minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
+	// for(auto w : wagons)
+	// 	minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
 	// */
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
@@ -206,11 +206,11 @@ State Train::backwardstate()
 
 void Train::checkcollision(int ms, Train* train)
 {
-	if(size(wagons) >= 1)
-	if(size(train->wagons) >= 1){
+	if(speed!=0 && size(wagons) >= 1 && size(train->wagons) >= 1){
 		float pixels = ms*0.001*abs(speed);
 		float distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->forwardstate()), pixels, true);
 		if(distance<pixels){
+			distance-=0.0001; // prevents comparison of equal floats
 			for(auto wagon: wagons)
 				wagon->axes->travel(distance*sign(speed));
 			couple(*train, gasisforward, train->gasisforward);
@@ -218,6 +218,7 @@ void Train::checkcollision(int ms, Train* train)
 		else{
 			distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->backwardstate()), pixels, true);
 			if(distance<pixels){
+				distance-=0.0001; // prevents comparison of equal floats
 				for(auto wagon: wagons)
 					wagon->axes->travel(distance*sign(speed));
 				couple(*train, gasisforward, !train->gasisforward);
@@ -244,10 +245,10 @@ bool Train::gas(int ms)
 	speed+=(2*gasisforward-1)*ms*Ptot/mtot;
 	// uncomment to remove train backwards speed restriction
 	// /*
-	if(gasisforward && !wagons.front()->hasdriver)
-		speed = fmin(50, speed);
-	if(!gasisforward && !wagons.back()->hasdriver)
-		speed = -fmin(50, -speed);
+	// if(gasisforward && !wagons.front()->hasdriver)
+	// 	speed = fmin(50, speed);
+	// if(!gasisforward && !wagons.back()->hasdriver)
+	// 	speed = -fmin(50, -speed);
 	// */
 	return true;
 }
@@ -359,6 +360,7 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 			select();
 		}
 		wantstocouple = false;
+		train.wantstocouple = false;
 	}
 	else{
 		go = false;

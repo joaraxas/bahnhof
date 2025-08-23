@@ -79,7 +79,7 @@ public:
     Vec pos;
     bool alignedforward = true;
     bool hasdriver = false;
-    int w;
+    float w;
     std::unique_ptr<RollingStock::Axes> axes;
 protected:
     std::unique_ptr<RollingStock::Cargo> cargo;
