@@ -140,7 +140,10 @@ void ClickableTable::render(Rendering* r)
 
     for(int index=toplineindex; index<lines.size(); index++){
         auto& line = lines[index];
-        line->render(r, maxarea);
+        TextStyle style = Info;
+        if(index==selectedlineindex)
+            style = Highlighted;
+        line->render(r, maxarea, style);
         if(linescrolloffset>0 && index==toplineindex){
             /* small hack: render line as rectangle here to use same color as in line->render 
                and ensure same integer rounding as for other rect renders */
@@ -149,7 +152,7 @@ void ClickableTable::render(Rendering* r)
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
-        ui->getuirendering().renderrectangle(r, textrect, Info);
+        ui->getuirendering().renderrectangle(r, textrect, style);
         if(maxarea.y>=rect.h){
             // render line as rectangle here to use same color as in line->render
             r->renderrectangle(ui->getuirendering().uitoscreen({0,rect.h,rect.w,0}), false, false);
@@ -171,7 +174,7 @@ Dropdown::Dropdown(Host* p, SDL_Rect r) : ClickableTable(p, r)
 
 void Dropdown::render(Rendering* r)
 {
-    Table::render(r); // hack to get right table line heights
+    ClickableTable::render(r); // hack to get right table line heights
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     rect.h = 0;
     for(auto& line : lines){
@@ -179,7 +182,7 @@ void Dropdown::render(Rendering* r)
     }
 
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
-    Table::render(r);
+    ClickableTable::render(r);
 }
 
 RouteDropdown::RouteDropdown(Host* p, SDL_Rect r) : 
@@ -198,7 +201,7 @@ void RouteDropdown::update(int ms)
     else
         for(int iRoute = 0; iRoute<names.size(); iRoute++){
             std::string name = names[iRoute];
-            lines.emplace_back(new RouteTableLine(panel, this, name));
+            lines.emplace_back(new TableLine(panel, this, name));
         }
 }
 
@@ -236,8 +239,12 @@ void TrainTable::update(int ms)
 {
 	traininfos = trainmanager->gettrainsinfo();
 	lines.clear();
-	for(TrainInfo& info: traininfos){
-        lines.emplace_back(new TrainTableLine(panel, this, info, trainmanager));
+    selectedlineindex = -1;
+    for(int index=0; index<traininfos.size(); index++){
+	    TrainInfo& info = traininfos[index];
+        lines.emplace_back(new TrainTableLine(panel, this, info));
+        if(info.train->isselected())
+            selectedlineindex = index;
 	}
 }
 
@@ -274,9 +281,9 @@ void RouteTable::update(int ms)
     ids = routing.getrouteids();
     for(int iRoute = 0; iRoute<names.size(); iRoute++){
         std::string name = names[iRoute];
-        lines.emplace_back(new RouteTableLine(panel, this, name));
+        lines.emplace_back(new TableLine(panel, this, name));
     }
-    lines.emplace_back(new RouteTableLine(panel, this, "New route"));
+    lines.emplace_back(new TableLine(panel, this, "New route"));
 }
 
 void RouteTable::lineclicked(int index)
@@ -293,6 +300,7 @@ void RouteTable::lineclicked(int index)
 void OrderTable::update(int ms)
 {
 	lines.clear();
+    selectedlineindex = -1;
 	
     if(route){
         descriptions = route->getorderdescriptions();
@@ -301,8 +309,9 @@ void OrderTable::update(int ms)
         for(int iOrder = 0; iOrder<numbers.size(); iOrder++){
             std::string str = "("+std::to_string(numbers[iOrder])+") " + descriptions[iOrder];
             int id = orderids[iOrder];
-            bool isselected = (id==route->selectedorderid);
-            lines.emplace_back(new OrderTableLine(panel, this, isselected, str));
+            if(id==route->selectedorderid)
+                selectedlineindex = iOrder;
+            lines.emplace_back(new TableLine(panel, this, str));
         }
     }
     if(lines.size() == 0)

@@ -34,44 +34,14 @@ void TableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
     ui->getuirendering().rendertext(r, str, getlocalrect(), style);
 }
 
-RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
-    TableLine(p, t, routename)
-{}
-
-void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
-{
-    TableLine::render(r, maxarea);
-    // ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
-}
-
-OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, std::string description) :
-    selected(sel),
-    TableLine(p, t, description)
-{}
-
-void OrderTableLine::render(Rendering* r, SDL_Rect maxarea)
-{
-    TextStyle style;
-    if(selected)
-        style = Highlighted;
-    else
-        style = Info;
-    TableLine::render(r, maxarea, style);
-    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
-}
-
-TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo, TrainManager* manager) : 
+TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo) : 
     TableLine(p, t, traininfo.name), 
-    info(traininfo),
-    trainmanager(manager)
+    info(traininfo)
 {}
 
-void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
+void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect = maxarea;
-    TextStyle style = Info;
-    if(info.train->isselected())
-        style = Highlighted;
     int rowoffset = 2;
     int textpadding = 5;
     int namerowwidth = 60;
@@ -88,8 +58,6 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea)
                      namerect.h-2*rowoffset};
     // The local rectangle works here because we are rendering to a separate table target
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
-    
-    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost) : 
@@ -101,14 +69,11 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::nam
     icon.ported = false;
 }
 
-void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
+void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style)
 {
     rect = maxarea;
-    TextStyle style = Info;
     Vec screeniconsize = icon.getsize();
     Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
-    // if(info.train->selected)
-    //     style = Highlighted;
     int rowoffset = 2;
     int textpadding = 5;
     int pricerowwidth = 50;
@@ -129,8 +94,6 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea)
     uiiconrect.y += rowoffset;
     SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
     icon.render(r, Vec(screeniconrect.x+screeniconsize.x*0.5, screeniconrect.y+screeniconsize.y*0.5));
-    
-    ui->getuirendering().renderrectangle(r, getlocalrect(), style);
 }
 
 } //end namespace UI

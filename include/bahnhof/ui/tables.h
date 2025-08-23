@@ -40,7 +40,8 @@ public:
     void scroll(Vec pos, int distance);
     virtual void render(Rendering*);
 protected:
-    virtual void lineclicked(int index) {};
+    virtual void lineclicked(int index) {selectedlineindex = index;};
+    int selectedlineindex = -1;
 private:
     int getlineindexat(Vec pos);
     int toplineindex = 0;

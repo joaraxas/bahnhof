@@ -30,39 +30,21 @@ protected:
     std::string str;
 };
 
-class RouteTableLine : public TableLine
-{
-public:
-    RouteTableLine(Host*, Table*, std::string routename);
-    virtual void render(Rendering* r, SDL_Rect maxarea);
-};
-
-class OrderTableLine : public TableLine
-{
-public:
-    OrderTableLine(Host*, Table*, bool select, std::string description);
-    void render(Rendering* r, SDL_Rect maxarea);
-private:
-    bool selected = false;
-    int orderid;
-};
-
 class TrainTableLine : public TableLine
 {
 public:
-    TrainTableLine(Host*, Table*, TrainInfo, TrainManager*);
-    void render(Rendering* r, SDL_Rect maxarea);
-    TrainInfo info;
+    TrainTableLine(Host*, Table*, TrainInfo);
+    void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
 private:
-    TrainManager* trainmanager;
+    TrainInfo info;
 };
 
 class PurchaseOptionTableLine : public TableLine
 {
 public:
     PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost);
-    void render(Rendering* r, SDL_Rect maxarea);
-protected:
+    void render(Rendering* r, SDL_Rect maxarea, TextStyle style);
+private:
     Icon icon;
     int price;
 };
