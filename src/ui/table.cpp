@@ -318,6 +318,14 @@ void OrderTable::update(int ms)
         lines.emplace_back(new TableLine(panel, this, "No orders yet"));
 }
 
+void OrderTable::render(Rendering* r)
+{
+    if(orderids.empty())
+        Table::render(r);
+    else   
+        ClickableTable::render(r);
+}
+
 void OrderTable::lineclicked(int index)
 {
     if(index<orderids.size())

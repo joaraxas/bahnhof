@@ -92,6 +92,7 @@ class OrderTable : public ClickableTable
 public:
     OrderTable(Host* newpanel, SDL_Rect newrect, Route* myroute) : ClickableTable(newpanel, newrect), route(myroute) {};
     virtual void update(int ms);
+    void render(Rendering* r);
 protected:
     void lineclicked(int index);
     Route* route;
