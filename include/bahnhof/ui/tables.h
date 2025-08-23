@@ -27,16 +27,27 @@ public:
     Table(Host*, SDL_Rect newrect);
     virtual ~Table();
     bool checkclick(Vec pos);
+    virtual void render(Rendering*);
+protected:
+    std::vector<std::unique_ptr<TableLine>> lines;
+};
+
+class ClickableTable : public Table
+{
+public:
+    ClickableTable(Host* h, SDL_Rect r) : Table(h, r) {};
+    void leftclick(Vec pos);
     void scroll(Vec pos, int distance);
     virtual void render(Rendering*);
 protected:
+    virtual void lineclicked(int index) {};
+private:
     int getlineindexat(Vec pos);
-    std::vector<std::unique_ptr<TableLine>> lines;
     int toplineindex = 0;
     int linescrolloffset = 0;
 };
 
-class Dropdown : public Table
+class Dropdown : public ClickableTable
 {
 public:
     Dropdown(Host* p, SDL_Rect r);
@@ -49,8 +60,8 @@ class RouteDropdown : public Dropdown
 public:
     RouteDropdown(Host* p, SDL_Rect r);
     void update(int ms);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
 	RouteManager& routing;
     std::vector<std::string> names;
     std::vector<int> ids;
@@ -63,25 +74,25 @@ public:
     void update(int ms);
 };
 
-class RouteTable : public Table
+class RouteTable : public ClickableTable
 {
 public:
     RouteTable(Host* p, SDL_Rect r);
     void update(int ms);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
 	RouteManager& routing;
     std::vector<std::string> names;
     std::vector<int> ids;
 };
 
-class OrderTable : public Table
+class OrderTable : public ClickableTable
 {
 public:
-    OrderTable(Host* newpanel, SDL_Rect newrect, Route* myroute) : Table(newpanel, newrect), route(myroute) {};
+    OrderTable(Host* newpanel, SDL_Rect newrect, Route* myroute) : ClickableTable(newpanel, newrect), route(myroute) {};
     virtual void update(int ms);
-    virtual void leftclick(Vec pos);
 protected:
+    void lineclicked(int index);
     Route* route;
     std::vector<std::string> descriptions;
     std::vector<int> orderids;
@@ -93,18 +104,18 @@ class TrainOrderTable : public OrderTable
 public:
     TrainOrderTable(Host* p, SDL_Rect r, Train& t) : OrderTable(p, r, nullptr), train(t) {};
     void update(int ms);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
     Train& train;
 };
 
-class TrainTable : public Table
+class TrainTable : public ClickableTable
 {
 public:
     TrainTable(Host*, SDL_Rect newrect);
     void update(int ms);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
     TrainManager* trainmanager;
     std::vector<TrainInfo> traininfos;
 };
@@ -118,22 +129,22 @@ private:
     Train& train;
 };
 
-class ConstructionTable : public Table
+class ConstructionTable : public ClickableTable
 {
 public:
     ConstructionTable(Host* p, SDL_Rect r);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
     InputManager& input;
     const std::vector<BuildingType>& buildingtypes;
 };
 
-class WagonTable : public Table
+class WagonTable : public ClickableTable
 {
 public:
     WagonTable(Host* p, SDL_Rect r, WagonFactory& f);
-    void leftclick(Vec pos);
 private:
+    void lineclicked(int index);
     InputManager& input;
     WagonFactory& factory;
 };

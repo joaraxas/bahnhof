@@ -21,7 +21,7 @@ Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
     rect = newrect;
 }
 
-Table::~Table()
+Table::~Table() // Needed to correctly destroy unique_ptrs
 {}
 
 bool Table::checkclick(Vec mousepos)
@@ -37,7 +37,51 @@ bool Table::checkclick(Vec mousepos)
     return false;
 }
 
-void Table::scroll(Vec pos, int distance)
+void Table::render(Rendering* r)
+{
+    SDL_Rect maxarea = {0,0,rect.w,rect.h};
+
+    float scale = ui->getuirendering().getuiscale();
+	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
+                                                       SDL_PIXELFORMAT_RGBA8888, 
+                                                       SDL_TEXTUREACCESS_TARGET, 
+                                                       ceil(maxarea.w*scale), 
+                                                       ceil(maxarea.h*scale));
+  	SDL_SetTextureBlendMode(tablerendertarget, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderTarget(renderer, tablerendertarget);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    SDL_RenderFillRect(renderer, NULL);
+
+    for(int index=0; index<lines.size(); index++){
+        auto& line = lines[index];
+        line->render(r, maxarea);
+        SDL_Rect textrect = line->getlocalrect();
+        maxarea.y += textrect.h;
+        maxarea.h -= textrect.h;
+        if(maxarea.y>=rect.h){
+            break;
+        }
+    }
+
+    SDL_SetTextureAlphaMod(tablerendertarget, 255);
+	SDL_SetRenderTarget(renderer, NULL);
+    SDL_Rect global = getglobalrect();
+    ui->getuirendering().rendertexture(r, tablerendertarget, &global);
+    SDL_DestroyTexture(tablerendertarget);
+}
+
+void ClickableTable::leftclick(Vec pos)
+{
+    int nlines = lines.size();
+    if(nlines > 0){
+        int index = getlineindexat(pos);
+        if(index>=0 && index<nlines){
+            lineclicked(index);
+        }
+    }
+}
+
+void ClickableTable::scroll(Vec pos, int distance)
 {
     linescrolloffset -= 3*distance;
 
@@ -67,7 +111,7 @@ void Table::scroll(Vec pos, int distance)
     }
 }
 
-int Table::getlineindexat(Vec mousepos)
+int ClickableTable::getlineindexat(Vec mousepos)
 {
     int lineindex = -1;
     int numlines = lines.size();
@@ -79,7 +123,7 @@ int Table::getlineindexat(Vec mousepos)
     return lineindex;
 }
 
-void Table::render(Rendering* r)
+void ClickableTable::render(Rendering* r)
 {
     SDL_Rect maxarea = {0,-linescrolloffset,rect.w,rect.h};
 
@@ -105,6 +149,7 @@ void Table::render(Rendering* r)
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
+        ui->getuirendering().renderrectangle(r, textrect, Info);
         if(maxarea.y>=rect.h){
             // render line as rectangle here to use same color as in line->render
             r->renderrectangle(ui->getuirendering().uitoscreen({0,rect.h,rect.w,0}), false, false);
@@ -119,7 +164,7 @@ void Table::render(Rendering* r)
     SDL_DestroyTexture(tablerendertarget);
 }
 
-Dropdown::Dropdown(Host* p, SDL_Rect r) : Table(p, r)
+Dropdown::Dropdown(Host* p, SDL_Rect r) : ClickableTable(p, r)
 {
     ui->setdropdown(this);
 }
@@ -157,17 +202,12 @@ void RouteDropdown::update(int ms)
         }
 }
 
-void RouteDropdown::leftclick(Vec mousepos)
+void RouteDropdown::lineclicked(int index)
 {
-    int nroutes = routing.getnumberofroutes();
-    if(nroutes > 0){
-        int index = getlineindexat(mousepos);
-        if(index>=0 && index<nroutes){
-            names = routing.getroutenames();
-            ids = routing.getrouteids();
-            dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
-        }
-    }
+    names = routing.getroutenames();
+    ids = routing.getrouteids();
+    if(index<ids.size())
+        dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
 MainInfoTable::MainInfoTable(Host* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}
@@ -187,7 +227,7 @@ void MainInfoTable::update(int ms)
 
 
 TrainTable::TrainTable(Host* newpanel, SDL_Rect newrect) : 
-    Table(newpanel, newrect)
+    ClickableTable(newpanel, newrect)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
 }
@@ -201,17 +241,12 @@ void TrainTable::update(int ms)
 	}
 }
 
-void TrainTable::leftclick(Vec mousepos)
+void TrainTable::lineclicked(int index)
 {
-    int index = getlineindexat(mousepos);
-    if(index>=0){
-        traininfos = trainmanager->gettrainsinfo();
-        if(index<traininfos.size()){
-            trainmanager->deselectall();
-            TrainInfo info = traininfos[index];
-            info.train->select();
-        }
-    }
+    traininfos = trainmanager->gettrainsinfo();
+    trainmanager->deselectall();
+    TrainInfo info = traininfos[index];
+    info.train->select();
 }
 
 
@@ -227,7 +262,7 @@ void TrainInfoTable::update(int ms)
 
 
 RouteTable::RouteTable(Host* p, SDL_Rect r) : 
-    Table(p, r), 
+    ClickableTable(p, r), 
     routing(ui->getgame().getgamestate().getrouting())
 {};
 
@@ -244,17 +279,14 @@ void RouteTable::update(int ms)
     lines.emplace_back(new RouteTableLine(panel, this, "New route"));
 }
 
-void RouteTable::leftclick(Vec mousepos)
+void RouteTable::lineclicked(int index)
 {
-    int index = getlineindexat(mousepos);
-    if(index>=0){
-        if(index<ids.size()){
-            RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
-            rlp->addroutepanel(ids[index]);
-        }
-        else if(index==ids.size())
-            routing.addroute();
+    if(index<ids.size()){
+        RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
+        rlp->addroutepanel(ids[index]);
     }
+    else if(index==ids.size())
+        routing.addroute();
 }
 
 
@@ -277,12 +309,10 @@ void OrderTable::update(int ms)
         lines.emplace_back(new TableLine(panel, this, "No orders yet"));
 }
 
-void OrderTable::leftclick(Vec pos)
+void OrderTable::lineclicked(int index)
 {
-    int index = getlineindexat(pos);
-    if(index>=0 && route && index<orderids.size()){
+    if(index<orderids.size())
         route->selectedorderid = orderids[index];
-    }
 }
 
 
@@ -299,19 +329,17 @@ void TrainOrderTable::update(int ms)
         route->selectedorderid = id;
 }
 
-void TrainOrderTable::leftclick(Vec pos)
+void TrainOrderTable::lineclicked(int index)
 {
-    int index = getlineindexat(pos);
-    if(index>=0 && route && index<orderids.size()){
+    if(index<orderids.size())
         train.orderid = orderids[index];
-    }
 }
 
 
 ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : 
-        Table(p, r), 
-        input(game->getinputmanager()),
-        buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
+    ClickableTable(p, r), 
+    input(game->getinputmanager()),
+    buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
         const BuildingType& type = buildingtypes[i];
@@ -326,21 +354,18 @@ ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) :
     }
 }
 
-void ConstructionTable::leftclick(Vec pos)
+void ConstructionTable::lineclicked(int index)
 {
     BuildingManager& buildings = game->getgamestate().getbuildingmanager();
-    int index = getlineindexat(pos);
-    if(index>=0){
-        const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
-        input.placebuilding(clickedbuilding);
-    }
+    const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
+    input.placebuilding(clickedbuilding);
 }
 
 
 WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) : 
-        Table(p, r), 
-        input(game->getinputmanager()),
-        factory(f)
+    ClickableTable(p, r), 
+    input(game->getinputmanager()),
+    factory(f)
 {
     for(WagonType* type : factory.getavailabletypes()){
         lines.emplace_back(
@@ -354,13 +379,10 @@ WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) :
     }
 }
 
-void WagonTable::leftclick(Vec pos)
+void WagonTable::lineclicked(int index)
 {
-    int index = getlineindexat(pos);
-    if(index>=0){
-        const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-        factory.orderwagon(*clickedwagon);
-    }
+    const WagonType* clickedwagon = factory.getavailabletypes().at(index);
+    factory.orderwagon(*clickedwagon);
 }
 
 } //end namespace UI

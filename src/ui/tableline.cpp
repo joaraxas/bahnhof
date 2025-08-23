@@ -41,7 +41,7 @@ RouteTableLine::RouteTableLine(Host* p, Table* t, std::string routename) :
 void RouteTableLine::render(Rendering* r, SDL_Rect maxarea)
 {
     TableLine::render(r, maxarea);
-    ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
+    // ui->getuirendering().renderrectangle(r, getlocalrect(), Info);
 }
 
 OrderTableLine::OrderTableLine(Host* p, Table* t, bool sel, std::string description) :
