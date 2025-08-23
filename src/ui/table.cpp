@@ -145,17 +145,17 @@ void ClickableTable::render(Rendering* r)
             style = Highlighted;
         line->render(r, maxarea, style);
         if(linescrolloffset>0 && index==toplineindex){
-            /* small hack: render line as rectangle here to use same color as in line->render 
-               and ensure same integer rounding as for other rect renders */
-            r->renderrectangle(ui->getuirendering().uitoscreen({0,0,rect.w,0}), false, false);
+            /* small hack: render line as rectangle here to ensure same integer rounding 
+            as for other rect renders */
+            ui->getuirendering().renderrectangle(r, {0,0,rect.w,0}, style);
         }
         SDL_Rect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
         ui->getuirendering().renderrectangle(r, textrect, style);
         if(maxarea.y>=rect.h){
-            // render line as rectangle here to use same color as in line->render
-            r->renderrectangle(ui->getuirendering().uitoscreen({0,rect.h,rect.w,0}), false, false);
+            // render line as rectangle here
+            ui->getuirendering().renderrectangle(r, {0,rect.h,rect.w,0}, style);
             break;
         }
     }
