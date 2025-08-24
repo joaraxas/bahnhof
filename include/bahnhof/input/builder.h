@@ -54,6 +54,7 @@ private:
     bool buildingfromstartpoint();
     Vec trackstartpoint{0,0};
     nodeid selectednode = 0;
+    State selectedstate;
 };
 
 class SignalBuilder : public Builder

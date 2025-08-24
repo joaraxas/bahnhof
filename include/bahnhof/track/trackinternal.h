@@ -137,7 +137,7 @@ float distancebetween(Vec, Vec);
 namespace Input
 {
     State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    State getcloseststate(Tracksystem& tracksystem, Vec pos);
+    State getcloseststate(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
     nodeid getclosestnode(Tracksystem& tracksystem, Vec pos);
     signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
     nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);

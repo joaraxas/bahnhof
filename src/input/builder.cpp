@@ -72,8 +72,11 @@ Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
     if(buildingfromstartpoint()){
         return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos);
     }
-    else if(selectednode){
+    if(selectednode){
         return Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
+    }
+    if(selectedstate){
+        return Tracks::Input::planconstructionto(tracksystem, selectedstate, pos);
     }
     return Tracks::Tracksection();
 }
@@ -101,15 +104,16 @@ void TrackBuilder::build()
 {
     Tracks::Tracksection section = planconstruction(anchorpoint);
     if(section){
-        Tracks::Input::buildsection(tracksystem, section);
-        selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
-        trackstartpoint = Vec(0,0);
         cost = Tracks::Input::getcostoftracks(section);
+        Tracks::Input::buildsection(tracksystem, section);
+        trackstartpoint = Vec(0,0);
+        selectedstate = State();
     }
     selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
-    if(!selectednode){
-        trackstartpoint = anchorpoint;
-    }
+    if(selectednode) return;
+    selectedstate = Tracks::Input::getstateat(tracksystem, anchorpoint, 20/game->getcamera().getscale());
+    if(selectedstate) return;
+    trackstartpoint = anchorpoint;
 }
 
 void TrackBuilder::reset()
@@ -117,6 +121,7 @@ void TrackBuilder::reset()
     Builder::reset();
     trackstartpoint = Vec(0,0);
     selectednode = 0;
+    selectedstate = State();
 }
 
 SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)

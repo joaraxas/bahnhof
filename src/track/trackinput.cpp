@@ -13,9 +13,9 @@ namespace Tracks
 {
 namespace Input
 {
-State getstateat(Tracksystem& tracksystem, Vec pos)
+State getstateat(Tracksystem& tracksystem, Vec pos, float mindist)
 {
-	return getcloseststate(tracksystem, pos);
+	return getcloseststate(tracksystem, pos, mindist);
 }
 
 State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
@@ -79,6 +79,20 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 		return section;
 	}
 	return Construction::extendtracktopos(tracksystem, fromnode, pos);
+}
+
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos)
+{
+	Node* fromnode = new Node(
+		tracksystem,
+		getpos(tracksystem, fromstate),
+		getorientation(tracksystem, fromstate),
+		-1
+	);
+	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
+	section.nodes.push_back(fromnode);
+	section.tracksplits[fromnode] = fromstate;
+	return section;
 }
 
 Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
@@ -243,9 +257,8 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 	return returnstate;
 }
 
-State getcloseststate(Tracksystem& tracksystem, Vec pos)
+State getcloseststate(Tracksystem& tracksystem, Vec pos, float mindist)
 {
-	float mindist = INFINITY;
 	State closeststate;
 	for(auto track: tracksystem.alltracks()){
 		State state = track->getcloseststate(pos);
