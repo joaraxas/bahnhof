@@ -58,7 +58,7 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos, float* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
@@ -78,10 +78,22 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 		}
 		return section;
 	}
-	return Construction::extendtracktopos(tracksystem, fromnode, pos);
+	
+	if(!angle)
+		return Construction::extendtracktopos(tracksystem, fromnode, pos);
+	
+	Node* tonode = new Node(
+		tracksystem, 
+		pos, 
+		*angle, 
+		-1
+	);
+	Tracksection section = Construction::connecttwonodes(tracksystem, fromnode, tonode);
+	section.nodes.push_back(tonode);
+	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos, float* angle)
 {
 	Node* fromnode = new Node(
 		tracksystem,
@@ -89,13 +101,13 @@ Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec p
 		getorientation(tracksystem, fromstate),
 		-1
 	);
-	Tracksection section = planconstructionto(tracksystem, fromnode, pos);
+	Tracksection section = planconstructionto(tracksystem, fromnode, pos, angle);
 	section.nodes.push_back(fromnode);
 	section.tracksplits[fromnode] = fromstate;
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, float* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
@@ -115,7 +127,19 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 		}
 		return section;
 	}
-	return Construction::extendtracktopos(tracksystem, frompos, pos);
+	if(!angle)
+		return Construction::extendtracktopos(tracksystem, frompos, pos);
+	
+	Node* tonode = new Node(
+		tracksystem, 
+		pos, 
+		*angle, 
+		-1
+	);
+	Tracksection section = Construction::extendtracktopos(tracksystem, tonode, frompos);
+	section.nodes.push_back(tonode);
+	return section;
+	
 }
 
 Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle)

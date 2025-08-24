@@ -97,9 +97,9 @@ namespace Input
     State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos);
-    Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos, float* angle=nullptr);
+    Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos, float* angle=nullptr);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, float* angle=nullptr);
     Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle);
     void buildsection(Tracksystem& tracksystem, const Tracksection& section);
     void discardsection(Tracksection& section);

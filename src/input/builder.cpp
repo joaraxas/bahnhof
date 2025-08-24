@@ -69,14 +69,15 @@ void Builder::updateangle(Vec pos)
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
+    float* angleptr = nullptr;
     if(buildingfromstartpoint()){
-        return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos);
+        return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos, angleptr);
     }
     if(selectednode){
-        return Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
+        return Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos, angleptr);
     }
     if(selectedstate){
-        return Tracks::Input::planconstructionto(tracksystem, selectedstate, pos);
+        return Tracks::Input::planconstructionto(tracksystem, selectedstate, pos, angleptr);
     }
     return Tracks::Tracksection();
 }
