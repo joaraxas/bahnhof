@@ -51,6 +51,7 @@ public:
 private:
     void build();
     Tracks::Tracksection planconstruction(Vec pos);
+    bool originwasset();
     Vec origin{0,0};
     nodeid selectednode = 0;
 };

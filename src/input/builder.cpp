@@ -12,9 +12,9 @@
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
-        input(owner), 
-        game(newgame), 
-        tracksystem(game->getgamestate().gettracksystems())
+    input(owner), 
+    game(newgame), 
+    tracksystem(game->getgamestate().gettracksystems())
 {}
 
 void Builder::render(Rendering* r)
@@ -70,13 +70,18 @@ void Builder::updateangle(Vec pos)
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
     Tracks::Tracksection section;
-    if(origin.x!=0 || origin.y!=0){
+    if(originwasset()){
         section = Tracks::Input::planconstructionto(tracksystem, origin, pos);
     }
     else if(selectednode){
         section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
     }
     return section;
+}
+
+bool TrackBuilder::originwasset()
+{
+    return (origin.x!=0 || origin.y!=0);
 }
 
 void TrackBuilder::render(Rendering* r)
