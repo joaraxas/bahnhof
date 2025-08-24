@@ -69,19 +69,18 @@ void Builder::updateangle(Vec pos)
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
-    Tracks::Tracksection section;
-    if(originwasset()){
-        section = Tracks::Input::planconstructionto(tracksystem, origin, pos);
+    if(buildingfromstartpoint()){
+        return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos);
     }
     else if(selectednode){
-        section = Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
+        return Tracks::Input::planconstructionto(tracksystem, tracksystem.getnode(selectednode), pos);
     }
-    return section;
+    return Tracks::Tracksection();
 }
 
-bool TrackBuilder::originwasset()
+bool TrackBuilder::buildingfromstartpoint()
 {
-    return (origin.x!=0 || origin.y!=0);
+    return (trackstartpoint.x!=0 || trackstartpoint.y!=0);
 }
 
 void TrackBuilder::render(Rendering* r)
@@ -104,19 +103,19 @@ void TrackBuilder::build()
     if(section){
         Tracks::Input::buildsection(tracksystem, section);
         selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
-        origin = Vec(0,0);
+        trackstartpoint = Vec(0,0);
         cost = Tracks::Input::getcostoftracks(section);
     }
     selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
     if(!selectednode){
-        origin = anchorpoint;
+        trackstartpoint = anchorpoint;
     }
 }
 
 void TrackBuilder::reset()
 {
     Builder::reset();
-    origin = Vec(0,0);
+    trackstartpoint = Vec(0,0);
     selectednode = 0;
 }
 
