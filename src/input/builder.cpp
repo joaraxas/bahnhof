@@ -48,6 +48,7 @@ void Builder::reset()
 {
     anchorpoint = Vec(0,0);
     droppedanchor = false;
+    angleptr = nullptr;
 }
 
 bool Builder::canbuild()
@@ -62,14 +63,15 @@ bool Builder::canbuild()
 void Builder::updateangle(Vec pos)
 {
     Vec diff = pos-anchorpoint;
+    angleptr = nullptr;
     if(norm(diff) > 20/game->getcamera().getscale()){
         angle = atan2(-diff.y, diff.x);
+        angleptr = &angle;
     }
 }
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
-    float* angleptr = nullptr;
     if(buildingfromstartpoint()){
         return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos, angleptr);
     }
