@@ -49,7 +49,7 @@ void Building::update(int ms)
 	}
 }
 
-bool Building::checkclick(Vec pos)
+bool Building::checkcollisionwithpoint(Vec pos)
 {
 	return shape->contains(pos);
 }

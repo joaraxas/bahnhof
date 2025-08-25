@@ -202,6 +202,14 @@ void BuildingBuilder::setbuildingtype(const BuildingType& type)
     cost = building->cost;
 }
 
+bool BuildingBuilder::canfit()
+{
+    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    if(buildingmanager.checkcollision(shape->mid()))
+        return false;
+    return true;
+}
+
 void BuildingBuilder::build()
 {
     if(!building){

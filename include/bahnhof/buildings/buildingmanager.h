@@ -19,6 +19,7 @@ public:
     const std::vector<BuildingType>& gettypes() const {return availabletypes;};
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
     void addbuilding(std::unique_ptr<Building> b);
+    bool checkcollision(Vec point);
 private:
     Game* game;
     std::map<BuildingID, BuildingType> types;

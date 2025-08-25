@@ -34,7 +34,7 @@ void BuildingManager::render(Rendering* r)
 bool BuildingManager::leftclick(Vec mappos)
 {
 	for(auto& building : buildings){
-		if(building->checkclick(mappos)){
+		if(building->checkcollisionwithpoint(mappos)){
 			building->leftclick(mappos);
 			return true;
 		}
@@ -45,4 +45,13 @@ bool BuildingManager::leftclick(Vec mappos)
 void BuildingManager::addbuilding(std::unique_ptr<Building> b)
 {
 	buildings.emplace_back(std::move(b));
+}
+
+bool BuildingManager::checkcollision(Vec point)
+{
+	for(auto& building : buildings){
+		if(building->checkcollisionwithpoint(point))
+			return true;
+	}
+	return false;
 }

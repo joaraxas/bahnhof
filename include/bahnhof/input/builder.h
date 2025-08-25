@@ -77,7 +77,7 @@ public:
     void reset();
     void setbuildingtype(const BuildingType& b);
 private:
-    bool canfit() {return Builder::canfit();};
+    bool canfit();
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;
