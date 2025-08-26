@@ -54,6 +54,11 @@ bool Building::checkcollisionwithpoint(Vec pos)
 	return shape->contains(pos);
 }
 
+bool Building::checkcollisionwithshape(Shape* othershape)
+{
+	return shape->intersects(othershape);
+}
+
 bool Building::leftclick(Vec pos)
 {
 	if(!panel->exists()){

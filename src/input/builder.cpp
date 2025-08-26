@@ -205,7 +205,7 @@ void BuildingBuilder::setbuildingtype(const BuildingType& type)
 bool BuildingBuilder::canfit()
 {
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
-    if(buildingmanager.checkcollision(shape->mid()))
+    if(buildingmanager.checkcollision(shape.get()))
         return false;
     return true;
 }

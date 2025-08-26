@@ -13,6 +13,7 @@ public:
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
     virtual Vec mid() const {return Vec(0,0);};
     virtual bool contains(Vec) const {return false;};
+    virtual bool intersects(Shape*) const {return false;};
     virtual float getorientation() const {return 0;};
 };
 
@@ -25,6 +26,7 @@ public:
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
     Vec mid() const;
     bool contains(Vec) const;
+    bool intersects(Shape*) const;
 protected:
     SDL_Rect rect;
 };
@@ -39,6 +41,7 @@ public:
     Vec mid() const;
     float getorientation() const {return angle;};
     bool contains(Vec) const;
+    bool intersects(Shape*) const;
 protected:
     float mid_x;
     float mid_y;
@@ -46,3 +49,10 @@ protected:
     int h;
     float angle;
 };
+
+namespace Intersection
+{
+bool rectangleandrectangle();
+bool rectangleandrotrectangle();
+bool rotrectangleandrotrectangle();
+}
