@@ -15,6 +15,8 @@ Rectangle::Rectangle(Vec pos, int w, int h) :
 	rect{int(pos.x-w*0.5), int(pos.y-h*0.5), w, h}
 {}
 
+Rectangle::Rectangle(Vec pos, Vec size) : Rectangle(pos, size.x, size.y) {};
+
 void Rectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
@@ -35,6 +37,40 @@ bool Rectangle::contains(Vec pos) const
 	return false;
 }
 
+bool Rectangle::intersects(const Shape* shape) const
+{
+	return shape->intersectsrect(this);
+}
+
+bool Rectangle::intersectsrect(const Rectangle* shape) const
+{
+	const SDL_Rect& b = shape->rect;
+	const SDL_Rect& a = rect;
+    return !(a.x + a.w/2 < b.x - b.w/2 ||
+             a.x - a.w/2 > b.x + b.w/2 ||
+             a.y + a.h/2 < b.y - b.h/2 ||
+             a.y - a.h/2 > b.y + b.h/2);
+}
+
+bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
+{
+	return false;
+}
+
+bool RotatedRectangle::intersects(const Shape* shape) const
+{
+	return shape->intersectsrotrect(this);
+}
+
+bool RotatedRectangle::intersectsrect(const Rectangle* shape) const
+{
+	return shape->intersectsrotrect(this);
+}
+
+bool RotatedRectangle::intersectsrotrect(const RotatedRectangle* shape) const
+{
+	return false;
+}
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
 {}

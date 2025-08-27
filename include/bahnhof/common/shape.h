@@ -5,6 +5,8 @@
 #include "math.h"
 
 class Rendering;
+class Rectangle;
+class RotatedRectangle;
 
 class Shape
 {
@@ -13,7 +15,9 @@ public:
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
     virtual Vec mid() const {return Vec(0,0);};
     virtual bool contains(Vec) const {return false;};
-    virtual bool intersects(Shape*) const {return false;};
+    virtual bool intersects(const Shape*) const = 0;
+    virtual bool intersectsrect(const Rectangle*) const = 0;
+    virtual bool intersectsrotrect(const RotatedRectangle*) const = 0;
     virtual float getorientation() const {return 0;};
 };
 
@@ -23,10 +27,13 @@ public:
     Rectangle(const SDL_Rect& rect);
     Rectangle(int x, int y, int w, int h);
     Rectangle(Vec pos, int w, int h);
+    Rectangle(Vec pos, Vec size);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
     Vec mid() const;
     bool contains(Vec) const;
-    bool intersects(Shape*) const;
+    bool intersects(const Shape*) const;
+    bool intersectsrect(const Rectangle*) const;
+    bool intersectsrotrect(const RotatedRectangle*) const;
 protected:
     SDL_Rect rect;
 };
@@ -41,7 +48,9 @@ public:
     Vec mid() const;
     float getorientation() const {return angle;};
     bool contains(Vec) const;
-    bool intersects(Shape*) const;
+    bool intersects(const Shape*) const;
+    bool intersectsrect(const Rectangle*) const;
+    bool intersectsrotrect(const RotatedRectangle*) const;
 protected:
     float mid_x;
     float mid_y;
