@@ -48,6 +48,7 @@ public:
     Vec mid() const;
     float getorientation() const {return angle;};
     bool contains(Vec) const;
+    std::array<Vec, 4> getvertices() const;
     bool intersects(const Shape*) const;
     bool intersectsrect(const Rectangle*) const;
     bool intersectsrotrect(const RotatedRectangle*) const;
@@ -61,6 +62,7 @@ protected:
 
 namespace Intersection
 {
+bool checkprojectionofverticesonrect(std::array<Vec, 4> verts, std::array<float, 4> rltb);
 bool rectangleandrectangle();
 bool rectangleandrotrectangle();
 bool rotrectangleandrotrectangle();
