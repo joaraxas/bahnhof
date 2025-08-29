@@ -52,52 +52,43 @@ bool Rectangle::intersectsrect(const Rectangle* shape) const
              a.y - a.h/2 > b.y + b.h/2);
 }
 
-// bool checkprojectionofverticesonrect(std::array<Vec, 4> verts, std::array<float, 4> rltb)
-// {
-// 	// x
-// 	bool alltotheright = true;
-// 	bool alltotheleft = true;
-// 	for(auto& vert : verts){
-// 		alltotheright &= vert.x > rltb;
-// 		alltotheleft &= vert.x < left;
-// 	}
-// 	if(alltotheright || alltotheleft) return false;
-// 	// y
-// 	int top = rect.y;
-// 	int bottom = rect.y+rect.h;
-// 	bool allabove = true;
-// 	bool allbelow = true;
-// 	for(auto& vert : verts){
-// 		allabove &= vert.y > rect.y+rect.h;
-// 		allbelow &= vert.y < rect.y;
-// 	}
-// 	if(allabove || allbelow) return false;
-// }
-
-bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
+namespace Intersection{
+bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb)
 {
-	std::array<Vec, 4> verts = shape->getvertices();
-	int left = rect.x;
-	int right = rect.x+rect.w;
+	// lrtb: left-right-top-bottom values
 	// x
 	bool alltotheright = true;
 	bool alltotheleft = true;
 	for(auto& vert : verts){
-		alltotheright &= vert.x > right;
-		alltotheleft &= vert.x < left;
+		alltotheleft &= vert.x < lrtb[0];
+		alltotheright &= vert.x > lrtb[1];
 	}
 	if(alltotheright || alltotheleft) return false;
 	// y
-	int top = rect.y;
-	int bottom = rect.y+rect.h;
 	bool allabove = true;
 	bool allbelow = true;
 	for(auto& vert : verts){
-		allabove &= vert.y > rect.y+rect.h;
-		allbelow &= vert.y < rect.y;
+		allabove &= vert.y < lrtb[2];
+		allbelow &= vert.y > lrtb[3];
 	}
 	if(allabove || allbelow) return false;
 	return true;
+}
+}
+
+bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
+{
+	std::array<Vec, 4> verts = shape->getvertices();
+	std::array<float, 4> leftrighttopbottom{
+		float(rect.x), 
+		float(rect.x+rect.w), 
+		float(rect.y), 
+		float(rect.y+rect.h)
+	};
+
+	bool collision = Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
+	// TODO: Add opposite comparison too
+	return collision;
 }
 
 bool RotatedRectangle::intersects(const Shape* shape) const

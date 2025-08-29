@@ -62,7 +62,7 @@ protected:
 
 namespace Intersection
 {
-bool checkprojectionofverticesonrect(std::array<Vec, 4> verts, std::array<float, 4> rltb);
+bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb);
 bool rectangleandrectangle();
 bool rectangleandrotrectangle();
 bool rotrectangleandrotrectangle();
