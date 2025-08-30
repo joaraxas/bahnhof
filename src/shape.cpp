@@ -103,8 +103,30 @@ bool RotatedRectangle::intersectsrect(const Rectangle* shape) const
 
 bool RotatedRectangle::intersectsrotrect(const RotatedRectangle* shape) const
 {
-	localcoords(shape->mid(), angle, mid());
-	return false;
+	std::array<Vec, 4> verts = shape->getvertices();
+	for(auto& vert: verts){
+		vert = localcoords(vert, angle, mid());
+	}
+	std::array<float, 4> leftrighttopbottom{
+		float(-0.5*w), 
+		float(0.5*w), 
+		float(-0.5*h), 
+		float(0.5*h)
+	};
+	bool collision = Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
+
+	verts = getvertices();
+	for(auto& vert: verts){
+		vert = localcoords(vert, shape->getorientation(), shape->mid());
+	}
+	leftrighttopbottom = {
+		float(-0.5*shape->w), 
+		float(0.5*shape->w), 
+		float(-0.5*shape->h), 
+		float(0.5*shape->h)
+	};
+	collision &= Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
+	return collision;
 }
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
