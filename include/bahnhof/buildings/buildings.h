@@ -23,7 +23,7 @@ public:
     void update(int ms);
     virtual void trigger() {};
     bool checkcollisionwithpoint(Vec pos);
-    bool checkcollisionwithshape(Shape*);
+    bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
     std::string name;
     const BuildingType& type;

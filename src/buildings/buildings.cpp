@@ -54,7 +54,7 @@ bool Building::checkcollisionwithpoint(Vec pos)
 	return shape->contains(pos);
 }
 
-bool Building::checkcollisionwithshape(Shape* othershape)
+bool Building::checkcollisionwithshape(const Shape& othershape)
 {
 	return shape->intersects(othershape);
 }

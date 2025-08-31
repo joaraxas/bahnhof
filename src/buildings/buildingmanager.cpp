@@ -47,7 +47,7 @@ void BuildingManager::addbuilding(std::unique_ptr<Building> b)
 	buildings.emplace_back(std::move(b));
 }
 
-bool BuildingManager::checkcollision(Shape* shape)
+bool BuildingManager::checkcollision(const Shape& shape)
 {
 	for(auto& building : buildings){
 		if(building->checkcollisionwithshape(shape))

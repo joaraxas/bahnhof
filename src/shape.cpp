@@ -37,43 +37,19 @@ bool Rectangle::contains(Vec pos) const
 	return false;
 }
 
-bool Rectangle::intersects(const Shape* shape) const
+bool Rectangle::intersects(const Shape& shape) const
 {
-	return shape->intersectsrect(this);
+	return shape.intersectsrect(*this);
 }
 
-bool Rectangle::intersectsrect(const Rectangle* shape) const
+bool Rectangle::intersectsrect(const Rectangle& shape) const
 {
-	const SDL_Rect& b = shape->rect;
+	const SDL_Rect& b = shape.rect;
 	const SDL_Rect& a = rect;
     return !(a.x + a.w/2 < b.x - b.w/2 ||
              a.x - a.w/2 > b.x + b.w/2 ||
              a.y + a.h/2 < b.y - b.h/2 ||
              a.y - a.h/2 > b.y + b.h/2);
-}
-
-namespace Intersection{
-bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb)
-{
-	// lrtb: left-right-top-bottom values
-	// x
-	bool alltotheright = true;
-	bool alltotheleft = true;
-	for(auto& vert : verts){
-		alltotheleft &= vert.x < lrtb[0];
-		alltotheright &= vert.x > lrtb[1];
-	}
-	if(alltotheright || alltotheleft) return false;
-	// y
-	bool allabove = true;
-	bool allbelow = true;
-	for(auto& vert : verts){
-		allabove &= vert.y < lrtb[2];
-		allbelow &= vert.y > lrtb[3];
-	}
-	if(allabove || allbelow) return false;
-	return true;
-}
 }
 
 Vec Rectangle::getsize() const
@@ -91,9 +67,8 @@ std::array<Vec, 4> Rectangle::getvertices() const
 	return verts;
 }
 
-bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
+bool Rectangle::intersectsrotrect(const RotatedRectangle& shape) const
 {
-	std::array<Vec, 4> verts = shape->getvertices();
 	std::array<float, 4> leftrighttopbottom{
 		float(rect.x), 
 		float(rect.x+rect.w), 
@@ -101,61 +76,30 @@ bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
 		float(rect.y+rect.h)
 	};
 
-	bool collision = Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
-
-	verts = getvertices();
-	for(auto& vert: verts){
-		vert = localcoords(vert, shape->getorientation(), shape->mid());
-	}
-	Vec rotrectsize = shape->getsize();
-	float whalf = rotrectsize.x * 0.5;
-	float hhalf = rotrectsize.y * 0.5;
-	leftrighttopbottom = {
-		float(-whalf), 
-		float(whalf), 
-		float(-hhalf), 
-		float(hhalf)
-	};
-	collision &= Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
-	return collision;
+	if(!Intersection::checkprojectionofverticesonrect(shape.getvertices(), leftrighttopbottom))
+		return false;
+	if(!Intersection::checkprojectionofverticesonrotrect(getvertices(), shape))
+		return false;
+	return true;
 }
 
-bool RotatedRectangle::intersects(const Shape* shape) const
+bool RotatedRectangle::intersects(const Shape& shape) const
 {
-	return shape->intersectsrotrect(this);
+	return shape.intersectsrotrect(*this);
 }
 
-bool RotatedRectangle::intersectsrect(const Rectangle* shape) const
+bool RotatedRectangle::intersectsrect(const Rectangle& shape) const
 {
-	return shape->intersectsrotrect(this);
+	return shape.intersectsrotrect(*this);
 }
 
-bool RotatedRectangle::intersectsrotrect(const RotatedRectangle* shape) const
+bool RotatedRectangle::intersectsrotrect(const RotatedRectangle& shape) const
 {
-	std::array<Vec, 4> verts = shape->getvertices();
-	for(auto& vert: verts){
-		vert = localcoords(vert, angle, mid());
-	}
-	std::array<float, 4> leftrighttopbottom{
-		float(-0.5*w), 
-		float(0.5*w), 
-		float(-0.5*h), 
-		float(0.5*h)
-	};
-	bool collision = Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
-
-	verts = getvertices();
-	for(auto& vert: verts){
-		vert = localcoords(vert, shape->getorientation(), shape->mid());
-	}
-	leftrighttopbottom = {
-		float(-0.5*shape->w), 
-		float(0.5*shape->w), 
-		float(-0.5*shape->h), 
-		float(0.5*shape->h)
-	};
-	collision &= Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
-	return collision;
+	if(!Intersection::checkprojectionofverticesonrotrect(shape.getvertices(), *this))
+		return false;
+	if(!Intersection::checkprojectionofverticesonrotrect(getvertices(), shape))
+		return false;
+	return true;
 }
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
@@ -210,3 +154,47 @@ Vec RotatedRectangle::getsize() const
 {
 	return Vec(w, h);
 }
+
+namespace Intersection{
+
+bool checkprojectionofverticesonrotrect(const std::array<Vec, 4>& verts, const RotatedRectangle& shape)
+{
+	std::array<Vec, 4> rotatedverts;
+	for(int i=0; i<4; i++){
+		rotatedverts[i] = localcoords(verts[i], shape.getorientation(), shape.mid());
+	}
+	Vec rotrectsize = shape.getsize();
+	float whalf = rotrectsize.x * 0.5;
+	float hhalf = rotrectsize.y * 0.5;
+	std::array<float, 4> leftrighttopbottom = {
+		float(-whalf), 
+		float(whalf), 
+		float(-hhalf), 
+		float(hhalf)
+	};
+	return Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom);
+}
+
+bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb)
+{
+	// lrtb: left-right-top-bottom values
+	// x
+	bool alltotheright = true;
+	bool alltotheleft = true;
+	for(auto& vert : verts){
+		alltotheleft &= vert.x < lrtb[0];
+		alltotheright &= vert.x > lrtb[1];
+	}
+	if(alltotheright || alltotheleft) return false;
+	// y
+	bool allabove = true;
+	bool allbelow = true;
+	for(auto& vert : verts){
+		allabove &= vert.y < lrtb[2];
+		allbelow &= vert.y > lrtb[3];
+	}
+	if(allabove || allbelow) return false;
+	return true;
+}
+
+} // namespace Intersection

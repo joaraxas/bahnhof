@@ -15,9 +15,9 @@ public:
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
     virtual Vec mid() const {return Vec(0,0);};
     virtual bool contains(Vec) const {return false;};
-    virtual bool intersects(const Shape*) const = 0;
-    virtual bool intersectsrect(const Rectangle*) const = 0;
-    virtual bool intersectsrotrect(const RotatedRectangle*) const = 0;
+    virtual bool intersects(const Shape&) const = 0;
+    virtual bool intersectsrect(const Rectangle&) const = 0;
+    virtual bool intersectsrotrect(const RotatedRectangle&) const = 0;
     virtual float getorientation() const {return 0;};
 };
 
@@ -33,9 +33,9 @@ public:
     bool contains(Vec) const;
     std::array<Vec, 4> getvertices() const;
     Vec getsize() const;
-    bool intersects(const Shape*) const;
-    bool intersectsrect(const Rectangle*) const;
-    bool intersectsrotrect(const RotatedRectangle*) const;
+    bool intersects(const Shape&) const;
+    bool intersectsrect(const Rectangle&) const;
+    bool intersectsrotrect(const RotatedRectangle&) const;
 protected:
     SDL_Rect rect;
 };
@@ -52,9 +52,9 @@ public:
     bool contains(Vec) const;
     std::array<Vec, 4> getvertices() const;
     Vec getsize() const;
-    bool intersects(const Shape*) const;
-    bool intersectsrect(const Rectangle*) const;
-    bool intersectsrotrect(const RotatedRectangle*) const;
+    bool intersects(const Shape&) const;
+    bool intersectsrect(const Rectangle&) const;
+    bool intersectsrotrect(const RotatedRectangle&) const;
 protected:
     float mid_x;
     float mid_y;
@@ -65,8 +65,9 @@ protected:
 
 namespace Intersection
 {
+
 bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb);
-bool rectangleandrectangle();
-bool rectangleandrotrectangle();
-bool rotrectangleandrotrectangle();
+bool checkprojectionofverticesonrotrect(const std::array<Vec, 4>& verts, const RotatedRectangle& shape);
+
 }
+
