@@ -31,6 +31,8 @@ public:
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
     Vec mid() const;
     bool contains(Vec) const;
+    std::array<Vec, 4> getvertices() const;
+    Vec getsize() const;
     bool intersects(const Shape*) const;
     bool intersectsrect(const Rectangle*) const;
     bool intersectsrotrect(const RotatedRectangle*) const;
@@ -49,6 +51,7 @@ public:
     float getorientation() const {return angle;};
     bool contains(Vec) const;
     std::array<Vec, 4> getvertices() const;
+    Vec getsize() const;
     bool intersects(const Shape*) const;
     bool intersectsrect(const Rectangle*) const;
     bool intersectsrotrect(const RotatedRectangle*) const;

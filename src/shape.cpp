@@ -76,6 +76,21 @@ bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std:
 }
 }
 
+Vec Rectangle::getsize() const
+{
+	return Vec(rect.w, rect.h);
+}
+
+std::array<Vec, 4> Rectangle::getvertices() const
+{
+	std::array<Vec, 4> verts;
+	verts[0] = {float(rect.x), float(rect.y)};
+	verts[1] = {float(rect.x+rect.w), float(rect.y)};
+	verts[2] = {float(rect.x), float(rect.y+rect.h)};
+	verts[3] = {float(rect.x+rect.w), float(rect.y+rect.h)};
+	return verts;
+}
+
 bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
 {
 	std::array<Vec, 4> verts = shape->getvertices();
@@ -87,7 +102,21 @@ bool Rectangle::intersectsrotrect(const RotatedRectangle* shape) const
 	};
 
 	bool collision = Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
-	// TODO: Add opposite comparison too
+
+	verts = getvertices();
+	for(auto& vert: verts){
+		vert = localcoords(vert, shape->getorientation(), shape->mid());
+	}
+	Vec rotrectsize = shape->getsize();
+	float whalf = rotrectsize.x * 0.5;
+	float hhalf = rotrectsize.y * 0.5;
+	leftrighttopbottom = {
+		float(-whalf), 
+		float(whalf), 
+		float(-hhalf), 
+		float(hhalf)
+	};
+	collision &= Intersection::checkprojectionofverticesonrect(verts, leftrighttopbottom);
 	return collision;
 }
 
@@ -175,4 +204,9 @@ std::array<Vec, 4> RotatedRectangle::getvertices() const
 	verts[2] = {mid_x + w2*c + h2*s, mid_y - h2*c + w2*s};
 	verts[3] = {mid_x - w2*c + h2*s, mid_y - h2*c - w2*s};
 	return verts;
+}
+
+Vec RotatedRectangle::getsize() const
+{
+	return Vec(w, h);
 }
