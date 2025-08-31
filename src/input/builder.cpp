@@ -103,6 +103,32 @@ void TrackBuilder::render(Rendering* r)
     Tracks::Input::discardsection(section);
 }
 
+void TrackBuilder::reset()
+{
+    Builder::reset();
+    trackstartpoint = Vec(0,0);
+    selectednode = 0;
+    selectedstate = State();
+}
+
+bool TrackBuilder::canfit()
+{
+    bool collision = false;
+
+    Tracks::Tracksection section = planconstruction(anchorpoint);
+    std::vector<std::unique_ptr<Shape>> trackshapes = 
+        Tracks::Input::gettrackcollisionmasks(section);
+    for(auto& shape : trackshapes){
+        if(game->getgamestate().getbuildingmanager().checkcollision(*shape)){
+            collision = true;
+            break;
+        }
+    }
+    Tracks::Input::discardsection(section);
+
+    return !collision;
+}
+
 void TrackBuilder::build()
 {
     Tracks::Tracksection section = planconstruction(anchorpoint);
@@ -117,14 +143,6 @@ void TrackBuilder::build()
     selectedstate = Tracks::Input::getstateat(tracksystem, anchorpoint, 20/game->getcamera().getscale());
     if(selectedstate) return;
     trackstartpoint = anchorpoint;
-}
-
-void TrackBuilder::reset()
-{
-    Builder::reset();
-    trackstartpoint = Vec(0,0);
-    selectednode = 0;
-    selectedstate = State();
 }
 
 SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)

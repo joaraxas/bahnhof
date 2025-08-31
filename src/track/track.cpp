@@ -309,4 +309,23 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }
+
+std::unique_ptr<Shape> Track::getcollisionmask()
+{
+	float sleeperwidth = 2600/150;
+	if(std::isinf(radius))
+		return std::make_unique<RotatedRectangle>(
+			getpos(0.5,0), 
+			getarclength(1), 
+			sleeperwidth*0.5,
+			getorientation(0)
+		);
+	return std::make_unique<RotatedRectangle>(
+			getpos(0.5,0), 
+			getarclength(1), 
+			sleeperwidth*0,
+			getorientation(0.5)
+		);
 }
+
+} //namespace Tracks

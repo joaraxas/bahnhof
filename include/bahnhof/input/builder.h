@@ -50,6 +50,7 @@ public:
     void render(Rendering*);
     void reset();
 private:
+    bool canfit();
     void build();
     Tracks::Tracksection planconstruction(Vec pos);
     bool buildingfromstartpoint();

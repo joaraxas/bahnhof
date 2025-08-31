@@ -3,6 +3,7 @@
 #include "state.h"
 #include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
+#include "bahnhof/common/shape.h"
 
 class Order;
 class Gotostate;
@@ -107,7 +108,8 @@ namespace Input
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
-    float getcostoftracks(Tracksection);
+    float getcostoftracks(const Tracksection& section);
+    std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section);
 };
 
 namespace Signaling
@@ -121,7 +123,7 @@ namespace Signaling
 };
 
     void render(Tracksystem&, Rendering* r);
-    void render(Tracksection section, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
+    void render(const Tracksection& section, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
     void renderabovetrains(Tracksystem&, Rendering* r);
 
     State travel(Tracksystem&, State state, float pixels);

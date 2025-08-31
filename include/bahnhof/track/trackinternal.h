@@ -3,6 +3,7 @@
 #include "state.h"
 #include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
+#include "bahnhof/common/shape.h"
 #include "bahnhof/graphics/sprite.h"
 
 class Rendering;
@@ -88,6 +89,7 @@ public:
     void connectsignal(State signalstate, signalid signal);
     void disconnectsignal(signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
+    std::unique_ptr<Shape> getcollisionmask();
     Node* previousnode;
     Node* nextnode;
     trackid id;

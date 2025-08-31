@@ -49,7 +49,7 @@ void render(Tracksystem& tracksystem, Rendering* r)
 	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
 }
 
-void render(Tracksection section, Rendering* r, TracksDisplayMode mode)
+void render(const Tracksection& section, Rendering* r, TracksDisplayMode mode)
 {
 	for(auto const track : section.tracks)
 		track->render(r, mode);
