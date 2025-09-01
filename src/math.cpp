@@ -87,9 +87,9 @@ float sign(float a)
 	return 1;
 }
 
-float truncate(float dir)
+float truncate(float dir, float denominator)
 {
-	return dir - pi*std::floor(dir/pi);
+	return dir - denominator*std::floor(dir/denominator);
 }
 
 int randint(int maxinclusive)

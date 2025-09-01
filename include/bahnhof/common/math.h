@@ -7,6 +7,10 @@
 #include <map>
 #include <unordered_set>
 
+const double pi = 3.141592653589793238;
+const float g = 9.8;
+const float normalgauge = 1.435;
+
 struct SDL_FPoint;
 
 struct Vec
@@ -27,9 +31,5 @@ Vec localcoords(Vec globalvec, float angle, Vec origin);
 Vec globalcoords(Vec localvec, float angle, Vec origin);
 
 float sign(float a);
-float truncate(float dir);
+float truncate(float dir, float denominator=pi);
 int randint(int maxinclusive);
-
-const double pi = 3.141592653589793238;
-const float g = 9.8;
-const float normalgauge = 1.435;

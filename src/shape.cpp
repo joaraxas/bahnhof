@@ -83,6 +83,11 @@ bool Rectangle::intersectsrotrect(const RotatedRectangle& shape) const
 	return true;
 }
 
+bool Rectangle::intersectsannularsector(const AnnularSector& shape) const
+{
+	return shape.intersectsrect(*this);
+}
+
 bool RotatedRectangle::intersects(const Shape& shape) const
 {
 	return shape.intersectsrotrect(*this);
@@ -100,6 +105,11 @@ bool RotatedRectangle::intersectsrotrect(const RotatedRectangle& shape) const
 	if(!Intersection::checkprojectionofverticesonrotrect(getvertices(), shape))
 		return false;
 	return true;
+}
+
+bool RotatedRectangle::intersectsannularsector(const AnnularSector& shape) const
+{
+	return shape.intersectsrotrect(*this);
 }
 
 RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
@@ -153,6 +163,68 @@ std::array<Vec, 4> RotatedRectangle::getvertices() const
 Vec RotatedRectangle::getsize() const
 {
 	return Vec(w, h);
+}
+
+AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickness)
+{
+	rightlimitangle = truncate(fromdir-pi*0.5, 2*pi);
+	Vec d = localcoords(topos, fromdir, frompos);
+	float dx = d.x; float dy = -d.y;
+	float radius = 0.5*(dy*dy+dx*dx)/dy;
+	angle = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
+	midpoint = globalcoords({0,radius}, fromdir, frompos);
+	innerradius = abs(radius) - 0.5*thickness;
+	outerradius = abs(radius) + 0.5*thickness;
+	angle = truncate(abs(angle), 2*pi);
+}
+
+void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
+{
+
+}
+
+Vec AnnularSector::mid() const
+{
+	return midpoint;
+}
+
+bool AnnularSector::contains(Vec point) const
+{
+	Vec diff = point-midpoint;
+	float distance = norm(diff);
+	if(distance>outerradius) return false;
+	if(distance<innerradius) return false;
+	Vec difflocal = localcoords(point, rightlimitangle, midpoint);
+	float angletomidpoint = atan2(difflocal.y, difflocal.x);
+	angletomidpoint = truncate(angletomidpoint, 2*pi);
+	if(angletomidpoint<0) return false;
+	if(angletomidpoint>angle) return false;
+	return true;
+}
+
+bool AnnularSector::intersects(const Shape& shape) const
+{
+	return shape.intersectsannularsector(*this);
+}
+
+bool AnnularSector::intersectsrect(const Rectangle&) const
+{
+
+}
+
+bool AnnularSector::intersectsrotrect(const RotatedRectangle&) const
+{
+
+}
+
+bool AnnularSector::intersectsannularsector(const AnnularSector&) const
+{
+	return false; // for now this won't happen
+}
+
+float AnnularSector::getorientation() const
+{
+	return rightlimitangle + angle * 0.5;
 }
 
 namespace Intersection{

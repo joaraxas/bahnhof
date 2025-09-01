@@ -306,6 +306,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 			radiustext = std::to_string(radius);
 		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
 		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14/scale, {255,255,255,255});
+		r->rendertext("phi "+std::to_string(phi), midpoint.x, midpoint.y+28/scale, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }
@@ -315,16 +316,16 @@ std::unique_ptr<Shape> Track::getcollisionmask()
 	float sleeperwidth = 2600/150;
 	if(std::isinf(radius))
 		return std::make_unique<RotatedRectangle>(
-			getpos(0.5,0), 
+			getpos(0.5, 0), 
 			getarclength(1), 
 			sleeperwidth*0.5,
 			getorientation(0)
 		);
-	return std::make_unique<RotatedRectangle>(
-			getpos(0.5,0), 
-			getarclength(1), 
-			sleeperwidth*0,
-			getorientation(0.5)
+	return std::make_unique<AnnularSector>(
+			getpos(0, 0), 
+			getorientation(0),
+			getpos(1, 0),
+			sleeperwidth
 		);
 }
 

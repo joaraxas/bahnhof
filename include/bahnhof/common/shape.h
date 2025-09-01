@@ -7,18 +7,20 @@
 class Rendering;
 class Rectangle;
 class RotatedRectangle;
+class AnnularSector;
 
 class Shape
 {
 public:
     virtual ~Shape() {};
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
-    virtual Vec mid() const {return Vec(0,0);};
+    virtual Vec mid() const = 0;
+    virtual float getorientation() const {return 0;};
     virtual bool contains(Vec) const {return false;};
     virtual bool intersects(const Shape&) const = 0;
     virtual bool intersectsrect(const Rectangle&) const = 0;
     virtual bool intersectsrotrect(const RotatedRectangle&) const = 0;
-    virtual float getorientation() const {return 0;};
+    virtual bool intersectsannularsector(const AnnularSector&) const = 0;
 };
 
 class Rectangle : public Shape
@@ -36,6 +38,7 @@ public:
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
     bool intersectsrotrect(const RotatedRectangle&) const;
+    bool intersectsannularsector(const AnnularSector&) const;
 protected:
     SDL_Rect rect;
 };
@@ -55,11 +58,32 @@ public:
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
     bool intersectsrotrect(const RotatedRectangle&) const;
+    bool intersectsannularsector(const AnnularSector&) const;
 protected:
     float mid_x;
     float mid_y;
     int w;
     int h;
+    float angle;
+};
+
+class AnnularSector : public Shape
+{
+public:
+    AnnularSector(Vec frompos, float fromorientation, Vec topos, float thickness);
+    void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const;
+    Vec mid() const;
+    float getorientation() const;
+    bool contains(Vec) const;
+    bool intersects(const Shape&) const;
+    bool intersectsrect(const Rectangle&) const;
+    bool intersectsrotrect(const RotatedRectangle&) const;
+    bool intersectsannularsector(const AnnularSector&) const;
+private:
+    Vec midpoint;
+    float innerradius;
+    float outerradius;
+    float rightlimitangle;
     float angle;
 };
 
