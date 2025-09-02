@@ -164,7 +164,7 @@ void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices,
         verts[i].color = color;
         verts[i].tex_coord = {0, 0};
     }
-	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+	SDL_RenderGeometry(renderer, NULL, verts, iverts, indices, ninds);
 }
 
 float Rendering::getcamscale()

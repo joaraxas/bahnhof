@@ -180,12 +180,36 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
-
+	SDL_Vertex verts[4];
+	std::array<Vec, 4> vertvecs = getvertices();
+	for(int i=0; i<4; i++){
+		verts[i].position = {vertvecs[i].x, vertvecs[i].y};
+	}
+	int indices[6] = {0, 1, 2, 0, 2, 3};
+	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
 }
 
 Vec AnnularSector::mid() const
 {
 	return midpoint;
+}
+
+float AnnularSector::getorientation() const
+{
+	return rightlimitangle + angle * 0.5;
+}
+
+std::array<Vec, 4> AnnularSector::getvertices() const
+{
+	std::array<Vec, 4> verts;
+	float mid_x = midpoint.x;
+	float mid_y = midpoint.y;
+	float alpha = -rightlimitangle;
+	verts[0] = {mid_x + innerradius*cos(alpha), mid_y + innerradius*sin(alpha)};
+	verts[1] = {mid_x + outerradius*cos(alpha), mid_y + outerradius*sin(alpha)};
+	verts[2] = {mid_x + outerradius*cos(alpha+angle), mid_y + outerradius*sin(alpha+angle)};
+	verts[3] = {mid_x + innerradius*cos(alpha+angle), mid_y + innerradius*sin(alpha+angle)};
+	return verts;
 }
 
 bool AnnularSector::contains(Vec point) const
@@ -209,22 +233,17 @@ bool AnnularSector::intersects(const Shape& shape) const
 
 bool AnnularSector::intersectsrect(const Rectangle&) const
 {
-
+	return false;
 }
 
 bool AnnularSector::intersectsrotrect(const RotatedRectangle&) const
 {
-
+	return false;
 }
 
 bool AnnularSector::intersectsannularsector(const AnnularSector&) const
 {
 	return false; // for now this won't happen
-}
-
-float AnnularSector::getorientation() const
-{
-	return rightlimitangle + angle * 0.5;
 }
 
 namespace Intersection{
