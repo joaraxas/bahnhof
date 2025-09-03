@@ -80,7 +80,7 @@ public:
     bool intersectsrotrect(const RotatedRectangle&) const;
     bool intersectsannularsector(const AnnularSector&) const;
 private:
-    std::array<Vec, 4> getvertices() const;
+    std::array<Vec, 6> getvertices() const;
     Vec midpoint;
     float innerradius;
     float outerradius;

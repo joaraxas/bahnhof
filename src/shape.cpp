@@ -185,13 +185,13 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
-	SDL_Vertex verts[4];
-	std::array<Vec, 4> vertvecs = getvertices();
-	for(int i=0; i<4; i++){
+	SDL_Vertex verts[6];
+	std::array<Vec, 6> vertvecs = getvertices();
+	for(int i=0; i<6; i++){
 		verts[i].position = {vertvecs[i].x, vertvecs[i].y};
 	}
-	int indices[6] = {0, 1, 2, 0, 2, 3};
-	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
+	int indices[12] = {0, 1, 2, 1, 2, 3, 2, 3, 4, 3, 4, 5};
+	r->renderfilledpolygon(verts, 6, indices, 12, color, ported, zoomed);
 	r->renderfilledrectangle({int(round(midpoint.x))-3,int(round(midpoint.y))-3,6,6});
 }
 
@@ -205,17 +205,19 @@ float AnnularSector::getorientation() const
 	return rightlimitangle + angle * 0.5;
 }
 
-std::array<Vec, 4> AnnularSector::getvertices() const
+std::array<Vec, 6> AnnularSector::getvertices() const
 {
-	std::array<Vec, 4> verts;
+	std::array<Vec, 6> verts;
 	float mid_x = midpoint.x;
 	float mid_y = midpoint.y;
 	float alpha = -rightlimitangle;
 	float angleneg = -angle;
 	verts[0] = {mid_x + innerradius*cos(alpha), mid_y + innerradius*sin(alpha)};
 	verts[1] = {mid_x + outerradius*cos(alpha), mid_y + outerradius*sin(alpha)};
-	verts[2] = {mid_x + outerradius*cos(alpha+angleneg), mid_y + outerradius*sin(alpha+angleneg)};
-	verts[3] = {mid_x + innerradius*cos(alpha+angleneg), mid_y + innerradius*sin(alpha+angleneg)};
+	verts[2] = {mid_x + innerradius*cos(alpha+angleneg/2), mid_y + innerradius*sin(alpha+angleneg/2)};
+	verts[3] = {mid_x + outerradius*cos(alpha+angleneg/2), mid_y + outerradius*sin(alpha+angleneg/2)};
+	verts[4] = {mid_x + innerradius*cos(alpha+angleneg), mid_y + innerradius*sin(alpha+angleneg)};
+	verts[5] = {mid_x + outerradius*cos(alpha+angleneg), mid_y + outerradius*sin(alpha+angleneg)};
 	return verts;
 }
 
