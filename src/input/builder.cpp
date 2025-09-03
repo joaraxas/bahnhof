@@ -288,7 +288,11 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
                 newangle
             );
     }
-    
+    case city:{
+        float ang = 30*pi/180;
+        Vec otherpos = globalcoords(Vec{100*sin(ang),-100*(1-cos(ang))}, angle, pos);
+        return std::make_unique<AnnularSector>(pos, angle, otherpos, 20);
+    }
     default:{
         if(angle==0)
             return std::make_unique<Rectangle>(pos, building->size);

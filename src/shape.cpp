@@ -167,15 +167,20 @@ Vec RotatedRectangle::getsize() const
 
 AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickness)
 {
-	rightlimitangle = truncate(fromdir-pi*0.5, 2*pi);
 	Vec d = localcoords(topos, fromdir, frompos);
 	float dx = d.x; float dy = -d.y;
 	float radius = 0.5*(dy*dy+dx*dx)/dy;
-	angle = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
-	midpoint = globalcoords({0,radius}, fromdir, frompos);
+	angle = abs(atan2(dx, sign(dy)*(radius-dy)));
+	midpoint = globalcoords({0,-radius}, fromdir, frompos);
+	angle = truncate(abs(angle), 2*pi);
+	std::cout<<angle*180/pi<<std::endl;
 	innerradius = abs(radius) - 0.5*thickness;
 	outerradius = abs(radius) + 0.5*thickness;
-	angle = truncate(abs(angle), 2*pi);
+	if(dy<0)
+		rightlimitangle = fromdir - pi/2;
+	else
+		rightlimitangle = fromdir - angle + pi/2;
+	rightlimitangle = truncate(rightlimitangle, 2*pi);
 }
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
@@ -187,6 +192,7 @@ void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, boo
 	}
 	int indices[6] = {0, 1, 2, 0, 2, 3};
 	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
+	r->renderfilledrectangle({int(round(midpoint.x))-3,int(round(midpoint.y))-3,6,6});
 }
 
 Vec AnnularSector::mid() const
@@ -205,10 +211,11 @@ std::array<Vec, 4> AnnularSector::getvertices() const
 	float mid_x = midpoint.x;
 	float mid_y = midpoint.y;
 	float alpha = -rightlimitangle;
+	float angleneg = -angle;
 	verts[0] = {mid_x + innerradius*cos(alpha), mid_y + innerradius*sin(alpha)};
 	verts[1] = {mid_x + outerradius*cos(alpha), mid_y + outerradius*sin(alpha)};
-	verts[2] = {mid_x + outerradius*cos(alpha+angle), mid_y + outerradius*sin(alpha+angle)};
-	verts[3] = {mid_x + innerradius*cos(alpha+angle), mid_y + innerradius*sin(alpha+angle)};
+	verts[2] = {mid_x + outerradius*cos(alpha+angleneg), mid_y + outerradius*sin(alpha+angleneg)};
+	verts[3] = {mid_x + innerradius*cos(alpha+angleneg), mid_y + innerradius*sin(alpha+angleneg)};
 	return verts;
 }
 
