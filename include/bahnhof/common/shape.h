@@ -33,7 +33,7 @@ public:
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
     Vec mid() const;
     bool contains(Vec) const;
-    std::array<Vec, 4> getvertices() const;
+    std::vector<Vec> getvertices() const;
     Vec getsize() const;
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
@@ -53,7 +53,7 @@ public:
     Vec mid() const;
     float getorientation() const {return angle;};
     bool contains(Vec) const;
-    std::array<Vec, 4> getvertices() const;
+    std::vector<Vec> getvertices() const;
     Vec getsize() const;
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
@@ -80,7 +80,7 @@ public:
     bool intersectsrotrect(const RotatedRectangle&) const;
     bool intersectsannularsector(const AnnularSector&) const;
 private:
-    std::array<Vec, 6> getvertices() const;
+    std::vector<Vec> getvertices() const;
     Vec midpoint;
     float innerradius;
     float outerradius;
@@ -91,8 +91,8 @@ private:
 namespace Intersection
 {
 
-bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb);
-bool checkprojectionofverticesonrotrect(const std::array<Vec, 4>& verts, const RotatedRectangle& shape);
+bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb);
+bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape);
 
 }
 

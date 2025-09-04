@@ -57,9 +57,10 @@ Vec Rectangle::getsize() const
 	return Vec(rect.w, rect.h);
 }
 
-std::array<Vec, 4> Rectangle::getvertices() const
+std::vector<Vec> Rectangle::getvertices() const
 {
-	std::array<Vec, 4> verts;
+	std::vector<Vec> verts;
+	verts.resize(4);
 	verts[0] = {float(rect.x), float(rect.y)};
 	verts[1] = {float(rect.x+rect.w), float(rect.y)};
 	verts[2] = {float(rect.x), float(rect.y+rect.h)};
@@ -124,13 +125,9 @@ RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float rot
 
 void RotatedRectangle::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
-	SDL_Vertex verts[4];
-	std::array<Vec, 4> vertvecs = getvertices();
-	for(int i=0; i<4; i++){
-		verts[i].position = {vertvecs[i].x, vertvecs[i].y};
-	}
-	int indices[6] = {0, 1, 2, 0, 2, 3};
-	r->renderfilledpolygon(verts, 4, indices, 6, color, ported, zoomed);
+	std::vector<Vec> vertvecs = getvertices();
+	std::vector<int> indices = {0, 1, 2, 0, 2, 3};
+	r->renderfilledpolygon(vertvecs, indices, color, ported, zoomed);
 }
 
 Vec RotatedRectangle::mid() const
@@ -146,9 +143,10 @@ bool RotatedRectangle::contains(Vec pos) const
 	return false;
 }
 
-std::array<Vec, 4> RotatedRectangle::getvertices() const
+std::vector<Vec> RotatedRectangle::getvertices() const
 {
-	std::array<Vec, 4> verts;
+	std::vector<Vec> verts;
+	verts.resize(4);
 	const float w2 = w*0.5;
 	const float h2 = h*0.5;
 	const float c = cos(-angle);
@@ -185,13 +183,9 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
-	SDL_Vertex verts[6];
-	std::array<Vec, 6> vertvecs = getvertices();
-	for(int i=0; i<6; i++){
-		verts[i].position = {vertvecs[i].x, vertvecs[i].y};
-	}
-	int indices[12] = {0, 1, 2, 1, 2, 3, 2, 3, 4, 3, 4, 5};
-	r->renderfilledpolygon(verts, 6, indices, 12, color, ported, zoomed);
+	std::vector<Vec> vertvecs = getvertices();
+	std::vector<int> indices = {0, 1, 2, 1, 2, 3, 2, 3, 4, 3, 4, 5};
+	r->renderfilledpolygon(vertvecs, indices, color, ported, zoomed);
 	r->renderfilledrectangle({int(round(midpoint.x))-3,int(round(midpoint.y))-3,6,6});
 }
 
@@ -205,9 +199,9 @@ float AnnularSector::getorientation() const
 	return rightlimitangle + angle * 0.5;
 }
 
-std::array<Vec, 6> AnnularSector::getvertices() const
+std::vector<Vec> AnnularSector::getvertices() const
 {
-	std::array<Vec, 6> verts;
+	std::vector<Vec> verts(6);
 	float mid_x = midpoint.x;
 	float mid_y = midpoint.y;
 	float alpha = -rightlimitangle;
@@ -257,10 +251,10 @@ bool AnnularSector::intersectsannularsector(const AnnularSector&) const
 
 namespace Intersection{
 
-bool checkprojectionofverticesonrotrect(const std::array<Vec, 4>& verts, const RotatedRectangle& shape)
+bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape)
 {
-	std::array<Vec, 4> rotatedverts;
-	for(int i=0; i<4; i++){
+	std::vector<Vec> rotatedverts(verts.size());
+	for(int i=0; i<verts.size(); i++){
 		rotatedverts[i] = localcoords(verts[i], shape.getorientation(), shape.mid());
 	}
 	Vec rotrectsize = shape.getsize();
@@ -275,7 +269,7 @@ bool checkprojectionofverticesonrotrect(const std::array<Vec, 4>& verts, const R
 	return Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom);
 }
 
-bool checkprojectionofverticesonrect(const std::array<Vec, 4>& verts, const std::array<float, 4>& lrtb)
+bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb)
 {
 	// lrtb: left-right-top-bottom values
 	// x

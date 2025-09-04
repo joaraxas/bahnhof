@@ -145,13 +145,16 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported, bool zoomed)
+void Rendering::renderfilledpolygon(const std::vector<Vec>& edges, const std::vector<int>& indices, SDL_Color color, bool ported, bool zoomed)
 {
+	std::vector<SDL_Vertex> verts(edges.size());
 	if(ported && zoomed){
-		for (int i = 0; i < iverts; ++i) {
-			Vec scaledv = cam->screencoord(verts[i].position);
+		for (int i = 0; i < edges.size(); ++i) {
+			Vec scaledv = cam->screencoord(edges[i]);
 			verts[i].position.x = scaledv.x;
 			verts[i].position.y = scaledv.y;
+			verts[i].color = color;
+			verts[i].tex_coord = {0, 0};
 		}
 	}
 	else{
@@ -160,11 +163,7 @@ void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices,
 		if(zoomed)
 			std::cout<<"error: zoomed non-ported polygon rendering is not supported yet!"<<std::endl;
 	}
-	for (int i = 0; i < iverts; ++i) {
-        verts[i].color = color;
-        verts[i].tex_coord = {0, 0};
-    }
-	SDL_RenderGeometry(renderer, NULL, verts, iverts, indices, ninds);
+	SDL_RenderGeometry(renderer, NULL, verts.data(), verts.size(), indices.data(), indices.size());
 }
 
 float Rendering::getcamscale()
