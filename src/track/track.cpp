@@ -223,25 +223,24 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 void Track::render(Rendering* r, TracksDisplayMode mode)
 {
 	float scale = r->getcamscale();
-	//// banvall ////
-	/*if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 127,127,127,255);
-		float sleeperwidth = 4000/200;
-		int nSleepers = round(getarclength(1)/0.25);
-		if(std::isinf(radius)) nSleepers = round(getarclength(1));
-		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
-			float nodedist = float(iSleeper+0.5)/float(nSleepers);
-			Vec drawposl = getpos(nodedist, sleeperwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperwidth/2);
-			if(drawposl.x>0)
-			if(drawposl.x<SCREEN_WIDTH)
-			if(drawposl.y>0)
-			if(drawposl.y<SCREEN_HEIGHT){
-				SDL_RenderDrawLine(renderer, drawposl.x, drawposl.y, drawposr.x, drawposr.y);
-			}
+	//// ballast ////
+	if(nicetracks && scale>0.3){
+		SDL_Color ballastcolor;
+		switch(mode){
+			case TracksDisplayMode::normal:
+				ballastcolor = {127,127,127,255};
+				break;
+			case TracksDisplayMode::planned:
+				ballastcolor = {255,255,255,63};
+				break;
+			case TracksDisplayMode::impossible:
+				ballastcolor = {127,0,0,127};
+				break;
 		}
-	}*/
-	//// syllar ////
+		std::unique_ptr<Shape> shape = getcollisionmask();
+		shape->renderfilled(r, ballastcolor);
+	}
+	//// sleepers ////
 	if(nicetracks){
 		switch(mode){
 			case TracksDisplayMode::normal:
@@ -251,7 +250,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 				break;
 			case TracksDisplayMode::impossible:
-				SDL_SetRenderDrawColor(renderer, 127,0,0,255);
+				SDL_SetRenderDrawColor(renderer, 220,0,0,255);
 				break;
 		}
 		float sleeperwidth = 2600/150;
@@ -266,7 +265,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 			}
 		}
 	}
-	//// rals ////
+	//// rails ////
 	if(nicetracks){
 		switch(mode){
 			case TracksDisplayMode::normal:
@@ -283,7 +282,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!std::isinf(radius))
-		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
+		nSegments = fmax(1,round(abs(phi/pi*32*radius/100)));
 	float gauge = 0;
 	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
@@ -313,19 +312,19 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 
 std::unique_ptr<Shape> Track::getcollisionmask()
 {
-	float sleeperwidth = 2600/150;
+	float ballastwidth = 4000/150;
 	if(std::isinf(radius))
 		return std::make_unique<RotatedRectangle>(
 			getpos(0.5, 0), 
 			getarclength(1), 
-			sleeperwidth*0.5,
+			ballastwidth,
 			getorientation(0)
 		);
 	return std::make_unique<AnnularSector>(
 			getpos(0, 0), 
 			getorientation(0),
 			getpos(1, 0),
-			sleeperwidth
+			ballastwidth
 		);
 }
 

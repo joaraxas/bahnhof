@@ -171,7 +171,6 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 	angle = abs(atan2(dx, sign(dy)*(radius-dy)));
 	midpoint = globalcoords({0,-radius}, fromdir, frompos);
 	angle = truncate(abs(angle), 2*pi);
-	std::cout<<angle*180/pi<<std::endl;
 	innerradius = abs(radius) - 0.5*thickness;
 	outerradius = abs(radius) + 0.5*thickness;
 	if(dy<0)
@@ -179,12 +178,13 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 	else
 		rightlimitangle = fromdir - angle + pi/2;
 	rightlimitangle = truncate(rightlimitangle, 2*pi);
+	
+	nSegments = fmax(1, round(angle/pi*32*outerradius/100));
 }
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
 	std::vector<Vec> vertvecs = getvertices();
-	int nSegments = (vertvecs.size()-2)/2;
 	std::vector<int> indices;
 	indices.reserve(2*3*nSegments);
 	for(int i=0; i<nSegments*2; i++){
@@ -208,7 +208,6 @@ float AnnularSector::getorientation() const
 
 std::vector<Vec> AnnularSector::getvertices() const
 {
-	int nSegments = 20;
 	std::vector<Vec> verts;
 	verts.reserve(nSegments*2+2);
 	float mid_x = midpoint.x;

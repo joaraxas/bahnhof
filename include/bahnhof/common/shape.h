@@ -86,6 +86,7 @@ private:
     float outerradius;
     float rightlimitangle;
     float angle;
+    int nSegments;
 };
 
 namespace Intersection
