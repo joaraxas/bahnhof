@@ -100,7 +100,8 @@ namespace Intersection
 
 bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb);
 bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape);
-bool edgesintersect(Edge, Edge);
+bool edgesintersect(const Edge&, const Edge&);
+bool anyedgesintersect(const std::vector<Edge>& edges1, const std::vector<Edge>& edges2);
 
 }
 

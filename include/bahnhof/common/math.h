@@ -18,10 +18,10 @@ struct Vec
     Vec();
     Vec(float xstart, float ystart);
     Vec(const SDL_FPoint& point);
-    Vec operator+(Vec);
-    Vec operator-(Vec);
-    Vec operator*(float);
-    Vec operator/(float);
+    Vec operator+(const Vec&) const;
+    Vec operator-(const Vec&) const;
+    Vec operator*(float) const;
+    Vec operator/(float) const;
     float x;
     float y;
 };

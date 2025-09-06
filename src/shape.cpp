@@ -63,8 +63,8 @@ std::vector<Vec> Rectangle::getvertices() const
 	verts.resize(4);
 	verts[0] = {float(rect.x), float(rect.y)};
 	verts[1] = {float(rect.x+rect.w), float(rect.y)};
-	verts[2] = {float(rect.x), float(rect.y+rect.h)};
-	verts[3] = {float(rect.x+rect.w), float(rect.y+rect.h)};
+	verts[2] = {float(rect.x+rect.w), float(rect.y+rect.h)};
+	verts[3] = {float(rect.x), float(rect.y+rect.h)};
 	return verts;
 }
 
@@ -243,30 +243,32 @@ bool AnnularSector::intersects(const Shape& shape) const
 
 bool AnnularSector::intersectsrect(const Rectangle& shape) const
 {
-	auto myvertices = getvertices();
-	if(shape.contains(myvertices.front()))
+	// First check whether one point from either body is inside the other.
+	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
+	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
+	if(shape.contains(rightoutercorner))
 		return true;
 	auto othervertices = shape.getvertices();
 	if(contains(othervertices.front()))
 		return true;
-	std::vector<Edge> myedges;
-	myedges.reserve(myvertices.size());
-	for(int i=0; i<myvertices.size(); i++){
-		int nexti = (i+1) % myvertices.size();
-		myedges.push_back(Edge(myvertices[i], myvertices[nexti]));
-	}
+
 	std::vector<Edge> otheredges;
-	otheredges.reserve(otheredges.size());
+	otheredges.reserve(othervertices.size());
 	for(int i=0; i<othervertices.size(); i++){
 		int nexti = (i+1) % othervertices.size();
 		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
 	}
-	for(auto& edge: myedges){
-		for(auto& otheredge : otheredges){
-			if(Intersection::edgesintersect(edge, otheredge))
-				return true;
-		}
-	}
+
+	// This shape has only two straight edges. We need to check whether any of these side edges collide with the other's.
+	std::vector<Edge> myedges;
+	myedges.reserve(2);
+	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
+	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
+	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
+	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
+	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
+	if(Intersection::anyedgesintersect(myedges, otheredges))
+		return true;
 	return false;
 }
 
@@ -322,7 +324,7 @@ bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::a
 	return true;
 }
 
-bool edgesintersect(Edge edge1, Edge edge2)
+bool edgesintersect(const Edge& edge1, const Edge& edge2)
 {
 	// express edge2 in local coordinates of edge1
 	Vec d1 = edge1.endpoint2 - edge1.endpoint1;
@@ -348,5 +350,14 @@ bool edgesintersect(Edge edge1, Edge edge2)
 	return true;
 }
 
+bool anyedgesintersect(const std::vector<Edge>& edges1, const std::vector<Edge>& edges2){
+	for(auto& edge: edges1){
+		for(auto& otheredge : edges2){
+			if(Intersection::edgesintersect(edge, otheredge))
+				return true;
+		}
+	}
+	return false;
+}
 
 } // namespace Intersection

@@ -23,7 +23,7 @@ Vec::Vec(const SDL_FPoint& point)
 	y = point.y;
 }
 
-Vec Vec::operator-(Vec v)
+Vec Vec::operator-(const Vec& v) const
 {
 	Vec out(0,0);
 	out.x = x-v.x;
@@ -31,7 +31,7 @@ Vec Vec::operator-(Vec v)
 	return out;
 }
 
-Vec Vec::operator+(Vec v)
+Vec Vec::operator+(const Vec& v) const
 {
 	Vec out(0,0);
 	out.x = x+v.x;
@@ -39,7 +39,7 @@ Vec Vec::operator+(Vec v)
 	return out;
 }
 
-Vec Vec::operator*(float a)
+Vec Vec::operator*(float a) const
 {
 	Vec out(0,0);
 	out.x = x*a;
@@ -47,7 +47,7 @@ Vec Vec::operator*(float a)
 	return out;
 }
 
-Vec Vec::operator/(float a)
+Vec Vec::operator/(float a) const
 {
 	Vec out(0,0);
 	out.x = x/a;
