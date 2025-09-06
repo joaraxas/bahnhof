@@ -241,8 +241,32 @@ bool AnnularSector::intersects(const Shape& shape) const
 	return shape.intersectsannularsector(*this);
 }
 
-bool AnnularSector::intersectsrect(const Rectangle&) const
+bool AnnularSector::intersectsrect(const Rectangle& shape) const
 {
+	auto myvertices = getvertices();
+	if(shape.contains(myvertices.front()))
+		return true;
+	auto othervertices = shape.getvertices();
+	if(contains(othervertices.front()))
+		return true;
+	std::vector<Edge> myedges;
+	myedges.reserve(myvertices.size());
+	for(int i=0; i<myvertices.size(); i++){
+		int nexti = (i+1) % myvertices.size();
+		myedges.push_back(Edge(myvertices[i], myvertices[nexti]));
+	}
+	std::vector<Edge> otheredges;
+	otheredges.reserve(otheredges.size());
+	for(int i=0; i<othervertices.size(); i++){
+		int nexti = (i+1) % othervertices.size();
+		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
+	}
+	for(auto& edge: myedges){
+		for(auto& otheredge : otheredges){
+			if(Intersection::edgesintersect(edge, otheredge))
+				return true;
+		}
+	}
 	return false;
 }
 
@@ -297,5 +321,32 @@ bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::a
 	if(allabove || allbelow) return false;
 	return true;
 }
+
+bool edgesintersect(Edge edge1, Edge edge2)
+{
+	// express edge2 in local coordinates of edge1
+	Vec d1 = edge1.endpoint2 - edge1.endpoint1;
+	float angle1 = atan2(-d1.y, d1.x);
+	Vec localendpoint1 = localcoords(edge2.endpoint1, angle1, edge1.endpoint1);
+	Vec localendpoint2 = localcoords(edge2.endpoint2, angle1, edge1.endpoint1);
+	// in this system, the vertical component of edge2 must change sign, or there is no collision
+	// TODO: This could be optimized, there is no need to compute the local x coords
+	if(localendpoint1.y*localendpoint2.y >= 0)
+		return false;
+
+	// now do the same test for edge1
+
+	// express edge1 in local coordinates of edge2
+	Vec d2 = edge2.endpoint2 - edge2.endpoint1;
+	float angle2 = atan2(-d2.y, d2.x);
+	localendpoint1 = localcoords(edge1.endpoint1, angle2, edge2.endpoint1);
+	localendpoint2 = localcoords(edge1.endpoint2, angle2, edge2.endpoint1);
+	// in this system, the vertical component of edge1 must change sign, or there is no collision
+	if(localendpoint1.y*localendpoint2.y >= 0)
+		return false;
+
+	return true;
+}
+
 
 } // namespace Intersection

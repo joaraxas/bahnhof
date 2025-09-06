@@ -89,11 +89,18 @@ private:
     int nSegments;
 };
 
+struct Edge
+{
+    Vec endpoint1;
+    Vec endpoint2;
+};
+
 namespace Intersection
 {
 
 bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb);
 bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape);
+bool edgesintersect(Edge, Edge);
 
 }
 
