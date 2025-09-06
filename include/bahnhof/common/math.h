@@ -26,7 +26,8 @@ struct Vec
     float y;
 };
 
-float norm(Vec v);
+float norm(const Vec& v);
+float normsquared(const Vec& v);
 Vec localcoords(Vec globalvec, float angle, Vec origin);
 Vec globalcoords(Vec localvec, float angle, Vec origin);
 

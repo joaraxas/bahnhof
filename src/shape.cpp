@@ -259,16 +259,20 @@ bool AnnularSector::intersectsrect(const Rectangle& shape) const
 		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
 	}
 
-	// This shape has only two straight edges. We need to check whether any of these side edges collide with the other's.
-	std::vector<Edge> myedges;
-	myedges.reserve(2);
-	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
-	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
-	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
-	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
-	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
-	if(Intersection::anyedgesintersect(myedges, otheredges))
+	Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
+	if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
 		return true;
+
+	// This shape has only two straight edges. We need to check whether any of these side edges collide with the other's.
+	// std::vector<Edge> myedges;
+	// myedges.reserve(2);
+	// Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
+	// myedges.push_back(Edge(rightinnercorner, rightoutercorner));
+	// Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
+	// Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
+	// myedges.push_back(Edge(leftinnercorner, leftoutercorner));
+	// if(Intersection::anyedgesintersect(myedges, otheredges))
+	// 	return true;
 	return false;
 }
 
@@ -348,6 +352,27 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 		return false;
 
 	return true;
+}
+
+bool edgeintersectsarc(const Edge& edge, const Arc& arc)
+{
+	float r2 = arc.radius * arc.radius;
+	float p1tocenter_dist2 = normsquared(edge.endpoint1 - arc.center);
+	float p2tocenter_dist2 = normsquared(edge.endpoint2 - arc.center);
+	if(p1tocenter_dist2<r2 && p2tocenter_dist2<r2)
+		return false; //the edge is enclosed by the circle, no collision
+	// TODO: What if we have equality?
+	if(p1tocenter_dist2>r2 && p2tocenter_dist2>r2){
+		float p1top2_dist2 = normsquared(edge.endpoint1 - edge.endpoint2);
+		float mindist2fromedgetocircle = p1tocenter_dist2 - 
+			pow(p1tocenter_dist2 + p1top2_dist2 - p2tocenter_dist2, 2) * 0.25 / p1top2_dist2;
+		if(mindist2fromedgetocircle<=r2){
+			// The line defined by the edge intersects the circle. Must check endpoints
+			return true;
+		}
+	}
+	return false;
+
 }
 
 bool anyedgesintersect(const std::vector<Edge>& edges1, const std::vector<Edge>& edges2){

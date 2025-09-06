@@ -55,9 +55,14 @@ Vec Vec::operator/(float a) const
 	return out;
 }
 
-float norm(Vec v)
+float norm(const Vec& v)
 {
-	return std::sqrt(v.x*v.x + v.y*v.y);
+	return std::sqrt(normsquared(v));
+}
+
+float normsquared(const Vec& v)
+{
+	return v.x*v.x + v.y*v.y;
 }
 
 Vec localcoords(Vec globalvec, float angle, Vec origin)

@@ -31,7 +31,7 @@ Game::~Game()
 
 void Game::play()
 {
-	gamestate->randommap();
+	// gamestate->randommap();
 	while(!quit){
 		timer->tick();
 		input->handle(timer->getms(), timer->getmslogic());

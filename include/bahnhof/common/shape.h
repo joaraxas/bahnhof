@@ -95,12 +95,21 @@ struct Edge
     Vec endpoint2;
 };
 
+struct Arc
+{
+    Vec center;
+    float radius;
+    float rightangle;
+    float angle;
+};
+
 namespace Intersection
 {
 
 bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb);
 bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape);
 bool edgesintersect(const Edge&, const Edge&);
+bool edgeintersectsarc(const Edge&, const Arc&);
 bool anyedgesintersect(const std::vector<Edge>& edges1, const std::vector<Edge>& edges2);
 
 }
