@@ -5,6 +5,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/track/track.h"
 
 
 BuildingManager::BuildingManager(Game* g) : game(g)
@@ -53,5 +54,17 @@ bool BuildingManager::checkcollision(const Shape& shape)
 		if(building->checkcollisionwithshape(shape))
 			return true;
 	}
+	return false;
+}
+
+bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
+{
+    std::vector<std::unique_ptr<Shape>> trackshapes = 
+        Tracks::Input::gettrackcollisionmasks(section);
+    for(auto& shape : trackshapes){
+        if(checkcollision(*shape)){
+            return true;
+        }
+    }
 	return false;
 }

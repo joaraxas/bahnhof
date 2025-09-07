@@ -116,14 +116,7 @@ bool TrackBuilder::canfit()
     bool collision = false;
 
     Tracks::Tracksection section = planconstruction(anchorpoint);
-    std::vector<std::unique_ptr<Shape>> trackshapes = 
-        Tracks::Input::gettrackcollisionmasks(section);
-    for(auto& shape : trackshapes){
-        if(game->getgamestate().getbuildingmanager().checkcollision(*shape)){
-            collision = true;
-            break;
-        }
-    }
+    collision = game->getgamestate().getbuildingmanager().checkcollision(section);
     Tracks::Input::discardsection(section);
 
     return !collision;
@@ -225,6 +218,15 @@ bool BuildingBuilder::canfit()
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
+    if(building->id == wagonfactory){
+        float newangle = angle;
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
+        if(buildingmanager.checkcollision(section)){
+            Tracks::Input::discardsection(section); 
+            return false;
+        }
+        Tracks::Input::discardsection(section); 
+    }
     return true;
 }
 
