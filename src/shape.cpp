@@ -193,7 +193,6 @@ void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, boo
 		indices.push_back(i+2);
 	}
 	r->renderfilledpolygon(vertvecs, indices, color, ported, zoomed);
-	r->renderfilledrectangle({int(round(midpoint.x))-3,int(round(midpoint.y))-3,6,6});
 }
 
 Vec AnnularSector::mid() const
@@ -252,32 +251,7 @@ bool AnnularSector::intersectsrect(const Rectangle& shape) const
 	if(contains(othervertices.front()))
 		return true;
 
-	// Generate the rectangles edges and check collision with my arcs
-	std::vector<Edge> otheredges;
-	otheredges.reserve(othervertices.size());
-	for(int i=0; i<othervertices.size(); i++){
-		int nexti = (i+1) % othervertices.size();
-		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
-		// check intersection with both arcs
-		Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
-		if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
-			return true;
-		Arc innerarc(midpoint, innerradius, rightlimitangle, angle);
-		if(Intersection::edgeintersectsarc(otheredges.back(), innerarc))
-			return true;
-	}
-
-	// This sector has only two straight edges. We need to check whether any of these side edges collide with the rectangle's.
-	std::vector<Edge> myedges;
-	myedges.reserve(2);
-	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
-	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
-	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
-	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
-	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
-	if(Intersection::anyedgesintersect(myedges, otheredges))
-		return true;
-	return false;
+	return intersectsanyedge(othervertices);
 }
 
 bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
@@ -291,18 +265,28 @@ bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
 	if(contains(othervertices.front()))
 		return true;
 
-	// Generate the rectangles edges and check collision with my arcs
-	std::vector<Edge> otheredges;
-	otheredges.reserve(othervertices.size());
-	for(int i=0; i<othervertices.size(); i++){
-		int nexti = (i+1) % othervertices.size();
-		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
+	return intersectsanyedge(othervertices);
+}
+
+bool AnnularSector::intersectsannularsector(const AnnularSector&) const
+{
+	return false; // for now this won't happen
+}
+
+bool AnnularSector::intersectsanyedge(const std::vector<Vec>& orderedvertices) const
+{
+	std::vector<Edge> edges;
+	edges.reserve(orderedvertices.size());
+	for(int i=0; i<orderedvertices.size(); i++){
+		int nexti = (i+1) % orderedvertices.size();
+		edges.push_back(Edge(orderedvertices[i], orderedvertices[nexti]));
+		
 		// check intersection with both arcs
 		Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
-		if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
+		if(Intersection::edgeintersectsarc(edges.back(), outerarc))
 			return true;
 		Arc innerarc(midpoint, innerradius, rightlimitangle, angle);
-		if(Intersection::edgeintersectsarc(otheredges.back(), innerarc))
+		if(Intersection::edgeintersectsarc(edges.back(), innerarc))
 			return true;
 	}
 
@@ -310,18 +294,14 @@ bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
 	std::vector<Edge> myedges;
 	myedges.reserve(2);
 	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
+	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
 	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
 	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
 	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
 	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
-	if(Intersection::anyedgesintersect(myedges, otheredges))
+	if(Intersection::anyedgesintersect(myedges, edges))
 		return true;
 	return false;
-}
-
-bool AnnularSector::intersectsannularsector(const AnnularSector&) const
-{
-	return false; // for now this won't happen
 }
 
 namespace Intersection{

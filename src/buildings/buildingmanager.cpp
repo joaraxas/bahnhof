@@ -12,13 +12,11 @@ BuildingManager::BuildingManager(Game* g) : game(g)
 	types[brewery] = BuildingType{brewery, "Brewery", Vec(232,150), {63,63,127,255}, sprites::brewery, sprites::beer, 120};
 	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(248,168), {63,127,63,255}, sprites::hopsfield, sprites::hops, 90};
 	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(300,450), {127,127,31,255}, sprites::barleyfield, sprites::barley, 70};
-	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, {}, sprites::iconopenwagon, 0};
-	// types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 200};
+	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 200};
 	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(370,185), {127,127,127,255}, sprites::wagonfactory, sprites::icontankloco, 100};
 
 	availabletypes.push_back(types[brewery]);
 	availabletypes.push_back(types[wagonfactory]);
-	availabletypes.push_back(types[city]);
 }
 
 void BuildingManager::update(int ms)

@@ -81,6 +81,7 @@ public:
     bool intersectsannularsector(const AnnularSector&) const;
 private:
     std::vector<Vec> getvertices() const;
+    bool intersectsanyedge(const std::vector<Vec>& orderedvertices) const;
     Vec midpoint;
     float innerradius;
     float outerradius;
