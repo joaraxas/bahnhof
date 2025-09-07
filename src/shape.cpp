@@ -246,38 +246,76 @@ bool AnnularSector::intersectsrect(const Rectangle& shape) const
 	// First check whether one point from either body is inside the other.
 	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
 	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
-	// if(shape.contains(rightoutercorner))
-	// 	return true;
+	if(shape.contains(rightoutercorner))
+		return true;
 	auto othervertices = shape.getvertices();
-	// if(contains(othervertices.front()))
-	// 	return true;
+	if(contains(othervertices.front()))
+		return true;
 
+	// Generate the rectangles edges and check collision with my arcs
 	std::vector<Edge> otheredges;
 	otheredges.reserve(othervertices.size());
 	for(int i=0; i<othervertices.size(); i++){
 		int nexti = (i+1) % othervertices.size();
 		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
+		// check intersection with both arcs
+		Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
+		if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
+			return true;
+		Arc innerarc(midpoint, innerradius, rightlimitangle, angle);
+		if(Intersection::edgeintersectsarc(otheredges.back(), innerarc))
+			return true;
 	}
 
-	Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
-	if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
+	// This sector has only two straight edges. We need to check whether any of these side edges collide with the rectangle's.
+	std::vector<Edge> myedges;
+	myedges.reserve(2);
+	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
+	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
+	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
+	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
+	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
+	if(Intersection::anyedgesintersect(myedges, otheredges))
 		return true;
-
-	// This shape has only two straight edges. We need to check whether any of these side edges collide with the other's.
-	// std::vector<Edge> myedges;
-	// myedges.reserve(2);
-	// Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
-	// myedges.push_back(Edge(rightinnercorner, rightoutercorner));
-	// Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
-	// Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
-	// myedges.push_back(Edge(leftinnercorner, leftoutercorner));
-	// if(Intersection::anyedgesintersect(myedges, otheredges))
-	// 	return true;
 	return false;
 }
 
-bool AnnularSector::intersectsrotrect(const RotatedRectangle&) const
+bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
 {
+	// First check whether one point from either body is inside the other.
+	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
+	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
+	if(shape.contains(rightoutercorner))
+		return true;
+	auto othervertices = shape.getvertices();
+	if(contains(othervertices.front()))
+		return true;
+
+	// Generate the rectangles edges and check collision with my arcs
+	std::vector<Edge> otheredges;
+	otheredges.reserve(othervertices.size());
+	for(int i=0; i<othervertices.size(); i++){
+		int nexti = (i+1) % othervertices.size();
+		otheredges.push_back(Edge(othervertices[i], othervertices[nexti]));
+		// check intersection with both arcs
+		Arc outerarc(midpoint, outerradius, rightlimitangle, angle);
+		if(Intersection::edgeintersectsarc(otheredges.back(), outerarc))
+			return true;
+		Arc innerarc(midpoint, innerradius, rightlimitangle, angle);
+		if(Intersection::edgeintersectsarc(otheredges.back(), innerarc))
+			return true;
+	}
+
+	// This sector has only two straight edges. We need to check whether any of these side edges collide with the rectangle's.
+	std::vector<Edge> myedges;
+	myedges.reserve(2);
+	Vec rightinnercorner(midpoint.x+innerradius*cos(-rightlimitangle), midpoint.y+innerradius*sin(-rightlimitangle));
+	myedges.push_back(Edge(rightinnercorner, rightoutercorner));
+	Vec leftinnercorner(midpoint.x+innerradius*cos(-rightlimitangle-angle), midpoint.y+innerradius*sin(-rightlimitangle-angle));
+	Vec leftoutercorner(midpoint.x+outerradius*cos(-rightlimitangle-angle), midpoint.y+outerradius*sin(-rightlimitangle-angle));
+	myedges.push_back(Edge(leftinnercorner, leftoutercorner));
+	if(Intersection::anyedgesintersect(myedges, otheredges))
+		return true;
 	return false;
 }
 
@@ -360,8 +398,10 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 	float p1tocenter_dist2 = normsquared(edge.endpoint1 - arc.center);
 	float p2tocenter_dist2 = normsquared(edge.endpoint2 - arc.center);
 	if(p1tocenter_dist2<r2 && p2tocenter_dist2<r2)
-		return false; //the edge is enclosed by the circle, no collision
-	// TODO: What if we have equality?
+		return false; // the edge is enclosed by the circle, no collision
+	float xhat = edge.endpoint2.x - edge.endpoint1.x;
+	float yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+	std::vector<int> discriminantsignstocheck;
 	if(p1tocenter_dist2>r2 && p2tocenter_dist2>r2){
 		// Both endpoints are outside the circle, check nearest point on edge
 		float p1top2_dist2 = normsquared(edge.endpoint1 - edge.endpoint2);
@@ -370,37 +410,46 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 		if(mindist2fromedgetocircle>r2){
 			return false; // the entire line is outside the circle
 		}
-		// probably solve for both intersections and check them
+		xhat = edge.endpoint2.x - edge.endpoint1.x;
+		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+		float edgeangle = atan2(yhat, xhat);
+		Vec clocal = localcoords(arc.center, edgeangle, edge.endpoint1);
+		if(clocal.x<0 || clocal.x>norm(edge.endpoint2-edge.endpoint1))
+			return false; // edge does not intersect circle
+		// Edge intersects circle, we must check both intersections vs the arc angles
+		discriminantsignstocheck.push_back(-1);
+		discriminantsignstocheck.push_back(1);
 	}
-	// The line defined by the edge intersects the circle. Must check endpoints
-	// there will be two solutions but we must only check one of them
-	bool pointingoutwards = (p2tocenter_dist2>p1tocenter_dist2);
+	else{
+		xhat = edge.endpoint2.x - edge.endpoint1.x;
+		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+		// The edge pierces through the circle
+		// There will be two solutions but we must only check one of them vs the arc angles
+		bool pointingoutwards = (p2tocenter_dist2>p1tocenter_dist2);
+		if(pointingoutwards) discriminantsignstocheck.push_back(1);
+		else discriminantsignstocheck.push_back(-1);
+	}
 
-	float xhat = edge.endpoint2.x - edge.endpoint1.x;
-	float yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+	// Compute line intersection angles and compare to arc limit angles
 	float mixedterm = -(edge.endpoint1.y-arc.center.y)*xhat - (edge.endpoint1.x-arc.center.x)*yhat;
-
 	float discriminant = sqrt((xhat*xhat+yhat*yhat)*r2 - mixedterm*mixedterm);
-	discriminant = (2*pointingoutwards-1)*discriminant;
-	float nom = xhat*mixedterm + yhat*discriminant;
-	float denom = -yhat*mixedterm + xhat*discriminant;
-	float intersectionangle = atan2(nom, denom);
+	for(int discsign : discriminantsignstocheck){
+		float nom = xhat*mixedterm + yhat*discsign*discriminant;
+		float denom = -yhat*mixedterm + xhat*discsign*discriminant;
+		float intersectionangle = atan2(nom, denom);
 
-	intersectionangle = truncate(intersectionangle, 2*pi);
-	std::cout<<"nom: "<<nom<<std::endl;
-	std::cout<<"denom: "<<denom<<std::endl;
-	std::cout<<"angle: "<<intersectionangle*180/pi<<std::endl;
-	if(intersectionangle>=arc.rightangle && 
-	intersectionangle<=arc.rightangle+arc.angle){
-		return true;
-	}
-	intersectionangle += 2*pi;
-	if(intersectionangle>=arc.rightangle && 
-	intersectionangle<=arc.rightangle+arc.angle){
-		return true;
+		intersectionangle = truncate(intersectionangle, 2*pi);
+		if(intersectionangle>=arc.rightangle && 
+		intersectionangle<=arc.rightangle+arc.angle){
+			return true;
+		}
+		intersectionangle += 2*pi;
+		if(intersectionangle>=arc.rightangle && 
+		intersectionangle<=arc.rightangle+arc.angle){
+			return true;
+		}
 	}
 	return false;
-
 }
 
 bool anyedgesintersect(const std::vector<Edge>& edges1, const std::vector<Edge>& edges2){
