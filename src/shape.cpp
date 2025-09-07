@@ -246,11 +246,11 @@ bool AnnularSector::intersectsrect(const Rectangle& shape) const
 	// First check whether one point from either body is inside the other.
 	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
 	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
-	if(shape.contains(rightoutercorner))
-		return true;
+	// if(shape.contains(rightoutercorner))
+	// 	return true;
 	auto othervertices = shape.getvertices();
-	if(contains(othervertices.front()))
-		return true;
+	// if(contains(othervertices.front()))
+	// 	return true;
 
 	std::vector<Edge> otheredges;
 	otheredges.reserve(othervertices.size());
@@ -363,13 +363,41 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 		return false; //the edge is enclosed by the circle, no collision
 	// TODO: What if we have equality?
 	if(p1tocenter_dist2>r2 && p2tocenter_dist2>r2){
+		// Both endpoints are outside the circle, check nearest point on edge
 		float p1top2_dist2 = normsquared(edge.endpoint1 - edge.endpoint2);
 		float mindist2fromedgetocircle = p1tocenter_dist2 - 
 			pow(p1tocenter_dist2 + p1top2_dist2 - p2tocenter_dist2, 2) * 0.25 / p1top2_dist2;
-		if(mindist2fromedgetocircle<=r2){
-			// The line defined by the edge intersects the circle. Must check endpoints
-			return true;
+		if(mindist2fromedgetocircle>r2){
+			return false; // the entire line is outside the circle
 		}
+		// probably solve for both intersections and check them
+	}
+	// The line defined by the edge intersects the circle. Must check endpoints
+	// there will be two solutions but we must only check one of them
+	bool pointingoutwards = (p2tocenter_dist2>p1tocenter_dist2);
+
+	float xhat = edge.endpoint2.x - edge.endpoint1.x;
+	float yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+	float mixedterm = -(edge.endpoint1.y-arc.center.y)*xhat - (edge.endpoint1.x-arc.center.x)*yhat;
+
+	float discriminant = sqrt((xhat*xhat+yhat*yhat)*r2 - mixedterm*mixedterm);
+	discriminant = (2*pointingoutwards-1)*discriminant;
+	float nom = xhat*mixedterm + yhat*discriminant;
+	float denom = -yhat*mixedterm + xhat*discriminant;
+	float intersectionangle = atan2(nom, denom);
+
+	intersectionangle = truncate(intersectionangle, 2*pi);
+	std::cout<<"nom: "<<nom<<std::endl;
+	std::cout<<"denom: "<<denom<<std::endl;
+	std::cout<<"angle: "<<intersectionangle*180/pi<<std::endl;
+	if(intersectionangle>=arc.rightangle && 
+	intersectionangle<=arc.rightangle+arc.angle){
+		return true;
+	}
+	intersectionangle += 2*pi;
+	if(intersectionangle>=arc.rightangle && 
+	intersectionangle<=arc.rightangle+arc.angle){
+		return true;
 	}
 	return false;
 
