@@ -220,7 +220,7 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	return reachedsignal;
 }
 
-void Track::render(Rendering* r, TracksDisplayMode mode)
+void Track::renderballast(Rendering* r, TracksDisplayMode mode)
 {
 	float scale = r->getcamscale();
 	//// ballast ////
@@ -240,6 +240,11 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 		std::unique_ptr<Shape> shape = getcollisionmask();
 		shape->renderfilled(r, ballastcolor);
 	}
+}
+
+void Track::render(Rendering* r, TracksDisplayMode mode)
+{
+	float scale = r->getcamscale();
 	//// sleepers ////
 	if(nicetracks){
 		switch(mode){

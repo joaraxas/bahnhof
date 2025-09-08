@@ -38,6 +38,7 @@ void Rendering::render(Gamestate* gamestate)
 		SDL_Rect rect = {x,y,128,128};
 		rendertexture(fieldtex, &rect);
 	}}
+	Tracks::renderbelowtracks(tracksystem, this);
 	Tracks::render(tracksystem, this);
 	gamestate->gettrainmanager().render(this);
 	gamestate->getbuildingmanager().render(this);

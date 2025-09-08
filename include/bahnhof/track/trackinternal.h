@@ -77,6 +77,7 @@ public:
     void connecttonodes();
     void disconnectfromnodes();
     void render(Rendering* r, TracksDisplayMode mode);
+    void renderballast(Rendering* r, TracksDisplayMode mode);
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);

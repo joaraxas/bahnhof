@@ -124,6 +124,7 @@ namespace Signaling
 
     void render(Tracksystem&, Rendering* r);
     void render(const Tracksection& section, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
+    void renderbelowtracks(Tracksystem& tracksystem, Rendering* r, TracksDisplayMode mode=TracksDisplayMode::normal);
     void renderabovetrains(Tracksystem&, Rendering* r);
 
     State travel(Tracksystem&, State state, float pixels);

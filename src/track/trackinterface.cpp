@@ -46,15 +46,26 @@ Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
 
 void render(Tracksystem& tracksystem, Rendering* r)
 {
-	render(Tracksection(tracksystem.alltracks(), tracksystem.allnodes()), r);
+	for(auto const track : tracksystem.alltracks())
+		track->render(r, TracksDisplayMode::normal);
+	for(auto const node : tracksystem.allnodes())
+		node->render(r);
 }
 
 void render(const Tracksection& section, Rendering* r, TracksDisplayMode mode)
 {
-	for(auto const track : section.tracks)
+	for(auto const track : section.tracks){
+		track->renderballast(r, mode);
 		track->render(r, mode);
+	}
 	for(auto const node : section.nodes)
 		node->render(r);
+}
+
+void renderbelowtracks(Tracksystem& tracksystem, Rendering* r, TracksDisplayMode mode)
+{
+	for(auto const track : tracksystem.alltracks())
+		track->renderballast(r, mode);
 }
 
 void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
