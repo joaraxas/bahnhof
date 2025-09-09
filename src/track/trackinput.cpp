@@ -58,13 +58,13 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, float* angle)
 {
 	trackid clickedtrack = 0;
-	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
 	if(clickedtrack){
 		nodeid clickednode = 0;
-		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
 			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
@@ -80,11 +80,11 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 	}
 	
 	if(!angle)
-		return Construction::extendtracktopos(tracksystem, fromnode, pos);
+		return Construction::extendtracktopos(tracksystem, fromnode, topos);
 	
 	Node* tonode = new Node(
 		tracksystem, 
-		pos, 
+		topos, 
 		*angle, 
 		-1
 	);
@@ -93,7 +93,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, float* angle)
 {
 	Node* fromnode = new Node(
 		tracksystem,
@@ -101,19 +101,19 @@ Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec p
 		getorientation(tracksystem, fromstate),
 		-1
 	);
-	Tracksection section = planconstructionto(tracksystem, fromnode, pos, angle);
+	Tracksection section = planconstructionto(tracksystem, fromnode, topos, angle);
 	section.nodes.push_back(fromnode);
 	section.tracksplits[fromnode] = fromstate;
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, float* angle)
 {
 	trackid clickedtrack = 0;
-	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
 	if(clickedtrack){
 		nodeid clickednode = 0;
-		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
 			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
@@ -128,11 +128,11 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, 
 		return section;
 	}
 	if(!angle)
-		return Construction::extendtracktopos(tracksystem, frompos, pos);
+		return Construction::extendtracktopos(tracksystem, frompos, topos);
 	
 	Node* tonode = new Node(
 		tracksystem, 
-		pos, 
+		topos, 
 		*angle, 
 		-1
 	);

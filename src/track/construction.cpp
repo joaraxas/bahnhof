@@ -10,21 +10,21 @@
 namespace Tracks{
 namespace Construction{
 
-Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec pos)
+Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 {
-	Vec posdiff = pos - frompos;
+	Vec posdiff = topos - frompos;
 	float dir = atan2(-posdiff.y,posdiff.x);
 	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
-	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
+	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, topos);
 	newsection = newsection + Tracksection({},{fromnode});
 	return newsection;
 }
 
-Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec topos)
 {
-	Vec posdiff = pos - fromnode->getpos();
+	Vec posdiff = topos - fromnode->getpos();
 	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - fromnode->getdir());
-    Node* tonodepointer = new Node(tracksystem, pos, dir, -1);
+    Node* tonodepointer = new Node(tracksystem, topos, dir, -1);
     Track* newtrack = new Track(tracksystem, *fromnode, *tonodepointer, -1);
 	Tracksection section({newtrack}, {tonodepointer});
 	return section;
