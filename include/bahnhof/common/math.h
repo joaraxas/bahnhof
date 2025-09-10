@@ -33,4 +33,5 @@ Vec globalcoords(Vec localvec, float angle, Vec origin);
 
 float sign(float a);
 float truncate(float dir, float denominator=pi);
+float anglediff(float a, float b, float wraparound=pi);
 int randint(int maxinclusive);

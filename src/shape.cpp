@@ -167,7 +167,7 @@ AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickn
 {
 	Vec d = localcoords(topos, fromdir, frompos);
 	float dx = d.x; float dy = -d.y;
-	float radius = 0.5*(dy*dy+dx*dx)/dy;
+	float radius = 0.5*(dy*dy+dx*dx)/dy; // TODO: What if dy is 0?
 	angle = abs(atan2(dx, sign(dy)*(radius-dy)));
 	midpoint = globalcoords({0,-radius}, fromdir, frompos);
 	angle = truncate(abs(angle), 2*pi);

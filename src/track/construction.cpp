@@ -65,8 +65,8 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node1->getdir());
 	}
 	if(
-		(distancebetween(pos1, newnodepoint) < 10 && abs(dir-node1->getdir()) < 5.0/180.0*pi) ||
-		(distancebetween(pos2, newnodepoint) < 10 && abs(dir-node2->getdir()) < 5.0/180.0*pi)
+		(distancebetween(pos1, newnodepoint) < 10 && abs(anglediff(dir, node1->getdir())) < 5.0/180.0*pi) ||
+		(distancebetween(pos2, newnodepoint) < 10 && abs(anglediff(dir, node2->getdir())) < 5.0/180.0*pi)
 	){
 		Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
 		return Tracksection({newtrack},{});

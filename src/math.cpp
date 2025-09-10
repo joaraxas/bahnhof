@@ -97,6 +97,11 @@ float truncate(float dir, float denominator)
 	return dir - denominator*std::floor(dir/denominator);
 }
 
+float anglediff(float a, float b, float wraparound)
+{
+	return std::remainder(a - b, wraparound);
+}
+
 int randint(int maxinclusive)
 {
 	return rand() % (maxinclusive+1);
