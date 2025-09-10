@@ -50,24 +50,24 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		intersectx = x1;
 		intersecty = -(y2 + (intersectx - x2)*tanth2);
 	}
-	std::cout<<"int_x "<<intersectx<<std::endl;
-	std::cout<<"int_y "<<intersecty<<std::endl;
-	std::cout<<"node2_x "<<pos2.x<<std::endl;
-	std::cout<<"node2_y "<<pos2.y<<std::endl;
 	Vec tangentintersection(intersectx, intersecty);
 	float disttointersect1 = distancebetween(pos1, tangentintersection);
 	float disttointersect2 = distancebetween(pos2, tangentintersection);
-	if(disttointersect1 > disttointersect2)
+	float dir;
+	if(disttointersect1 > disttointersect2){
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
-	else
+		Vec posdiff = newnodepoint - pos2;
+		dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node2->getdir());
+	}
+	else{
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-	Vec posdiff = newnodepoint - pos1;
-	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node1->getdir());
-	std::cout<<"dist "<<distancebetween(pos1, newnodepoint)<<std::endl;
-	std::cout<<"angle "<<abs(dir-node1->getdir())*180/pi<<std::endl;
-	if((distancebetween(pos1, newnodepoint) < 10 && abs(dir-node1->getdir()) < 5.0/180.0*pi)
-	|| (distancebetween(pos2, newnodepoint) < 10 && abs(dir-node2->getdir()) < 5.0/180.0*pi)){
-		std::cout<<abs(dir-node2->getdir())<<std::endl;
+		Vec posdiff = newnodepoint - pos1;
+		dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node1->getdir());
+	}
+	if(
+		(distancebetween(pos1, newnodepoint) < 10 && abs(dir-node1->getdir()) < 5.0/180.0*pi) ||
+		(distancebetween(pos2, newnodepoint) < 10 && abs(dir-node2->getdir()) < 5.0/180.0*pi)
+	){
 		Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
 		return Tracksection({newtrack},{});
 	}
