@@ -50,6 +50,10 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		intersectx = x1;
 		intersecty = -(y2 + (intersectx - x2)*tanth2);
 	}
+	std::cout<<"int_x "<<intersectx<<std::endl;
+	std::cout<<"int_y "<<intersecty<<std::endl;
+	std::cout<<"node2_x "<<pos2.x<<std::endl;
+	std::cout<<"node2_y "<<pos2.y<<std::endl;
 	Vec tangentintersection(intersectx, intersecty);
 	float disttointersect1 = distancebetween(pos1, tangentintersection);
 	float disttointersect2 = distancebetween(pos2, tangentintersection);
@@ -57,13 +61,19 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
 	else
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-	if(distancebetween(pos1, newnodepoint)> 10 && distancebetween(pos2, newnodepoint)> 10){ // TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
-		Tracksection section = extendtracktopos(tracksystem, node1, newnodepoint);
-		section.tracks.push_back(new Track(tracksystem, *section.nodes.back(), *node2, -1));
-		return section;
+	Vec posdiff = newnodepoint - pos1;
+	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node1->getdir());
+	std::cout<<"dist "<<distancebetween(pos1, newnodepoint)<<std::endl;
+	std::cout<<"angle "<<abs(dir-node1->getdir())*180/pi<<std::endl;
+	if((distancebetween(pos1, newnodepoint) < 10 && abs(dir-node1->getdir()) < 5.0/180.0*pi)
+	|| (distancebetween(pos2, newnodepoint) < 10 && abs(dir-node2->getdir()) < 5.0/180.0*pi)){
+		std::cout<<abs(dir-node2->getdir())<<std::endl;
+		Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
+		return Tracksection({newtrack},{});
 	}
-	Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
-	return Tracksection({newtrack},{});
+	Tracksection section = extendtracktopos(tracksystem, node1, newnodepoint);
+	section.tracks.push_back(new Track(tracksystem, *section.nodes.back(), *node2, -1));
+	return section;
 }
 
 void splittrack(Tracksystem& tracksystem, Node* node, State state)
