@@ -12,6 +12,7 @@ add_executable(bahnhof
     src/main.cpp
     src/math.cpp
     src/shape.cpp
+    src/orientation.cpp
     src/graphics/rendering.cpp
     src/graphics/graphics.cpp
     src/graphics/sprite.cpp

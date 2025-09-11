@@ -1,11 +1,11 @@
 #include<iostream>
 #include<string>
 #include<map>
+#include "bahnhof/common/orientation.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
-
 
 namespace Tracks{
 namespace Construction{
@@ -53,20 +53,20 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 	Vec tangentintersection(intersectx, intersecty);
 	float disttointersect1 = distancebetween(pos1, tangentintersection);
 	float disttointersect2 = distancebetween(pos2, tangentintersection);
-	float dir;
+	Tangent dir;
 	if(disttointersect1 > disttointersect2){
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
 		Vec posdiff = newnodepoint - pos2;
-		dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node2->getdir());
+		dir = 2*atan2(-posdiff.y,posdiff.x) - node2->getdir();
 	}
 	else{
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
 		Vec posdiff = newnodepoint - pos1;
-		dir = truncate(2*atan2(-posdiff.y,posdiff.x) - node1->getdir());
+		dir = 2*atan2(-posdiff.y,posdiff.x) - node1->getdir();
 	}
 	if(
-		(distancebetween(pos1, newnodepoint) < 10 && abs(anglediff(dir, node1->getdir())) < 5.0/180.0*pi) ||
-		(distancebetween(pos2, newnodepoint) < 10 && abs(anglediff(dir, node2->getdir())) < 5.0/180.0*pi)
+		(distancebetween(pos1, newnodepoint) < 10 && abs(dir - node1->getdir()) < 5.0/180.0*pi) ||
+		(distancebetween(pos2, newnodepoint) < 10 && abs(dir - node2->getdir()) < 5.0/180.0*pi)
 	){
 		Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
 		return Tracksection({newtrack},{});
