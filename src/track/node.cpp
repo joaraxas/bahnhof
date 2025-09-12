@@ -8,9 +8,8 @@
 
 namespace Tracks{
 
-Node::Node(Tracksystem& t, Vec p, float dirstart, nodeid id) : tracksystem(&t), pos(p), id(id)
+Node::Node(Tracksystem& t, Vec p, Tangent dirstart, nodeid id) : tracksystem(&t), pos(p), dir(dirstart), id(id)
 {
-	dir = truncate(dirstart);
 	if(!Node::sprite.hasspritesheet())
 		Node::sprite.setspritesheet(tracksystem->game->getsprites(), sprites::bufferstop);
 }
@@ -77,15 +76,15 @@ void Node::render(Rendering* r)
 			r->rendertext("track down: "+std::to_string(trackdown->id), pos.x, pos.y+2*14/scale);
 		if(trackup)
 			r->rendertext("track up: "+std::to_string(trackup->id), pos.x, pos.y+3*14/scale);
-		r->rendertext(std::to_string(dir), pos.x, pos.y+4*14/scale);
+		r->rendertext(dir, pos.x, pos.y+4*14/scale);
 	}
 	else if(scale>=0.3){
 		if(!trackdown && trackup){
-			Node::sprite.imageangle = dir + pi;
+			Node::sprite.imageangle = dir.angledown();
 			Node::sprite.render(r, pos);
 		}
 		if(!trackup && trackdown){
-			Node::sprite.imageangle = dir;
+			Node::sprite.imageangle = dir.angleup();
 			Node::sprite.render(r, pos);
 		}
 	}
@@ -96,7 +95,7 @@ Vec Node::getpos()
 	return pos;
 }
 
-float Node::getdir()
+Tangent Node::getdir()
 {
 	return dir;
 }
@@ -106,7 +105,7 @@ bool Node::hasswitch()
 	return switchup || switchdown;
 }
 
-Vec getswitchpos(Vec pos, float dir, bool updown)
+Vec getswitchpos(Vec pos, Tangent dir, bool updown)
 {
 	float transverseoffset = -(2*updown-1)*28;///scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;

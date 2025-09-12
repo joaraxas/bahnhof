@@ -4,6 +4,7 @@
 #include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/orientation.h"
 #include "bahnhof/graphics/sprite.h"
 
 class Rendering;
@@ -23,12 +24,12 @@ class Node
 {
 friend class Switch;
 public:
-    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
+    Node(Tracksystem& newtracksystem, Vec posstart, Tangent dirstart, nodeid myid);
     void connecttrack(Track* track, bool fromupordown);
     void disconnecttrack(Track* track, bool fromupordown);
     void render(Rendering* r);
     Vec getpos();
-    float getdir();
+    Tangent getdir();
     bool hasswitch();
     Track* trackup = nullptr;
     Track* trackdown = nullptr;
@@ -39,11 +40,11 @@ private:
     std::unique_ptr<Switch> switchup = nullptr;
     std::unique_ptr<Switch> switchdown = nullptr;
     Vec pos;
-    float dir;
+    Tangent dir;
     inline static Sprite sprite;
 };
 
-Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
+Vec getswitchpos(Vec nodepos, Tangent nodedir, bool updown);
 
 class Switch
 {
