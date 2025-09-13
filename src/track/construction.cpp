@@ -22,8 +22,7 @@ Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 
 Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec topos)
 {
-	Vec posdiff = topos - fromnode->getpos();
-	Tangent dir = 2*atan2(-posdiff.y,posdiff.x) - fromnode->getdir();
+	Tangent dir = gettangentofcurvestartingfromnode(*fromnode, topos);
     Node* tonodepointer = new Node(tracksystem, topos, dir, -1);
     Track* newtrack = new Track(tracksystem, *fromnode, *tonodepointer, -1);
 	Tracksection section({newtrack}, {tonodepointer});
@@ -56,17 +55,15 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 	Tangent dir;
 	if(disttointersect1 > disttointersect2){
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
-		Vec posdiff = newnodepoint - pos2;
-		dir = 2*atan2(-posdiff.y,posdiff.x) - node2->getdir();
+		dir = gettangentofcurvestartingfromnode(*node2, newnodepoint);
 	}
 	else{
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-		Vec posdiff = newnodepoint - pos1;
-		dir = 2*atan2(-posdiff.y,posdiff.x) - node1->getdir();
+		dir = gettangentofcurvestartingfromnode(*node1, newnodepoint);
 	}
 	if(
-		(distancebetween(pos1, newnodepoint) < 10 && abs(dir - node1->getdir()) < 5.0/180.0*pi) ||
-		(distancebetween(pos2, newnodepoint) < 10 && abs(dir - node2->getdir()) < 5.0/180.0*pi)
+		(distancebetween(pos1, newnodepoint) < 10 && dir.absanglediff(node1->getdir()) < 5.0/180.0*pi) ||
+		(distancebetween(pos2, newnodepoint) < 10 && dir.absanglediff(node2->getdir()) < 5.0/180.0*pi)
 	){
 		Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
 		return Tracksection({newtrack},{});
@@ -92,6 +89,11 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	tracksystem.removetrack(state.track);
 }	
 
+Tangent gettangentofcurvestartingfromnode(Node& startnode, Vec topos)
+{
+	Vec posdiff = topos - startnode.getpos();
+	return Tangent(-startnode.getdir() + 2*atan2(-posdiff.y,posdiff.x));
+}
 
 }
 }

@@ -6,10 +6,10 @@ Tangent::Tangent(): _angle(0)
 Tangent::Tangent(float angle): _angle(truncate(angle))
 {}
 
-double Tangent::operator -(const Tangent& other) const
+double Tangent::absanglediff(const Tangent& other) const
 {
     // Computes the smallest angle difference between two orientations
-    return anglediff(_angle, other._angle, pi);
+    return abs(anglediff(_angle, other._angle, pi));
 }
 
 Tangent::operator std::string() const

@@ -15,7 +15,7 @@ Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), updo
     addtrack(track);
 	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::switchsprite);
 	sprite.zoomed = false;
-	sprite.imageangle = node->dir - pi/2;
+	sprite.imageangle = node->dir.angleup() - pi/2;
     if(!updown) sprite.imageangle+=pi;
 }
 
