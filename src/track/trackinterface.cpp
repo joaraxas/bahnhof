@@ -16,6 +16,11 @@ float getorientation(Tracksystem& tracksystem, State state)
 	return tracksystem.gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
 }
 
+Tangent gettangent(Tracksystem& tracksystem, State state)
+{
+	return Tangent(getorientation(tracksystem, state));
+}
+
 float getradius(Tracksystem& tracksystem, State state)
 {
 	return tracksystem.gettrack(state.track)->getradius(state);

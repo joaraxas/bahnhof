@@ -3,7 +3,7 @@
 Tangent::Tangent(): _angle(0)
 {}
 
-Tangent::Tangent(float angle): _angle(truncate(angle))
+Tangent::Tangent(float angle): _angle(truncate(angle, pi))
 {}
 
 double Tangent::absanglediff(const Tangent& other) const

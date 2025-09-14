@@ -105,9 +105,9 @@ bool Node::hasswitch()
 	return switchup || switchdown;
 }
 
-Vec getswitchpos(Vec pos, Tangent dir, bool updown)
+Vec getswitchpos(Vec pos, Tangent dir, bool pointsupwards)
 {
-	float transverseoffset = -(2*updown-1)*28;///scale;
+	float transverseoffset = -(2*pointsupwards-1)*28;///scale;
 	return pos - Vec(sin(dir), cos(dir))*transverseoffset;
 }
 }

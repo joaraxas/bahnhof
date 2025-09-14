@@ -4,7 +4,7 @@
 struct Tangent
 {
     Tangent();
-    Tangent(float angle);
+    explicit Tangent(float angle);
     double absanglediff(const Tangent&) const;
     Tangent operator -() const {return Tangent(-_angle);};
     Tangent operator +(float rot) const {return Tangent(_angle+rot);};

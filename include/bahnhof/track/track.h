@@ -4,6 +4,7 @@
 #include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/orientation.h"
 
 class Order;
 class Gotostate;
@@ -136,6 +137,7 @@ namespace Signaling
     Vec getpos(Tracksystem&, State state, float transverseoffset=0);
     float getradius(Tracksystem&, State state);
     float getorientation(Tracksystem&, State state);
+    Tangent gettangent(Tracksystem&, State state);
 
     Vec getswitchpos(Tracksystem&, switchid _switch);
     Vec getsignalpos(Tracksystem&, signalid signal);

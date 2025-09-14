@@ -44,13 +44,13 @@ private:
     inline static Sprite sprite;
 };
 
-Vec getswitchpos(Vec nodepos, Tangent nodedir, bool updown);
+Vec getswitchpos(Vec nodepos, Tangent nodedir, bool pointsupwards);
 
 class Switch
 {
 friend class Node;
 public:
-    Switch(Node* node, Track* track, bool updown);
+    Switch(Node* node, Track* track, bool isupordown);
     ~Switch();
     void render(Rendering* r);
     void setswitch(int newstate);
@@ -62,7 +62,7 @@ private:
     void removetrack(Track* track);
     Tracksystem* tracksystem;
     Node* node;
-    bool updown;
+    bool pointsupwards;
     int switchstate = 0;
     std::vector<Track*> tracks;
     Icon sprite;

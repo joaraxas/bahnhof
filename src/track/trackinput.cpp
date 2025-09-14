@@ -25,8 +25,11 @@ State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
 	for(auto const node: tracksystem.allnodes()){
 		if(node->trackdown && node->trackup)
 			continue;
-		if(!node->trackdown && !node->trackup) // this should never happen
+		if(!node->trackdown && !node->trackup){
+			std::cout<<"Warning: node " << node->id << " has no tracks attached" << std::endl;
+			// this should never happen
 			continue;
+			} 
 		float distsquared = pow(node->getpos().x-pos.x, 2) + pow(node->getpos().y-pos.y, 2);
 		if(distsquared < mindistsquared){
 			closestnode = node;
@@ -67,7 +70,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec to
 		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
-			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), gettangent(tracksystem, clickedstate), -1);
 		}
 		else
 			tonode = tracksystem.getnode(clickednode);
@@ -85,7 +88,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec to
 	Node* tonode = new Node(
 		tracksystem, 
 		topos, 
-		*angle, 
+		Tangent(*angle), 
 		-1
 	);
 	Tracksection section = Construction::connecttwonodes(tracksystem, fromnode, tonode);
@@ -98,7 +101,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec t
 	Node* fromnode = new Node(
 		tracksystem,
 		getpos(tracksystem, fromstate),
-		getorientation(tracksystem, fromstate),
+		gettangent(tracksystem, fromstate),
 		-1
 	);
 	Tracksection section = planconstructionto(tracksystem, fromnode, topos, angle);
@@ -116,7 +119,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos
 		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
-			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), gettangent(tracksystem, clickedstate), -1);
 		}
 		else
 			tonode = tracksystem.getnode(clickednode);
@@ -133,7 +136,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos
 	Node* tonode = new Node(
 		tracksystem, 
 		topos, 
-		*angle, 
+		Tangent(*angle), 
 		-1
 	);
 	Tracksection section = Construction::extendtracktopos(tracksystem, tonode, frompos);
