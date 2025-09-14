@@ -37,8 +37,8 @@ protected:
     InputManager& input;
     Tracks::Tracksystem& tracksystem;
     Vec anchorpoint{0,0};
-    float angle;
-    float* angleptr = nullptr;
+    Angle angle;
+    Angle* angleptr = nullptr;
     bool droppedanchor = false;
     float cost;
 };

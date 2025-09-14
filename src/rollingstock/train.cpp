@@ -160,12 +160,12 @@ void Train::render(Rendering* r)
 {
 	if(selected){
 		Vec frontpos = getpos(*tracksystem, forwardstate());
-		float forwarddir = getorientation(*tracksystem, forwardstate());
+		Angle forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;
 		light.imageangle = forwarddir;
 		light.render(r, frontpos);
 		Vec backpos = getpos(*tracksystem, backwardstate());
-		float backwarddir = getorientation(*tracksystem, backwardstate());
+		Angle backwarddir = getorientation(*tracksystem, backwardstate());
 		light.imagetype = 1;
 		light.imageangle = backwarddir;
 		light.render(r, backpos);

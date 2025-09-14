@@ -12,6 +12,7 @@ const float g = 9.8;
 const float normalgauge = 1.435;
 
 struct SDL_FPoint;
+struct Angle;
 
 struct Vec
 {
@@ -28,8 +29,8 @@ struct Vec
 
 float norm(const Vec& v);
 float normsquared(const Vec& v);
-Vec localcoords(Vec globalvec, float angle, Vec origin);
-Vec globalcoords(Vec localvec, float angle, Vec origin);
+Vec localcoords(Vec globalvec, Angle angle, Vec origin);
+Vec globalcoords(Vec localvec, Angle angle, Vec origin);
 
 float sign(float a);
 float truncate(float dir, float denominator);

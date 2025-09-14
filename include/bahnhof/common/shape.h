@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "orientation.h"
 
 class Rendering;
 class Rectangle;
@@ -15,7 +16,7 @@ public:
     virtual ~Shape() {};
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
     virtual Vec mid() const = 0;
-    virtual float getorientation() const {return 0;};
+    virtual Angle getorientation() const {return Angle(0);};
     virtual bool contains(Vec) const {return false;};
     virtual bool intersects(const Shape&) const = 0;
     virtual bool intersectsrect(const Rectangle&) const = 0;
@@ -47,11 +48,11 @@ class RotatedRectangle : public Shape
 {
 public:
     RotatedRectangle(float mid_x, float mid_y, int w, int h);
-    RotatedRectangle(Vec mid, int w, int h, float rotation);
-    RotatedRectangle(float mid_x, float mid_y, int w, int h, float rotation);
+    RotatedRectangle(Vec mid, int w, int h, Angle rotation);
+    RotatedRectangle(float mid_x, float mid_y, int w, int h, Angle rotation);
     void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
     Vec mid() const;
-    float getorientation() const {return angle;};
+    Angle getorientation() const {return angle;};
     bool contains(Vec) const;
     std::vector<Vec> getvertices() const;
     Vec getsize() const;
@@ -64,16 +65,16 @@ protected:
     float mid_y;
     int w;
     int h;
-    float angle;
+    Angle angle;
 };
 
 class AnnularSector : public Shape
 {
 public:
-    AnnularSector(Vec frompos, float fromorientation, Vec topos, float thickness);
+    AnnularSector(Vec frompos, Angle fromorientation, Vec topos, float thickness);
     void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const;
     Vec mid() const;
-    float getorientation() const;
+    Angle getorientation() const;
     bool contains(Vec) const;
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
@@ -85,8 +86,8 @@ private:
     Vec midpoint;
     float innerradius;
     float outerradius;
-    float rightlimitangle;
-    float angle;
+    Angle rightlimitangle;
+    Angle angle;
     int nSegments;
 };
 
@@ -100,8 +101,8 @@ struct Arc
 {
     Vec center;
     float radius;
-    float rightangle;
-    float angle;
+    Angle rightangle;
+    Angle angle;
 };
 
 namespace Intersection

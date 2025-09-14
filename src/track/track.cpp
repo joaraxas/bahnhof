@@ -105,9 +105,9 @@ float Track::getarclength(float nodedist)
 	return arclength;
 }
 
-float Track::getorientation(float nodedist)
+Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir().angleup() - nodedist*phi + pi*!isabovepreviousnode();
+	return previousnode->getdir().angleup() + Angle(-nodedist*phi + pi*!isabovepreviousnode());
 }
 
 float Track::getradius(State state)

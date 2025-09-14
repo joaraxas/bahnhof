@@ -61,7 +61,7 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, Angle* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
@@ -96,7 +96,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec to
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, Angle* angle)
 {
 	Node* fromnode = new Node(
 		tracksystem,
@@ -110,7 +110,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec t
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, float* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, Angle* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
@@ -145,7 +145,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos
 	
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, Angle& angle)
 {
 	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
 	Vec trackextension = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);

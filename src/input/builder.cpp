@@ -65,7 +65,7 @@ void Builder::updateangle(Vec pos)
     Vec diff = pos-anchorpoint;
     angleptr = nullptr;
     if(norm(diff) > 20/game->getcamera().getscale()){
-        angle = atan2(-diff.y, diff.x);
+        angle = Angle(atan2(-diff.y, diff.x));
         angleptr = &angle;
     }
 }
@@ -176,7 +176,7 @@ void BuildingBuilder::render(Rendering* r)
     Builder::render(r);
     if(building){ // this should always be true
         if(building->id==wagonfactory){
-            float newangle = angle;
+            Angle newangle = angle;
             Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
             TracksDisplayMode mode = TracksDisplayMode::planned;
             if(!canbuild())
@@ -204,7 +204,7 @@ void BuildingBuilder::reset()
 {
     Builder::reset();
     building = nullptr;
-    angle = 0;
+    angle = Angle(0);
 }
 
 void BuildingBuilder::setbuildingtype(const BuildingType& type)
@@ -219,7 +219,7 @@ bool BuildingBuilder::canfit()
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
     if(building->id == wagonfactory){
-        float newangle = angle;
+        Angle newangle = angle;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         if(buildingmanager.checkcollision(section)){
             Tracks::Input::discardsection(section); 
@@ -253,7 +253,7 @@ void BuildingBuilder::build()
         break;
     case wagonfactory:{
         RollingStockManager& r = game->getgamestate().getrollingstockmanager();
-        float newangle = angle;
+        Angle newangle = angle;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = Tracks::getstartpointstate(section);
@@ -272,7 +272,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
     switch (building->id)
     {
     case wagonfactory:{
-        float newangle = angle;
+        Angle newangle = angle;
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
         Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 500, newangle);
         if(neareststate)
@@ -296,7 +296,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
         return std::make_unique<AnnularSector>(pos, angle, otherpos, 20);
     }
     default:{
-        if(angle==0)
+        if(angle==Angle(0))
             return std::make_unique<Rectangle>(pos, building->size);
         return std::make_unique<RotatedRectangle>(pos, building->size.x, building->size.y, angle);
     }

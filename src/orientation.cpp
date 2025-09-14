@@ -1,9 +1,12 @@
 #include "bahnhof/common/orientation.h"
 
-Tangent::Tangent(): _angle(0)
+Tangent::Tangent(): Tangent(0)
 {}
 
 Tangent::Tangent(float angle): _angle(truncate(angle, pi))
+{}
+
+Tangent::Tangent(Angle a): _angle(truncate(a.getradians(), pi))
 {}
 
 double Tangent::absanglediff(const Tangent& other) const
@@ -19,15 +22,15 @@ Tangent::operator std::string() const
 
 double sin(const Tangent& tangent)
 {
-    return sin(tangent._angle);
+    return std::sin(tangent._angle);
 }
 
 double cos(const Tangent& tangent)
 {
-    return cos(tangent._angle);
+    return std::cos(tangent._angle);
 }
 
 double tan(const Tangent& tangent)
 {
-    return tan(tangent._angle);
+    return std::tan(tangent._angle);
 }

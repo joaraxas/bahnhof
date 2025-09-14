@@ -11,9 +11,9 @@ Vec getpos(Tracksystem& tracksystem, State state, float transverseoffset)
 	return tracksystem.gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
-float getorientation(Tracksystem& tracksystem, State state)
+Angle getorientation(Tracksystem& tracksystem, State state)
 {
-	return tracksystem.gettrack(state.track)->getorientation(state.nodedist) + pi*!state.alignedwithtrack;
+	return tracksystem.gettrack(state.track)->getorientation(state.nodedist) + Angle(pi*!state.alignedwithtrack);
 }
 
 Tangent gettangent(Tracksystem& tracksystem, State state)
@@ -216,7 +216,7 @@ State getstartpointstate(Tracksection& section)
 	return State(section.tracks.front()->id, 0, true);
 }
 
-Vec gettrackextension(Tracksystem& tracksystem, State fromstate, float distance, float& angle){
+Vec gettrackextension(Tracksystem& tracksystem, State fromstate, float distance, Angle& angle){
     if(fromstate){
         angle = Tracks::getorientation(tracksystem, fromstate);
     }

@@ -99,10 +99,10 @@ namespace Input
     State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
     Vec plansignalat(Tracksystem& tracksystem, Vec pos);
     signalid buildsignalat(Tracksystem& tracksystem, Vec pos);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos, float* angle=nullptr);
-    Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos, float* angle=nullptr);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, float* angle=nullptr);
-    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos, Angle* angle=nullptr);
+    Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec pos, Angle* angle=nullptr);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos, Angle* angle=nullptr);
+    Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, Angle& angle);
     void buildsection(Tracksystem& tracksystem, const Tracksection& section);
     void discardsection(Tracksection& section);
     nodeid selectnodeat(Tracksystem& tracksystem, Vec pos); // TODO: this should maybe be replaced with getstateat
@@ -132,11 +132,11 @@ namespace Signaling
     float distancefromto(Tracksystem&, State state1, State state2, float maxdist, bool mustalign=false);
     bool isendofline(Tracksystem&, State state);
     State getstartpointstate(Tracksection&);
-    Vec gettrackextension(Tracksystem&, State fromstate, float distance, float& angle);
+    Vec gettrackextension(Tracksystem&, State fromstate, float distance, Angle& angle);
 
     Vec getpos(Tracksystem&, State state, float transverseoffset=0);
     float getradius(Tracksystem&, State state);
-    float getorientation(Tracksystem&, State state);
+    Angle getorientation(Tracksystem&, State state);
     Tangent gettangent(Tracksystem&, State state);
 
     Vec getswitchpos(Tracksystem&, switchid _switch);

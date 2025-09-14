@@ -4,6 +4,7 @@
 #include<iostream>
 #include<string>
 #include "bahnhof/common/math.h"
+#include "bahnhof/common/orientation.h"
 
 Vec::Vec()
 {
@@ -65,21 +66,21 @@ float normsquared(const Vec& v)
 	return v.x*v.x + v.y*v.y;
 }
 
-Vec localcoords(Vec globalvec, float angle, Vec origin)
+Vec localcoords(Vec globalvec, Angle angle, Vec origin)
 {
 	// pass from left-hand system to right-hand and rotate by -angle
 	Vec localvec;
-	localvec.x = std::cos(angle)*(globalvec.x - origin.x) + std::sin(angle)*-(globalvec.y - origin.y);
-	localvec.y =-std::sin(angle)*(globalvec.x - origin.x) + std::cos(angle)*-(globalvec.y - origin.y);
+	localvec.x = cos(angle)*(globalvec.x - origin.x) + sin(angle)*-(globalvec.y - origin.y);
+	localvec.y =-sin(angle)*(globalvec.x - origin.x) + cos(angle)*-(globalvec.y - origin.y);
 	return localvec;
 }
 
-Vec globalcoords(Vec localvec, float angle, Vec origin)
+Vec globalcoords(Vec localvec, Angle angle, Vec origin)
 {
 	// pass from right-hand system to left-hand and rotate by angle
 	Vec globalvec;
-	globalvec.x = std::cos(angle)*(localvec.x) - std::sin(angle)*(localvec.y);
-	globalvec.y = std::sin(angle)*(localvec.x) + std::cos(angle)*(localvec.y);
+	globalvec.x = cos(angle)*(localvec.x) - sin(angle)*(localvec.y);
+	globalvec.y = sin(angle)*(localvec.x) + cos(angle)*(localvec.y);
 	globalvec.y = -globalvec.y;
 	globalvec = globalvec + origin;
 	return globalvec;

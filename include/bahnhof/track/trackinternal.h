@@ -82,7 +82,7 @@ public:
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);
-    float getorientation(float nodedist);
+    Angle getorientation(float nodedist);
     float getradius(State state);
     Track* nexttrack();
     Track* previoustrack();

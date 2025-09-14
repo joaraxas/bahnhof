@@ -113,13 +113,13 @@ bool RotatedRectangle::intersectsannularsector(const AnnularSector& shape) const
 	return shape.intersectsrotrect(*this);
 }
 
-RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, 0)
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, Angle(0))
 {}
 
-RotatedRectangle::RotatedRectangle(Vec mid, int w_, int h_, float rotation) : RotatedRectangle(mid.x, mid.y, w_, h_, rotation)
+RotatedRectangle::RotatedRectangle(Vec mid, int w_, int h_, Angle rotation) : RotatedRectangle(mid.x, mid.y, w_, h_, rotation)
 {}
 
-RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, float rotation) : 
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_, Angle rotation) : 
 	mid_x(x_), mid_y(y_), w(w_), h(h_), angle(rotation)
 {}
 
@@ -163,23 +163,21 @@ Vec RotatedRectangle::getsize() const
 	return Vec(w, h);
 }
 
-AnnularSector::AnnularSector(Vec frompos, float fromdir, Vec topos, float thickness)
+AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Vec topos, float thickness)
 {
 	Vec d = localcoords(topos, fromdir, frompos);
 	float dx = d.x; float dy = -d.y;
 	float radius = 0.5*(dy*dy+dx*dx)/dy; // TODO: What if dy is 0?
-	angle = abs(atan2(dx, sign(dy)*(radius-dy)));
+	angle = Angle(abs(atan2(dx, sign(dy)*(radius-dy))));
 	midpoint = globalcoords({0,-radius}, fromdir, frompos);
-	angle = truncate(abs(angle), 2*pi);
 	innerradius = abs(radius) - 0.5*thickness;
 	outerradius = abs(radius) + 0.5*thickness;
 	if(dy<0)
-		rightlimitangle = fromdir - pi/2;
+		rightlimitangle = fromdir - Angle(pi/2);
 	else
-		rightlimitangle = fromdir - angle + pi/2;
-	rightlimitangle = truncate(rightlimitangle, 2*pi);
+		rightlimitangle = fromdir - angle + Angle(pi/2);
 	
-	nSegments = fmax(1, round(angle/pi*32*outerradius/100));
+	nSegments = fmax(1, round(angle.getradians()/pi*32*outerradius/100));
 }
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
@@ -200,7 +198,7 @@ Vec AnnularSector::mid() const
 	return midpoint;
 }
 
-float AnnularSector::getorientation() const
+Angle AnnularSector::getorientation() const
 {
 	return rightlimitangle + angle * 0.5;
 }
@@ -211,8 +209,8 @@ std::vector<Vec> AnnularSector::getvertices() const
 	verts.reserve(nSegments*2+2);
 	float mid_x = midpoint.x;
 	float mid_y = midpoint.y;
-	float alpha = -rightlimitangle;
-	float angleneg = -angle;
+	float alpha = -rightlimitangle.getradians();
+	float angleneg = -angle.getradians();
 	for(int i=0; i<nSegments+1; i++){
 		verts.emplace_back(Vec(mid_x + innerradius*cos(alpha), mid_y + innerradius*sin(alpha)));
 		verts.emplace_back(Vec(mid_x + outerradius*cos(alpha), mid_y + outerradius*sin(alpha)));
@@ -228,10 +226,9 @@ bool AnnularSector::contains(Vec point) const
 	if(distance>outerradius) return false;
 	if(distance<innerradius) return false;
 	Vec difflocal = localcoords(point, rightlimitangle, midpoint);
-	float angletomidpoint = atan2(difflocal.y, difflocal.x);
-	angletomidpoint = truncate(angletomidpoint, 2*pi);
-	if(angletomidpoint<0) return false;
-	if(angletomidpoint>angle) return false;
+	Angle angletomidpoint(atan2(difflocal.y, difflocal.x));
+	// if(angletomidpoint<0) return false;
+	// if(angletomidpoint>angle) return false; // TODO:
 	return true;
 }
 
@@ -350,7 +347,7 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 {
 	// express edge2 in local coordinates of edge1
 	Vec d1 = edge1.endpoint2 - edge1.endpoint1;
-	float angle1 = atan2(-d1.y, d1.x);
+	Angle angle1(atan2(-d1.y, d1.x));
 	Vec localendpoint1 = localcoords(edge2.endpoint1, angle1, edge1.endpoint1);
 	Vec localendpoint2 = localcoords(edge2.endpoint2, angle1, edge1.endpoint1);
 	// in this system, the vertical component of edge2 must change sign, or there is no collision
@@ -362,7 +359,7 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 
 	// express edge1 in local coordinates of edge2
 	Vec d2 = edge2.endpoint2 - edge2.endpoint1;
-	float angle2 = atan2(-d2.y, d2.x);
+	Angle angle2(atan2(-d2.y, d2.x));
 	localendpoint1 = localcoords(edge1.endpoint1, angle2, edge2.endpoint1);
 	localendpoint2 = localcoords(edge1.endpoint2, angle2, edge2.endpoint1);
 	// in this system, the vertical component of edge1 must change sign, or there is no collision
@@ -392,7 +389,7 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 		}
 		xhat = edge.endpoint2.x - edge.endpoint1.x;
 		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
-		float edgeangle = atan2(yhat, xhat);
+		Angle edgeangle(atan2(yhat, xhat)); // TODO: Turn this into a constructor/function here and everywhere else in this file using atan2
 		Vec clocal = localcoords(arc.center, edgeangle, edge.endpoint1);
 		if(clocal.x<0 || clocal.x>norm(edge.endpoint2-edge.endpoint1))
 			return false; // edge does not intersect circle
@@ -416,18 +413,18 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 	for(int discsign : discriminantsignstocheck){
 		float nom = xhat*mixedterm + yhat*discsign*discriminant;
 		float denom = -yhat*mixedterm + xhat*discsign*discriminant;
-		float intersectionangle = atan2(nom, denom);
+		Angle intersectionangle(atan2(nom, denom));
 
-		intersectionangle = truncate(intersectionangle, 2*pi);
-		if(intersectionangle>=arc.rightangle && 
-		intersectionangle<=arc.rightangle+arc.angle){
-			return true;
-		}
-		intersectionangle += 2*pi;
-		if(intersectionangle>=arc.rightangle && 
-		intersectionangle<=arc.rightangle+arc.angle){
-			return true;
-		}
+		// TODO: I think I need a function to check whether one angle is enclosed by two others
+		// if(intersectionangle>=arc.rightangle && 
+		// intersectionangle<=arc.rightangle+arc.angle){
+		// 	return true;
+		// }
+		// intersectionangle += 2*pi;
+		// if(intersectionangle>=arc.rightangle && 
+		// intersectionangle<=arc.rightangle+arc.angle){
+		// 	return true;
+		// }
 	}
 	return false;
 }
