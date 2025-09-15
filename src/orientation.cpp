@@ -1,5 +1,12 @@
 #include "bahnhof/common/orientation.h"
 
+bool Angle::isbetween(const Angle& lower, const Angle& upper)
+{
+    if(upper._angle>=lower._angle)
+        return _angle>=lower._angle && _angle<=upper._angle;
+    return _angle>=lower._angle || _angle<=upper._angle;
+}
+
 Tangent::Tangent(): Tangent(0)
 {}
 

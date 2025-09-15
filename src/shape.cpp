@@ -227,9 +227,9 @@ bool AnnularSector::contains(Vec point) const
 	if(distance<innerradius) return false;
 	Vec difflocal = localcoords(point, rightlimitangle, midpoint);
 	Angle angletomidpoint(atan2(difflocal.y, difflocal.x));
-	// if(angletomidpoint<0) return false;
-	// if(angletomidpoint>angle) return false; // TODO:
-	return true;
+	if(angletomidpoint.isbetween(Angle(0), angle))
+		return true;
+	return false;
 }
 
 bool AnnularSector::intersects(const Shape& shape) const
@@ -415,16 +415,8 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 		float denom = -yhat*mixedterm + xhat*discsign*discriminant;
 		Angle intersectionangle(atan2(nom, denom));
 
-		// TODO: I think I need a function to check whether one angle is enclosed by two others
-		// if(intersectionangle>=arc.rightangle && 
-		// intersectionangle<=arc.rightangle+arc.angle){
-		// 	return true;
-		// }
-		// intersectionangle += 2*pi;
-		// if(intersectionangle>=arc.rightangle && 
-		// intersectionangle<=arc.rightangle+arc.angle){
-		// 	return true;
-		// }
+		if(intersectionangle.isbetween(arc.rightangle, arc.rightangle+arc.angle))
+			return true;
 	}
 	return false;
 }

@@ -15,6 +15,7 @@ struct Angle
     Angle operator -() const {return Angle(-_angle);};
     friend bool operator ==(const Angle& lhs, const Angle& rhs) {return lhs._angle == rhs._angle;};
     operator std::string() const {std::to_string(_angle);};
+    bool isbetween(const Angle& lower, const Angle& upper);
     double getradians() const {return _angle;};
 
     friend double sin(const Angle& a) {return std::sin(a._angle);};
