@@ -80,11 +80,11 @@ void Node::render(Rendering* r)
 	}
 	else if(scale>=0.3){
 		if(!trackdown && trackup){
-			Node::sprite.imageangle = dir.angledown();
+			Node::sprite.imageangle = dir.getradiansdown();
 			Node::sprite.render(r, pos);
 		}
 		if(!trackup && trackdown){
-			Node::sprite.imageangle = dir.angleup();
+			Node::sprite.imageangle = dir.getradiansup();
 			Node::sprite.render(r, pos);
 		}
 	}

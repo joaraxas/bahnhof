@@ -15,8 +15,8 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	nextnode = &next;
 	id = myid;
 
-	// TODO: Could also define a localcoords for tangent or use angledown depending on track connection
-	Vec d = localcoords(nextnode->getpos(), previousnode->getdir().angleup(), previousnode->getpos());
+	// TODO: Could also define a localcoords for tangent or use getradiansdown depending on track connection
+	Vec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
 	float dx = d.x; float dy = -d.y;
 	radius = 0.5*(dy*dy+dx*dx)/dy;
 	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
@@ -49,16 +49,16 @@ void Track::disconnectfromnodes()
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir().angleup(), previousnode->getpos());
+	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir().getradiansup(), previousnode->getpos());
 	if(std::isinf(radius)){
-		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir().angleup(), nextnode->getpos());
+		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir().getradiansup(), nextnode->getpos());
 		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
 		Vec localpos;
 		localpos.x = (radius+transverseoffset)*sin(nodedist*phi);
 		localpos.y =-(radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = globalcoords(localpos, previousnode->getdir().angleup(), previousoffsetpos);	
+		currentpos = globalcoords(localpos, previousnode->getdir().getradiansup(), previousoffsetpos);	
 	}
 	return currentpos;
 }
@@ -66,7 +66,7 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	Vec d = localcoords(pos, previousnode->getdir().angleup(), previousnode->getpos());
+	Vec d = localcoords(pos, previousnode->getdir().getradiansup(), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
 	if(std::isinf(radius)){
 		if(isabovepreviousnode()){
@@ -107,7 +107,7 @@ float Track::getarclength(float nodedist)
 
 Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir().angleup() + Angle(-nodedist*phi + pi*!isabovepreviousnode());
+	return previousnode->getdir().getradiansup() + Angle(-nodedist*phi + pi*!isabovepreviousnode());
 }
 
 float Track::getradius(State state)
@@ -151,7 +151,7 @@ bool Track::isabovepreviousnode()
 
 bool Track::isbelownextnode()
 {
-	return cos(getorientation(1) - nextnode->getdir().angleup()) > 0; // TODO: Will this work if the difference is small and dir is close to horizontal?
+	return cos(getorientation(1) - nextnode->getdir().getradiansup()) > 0; // TODO: Will this work if the difference is small and dir is close to horizontal?
 }
 
 void Track::split(Track& track1, Track& track2, State where)

@@ -102,10 +102,10 @@ void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrec
 		rect->x = screenpos.x-centerx; rect->y = screenpos.y-centery;
 	}
 	if(originiscenter)
-		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getradians() * 180 / pi, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), NULL, SDL_FLIP_NONE);
 	else{
 		SDL_Point center = {centerx, centery};
-		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getradians() * 180 / pi, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), &center, SDL_FLIP_NONE);
 	}
 }
 

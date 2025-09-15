@@ -13,7 +13,7 @@ Tangent::Tangent(): Tangent(0)
 Tangent::Tangent(float angle): _angle(truncate(angle, pi))
 {}
 
-Tangent::Tangent(Angle a): _angle(truncate(a.getradians(), pi))
+Tangent::Tangent(Angle a): _angle(truncate(a._angle, pi))
 {}
 
 double Tangent::absanglediff(const Tangent& other) const
