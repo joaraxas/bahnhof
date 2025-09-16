@@ -16,7 +16,7 @@ class Spritesheet
 public:
     Spritesheet(sprites::name newname, std::string pathtopng, int nimages=1, int ntypes=1);
     ~Spritesheet();
-    void render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle imageangle=Angle(0), 
+    void render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle imageangle=Angle::zero, 
                 int imageindex=0, int imagetype=0, float imagescale=1, Uint8 imagealpha=255, 
                 Uint8 red=255, Uint8 green=255, Uint8 blue=255);
     int getimagenumber();

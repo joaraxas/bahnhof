@@ -113,7 +113,7 @@ bool RotatedRectangle::intersectsannularsector(const AnnularSector& shape) const
 	return shape.intersectsrotrect(*this);
 }
 
-RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, Angle(0))
+RotatedRectangle::RotatedRectangle(float x_, float y_, int w_, int h_) : RotatedRectangle(x_, y_, w_, h_, Angle::zero)
 {}
 
 RotatedRectangle::RotatedRectangle(Vec mid, int w_, int h_, Angle rotation) : RotatedRectangle(mid.x, mid.y, w_, h_, rotation)
@@ -227,7 +227,7 @@ bool AnnularSector::contains(Vec point) const
 	if(distance<innerradius) return false;
 	Vec difflocal = localcoords(point, rightlimitangle, midpoint);
 	Angle angletomidpoint(atan2(difflocal.y, difflocal.x));
-	if(angletomidpoint.isbetween(Angle(0), angle))
+	if(angletomidpoint.isbetween(Angle::zero, angle))
 		return true;
 	return false;
 }

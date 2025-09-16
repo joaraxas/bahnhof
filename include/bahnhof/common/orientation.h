@@ -4,7 +4,7 @@
 
 struct Angle
 {
-    Angle() : Angle(0) {};
+    Angle() : Angle(0.0) {};
     explicit Angle(float radians) : _angle(truncate(radians, 2*pi)) {};
 
     Angle operator +(const Angle& a) const {return Angle(_angle+a._angle);};
@@ -20,6 +20,8 @@ struct Angle
     bool isbetween(const Angle& lower, const Angle& upper);
     double getdegrees() const {return _angle*180/pi;};
 
+    static const Angle zero;
+
     friend double sin(const Angle& a) {return std::sin(a._angle);};
     friend double cos(const Angle& a) {return std::cos(a._angle);};
     friend double tan(const Angle& a) {return std::tan(a._angle);};
@@ -28,6 +30,8 @@ struct Angle
 private:
     double _angle;
 };
+
+inline const Angle Angle::zero{0.0};
 
 struct Tangent
 {

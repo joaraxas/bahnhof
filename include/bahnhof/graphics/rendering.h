@@ -29,7 +29,7 @@ public:
     void render(Gamestate* gamestate);
     SDL_Rect rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
     SDL_Rect rendercenteredtext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
-    void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, Angle angle=Angle(0), bool ported=true, bool zoomed=true, bool originiscenter=false, int centerx=0, int centery=0);
+    void rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect=nullptr, Angle angle=Angle::zero, bool ported=true, bool zoomed=true, bool originiscenter=false, int centerx=0, int centery=0);
     void renderline(Vec pos1, Vec pos2, bool ported=true);
     void renderrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);
     void renderfilledrectangle(SDL_Rect rect, bool ported=true, bool zoomed=true);

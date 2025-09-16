@@ -204,7 +204,7 @@ void BuildingBuilder::reset()
 {
     Builder::reset();
     building = nullptr;
-    angle = Angle(0);
+    angle = Angle::zero;
 }
 
 void BuildingBuilder::setbuildingtype(const BuildingType& type)
@@ -296,7 +296,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
         return std::make_unique<AnnularSector>(pos, angle, otherpos, 20);
     }
     default:{
-        if(angle==Angle(0))
+        if(angle==Angle::zero)
             return std::make_unique<Rectangle>(pos, building->size);
         return std::make_unique<RotatedRectangle>(pos, building->size.x, building->size.y, angle);
     }

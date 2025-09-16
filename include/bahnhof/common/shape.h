@@ -16,7 +16,7 @@ public:
     virtual ~Shape() {};
     virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
     virtual Vec mid() const = 0;
-    virtual Angle getorientation() const {return Angle(0);};
+    virtual Angle getorientation() const {return Angle::zero;};
     virtual bool contains(Vec) const {return false;};
     virtual bool intersects(const Shape&) const = 0;
     virtual bool intersectsrect(const Rectangle&) const = 0;
