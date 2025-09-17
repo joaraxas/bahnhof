@@ -98,6 +98,7 @@ public:
 private:
     bool isabovepreviousnode();
     bool isbelownextnode();
+    bool aboveprev;
     Tracksystem* tracksystem;
     float phi;
     float radius;

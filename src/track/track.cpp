@@ -24,6 +24,20 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 		radius = INFINITY;
 		phi = 0;
 	}
+	// TODO: Clean this up
+	// phi and radius are always positive. All tracks bend to the left.
+	if(phi>0){
+		nextnode = &previous;
+		previousnode = &next;
+	}
+	phi = abs(phi); radius = abs(radius);
+	Vec nextposlocal = localcoords(nextnode->getpos(), 
+							previousnode->getdir().getradiansup(), 
+							previousnode->getpos());
+	aboveprev = true;
+	if(nextposlocal.x<0)
+		aboveprev = false;
+	// TODO: This assumes <180 degree curve. Fix it.
 }
 
 Track::~Track()
@@ -49,16 +63,16 @@ void Track::disconnectfromnodes()
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir().getradiansup(), previousnode->getpos());
+	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), getorientation(0), previousnode->getpos());
 	if(std::isinf(radius)){
-		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir().getradiansup(), nextnode->getpos());
+		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), getorientation(1), nextnode->getpos());
 		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
 		Vec localpos;
-		localpos.x = (radius+transverseoffset)*sin(nodedist*phi);
-		localpos.y =-(radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = globalcoords(localpos, previousnode->getdir().getradiansup(), previousoffsetpos);	
+		localpos.x = (radius-transverseoffset)*sin(nodedist*phi);
+		localpos.y = (radius-transverseoffset)*(1-cos(nodedist*phi));
+		currentpos = globalcoords(localpos, getorientation(0), previousoffsetpos);	
 	}
 	return currentpos;
 }
@@ -68,6 +82,7 @@ State Track::getcloseststate(Vec pos)
 	State closeststate(id, 0, true);
 	Vec d = localcoords(pos, previousnode->getdir().getradiansup(), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
+	// TODO: Fix this and remove all abs(radius) and abs(phi)
 	if(std::isinf(radius)){
 		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
@@ -100,19 +115,21 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*norm(previousnode->getpos() - nextnode->getpos());
 	}
 	else{
-		arclength = nodedist*abs(radius*phi);
+		arclength = nodedist*radius*phi;
 	}
 	return arclength;
 }
 
 Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir().getradiansup() + Angle(-nodedist*phi + pi*!isabovepreviousnode());
+	return previousnode->getdir().getradiansup() + Angle(nodedist*phi + pi*!isabovepreviousnode());
 }
 
 float Track::getradius(State state)
 {
-	return radius*(2*state.alignedwithtrack-1)*(2*isabovepreviousnode()-1);
+	// Turning left: positive
+	// Turning right: negative
+	return radius*(2*state.alignedwithtrack-1);
 }
 
 Track* Track::nexttrack(){
@@ -146,7 +163,7 @@ bool Track::isabovepreviousnode()
 				return (nextnode->getpos().x <= previousnode->getpos().x);
 	}
 	else
-		return radius*phi >= 0;
+		return aboveprev;
 }
 
 bool Track::isbelownextnode()
@@ -288,7 +305,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!std::isinf(radius))
-		nSegments = fmax(1,round(abs(phi/pi*32*radius/100)));
+		nSegments = fmax(1,round(phi/pi*32*radius/100));
 	float gauge = 0;
 	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){

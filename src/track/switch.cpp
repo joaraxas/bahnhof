@@ -32,7 +32,7 @@ void Switch::addtrack(Track* track){
         insertionindex = tracks.size();
         float newtrackcurvature = 1./getradiusoriginatingfromnode(track, node->id);
         for(int iTrack=0; iTrack<tracks.size(); iTrack++){
-            if(newtrackcurvature < 1./getradiusoriginatingfromnode(tracks[iTrack], node->id))
+            if(newtrackcurvature > 1./getradiusoriginatingfromnode(tracks[iTrack], node->id))
                 insertionindex = iTrack;
             if(insertionindex==iTrack) break;
         }
