@@ -82,7 +82,6 @@ State Track::getcloseststate(Vec pos)
 	State closeststate(id, 0, true);
 	Vec d = localcoords(pos, previousnode->getdir().getradiansup(), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
-	// TODO: Fix this and remove all abs(radius) and abs(phi)
 	if(std::isinf(radius)){
 		if(isabovepreviousnode()){
 			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
@@ -94,16 +93,14 @@ State Track::getcloseststate(Vec pos)
 		}
 	}
 	else{
-		if(isabovepreviousnode()){
-			float angle = atan2(dx, sign(radius)*(radius+dy));
-			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) <= sign(radius)*pow(radius,2);
+		if(!isabovepreviousnode()){
+			// TODO: Would be more elegant to directly use local track angle coords than tangent coords
+			dx = -dx;
+			dy = -dy;
 		}
-		else{
-			float angle = atan2(-dx, sign(radius)*(radius+dy));
-			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) >= sign(radius)*pow(radius,2);
-		}
+		float angle = atan2(dx, (radius-dy));
+		closeststate.nodedist = fmax(fmin(1, angle/phi), 0); // TODO: will this work if phi>pi?
+		closeststate.alignedwithtrack = (pow(radius-dy, 2) + pow(dx, 2)) >= pow(radius,2);
 	}
 	return closeststate;
 }
@@ -168,7 +165,7 @@ bool Track::isabovepreviousnode()
 
 bool Track::isbelownextnode()
 {
-	return cos(getorientation(1) - nextnode->getdir().getradiansup()) > 0; // TODO: Will this work if the difference is small and dir is close to horizontal?
+	return cos(getorientation(1) - nextnode->getdir().getradiansup()) > 0;
 }
 
 void Track::split(Track& track1, Track& track2, State where)
