@@ -80,26 +80,15 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	Vec d = localcoords(pos, previousnode->getdir().getradiansup(), previousnode->getpos());
+	Vec d = localcoords(pos, getorientation(0), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
 	if(std::isinf(radius)){
-		if(isabovepreviousnode()){
-			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy<=0);
-		}
-		else{
-			closeststate.nodedist = fmax(fmin(1, -dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy>=0);
-		}
+		closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
+		closeststate.alignedwithtrack = (dy<=0);
 	}
 	else{
-		if(!isabovepreviousnode()){
-			// TODO: Would be more elegant to directly use local track angle coords than tangent coords
-			dx = -dx;
-			dy = -dy;
-		}
-		float angle = atan2(dx, (radius-dy));
-		closeststate.nodedist = fmax(fmin(1, angle/phi), 0); // TODO: will this work if phi>pi?
+		float angletocenter = truncate(atan2(dx, radius-dy), 2*pi);
+		closeststate.nodedist = fmax(fmin(1, angletocenter/phi), 0);
 		closeststate.alignedwithtrack = (pow(radius-dy, 2) + pow(dx, 2)) >= pow(radius,2);
 	}
 	return closeststate;
