@@ -70,22 +70,14 @@ std::vector<Vec> Rectangle::getvertices() const
 
 bool Rectangle::intersectsrotrect(const RotatedRectangle& shape) const
 {
-	const std::vector<Vec>& verts = shape.getvertices();
-	std::vector<Localvec> rotatedverts;
-	rotatedverts.reserve(verts.size());
-	for(int i=0; i<verts.size(); i++){
-		rotatedverts.push_back(localcoords(verts[i], getorientation(), mid()));
-	}
-	const float whalf = rect.w * 0.5;
-	const float hhalf = rect.h * 0.5;
-	std::array<float, 4> leftrighttopbottom = {
-		-whalf, 
-		whalf, 
-		-hhalf, 
-		hhalf
+	std::array<float, 4> leftrighttopbottom{
+               float(rect.x), 
+               float(rect.x+rect.w), 
+               float(rect.y), 
+               float(rect.y+rect.h)
 	};
 
-	if(!Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom))
+	if(!Intersection::checkprojectionofverticesonrect(shape.getvertices(), leftrighttopbottom))
 		return false;
 	if(!Intersection::checkprojectionofverticesonrotrect(getvertices(), shape))
 		return false;
@@ -325,13 +317,34 @@ bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const Rot
 	Vec rotrectsize = shape.getsize();
 	float whalf = rotrectsize.x * 0.5;
 	float hhalf = rotrectsize.y * 0.5;
-	std::array<float, 4> leftrighttopbottom = {
-		-whalf, whalf, -hhalf, hhalf
-	};
-	return Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom);
+	// x
+	bool alltotheright = true;
+	for(auto& vert : rotatedverts){
+		alltotheright &= vert.x > whalf;
+	}
+	if(alltotheright) return false;
+	
+	bool alltotheleft = true;
+	for(auto& vert : rotatedverts){
+		alltotheleft &= vert.x < -whalf;
+	}
+	if(alltotheleft) return false;
+	// y
+	bool allabove = true;
+	for(auto& vert : rotatedverts){
+		allabove &= vert.y > hhalf;
+	}
+	if(allabove) return false;
+
+	bool allbelow = true;
+	for(auto& vert : rotatedverts){
+		allbelow &= vert.y < -hhalf;
+	}
+	if(allbelow) return false;
+	return true;
 }
 
-bool checkprojectionofverticesonrect(const std::vector<Localvec>& verts, const std::array<float, 4>& lrtb)
+bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb)
 {
 	// lrtb: left-right-top-bottom values
 	// x
