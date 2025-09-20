@@ -177,8 +177,7 @@ AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Vec topos, float thickn
 	else
 		rightlimitangle = fromdir - angle + Angle(pi/2);
 	
-	nSegments = fmax(1, round(angle.getdegrees()/180*32*outerradius/100)); // 180 degrees yields 32 segments at radius 100
-	// TODO: This could be a free function int discretizecurve(const Angle&), used also in Track::render()
+	nSegments = discretizecurve(angle, outerradius);
 }
 
 void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
@@ -299,6 +298,11 @@ bool AnnularSector::intersectsanyedge(const std::vector<Vec>& orderedvertices) c
 	if(Intersection::anyedgesintersect(myedges, edges))
 		return true;
 	return false;
+}
+
+uint8_t discretizecurve(Angle& angle, float radius)
+{
+	return fmax(1, round(angle.getdegrees()/180*32*radius/100)); // 180 degrees yields 32 segments at radius 100
 }
 
 namespace Intersection{

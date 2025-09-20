@@ -38,10 +38,10 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	radius = 0.5*(d.y*d.y+d.x*d.x)/d.y;
 	if(abs(radius)>1e5){
 		radius = INFINITY;
-		phi = 0;
+		phi = Angle::zero;
 	}
 	else{
-		phi = atan2(d.x, radius-d.y);
+		phi = Angle(atan2(d.x, radius-d.y));
 	}
 }
 
@@ -92,7 +92,7 @@ State Track::getcloseststate(Vec pos)
 		closeststate.alignedwithtrack = (dy<=0);
 	}
 	else{
-		float angletocenter = truncate(atan2(dx, radius-dy), 2*pi);
+		Angle angletocenter{atan2(dx, radius-dy)};
 		closeststate.nodedist = fmax(fmin(1, angletocenter/phi), 0);
 		closeststate.alignedwithtrack = (pow(radius-dy, 2) + pow(dx, 2)) >= pow(radius,2);
 	}
@@ -106,14 +106,14 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*norm(previousnode->getpos() - nextnode->getpos());
 	}
 	else{
-		arclength = nodedist*radius*phi;
+		arclength = nodedist*phi.arclength(radius);
 	}
 	return arclength;
 }
 
 Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir().getradiansup() + Angle(nodedist*phi + pi*!isabovepreviousnode());
+	return previousnode->getdir().getradiansup() + nodedist*phi + Angle(pi*!isabovepreviousnode());
 }
 
 float Track::getradius(State state)
@@ -294,7 +294,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!std::isinf(radius))
-		nSegments = fmax(1,round(phi/pi*32*radius/100));
+		nSegments = discretizecurve(phi, radius);
 	float gauge = 0;
 	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
@@ -317,7 +317,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 			radiustext = std::to_string(radius);
 		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
 		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14/scale, {255,255,255,255});
-		r->rendertext("phi "+std::to_string(phi), midpoint.x, midpoint.y+28/scale, {255,255,255,255});
+		r->rendertext("phi "+std::string(phi), midpoint.x, midpoint.y+28/scale, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }

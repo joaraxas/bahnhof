@@ -13,12 +13,14 @@ struct Angle
     Angle operator *(float c) const {return Angle(_angle*c);};
     friend Angle operator *(float c, const Angle& a) {return a*c;};
     Angle operator /(int c) const {return Angle(_angle/double(c));};
+    double operator /(const Angle& a) const {return _angle/a._angle;};
     Angle operator -() const {return Angle(-_angle);};
     friend bool operator ==(const Angle& lhs, const Angle& rhs) {return lhs._angle == rhs._angle;};
-    operator std::string() const {std::to_string(_angle);};
+    operator std::string() const {return std::to_string(getdegrees())+"°";};
 
     bool isbetween(const Angle& lower, const Angle& upper);
     double getdegrees() const {return _angle*180/pi;};
+    double arclength(double radius) {return radius*_angle;};
 
     static const Angle zero;
 

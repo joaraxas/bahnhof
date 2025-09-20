@@ -100,7 +100,7 @@ private:
     bool isbelownextnode();
     bool aboveprev;
     Tracksystem* tracksystem;
-    float phi;
+    Angle phi;
     float radius;
     std::map<float,signalid> signals;
 };
