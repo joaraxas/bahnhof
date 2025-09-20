@@ -71,7 +71,7 @@ protected:
 class AnnularSector : public Shape
 {
 public:
-    AnnularSector(Vec frompos, Angle fromorientation, Vec topos, float thickness);
+    AnnularSector(Vec frompos, Angle fromorientation, Angle arcangle, float radius, float thickness);
     void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const;
     Vec mid() const;
     Angle getorientation() const;

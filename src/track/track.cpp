@@ -334,7 +334,8 @@ std::unique_ptr<Shape> Track::getcollisionmask()
 	return std::make_unique<AnnularSector>(
 			getpos(0, 0), 
 			getorientation(0),
-			getpos(1, 0),
+			phi,
+			radius,
 			ballastwidth
 		);
 }

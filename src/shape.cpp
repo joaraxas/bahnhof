@@ -163,20 +163,14 @@ Vec RotatedRectangle::getsize() const
 	return Vec(w, h);
 }
 
-AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Vec topos, float thickness)
+AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Angle arcangle, float r, float thickness)
 {
-	Localvec d = localcoords(topos, fromdir, frompos);
-	float dx = d.x; float dy = -d.y;
-	float radius = 0.5*(dy*dy+dx*dx)/dy; // TODO: What if dy is 0?
-	angle = Angle(abs(atan2(dx, sign(dy)*(radius-dy))));
-	midpoint = globalcoords(Localvec{0,-radius}, fromdir, frompos);
-	innerradius = abs(radius) - 0.5*thickness;
-	outerradius = abs(radius) + 0.5*thickness;
-	if(dy<0)
-		rightlimitangle = fromdir - Angle(pi/2);
-	else
-		rightlimitangle = fromdir - angle + Angle(pi/2);
-	
+	float radius = abs(r);
+	angle = arcangle;
+	midpoint = globalcoords(Localvec{0,radius}, fromdir, frompos);
+	innerradius = radius - 0.5*thickness;
+	outerradius = radius + 0.5*thickness;
+	rightlimitangle = fromdir - Angle(pi/2);
 	nSegments = discretizecurve(angle, outerradius);
 }
 
@@ -191,7 +185,8 @@ void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, boo
 		indices.push_back(i+2);
 	}
 	r->renderfilledpolygon(vertvecs, indices, color, ported, zoomed);
-	r->renderfilledrectangle({int(midpoint.x-3),int(midpoint.y-3),6,6});
+	
+	// r->renderfilledrectangle({int(midpoint.x-3),int(midpoint.y-3),6,6});
 }
 
 Vec AnnularSector::mid() const
