@@ -15,7 +15,7 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	nextnode = &next;
 	id = myid;
 
-	Vec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
+	Localvec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
 
 	// note: this assumes max pi curve angle
 	if(d.x*d.y<0){
@@ -85,7 +85,7 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	Vec d = localcoords(pos, getorientation(0), previousnode->getpos());
+	Localvec d = localcoords(pos, getorientation(0), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
 	if(std::isinf(radius)){
 		closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);

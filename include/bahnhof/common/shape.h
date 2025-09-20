@@ -110,7 +110,7 @@ uint8_t discretizecurve(Angle& angle, float radius);
 namespace Intersection
 {
 
-bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb);
+bool checkprojectionofverticesonrect(const std::vector<Localvec>& verts, const std::array<float, 4>& lrtb);
 bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape);
 bool edgesintersect(const Edge&, const Edge&);
 bool edgeintersectsarc(const Edge&, const Arc&);

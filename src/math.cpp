@@ -71,13 +71,16 @@ float normsquared(const Vec& v)
 	return v.x*v.x + v.y*v.y;
 }
 
-Vec localcoords(Vec globalvec, Angle angle, Vec origin)
+Localvec::Localvec(const Vec& origin, const Angle& angle, const Vec& globalvec)
+{
+	x = cos(angle)*(globalvec.x - origin.x) + sin(angle)*-(globalvec.y - origin.y);
+	y =-sin(angle)*(globalvec.x - origin.x) + cos(angle)*-(globalvec.y - origin.y);
+}
+
+Localvec localcoords(Vec globalvec, Angle orientation, Vec origin)
 {
 	// pass from left-hand system to right-hand and rotate by -angle
-	Vec localvec;
-	localvec.x = cos(angle)*(globalvec.x - origin.x) + sin(angle)*-(globalvec.y - origin.y);
-	localvec.y =-sin(angle)*(globalvec.x - origin.x) + cos(angle)*-(globalvec.y - origin.y);
-	return localvec;
+	return Localvec(origin, orientation, globalvec);
 }
 
 Vec globalcoords(Vec localvec, Angle angle, Vec origin)

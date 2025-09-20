@@ -70,14 +70,22 @@ std::vector<Vec> Rectangle::getvertices() const
 
 bool Rectangle::intersectsrotrect(const RotatedRectangle& shape) const
 {
-	std::array<float, 4> leftrighttopbottom{
-		float(rect.x), 
-		float(rect.x+rect.w), 
-		float(rect.y), 
-		float(rect.y+rect.h)
+	const std::vector<Vec>& verts = shape.getvertices();
+	std::vector<Localvec> rotatedverts;
+	rotatedverts.reserve(verts.size());
+	for(int i=0; i<verts.size(); i++){
+		rotatedverts.push_back(localcoords(verts[i], getorientation(), mid()));
+	}
+	const float whalf = rect.w * 0.5;
+	const float hhalf = rect.h * 0.5;
+	std::array<float, 4> leftrighttopbottom = {
+		-whalf, 
+		whalf, 
+		-hhalf, 
+		hhalf
 	};
 
-	if(!Intersection::checkprojectionofverticesonrect(shape.getvertices(), leftrighttopbottom))
+	if(!Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom))
 		return false;
 	if(!Intersection::checkprojectionofverticesonrotrect(getvertices(), shape))
 		return false;
@@ -137,7 +145,7 @@ Vec RotatedRectangle::mid() const
 
 bool RotatedRectangle::contains(Vec pos) const
 {
-	Vec diff = localcoords(pos, angle, mid());
+	Localvec diff = localcoords(pos, angle, mid());
 	if(diff.x>=-w*0.5 && diff.x<=w*0.5 && diff.y>=-h*0.5 && diff.y<=h*0.5)
 		return true;
 	return false;
@@ -165,7 +173,7 @@ Vec RotatedRectangle::getsize() const
 
 AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Vec topos, float thickness)
 {
-	Vec d = localcoords(topos, fromdir, frompos);
+	Localvec d = localcoords(topos, fromdir, frompos);
 	float dx = d.x; float dy = -d.y;
 	float radius = 0.5*(dy*dy+dx*dx)/dy; // TODO: What if dy is 0?
 	angle = Angle(abs(atan2(dx, sign(dy)*(radius-dy))));
@@ -224,7 +232,7 @@ bool AnnularSector::contains(Vec point) const
 	float distance = norm(diff);
 	if(distance>outerradius) return false;
 	if(distance<innerradius) return false;
-	Vec difflocal = localcoords(point, rightlimitangle, midpoint);
+	Localvec difflocal = localcoords(point, rightlimitangle, midpoint);
 	Angle angletomidpoint(atan2(difflocal.y, difflocal.x));
 	if(angletomidpoint.isbetween(Angle::zero, angle))
 		return true;
@@ -309,23 +317,21 @@ namespace Intersection{
 
 bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const RotatedRectangle& shape)
 {
-	std::vector<Vec> rotatedverts(verts.size());
+	std::vector<Localvec> rotatedverts;
+	rotatedverts.reserve(verts.size());
 	for(int i=0; i<verts.size(); i++){
-		rotatedverts[i] = localcoords(verts[i], shape.getorientation(), shape.mid());
+		rotatedverts.push_back(localcoords(verts[i], shape.getorientation(), shape.mid()));
 	}
 	Vec rotrectsize = shape.getsize();
 	float whalf = rotrectsize.x * 0.5;
 	float hhalf = rotrectsize.y * 0.5;
 	std::array<float, 4> leftrighttopbottom = {
-		float(-whalf), 
-		float(whalf), 
-		float(-hhalf), 
-		float(hhalf)
+		-whalf, whalf, -hhalf, hhalf
 	};
 	return Intersection::checkprojectionofverticesonrect(rotatedverts, leftrighttopbottom);
 }
 
-bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::array<float, 4>& lrtb)
+bool checkprojectionofverticesonrect(const std::vector<Localvec>& verts, const std::array<float, 4>& lrtb)
 {
 	// lrtb: left-right-top-bottom values
 	// x
@@ -352,8 +358,8 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 	// express edge2 in local coordinates of edge1
 	Vec d1 = edge1.endpoint2 - edge1.endpoint1;
 	Angle angle1(atan2(-d1.y, d1.x));
-	Vec localendpoint1 = localcoords(edge2.endpoint1, angle1, edge1.endpoint1);
-	Vec localendpoint2 = localcoords(edge2.endpoint2, angle1, edge1.endpoint1);
+	Localvec localendpoint1 = localcoords(edge2.endpoint1, angle1, edge1.endpoint1);
+	Localvec localendpoint2 = localcoords(edge2.endpoint2, angle1, edge1.endpoint1);
 	// in this system, the vertical component of edge2 must change sign, or there is no collision
 	// TODO: This could be optimized, there is no need to compute the local x coords
 	if(localendpoint1.y*localendpoint2.y >= 0)
@@ -394,7 +400,7 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 		xhat = edge.endpoint2.x - edge.endpoint1.x;
 		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
 		Angle edgeangle(atan2(yhat, xhat)); // TODO: Turn this into a constructor/function here and everywhere else in this file using atan2
-		Vec clocal = localcoords(arc.center, edgeangle, edge.endpoint1);
+		Localvec clocal = localcoords(arc.center, edgeangle, edge.endpoint1);
 		if(clocal.x<0 || clocal.x>norm(edge.endpoint2-edge.endpoint1))
 			return false; // edge does not intersect circle
 		// Edge intersects circle, we must check both intersections vs the arc angles

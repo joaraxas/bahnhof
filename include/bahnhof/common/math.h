@@ -28,9 +28,16 @@ struct Vec
     float y;
 };
 
+struct Localvec
+{
+    Localvec(const Vec& origin, const Angle& orientation, const Vec& globalvec);
+    float x;
+    float y;
+};
+
 float norm(const Vec& v);
 float normsquared(const Vec& v);
-Vec localcoords(Vec globalvec, Angle angle, Vec origin);
+Localvec localcoords(Vec globalvec, Angle angle, Vec origin);
 Vec globalcoords(Vec localvec, Angle angle, Vec origin);
 
 float sign(float a);
