@@ -10,9 +10,9 @@ struct Angle
     Angle operator +(const Angle& a) const {return Angle(_angle+a._angle);};
     Angle& operator +=(const Angle& a) {_angle=truncate(_angle+a._angle, 2*pi); return *this;};
     Angle operator -(const Angle& a) const {return Angle(_angle-a._angle);};
-    Angle operator *(float c) const {return Angle(_angle*c);}; // TODO: Does this make sense?
-    friend Angle operator *(float c, const Angle& a) {return a*c;}; // TODO: Does this make sense?
-    Angle operator /(int c) const {return Angle(_angle/double(c));}; // TODO: Does this make sense?
+    Angle operator *(float c) const {return Angle(_angle*c);};
+    friend Angle operator *(float c, const Angle& a) {return a*c;};
+    Angle operator /(int c) const {return Angle(_angle/double(c));};
     Angle operator -() const {return Angle(-_angle);};
     friend bool operator ==(const Angle& lhs, const Angle& rhs) {return lhs._angle == rhs._angle;};
     operator std::string() const {std::to_string(_angle);};

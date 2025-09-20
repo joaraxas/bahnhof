@@ -15,29 +15,34 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	nextnode = &next;
 	id = myid;
 
-	// TODO: Could also define a localcoords for tangent or use getradiansdown depending on track connection
 	Vec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
-	float dx = d.x; float dy = -d.y;
-	radius = 0.5*(dy*dy+dx*dx)/dy;
-	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
+
+	// note: this assumes max pi curve angle
+	if(d.x*d.y<0){
+		// Curves to the right, reverse track direction
+		nextnode = &previous;
+		previousnode = &next;
+		d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
+	}
+
+	if(d.y>0){
+		aboveprev = true;
+	}
+	else{
+		// Below previous node, rotate local coords by pi
+		d.x = -d.x;
+		d.y = -d.y;
+		aboveprev = false;
+	}
+
+	radius = 0.5*(d.y*d.y+d.x*d.x)/d.y;
 	if(abs(radius)>1e5){
 		radius = INFINITY;
 		phi = 0;
 	}
-	// TODO: Clean this up
-	// phi and radius are always positive. All tracks bend to the left.
-	if(phi>0){
-		nextnode = &previous;
-		previousnode = &next;
+	else{
+		phi = atan2(d.x, radius-d.y);
 	}
-	phi = abs(phi); radius = abs(radius);
-	Vec nextposlocal = localcoords(nextnode->getpos(), 
-							previousnode->getdir().getradiansup(), 
-							previousnode->getpos());
-	aboveprev = true;
-	if(nextposlocal.x<0)
-		aboveprev = false;
-	// TODO: This assumes <180 degree curve. Fix it.
 }
 
 Track::~Track()
@@ -142,14 +147,12 @@ bool Track::isabovepreviousnode()
 	if(std::isinf(radius)){
 		if(abs(previousnode->getpos().y - nextnode->getpos().y)>1)
 			return previousnode->getpos().y >= nextnode->getpos().y;
-		else
-			if(cos(previousnode->getdir()) > 0)
-				return (nextnode->getpos().x >= previousnode->getpos().x);
-			else
-				return (nextnode->getpos().x <= previousnode->getpos().x);
+		if(cos(previousnode->getdir()) > 0)
+			return (nextnode->getpos().x >= previousnode->getpos().x);
+		return (nextnode->getpos().x <= previousnode->getpos().x);
 	}
-	else
-		return aboveprev;
+	
+	return aboveprev;
 }
 
 bool Track::isbelownextnode()
