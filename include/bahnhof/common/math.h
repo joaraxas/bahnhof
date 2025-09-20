@@ -22,6 +22,7 @@ struct Vec
     Vec operator+(const Vec&) const;
     Vec operator-(const Vec&) const;
     Vec operator*(float) const;
+    friend Vec operator*(float, const Vec&);
     Vec operator/(float) const;
     float x;
     float y;

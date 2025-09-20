@@ -48,6 +48,11 @@ Vec Vec::operator*(float a) const
 	return out;
 }
 
+Vec operator*(float a, const Vec& v)
+{
+	return Vec{a*v.x, a*v.y};
+}
+
 Vec Vec::operator/(float a) const
 {
 	Vec out(0,0);
