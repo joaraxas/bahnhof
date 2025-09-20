@@ -68,15 +68,14 @@ void Track::disconnectfromnodes()
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), getorientation(0), previousnode->getpos());
+	Vec previousoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(0), previousnode->getpos());
 	if(std::isinf(radius)){
-		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), getorientation(1), nextnode->getpos());
+		Vec nextoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(1), nextnode->getpos());
 		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
-		Vec localpos;
-		localpos.x = (radius-transverseoffset)*sin(nodedist*phi);
-		localpos.y = (radius-transverseoffset)*(1-cos(nodedist*phi));
+		Localvec localpos((radius-transverseoffset)*sin(nodedist*phi),
+						  (radius-transverseoffset)*(1-cos(nodedist*phi)));
 		currentpos = globalcoords(localpos, getorientation(0), previousoffsetpos);	
 	}
 	return currentpos;

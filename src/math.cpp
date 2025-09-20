@@ -83,7 +83,7 @@ Localvec localcoords(Vec globalvec, Angle orientation, Vec origin)
 	return Localvec(origin, orientation, globalvec);
 }
 
-Vec globalcoords(Vec localvec, Angle angle, Vec origin)
+Vec globalcoords(Localvec localvec, Angle angle, Vec origin)
 {
 	// pass from right-hand system to left-hand and rotate by angle
 	Vec globalvec;

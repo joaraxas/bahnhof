@@ -169,7 +169,7 @@ AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Vec topos, float thickn
 	float dx = d.x; float dy = -d.y;
 	float radius = 0.5*(dy*dy+dx*dx)/dy; // TODO: What if dy is 0?
 	angle = Angle(abs(atan2(dx, sign(dy)*(radius-dy))));
-	midpoint = globalcoords({0,-radius}, fromdir, frompos);
+	midpoint = globalcoords(Localvec{0,-radius}, fromdir, frompos);
 	innerradius = abs(radius) - 0.5*thickness;
 	outerradius = abs(radius) + 0.5*thickness;
 	if(dy<0)
@@ -191,6 +191,7 @@ void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, boo
 		indices.push_back(i+2);
 	}
 	r->renderfilledpolygon(vertvecs, indices, color, ported, zoomed);
+	r->renderfilledrectangle({int(midpoint.x-3),int(midpoint.y-3),6,6});
 }
 
 Vec AnnularSector::mid() const
@@ -323,7 +324,7 @@ bool checkprojectionofverticesonrotrect(const std::vector<Vec>& verts, const Rot
 		alltotheright &= vert.x > whalf;
 	}
 	if(alltotheright) return false;
-	
+
 	bool alltotheleft = true;
 	for(auto& vert : rotatedverts){
 		alltotheleft &= vert.x < -whalf;
