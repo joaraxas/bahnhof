@@ -203,13 +203,11 @@ std::vector<Vec> AnnularSector::getvertices() const
 {
 	std::vector<Vec> verts;
 	verts.reserve(nSegments*2+2);
-	const float mid_x = midpoint.x;
-	const float mid_y = midpoint.y;
 	const Angle increment = angle/nSegments;
 	for(int i=0; i<nSegments+1; i++){
 		Angle alpha = rightlimitangle + i*increment;
-		verts.emplace_back(Vec(mid_x + innerradius*cos(alpha), mid_y - innerradius*sin(alpha)));
-		verts.emplace_back(Vec(mid_x + outerradius*cos(alpha), mid_y - outerradius*sin(alpha)));
+		verts.emplace_back(globalcoords({innerradius, 0}, alpha, midpoint));
+		verts.emplace_back(globalcoords({outerradius, 0}, alpha, midpoint));
 	}
 	return verts;
 }

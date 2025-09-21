@@ -71,26 +71,36 @@ float normsquared(const Vec& v)
 	return v.x*v.x + v.y*v.y;
 }
 
-Localvec::Localvec(const Vec& origin, const Angle& angle, const Vec& globalvec)
+Localvec localcoords(const Vec& globalvec, const Angle& angle, const Vec& origin)
 {
-	x = cos(angle)*(globalvec.x - origin.x) + sin(angle)*-(globalvec.y - origin.y);
-	y =-sin(angle)*(globalvec.x - origin.x) + cos(angle)*-(globalvec.y - origin.y);
-}
-
-Localvec localcoords(Vec globalvec, Angle orientation, Vec origin)
-{
+	const Localvec localvec{globalvec.x - origin.x, -(globalvec.y - origin.y)};
+	if(angle == Angle::zero)
+		return localvec;
 	// pass from left-hand system to right-hand and rotate by -angle
-	return Localvec(origin, orientation, globalvec);
+	const float sa = sin(angle);
+	const float ca = cos(angle);
+	return Localvec{
+		ca*localvec.x + sa*localvec.y,
+	   -sa*localvec.x + ca*localvec.y
+	};
 }
 
-Vec globalcoords(Localvec localvec, Angle angle, Vec origin)
+Vec globalcoords(const Localvec& localvec, const Angle& angle, const Vec& origin)
 {
+	if(angle == Angle::zero)
+		return Vec{origin.x + localvec.x, origin.y - localvec.y};
 	// pass from right-hand system to left-hand and rotate by angle
-	Vec globalvec;
-	globalvec.x = cos(angle)*(localvec.x) - sin(angle)*(localvec.y);
-	globalvec.y = sin(angle)*(localvec.x) + cos(angle)*(localvec.y);
-	globalvec.y = -globalvec.y;
-	globalvec = globalvec + origin;
+	Vec globalvec = origin;
+	float sa = sin(angle);
+	float ca = cos(angle);
+	if(localvec.x!=0){
+		globalvec.x += ca*(localvec.x);
+		globalvec.y -= sa*(localvec.x);
+	}
+	if(localvec.y!=0){
+		globalvec.x -= sa*(localvec.y);
+		globalvec.y -= ca*(localvec.y);
+	}
 	return globalvec;
 }
 
