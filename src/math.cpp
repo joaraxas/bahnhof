@@ -71,6 +71,9 @@ float normsquared(const Vec& v)
 	return v.x*v.x + v.y*v.y;
 }
 
+Localvec operator+(Localvec v1, const Localvec& v2) {return v1+=v2;}
+Localvec operator-(Localvec v1, const Localvec& v2) {return v1-=v2;}
+
 Localvec localcoords(const Vec& globalvec, const Angle& angle, const Vec& origin)
 {
 	const Localvec localvec{globalvec.x - origin.x, -(globalvec.y - origin.y)};

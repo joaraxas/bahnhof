@@ -31,9 +31,14 @@ struct Vec
 struct Localvec
 {
     Localvec(float xstart, float ystart) : x(xstart), y(ystart) {};
+    Localvec& operator+=(const Localvec& v) {x+=v.x; y+=v.y; return *this;}
+    Localvec& operator-=(const Localvec& v) {x-=v.x; y-=v.y; return *this;}
     float x;
     float y;
 };
+
+Localvec operator+(Localvec v1, const Localvec& v2);
+Localvec operator-(Localvec v1, const Localvec& v2);
 
 float norm(const Vec& v);
 float normsquared(const Vec& v);
