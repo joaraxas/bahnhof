@@ -33,6 +33,7 @@ struct Localvec
     Localvec(float xstart, float ystart) : x(xstart), y(ystart) {};
     Localvec& operator+=(const Localvec& v) {x+=v.x; y+=v.y; return *this;}
     Localvec& operator-=(const Localvec& v) {x-=v.x; y-=v.y; return *this;}
+    Localvec operator/(float c) const {return {x/c, y/c};};
     float x;
     float y;
 };
