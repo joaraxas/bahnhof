@@ -61,16 +61,6 @@ Vec Vec::operator/(float a) const
 	return out;
 }
 
-float norm(const Vec& v)
-{
-	return std::sqrt(normsquared(v));
-}
-
-float normsquared(const Vec& v)
-{
-	return v.x*v.x + v.y*v.y;
-}
-
 Localvec operator+(Localvec v1, const Localvec& v2) {return v1+=v2;}
 Localvec operator-(Localvec v1, const Localvec& v2) {return v1-=v2;}
 

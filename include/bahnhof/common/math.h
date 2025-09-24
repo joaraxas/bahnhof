@@ -41,8 +41,10 @@ struct Localvec
 Localvec operator+(Localvec v1, const Localvec& v2);
 Localvec operator-(Localvec v1, const Localvec& v2);
 
-float norm(const Vec& v);
-float normsquared(const Vec& v);
+template<typename T> 
+float norm(const T& v) {return std::sqrt(normsquared(v));}
+template<typename T> 
+float normsquared(const T& v) {return v.x*v.x + v.y*v.y;}
 Localvec localcoords(const Vec& globalvec, const Angle& angle, const Vec& origin);
 Vec globalcoords(const Localvec& localvec, const Angle& angle, const Vec& origin);
 
