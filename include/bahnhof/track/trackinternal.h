@@ -154,7 +154,7 @@ namespace Construction
     Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
     void splittrack(Tracksystem&, Node* node, State state);
-    Tangent gettangentofcurvestartingfromnode(Node& startnode, Vec curvetopos);
+    Tangent gettangentatpointoncurvestartingfromnode(Node& startnode, Vec curvetopos);
 };
 
 }

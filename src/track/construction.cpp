@@ -22,7 +22,7 @@ Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 
 Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec topos)
 {
-	Tangent dir = gettangentofcurvestartingfromnode(*fromnode, topos);
+	Tangent dir = gettangentatpointoncurvestartingfromnode(*fromnode, topos);
     Node* tonodepointer = new Node(tracksystem, topos, dir, -1);
     Track* newtrack = new Track(tracksystem, *fromnode, *tonodepointer, -1);
 	Tracksection section({newtrack}, {tonodepointer});
@@ -55,11 +55,11 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 	Tangent dir;
 	if(disttointersect1 > disttointersect2){
 		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
-		dir = gettangentofcurvestartingfromnode(*node2, newnodepoint);
+		dir = gettangentatpointoncurvestartingfromnode(*node2, newnodepoint);
 	}
 	else{
 		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-		dir = gettangentofcurvestartingfromnode(*node1, newnodepoint);
+		dir = gettangentatpointoncurvestartingfromnode(*node1, newnodepoint);
 	}
 	if(
 		(distancebetween(pos1, newnodepoint) < 10 && dir.absanglediff(node1->getdir()) < 5.0/180.0*pi) ||
@@ -89,10 +89,10 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	tracksystem.removetrack(state.track);
 }	
 
-Tangent gettangentofcurvestartingfromnode(Node& startnode, Vec topos)
+Tangent gettangentatpointoncurvestartingfromnode(Node& startnode, Vec topos)
 {
 	Vec posdiff = topos - startnode.getpos();
-	return Tangent(-startnode.getdir() + 2*atan2(-posdiff.y,posdiff.x));
+	return Tangent(-startnode.getdir() + 2*Angle(posdiff));
 }
 
 }
