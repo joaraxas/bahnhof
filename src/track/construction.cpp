@@ -13,7 +13,7 @@ namespace Construction{
 Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 {
 	Vec posdiff = topos - frompos;
-	Tangent dir(atan2(-posdiff.y,posdiff.x));
+	Tangent dir(posdiff);
 	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
 	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, topos);
 	newsection = newsection + Tracksection({},{fromnode});

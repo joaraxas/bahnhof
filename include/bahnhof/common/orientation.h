@@ -6,6 +6,8 @@ struct Angle
 {
     Angle() : Angle(0.0) {};
     explicit Angle(float radians) : _angle(truncate(radians, 2*pi)) {};
+    explicit Angle(Vec v) : Angle(v.getangle()) {};
+    explicit Angle(Localvec v) : Angle(v.getangle()) {};
 
     Angle operator +(const Angle& a) const {return Angle(_angle+a._angle);};
     Angle& operator +=(const Angle& a) {_angle=truncate(_angle+a._angle, 2*pi); return *this;};
@@ -40,6 +42,8 @@ struct Tangent
     Tangent();
     explicit Tangent(float angle);
     explicit Tangent(Angle angle);
+    explicit Tangent(Vec v) : Tangent(v.getangle()) {};
+    explicit Tangent(Localvec v) : Tangent(v.getangle()) {};
 
     Tangent operator -() const {return Tangent(-_angle);};
     Tangent operator +(float rot) const {return Tangent(_angle+rot);};

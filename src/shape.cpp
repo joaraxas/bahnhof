@@ -218,9 +218,8 @@ bool AnnularSector::contains(Vec point) const
 	float distance = norm(diff);
 	if(distance>outerradius) return false;
 	if(distance<innerradius) return false;
-	Localvec difflocal = localcoords(point, rightlimitangle, midpoint);
-	Angle angletomidpoint(atan2(difflocal.y, difflocal.x));
-	if(angletomidpoint.isbetween(Angle::zero, angle))
+	Angle angletomidpoint(diff);
+	if(angletomidpoint.isbetween(rightlimitangle, rightlimitangle+angle))
 		return true;
 	return false;
 }
@@ -363,8 +362,7 @@ bool checkprojectionofverticesonrect(const std::vector<Vec>& verts, const std::a
 bool edgesintersect(const Edge& edge1, const Edge& edge2)
 {
 	// express edge2 in local coordinates of edge1
-	Vec d1 = edge1.endpoint2 - edge1.endpoint1;
-	Angle angle1(atan2(-d1.y, d1.x));
+	Angle angle1(edge1.endpoint2 - edge1.endpoint1);
 	Localvec localendpoint1 = localcoords(edge2.endpoint1, angle1, edge1.endpoint1);
 	Localvec localendpoint2 = localcoords(edge2.endpoint2, angle1, edge1.endpoint1);
 	// in this system, the vertical component of edge2 must change sign, or there is no collision
@@ -375,8 +373,7 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 	// now do the same test for edge1
 
 	// express edge1 in local coordinates of edge2
-	Vec d2 = edge2.endpoint2 - edge2.endpoint1;
-	Angle angle2(atan2(-d2.y, d2.x));
+	Angle angle2(edge2.endpoint2 - edge2.endpoint1);
 	localendpoint1 = localcoords(edge1.endpoint1, angle2, edge2.endpoint1);
 	localendpoint2 = localcoords(edge1.endpoint2, angle2, edge2.endpoint1);
 	// in this system, the vertical component of edge1 must change sign, or there is no collision

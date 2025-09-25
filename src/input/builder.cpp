@@ -65,7 +65,7 @@ void Builder::updateangle(Vec pos)
     Vec diff = pos-anchorpoint;
     angleptr = nullptr;
     if(norm(diff) > 20/game->getcamera().getscale()){
-        angle = Angle(atan2(-diff.y, diff.x));
+        angle = Angle(diff);
         angleptr = &angle;
     }
 }
