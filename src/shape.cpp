@@ -385,35 +385,32 @@ bool edgesintersect(const Edge& edge1, const Edge& edge2)
 
 bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 {
-	float r2 = arc.radius * arc.radius;
-	float p1tocenter_dist2 = normsquared(edge.endpoint1 - arc.center);
-	float p2tocenter_dist2 = normsquared(edge.endpoint2 - arc.center);
-	if(p1tocenter_dist2<r2 && p2tocenter_dist2<r2)
+	float rsq = arc.radius * arc.radius;
+	Localvec ctop1 = localcoords(edge.endpoint1, Angle::zero, arc.center);
+	Localvec ctop2 = localcoords(edge.endpoint2, Angle::zero, arc.center);
+	float p1tocenter_dist2 = normsquared(ctop1);
+	float p2tocenter_dist2 = normsquared(ctop2);
+	if(p1tocenter_dist2<rsq && p2tocenter_dist2<rsq)
 		return false; // the edge is enclosed by the circle, no collision
-	float xhat = edge.endpoint2.x - edge.endpoint1.x;
-	float yhat = -(edge.endpoint2.y - edge.endpoint1.y);
+	Localvec p1top2 = localcoords(edge.endpoint2, Angle::zero, edge.endpoint1);
 	std::vector<int> discriminantsignstocheck;
-	if(p1tocenter_dist2>r2 && p2tocenter_dist2>r2){
+	if(p1tocenter_dist2>rsq && p2tocenter_dist2>rsq){
 		// Both endpoints are outside the circle, check nearest point on edge
-		float p1top2_dist2 = normsquared(edge.endpoint1 - edge.endpoint2);
+		float p1top2_dist2 = normsquared(p1top2);
 		float mindist2fromedgetocircle = p1tocenter_dist2 - 
 			pow(p1tocenter_dist2 + p1top2_dist2 - p2tocenter_dist2, 2) * 0.25 / p1top2_dist2;
-		if(mindist2fromedgetocircle>r2){
+		if(mindist2fromedgetocircle>rsq){
 			return false; // the entire line is outside the circle
 		}
-		xhat = edge.endpoint2.x - edge.endpoint1.x;
-		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
-		Angle edgeangle(atan2(yhat, xhat)); // TODO: Turn this into a constructor/function here and everywhere else in this file using atan2
+		Angle edgeangle(p1top2);
 		Localvec clocal = localcoords(arc.center, edgeangle, edge.endpoint1);
-		if(clocal.x<0 || clocal.x>norm(edge.endpoint2-edge.endpoint1))
+		if(clocal.x<0 || clocal.x>sqrt(p1top2_dist2))
 			return false; // edge does not intersect circle
 		// Edge intersects circle, we must check both intersections vs the arc angles
 		discriminantsignstocheck.push_back(-1);
 		discriminantsignstocheck.push_back(1);
 	}
 	else{
-		xhat = edge.endpoint2.x - edge.endpoint1.x;
-		yhat = -(edge.endpoint2.y - edge.endpoint1.y);
 		// The edge pierces through the circle
 		// There will be two solutions but we must only check one of them vs the arc angles
 		bool pointingoutwards = (p2tocenter_dist2>p1tocenter_dist2);
@@ -422,11 +419,11 @@ bool edgeintersectsarc(const Edge& edge, const Arc& arc)
 	}
 
 	// Compute line intersection angles and compare to arc limit angles
-	float mixedterm = -(edge.endpoint1.y-arc.center.y)*xhat - (edge.endpoint1.x-arc.center.x)*yhat;
-	float discriminant = sqrt((xhat*xhat+yhat*yhat)*r2 - mixedterm*mixedterm);
+	float mixedterm = ctop1.y*p1top2.x - ctop1.x*p1top2.y;
+	float discriminant = sqrt(normsquared(p1top2)*rsq - mixedterm*mixedterm);
 	for(int discsign : discriminantsignstocheck){
-		float nom = xhat*mixedterm + yhat*discsign*discriminant;
-		float denom = -yhat*mixedterm + xhat*discsign*discriminant;
+		float nom = p1top2.x*mixedterm + p1top2.y*discsign*discriminant;
+		float denom = -p1top2.y*mixedterm + p1top2.x*discsign*discriminant;
 		Angle intersectionangle(atan2(nom, denom));
 
 		if(intersectionangle.isbetween(arc.rightangle, arc.rightangle+arc.angle))

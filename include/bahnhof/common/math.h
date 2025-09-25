@@ -24,7 +24,7 @@ struct Vec
     Vec operator*(float) const;
     friend Vec operator*(float, const Vec&);
     Vec operator/(float) const;
-    Angle getangle() const;
+    Angle toangle() const;
     float x;
     float y;
 };
@@ -35,7 +35,7 @@ struct Localvec
     Localvec& operator+=(const Localvec& v) {x+=v.x; y+=v.y; return *this;}
     Localvec& operator-=(const Localvec& v) {x-=v.x; y-=v.y; return *this;}
     Localvec operator/(float c) const {return {x/c, y/c};};
-    Angle getangle() const;
+    Angle toangle() const;
     float x;
     float y;
 };

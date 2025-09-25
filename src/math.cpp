@@ -61,7 +61,7 @@ Vec Vec::operator/(float a) const
 	return out;
 }
 
-Angle Vec::getangle() const
+Angle Vec::toangle() const
 {
 	return Angle(atan2(-y, x));
 }
@@ -102,7 +102,7 @@ Vec globalcoords(const Localvec& localvec, const Angle& angle, const Vec& origin
 	return globalvec;
 }
 
-Angle Localvec::getangle() const
+Angle Localvec::toangle() const
 {
 	return Angle(atan2(y, x));
 }
