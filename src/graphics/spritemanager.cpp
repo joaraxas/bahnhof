@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/graphics/rendering.h"

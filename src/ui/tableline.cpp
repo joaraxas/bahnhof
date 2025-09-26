@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/tablelines.h"

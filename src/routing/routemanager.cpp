@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/graphics/rendering.h"
 

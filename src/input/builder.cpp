@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/builder.h"
 #include "bahnhof/common/gamestate.h"

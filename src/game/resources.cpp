@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/gamestate.h"

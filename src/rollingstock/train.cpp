@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include<algorithm>
 #include "bahnhof/graphics/graphics.h"

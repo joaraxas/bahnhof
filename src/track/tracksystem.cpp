@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/input/input.h"

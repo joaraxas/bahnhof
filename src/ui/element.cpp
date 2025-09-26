@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/decoration.h"

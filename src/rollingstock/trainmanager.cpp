@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"

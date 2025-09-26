@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/shape.h"

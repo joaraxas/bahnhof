@@ -1,6 +1,4 @@
 #pragma once
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"

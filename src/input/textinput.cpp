@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/input/textinput.h"
 #include "bahnhof/ui/decoration.h"
 

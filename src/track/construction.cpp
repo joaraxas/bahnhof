@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/orientation.h"
 #include "bahnhof/track/trackinternal.h"
