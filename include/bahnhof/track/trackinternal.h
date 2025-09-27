@@ -84,6 +84,7 @@ public:
     float getarclength(float nodedist);
     Angle getorientation(float nodedist);
     float getradius(State state);
+    float getminradius();
     Track* nexttrack();
     Track* previoustrack();
     void split(Track& track1, Track& track2, State where);

@@ -110,6 +110,7 @@ namespace Input
     Order* generateorderat(Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
     float getcostoftracks(const Tracksection& section);
+    float getminradiusofsection(const Tracksection& section);
     std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section);
 };
 

@@ -53,13 +53,15 @@ void TrackBuilder::reset()
 
 bool TrackBuilder::canfit()
 {
-    bool collision = false;
+    bool acceptablesection = true;
 
     Tracks::Tracksection section = planconstruction(anchorpoint);
-    collision = game->getgamestate().getbuildingmanager().checkcollision(section);
+    if(section) // A bit ugly, we need to escape this not to prevent trackstartpoint setting, as that is triggered by build()
+        acceptablesection &= (Tracks::Input::getminradiusofsection(section) >= 100);
+    acceptablesection &= !game->getgamestate().getbuildingmanager().checkcollision(section);
     Tracks::Input::discardsection(section);
 
-    return !collision;
+    return acceptablesection;
 }
 
 void TrackBuilder::build()

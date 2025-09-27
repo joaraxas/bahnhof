@@ -120,6 +120,11 @@ float Track::getradius(State state)
 	return radius*(2*state.alignedwithtrack-1);
 }
 
+float Track::getminradius()
+{
+	return abs(radius);
+}
+
 Track* Track::nexttrack(){
 	Track* nexttrack;
 	if(isbelownextnode()){
