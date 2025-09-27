@@ -49,6 +49,7 @@ struct Tangent
     Tangent operator +(float rot) const {return Tangent(_angle+rot);};
     friend Tangent operator +(float rot, const Tangent& t) {return t+rot;};
     Tangent operator +(Angle rot) const {return Tangent(_angle+rot._angle);};
+    Tangent operator -(Angle rot) const {return Tangent(_angle-rot._angle);};
     operator std::string() const;
 
     Angle getradiansup() const {return Angle(_angle);};
