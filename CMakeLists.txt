@@ -29,6 +29,9 @@ add_executable(bahnhof
     src/input/input.cpp
     src/input/textinput.cpp
     src/input/builder.cpp
+    src/input/trackbuilder.cpp
+    src/input/signalbuilder.cpp
+    src/input/buildingbuilder.cpp
     src/ui/ui.cpp
     src/ui/uirendering.cpp
     src/ui/host.cpp
