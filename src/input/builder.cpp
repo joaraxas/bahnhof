@@ -41,7 +41,7 @@ void Builder::reset()
 {
     anchorpoint = Vec(0,0);
     droppedanchor = false;
-    angleptr = nullptr;
+    angleisset = false;
 }
 
 bool Builder::canbuild()
@@ -56,9 +56,9 @@ bool Builder::canbuild()
 void Builder::updateangle(Vec pos)
 {
     Vec diff = pos-anchorpoint;
-    angleptr = nullptr;
+    angleisset = false;
     if(norm(diff) > 20/game->getcamera().getscale()){
         angle = Angle(diff);
-        angleptr = &angle;
+        angleisset = true;
     }
 }

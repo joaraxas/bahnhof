@@ -8,6 +8,10 @@
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
+    Angle* angleptr = nullptr;
+    if(angleisset){
+        angleptr = &angle;
+    }
     if(buildingfromstartpoint()){
         return Tracks::Input::planconstructionto(tracksystem, trackstartpoint, pos, angleptr);
     }

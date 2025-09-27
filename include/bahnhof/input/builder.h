@@ -32,15 +32,16 @@ protected:
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
-    void updateangle(Vec pos);
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
-    Vec anchorpoint{0,0};
-    Angle angle;
-    Angle* angleptr = nullptr;
-    bool droppedanchor = false;
     float cost;
+    Vec anchorpoint{0,0};
+    bool droppedanchor = false;
+    Angle angle;
+    bool angleisset;
+    Game* game;
+    Tracks::Tracksystem& tracksystem;
+private:
+    void updateangle(Vec pos);
+    InputManager& input;
 };
 
 class TrackBuilder : public Builder
