@@ -14,31 +14,44 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	id = myid;
 
 	Localvec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
-
-	// note: this assumes max pi curve angle
-	if(d.x*d.y<0){
-		// Curves to the right, reverse track direction
-		nextnode = &previous;
-		previousnode = &next;
-		d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
-	}
-
-	if(d.y>0){
-		aboveprev = true;
-	}
-	else{
-		// Below previous node, rotate local coords by pi
-		d.x = -d.x;
-		d.y = -d.y;
-		aboveprev = false;
-	}
-
-	radius = 0.5*(d.y*d.y+d.x*d.x)/d.y;
-	if(abs(radius)>1e5){
+	if(abs(d.y)<1){
+		// straight track must point in dir.radiansup()
 		radius = INFINITY;
 		phi = Angle::zero;
+		aboveprev = true; // define straight track direction so that this always holds
+		if(nextnode->getpos().y > previousnode->getpos().y){
+			// define straight tracks to always point upwards
+			nextnode = &previous;
+			previousnode = &next;
+		}
+		if(nextnode->getpos().y == previousnode->getpos().y){
+			// if y value is identical, define track to point to the right
+			if(nextnode->getpos().x < previousnode->getpos().x){
+				nextnode = &previous;
+				previousnode = &next;
+			}
+		}
 	}
 	else{
+		// curved track always defined to turn to the left
+		if(d.x*d.y<0){ // note: this assumes max pi curve angle
+			// Curves to the right, reverse track direction
+			nextnode = &previous;
+			previousnode = &next;
+			d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
+		}
+
+		if(d.y>0){
+			aboveprev = true;
+		}
+		else{
+			// Below previous node, rotate local coords by pi, making dy positive
+			d.x = -d.x;
+			d.y = -d.y;
+			aboveprev = false;
+		}
+
+		radius = 0.5*(d.y*d.y+d.x*d.x)/d.y;
 		phi = Angle(atan2(d.x, radius-d.y));
 	}
 }
@@ -174,6 +187,8 @@ void Track::split(Track& track1, Track& track2, State where)
 
 State Track::getnewstateaftersplit(Track& track1, Track& track2, State wheresplit, State oldstate)
 {
+	// track1 must connect to previousnode, track2 to nextnode
+	// orientation of track1 and track2 is deterministic and will agree with *this
 	if(oldstate.track == id){
 		if(oldstate.nodedist<wheresplit.nodedist){
 			oldstate.track = track1.id;
