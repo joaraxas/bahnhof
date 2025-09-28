@@ -21,9 +21,9 @@ Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec topos)
 {
 	Tangent dir = gettangentatpointoncurvestartingfromnode(*fromnode, topos);
-    Node* tonodepointer = new Node(tracksystem, topos, dir, -1);
-    Track* newtrack = new Track(tracksystem, *fromnode, *tonodepointer, -1);
-	Tracksection section({newtrack}, {tonodepointer});
+	Node* tonode = new Node(tracksystem, topos, dir, -1);
+	Track* newtrack = new Track(tracksystem, *fromnode, *tonode, -1);
+	Tracksection section({newtrack}, {tonode});
 	return section;
 }
 

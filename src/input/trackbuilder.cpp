@@ -39,7 +39,10 @@ void TrackBuilder::render(Rendering* r)
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
     Vec screenpoint = game->getcamera().screencoord(anchorpoint);
-    r->rendertext(std::to_string(int(cost)), screenpoint.x, screenpoint.y-18, {127, 0, 0}, false, false);
+    std::string tooltip = std::to_string(int(cost))+" Fr\n"+
+        "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
+        std::to_string(section.tracks.size())+" tracks";
+    r->rendertext(tooltip, screenpoint.x+20, screenpoint.y, {0, 0, 0}, false, false);
     Tracks::Input::discardsection(section);
 }
 

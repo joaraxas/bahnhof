@@ -63,6 +63,7 @@ Vec Vec::operator/(float a) const
 
 Angle Vec::toangle() const
 {
+	if(x==0 && y==0) {std::cout<<"warning: returning zero from zero vector in Vec::toangle()"<<std::endl; return Angle::zero;}
 	return Angle(atan2(-y, x));
 }
 
@@ -104,6 +105,7 @@ Vec globalcoords(const Localvec& localvec, const Angle& angle, const Vec& origin
 
 Angle Localvec::toangle() const
 {
+	if(x==0 && y==0) {std::cout<<"warning: returning zero from zero vector in Localvec::toangle()"<<std::endl; return Angle::zero;}
 	return Angle(atan2(y, x));
 }
 
