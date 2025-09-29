@@ -14,7 +14,7 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	id = myid;
 
 	Localvec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
-	if(abs(d.y)<1){
+	if(abs(d.y/d.x)<1e-4){
 		// straight track must point in dir.radiansup()
 		radius = INFINITY;
 		phi = Angle::zero;
