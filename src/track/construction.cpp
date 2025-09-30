@@ -55,11 +55,11 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 		float disttointersect2 = distancebetween(pos2, tangentintersection);
 		if(disttointersect1 > disttointersect2){
 			newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
-			newdir = gettangentatpointoncurvestartingfromnode(*node2, newnodepoint);
+			newdir = node1->getdir();
 		}
 		else{
 			newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-			newdir = gettangentatpointoncurvestartingfromnode(*node1, newnodepoint);
+			newdir = node2->getdir();
 		}
 		if(
 			(distancebetween(pos1, newnodepoint) < 10 && newdir.absanglediff(node1->getdir()) < 5.0/180.0*pi) ||
@@ -69,8 +69,10 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 			return Tracksection({newtrack},{});
 		}
 	}
-	Tracksection section = extendtracktopos(tracksystem, node1, newnodepoint);
-	section.tracks.push_back(new Track(tracksystem, *section.nodes.back(), *node2, -1));
+	Node* tonode = new Node(tracksystem, newnodepoint, newdir, -1);
+	Track* newtrack1 = new Track(tracksystem, *node1, *tonode, -1);
+	Track* newtrack2 = new Track(tracksystem, *tonode, *node2, -1);
+	Tracksection section({newtrack1, newtrack2}, {tonode});
 	return section;
 }
 
