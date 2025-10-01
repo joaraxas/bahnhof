@@ -29,6 +29,11 @@ bool TrackBuilder::buildingfromstartpoint()
     return (trackstartpoint.x!=0 || trackstartpoint.y!=0);
 }
 
+bool TrackBuilder::islayingtrack()
+{
+    return selectednode || selectedstate || buildingfromstartpoint();
+}
+
 void TrackBuilder::render(Rendering* r)
 {
     Builder::render(r);
@@ -39,9 +44,13 @@ void TrackBuilder::render(Rendering* r)
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
     Vec screenpoint = game->getcamera().screencoord(anchorpoint);
-    std::string tooltip = std::to_string(int(cost))+" Fr\n"+
+    std::string tooltip;
+    if(islayingtrack())
+        tooltip = std::to_string(int(cost))+" Fr\n"+
         "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
         std::to_string(section.tracks.size())+" tracks";
+    else
+        tooltip = "click track startpoint";
     r->rendertext(tooltip, screenpoint.x+20, screenpoint.y, {0, 0, 0}, false, false);
     Tracks::Input::discardsection(section);
 }
@@ -56,11 +65,12 @@ void TrackBuilder::reset()
 
 bool TrackBuilder::canfit()
 {
+    if(!islayingtrack())
+        return true;
     bool acceptablesection = true;
 
     Tracks::Tracksection section = planconstruction(anchorpoint);
-    if(section) // A bit ugly, we need to escape this not to prevent trackstartpoint setting, as that is triggered by build()
-        acceptablesection &= (Tracks::Input::getminradiusofsection(section) >= 100);
+    acceptablesection &= (Tracks::Input::getminradiusofsection(section) >= 100);
     acceptablesection &= !game->getgamestate().getbuildingmanager().checkcollision(section);
     Tracks::Input::discardsection(section);
 
@@ -69,12 +79,14 @@ bool TrackBuilder::canfit()
 
 void TrackBuilder::build()
 {
-    Tracks::Tracksection section = planconstruction(anchorpoint);
-    if(section){
-        cost = Tracks::Input::getcostoftracks(section);
-        Tracks::Input::buildsection(tracksystem, section);
-        trackstartpoint = Vec(0,0);
-        selectedstate = State();
+    if(islayingtrack()){
+        Tracks::Tracksection section = planconstruction(anchorpoint);
+        if(section){
+            cost = Tracks::Input::getcostoftracks(section);
+            Tracks::Input::buildsection(tracksystem, section);
+            trackstartpoint = Vec(0,0);
+            selectedstate = State();
+        }
     }
     selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
     if(selectednode) return;

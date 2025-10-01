@@ -27,6 +27,7 @@ struct Vec
     friend Vec operator*(float, const Vec&);
     Vec operator/(float) const;
     Angle toangle() const;
+    bool iszero() const {return x==0 && y==0;}
     float x;
     float y;
 };

@@ -53,6 +53,7 @@ public:
 private:
     bool canfit();
     void build();
+    bool islayingtrack();
     Tracks::Tracksection planconstruction(Vec pos);
     bool buildingfromstartpoint();
     Vec trackstartpoint{0,0};
