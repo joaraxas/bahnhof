@@ -45,13 +45,18 @@ void TrackBuilder::render(Rendering* r)
     Tracks::render(section, r, mode);
     Vec screenpoint = game->getcamera().screencoord(anchorpoint);
     std::string tooltip;
-    if(islayingtrack())
-        tooltip = std::to_string(int(cost))+" Fr\n"+
-        "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
-        std::to_string(section.tracks.size())+" tracks";
+    if(islayingtrack()){
+        if(!nicetracks)
+            tooltip = std::to_string(int(cost))+" Fr\n"+
+            "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
+            std::to_string(section.tracks.size())+" tracks";
+        else
+            tooltip = std::to_string(int(cost))+" Fr";
+    }
     else
         tooltip = "click track startpoint";
-    r->rendertext(tooltip, screenpoint.x+20, screenpoint.y, {0, 0, 0}, false, false);
+    // TODO: Instead of using getlogicalscale(), we could have a logical pixels type or pass this to the uirenderer
+    r->rendertext(tooltip, screenpoint.x+16*getlogicalscale(), screenpoint.y, {0, 0, 0}, false, false);
     Tracks::Input::discardsection(section);
 }
 
