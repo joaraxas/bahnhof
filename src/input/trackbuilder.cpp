@@ -50,13 +50,20 @@ void TrackBuilder::render(Rendering* r)
             tooltip = std::to_string(int(cost))+" Fr\n"+
             "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
             std::to_string(section.tracks.size())+" tracks";
-        else
-            tooltip = std::to_string(int(cost))+" Fr";
+        else{
+            if(isinf(Tracks::Input::getminradiusofsection(section))){
+                tooltip = std::to_string(int(cost))+" Fr\n"+
+                "radius many m";
+            }
+            else
+                tooltip = std::to_string(int(cost))+" Fr\n"+
+                "radius "+std::to_string(int(round(Tracks::Input::getminradiusofsection(section)*150/1000)))+" m";
+        }
     }
     else
         tooltip = "click track startpoint";
     // TODO: Instead of using getlogicalscale(), we could have a logical pixels type or pass this to the uirenderer
-    r->rendertext(tooltip, screenpoint.x+16*getlogicalscale(), screenpoint.y, {0, 0, 0}, false, false);
+    r->rendertext(tooltip, screenpoint.x+50*getlogicalscale(), screenpoint.y, {0, 0, 0}, false, false);
     Tracks::Input::discardsection(section);
 }
 
