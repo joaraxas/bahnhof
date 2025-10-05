@@ -1,8 +1,8 @@
 #include "bahnhof/common/shape.h"
 
-uint8_t discretizecurve(Angle& angle, float radius)
+int discretizecurve(Angle& angle, float radius)
 {
-	return fmax(1, round(angle.getdegrees()/180*32*radius/100)); // 180 degrees yields 32 segments at radius 100
+	return fmax(1, round(angle.getdegrees()/180.*32.*radius/100.)); // 180 degrees yields 32 segments at radius 100
 }
 
 namespace Intersection{

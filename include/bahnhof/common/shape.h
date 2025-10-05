@@ -105,7 +105,7 @@ struct Arc
     Angle angle;
 };
 
-uint8_t discretizecurve(Angle& angle, float radius);
+int discretizecurve(Angle& angle, float radius);
 
 namespace Intersection
 {
