@@ -92,7 +92,9 @@ void BuildingBuilder::build()
         Angle newangle = angle;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         Tracks::Input::buildsection(tracksystem, section);
-        State midpointstate = Tracks::getstartpointstate(section);
+        State midpointstate = Tracks::Input::getstateat(tracksystem, anchorpoint);
+        if(!Tracks::getorientation(tracksystem, midpointstate).isbetween(newangle-Angle(1), newangle+Angle(1)))
+            midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack;
         midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 500));
         buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), midpointstate, r));
         break;
