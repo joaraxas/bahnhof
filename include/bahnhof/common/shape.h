@@ -8,7 +8,7 @@
 class Rendering;
 class Rectangle;
 class RotatedRectangle;
-class AnnularSector;
+class Ringsector;
 
 class Shape
 {
@@ -21,7 +21,7 @@ public:
     virtual bool intersects(const Shape&) const = 0;
     virtual bool intersectsrect(const Rectangle&) const = 0;
     virtual bool intersectsrotrect(const RotatedRectangle&) const = 0;
-    virtual bool intersectsannularsector(const AnnularSector&) const = 0;
+    virtual bool intersectsringsector(const Ringsector&) const = 0;
 };
 
 class Rectangle : public Shape
@@ -39,7 +39,7 @@ public:
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
     bool intersectsrotrect(const RotatedRectangle&) const;
-    bool intersectsannularsector(const AnnularSector&) const;
+    bool intersectsringsector(const Ringsector&) const;
 protected:
     SDL_Rect rect;
 };
@@ -59,7 +59,7 @@ public:
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
     bool intersectsrotrect(const RotatedRectangle&) const;
-    bool intersectsannularsector(const AnnularSector&) const;
+    bool intersectsringsector(const Ringsector&) const;
 protected:
     float mid_x;
     float mid_y;
@@ -68,10 +68,10 @@ protected:
     Angle angle;
 };
 
-class AnnularSector : public Shape
+class Ringsector : public Shape
 {
 public:
-    AnnularSector(Vec frompos, Angle fromorientation, Angle arcangle, float radius, float thickness);
+    Ringsector(Vec frompos, Angle fromorientation, Angle arcangle, float radius, float thickness);
     void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const;
     Vec mid() const;
     Angle getorientation() const;
@@ -79,7 +79,7 @@ public:
     bool intersects(const Shape&) const;
     bool intersectsrect(const Rectangle&) const;
     bool intersectsrotrect(const RotatedRectangle&) const;
-    bool intersectsannularsector(const AnnularSector&) const;
+    bool intersectsringsector(const Ringsector&) const;
 private:
     std::vector<Vec> getvertices() const;
     bool intersectsanyedge(const std::vector<Vec>& orderedvertices) const;

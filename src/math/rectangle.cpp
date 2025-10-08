@@ -82,7 +82,7 @@ bool Rectangle::intersectsrotrect(const RotatedRectangle& shape) const
 	return true;
 }
 
-bool Rectangle::intersectsannularsector(const AnnularSector& shape) const
+bool Rectangle::intersectsringsector(const Ringsector& shape) const
 {
 	return shape.intersectsrect(*this);
 }

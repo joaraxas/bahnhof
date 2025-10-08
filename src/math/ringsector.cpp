@@ -1,7 +1,7 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/graphics/rendering.h"
 
-AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Angle arcangle, float r, float thickness)
+Ringsector::Ringsector(Vec frompos, Angle fromdir, Angle arcangle, float r, float thickness)
 {
 	float radius = abs(r);
 	angle = arcangle;
@@ -12,7 +12,7 @@ AnnularSector::AnnularSector(Vec frompos, Angle fromdir, Angle arcangle, float r
 	nSegments = discretizecurve(angle, outerradius);
 }
 
-void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
+void Ringsector::renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const
 {
 	std::vector<Vec> vertvecs = getvertices();
 	std::vector<int> indices;
@@ -27,17 +27,17 @@ void AnnularSector::renderfilled(Rendering* r, SDL_Color color, bool ported, boo
 	// r->renderfilledrectangle({int(midpoint.x-3),int(midpoint.y-3),6,6});
 }
 
-Vec AnnularSector::mid() const
+Vec Ringsector::mid() const
 {
 	return midpoint;
 }
 
-Angle AnnularSector::getorientation() const
+Angle Ringsector::getorientation() const
 {
 	return rightlimitangle + angle * 0.5;
 }
 
-std::vector<Vec> AnnularSector::getvertices() const
+std::vector<Vec> Ringsector::getvertices() const
 {
 	std::vector<Vec> verts;
 	verts.reserve(nSegments*2+2);
@@ -50,7 +50,7 @@ std::vector<Vec> AnnularSector::getvertices() const
 	return verts;
 }
 
-bool AnnularSector::contains(Vec point) const
+bool Ringsector::contains(Vec point) const
 {
 	Vec diff = point-midpoint;
 	float distance = norm(diff);
@@ -62,26 +62,12 @@ bool AnnularSector::contains(Vec point) const
 	return false;
 }
 
-bool AnnularSector::intersects(const Shape& shape) const
+bool Ringsector::intersects(const Shape& shape) const
 {
-	return shape.intersectsannularsector(*this);
+	return shape.intersectsringsector(*this);
 }
 
-bool AnnularSector::intersectsrect(const Rectangle& shape) const
-{
-	// First check whether one point from either body is inside the other.
-	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
-	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
-	if(shape.contains(rightoutercorner))
-		return true;
-	auto othervertices = shape.getvertices();
-	if(contains(othervertices.front()))
-		return true;
-
-	return intersectsanyedge(othervertices);
-}
-
-bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
+bool Ringsector::intersectsrect(const Rectangle& shape) const
 {
 	// First check whether one point from either body is inside the other.
 	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
@@ -95,12 +81,26 @@ bool AnnularSector::intersectsrotrect(const RotatedRectangle& shape) const
 	return intersectsanyedge(othervertices);
 }
 
-bool AnnularSector::intersectsannularsector(const AnnularSector&) const
+bool Ringsector::intersectsrotrect(const RotatedRectangle& shape) const
+{
+	// First check whether one point from either body is inside the other.
+	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
+	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
+	if(shape.contains(rightoutercorner))
+		return true;
+	auto othervertices = shape.getvertices();
+	if(contains(othervertices.front()))
+		return true;
+
+	return intersectsanyedge(othervertices);
+}
+
+bool Ringsector::intersectsringsector(const Ringsector&) const
 {
 	return false; // for now this won't happen
 }
 
-bool AnnularSector::intersectsanyedge(const std::vector<Vec>& orderedvertices) const
+bool Ringsector::intersectsanyedge(const std::vector<Vec>& orderedvertices) const
 {
 	std::vector<Edge> edges;
 	edges.reserve(orderedvertices.size());

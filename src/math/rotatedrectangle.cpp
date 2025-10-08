@@ -20,7 +20,7 @@ bool RotatedRectangle::intersectsrotrect(const RotatedRectangle& shape) const
 	return true;
 }
 
-bool RotatedRectangle::intersectsannularsector(const AnnularSector& shape) const
+bool RotatedRectangle::intersectsringsector(const Ringsector& shape) const
 {
 	return shape.intersectsrotrect(*this);
 }
