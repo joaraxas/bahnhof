@@ -1,4 +1,5 @@
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/rendering.h"
 
 Ringsector::Ringsector(Vec frompos, Angle fromdir, Angle arcangle, float r, float thickness)

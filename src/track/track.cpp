@@ -1,4 +1,5 @@
 #include<map>
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/track/trackinternal.h"

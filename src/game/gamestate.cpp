@@ -11,6 +11,7 @@
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 
 
 Gamestate::Gamestate(Game* whatgame)

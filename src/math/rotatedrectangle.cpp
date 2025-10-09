@@ -1,4 +1,5 @@
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/rendering.h"
 
 bool RotatedRectangle::intersects(const Shape& shape) const

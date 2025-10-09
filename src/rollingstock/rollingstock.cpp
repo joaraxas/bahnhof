@@ -1,6 +1,6 @@
 #include<map>
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"

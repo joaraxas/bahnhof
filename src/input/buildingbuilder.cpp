@@ -1,4 +1,6 @@
 #include "bahnhof/input/builder.h"
+#include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"

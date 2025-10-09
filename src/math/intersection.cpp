@@ -1,4 +1,5 @@
 #include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 
 int discretizecurve(Angle& angle, float radius)
 {
