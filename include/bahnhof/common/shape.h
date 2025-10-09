@@ -13,11 +13,11 @@ class Ringsector;
 class Shape
 {
 public:
-    virtual ~Shape() {};
-    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
+    virtual ~Shape() = default;
+    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const = 0;
     virtual Vec mid() const = 0;
     virtual Angle getorientation() const {return Angle::zero;};
-    virtual bool contains(Vec) const {return false;};
+    virtual bool contains(Vec) const = 0;
     virtual bool intersects(const Shape&) const = 0;
     virtual bool intersectsrect(const Rectangle&) const = 0;
     virtual bool intersectsrotrect(const RotatedRectangle&) const = 0;
