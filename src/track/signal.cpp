@@ -67,7 +67,7 @@ bool Signal::isred(Train* fortrain)
 	return false;
 }
 
-Vec getsignalposfromstate(Tracksystem& tracksystem, State state)
+Vec getsignalposfromstate(const Tracksystem& tracksystem, State state)
 {
 	Angle orientation = getorientation(tracksystem, state);
 	float transverseoffset = -20;

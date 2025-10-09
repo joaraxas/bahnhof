@@ -135,18 +135,18 @@ private:
     Icon sprite;
 };
 
-Vec getsignalposfromstate(Tracksystem&, State state);
+Vec getsignalposfromstate(const Tracksystem&, State state);
 
-State tryincrementingtrack(Tracksystem&, State state);
+State tryincrementingtrack(const Tracksystem&, State state);
 float distancebetween(Vec, Vec);
 
 namespace Input
 {
-    State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    State getcloseststate(Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
-    nodeid getclosestnode(Tracksystem& tracksystem, Vec pos);
-    signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
-    nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);
+    State whatdidiclick(const Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
+    State getcloseststate(const Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
+    nodeid getclosestnode(const Tracksystem& tracksystem, Vec pos);
+    signalid getclosestsignal(const Tracksystem& tracksystem, Vec pos);
+    nodeid getclosestswitch(const Tracksystem& tracksystem, Vec pos);
 }
 
 namespace Construction

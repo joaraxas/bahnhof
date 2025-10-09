@@ -11,12 +11,12 @@ namespace Tracks
 {
 namespace Input
 {
-State getstateat(Tracksystem& tracksystem, Vec pos, float mindist)
+State getstateat(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
 	return getcloseststate(tracksystem, pos, mindist);
 }
 
-State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
+State getendpointat(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
 	float mindistsquared = mindist*mindist/tracksystem.game->getcamera().getscale();
 	Node* closestnode = nullptr;
@@ -47,7 +47,7 @@ State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
 	return State(closestnode->trackdown->id, 0, false);
 }
 
-Vec plansignalat(Tracksystem& tracksystem, Vec pos)
+Vec plansignalat(const Tracksystem& tracksystem, Vec pos)
 {
 	State signalstate = getcloseststate(tracksystem, pos);
 	return getsignalposfromstate(tracksystem, signalstate);
@@ -179,7 +179,7 @@ void discardsection(Tracksection& section)
 	}
 }
 
-nodeid selectnodeat(Tracksystem& tracksystem, Vec pos)
+nodeid selectnodeat(const Tracksystem& tracksystem, Vec pos)
 {
 	nodeid selectednode = 0;
 	whatdidiclick(tracksystem, pos, nullptr, &selectednode, nullptr, nullptr);
@@ -197,7 +197,7 @@ bool switchat(Tracksystem& tracks, Vec pos)
 	return(clickedsignal||clickedswitch);
 }
 
-Order* generateorderat(Tracksystem& tracks, Vec pos)
+Order* generateorderat(const Tracksystem& tracks, Vec pos)
 {
 	Order* neworder = nullptr;
 	trackid clickedtrack=0; signalid clickedsignal=0; switchid clickedswitch=0;
@@ -253,7 +253,7 @@ std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& s
 	return shapes;
 }
 
-State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, switchid* _switch)
+State whatdidiclick(const Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, switchid* _switch)
 {
 	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;
 	State closeststate; nodeid closestnode = 0; signalid closestsignal = 0; nodeid closestswitch = 0;
@@ -302,7 +302,7 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 	return returnstate;
 }
 
-State getcloseststate(Tracksystem& tracksystem, Vec pos, float mindist)
+State getcloseststate(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
 	State closeststate;
 	for(auto track: tracksystem.alltracks()){
@@ -316,7 +316,7 @@ State getcloseststate(Tracksystem& tracksystem, Vec pos, float mindist)
 	return closeststate;
 }
 
-nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
+nodeid getclosestnode(const Tracksystem& tracksystem, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	nodeid closestnode = 0;
@@ -330,7 +330,7 @@ nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
 	return closestnode;
 }
 
-signalid getclosestsignal(Tracksystem& tracks, Vec pos)
+signalid getclosestsignal(const Tracksystem& tracks, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	signalid closestsignal = 0;
@@ -344,7 +344,7 @@ signalid getclosestsignal(Tracksystem& tracks, Vec pos)
 	return closestsignal;
 }
 
-nodeid getclosestswitch(Tracksystem& tracks, Vec pos)
+nodeid getclosestswitch(const Tracksystem& tracks, Vec pos)
 {
 	float mindist = INFINITY;
 	switchid closestswitch = 0;

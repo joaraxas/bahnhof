@@ -4,22 +4,22 @@
 #include "bahnhof/track/trackinternal.h"
 
 namespace Tracks{
-Vec getpos(Tracksystem& tracksystem, State state, float transverseoffset)
+Vec getpos(const Tracksystem& tracksystem, State state, float transverseoffset)
 {
 	return tracksystem.gettrack(state.track)->getpos(state.nodedist, transverseoffset);
 }
 
-Angle getorientation(Tracksystem& tracksystem, State state)
+Angle getorientation(const Tracksystem& tracksystem, State state)
 {
 	return tracksystem.gettrack(state.track)->getorientation(state.nodedist) + Angle(pi*!state.alignedwithtrack);
 }
 
-Tangent gettangent(Tracksystem& tracksystem, State state)
+Tangent gettangent(const Tracksystem& tracksystem, State state)
 {
 	return Tangent(getorientation(tracksystem, state));
 }
 
-float getradius(Tracksystem& tracksystem, State state)
+float getradius(const Tracksystem& tracksystem, State state)
 {
 	return tracksystem.gettrack(state.track)->getradius(state);
 }
@@ -30,7 +30,7 @@ void setswitch(Tracksystem& tracksystem, switchid _switch, int switchstate)
 	switchptr->setswitch(switchstate);
 }
 
-Vec getswitchpos(Tracksystem& tracksystem, switchid _switch)
+Vec getswitchpos(const Tracksystem& tracksystem, switchid _switch)
 {
 	Switch* switchptr = tracksystem.getswitch(_switch);
 	return switchptr->pos();
@@ -42,12 +42,12 @@ void setsignal(Tracksystem& tracksystem, signalid signal, int redgreenorflip)
 	signalpointer->set(redgreenorflip);
 }
 
-Vec getsignalpos(Tracksystem& tracksystem, signalid signal)
+Vec getsignalpos(const Tracksystem& tracksystem, signalid signal)
 {
 	return getsignalposfromstate(tracksystem, tracksystem.getsignal(signal)->state);
 }
 
-void render(Tracksystem& tracksystem, Rendering* r)
+void render(const Tracksystem& tracksystem, Rendering* r)
 {
 	for(auto const track : tracksystem.alltracks())
 		track->render(r, TracksDisplayMode::normal);
@@ -65,13 +65,13 @@ void render(const Tracksection& section, Rendering* r, TracksDisplayMode mode)
 		node->render(r);
 }
 
-void renderbelowtracks(Tracksystem& tracksystem, Rendering* r, TracksDisplayMode mode)
+void renderbelowtracks(const Tracksystem& tracksystem, Rendering* r, TracksDisplayMode mode)
 {
 	for(auto const track : tracksystem.alltracks())
 		track->renderballast(r, mode);
 }
 
-void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
+void renderabovetrains(const Tracksystem& tracksystem, Rendering* r)
 {
 	for(auto const& _switch : tracksystem.allswitches())
 		_switch->render(r);
@@ -79,7 +79,7 @@ void renderabovetrains(Tracksystem& tracksystem, Rendering* r)
 		signal->render(r);
 }
 
-State tryincrementingtrack(Tracksystem& tracks, State oldstate)
+State tryincrementingtrack(const Tracksystem& tracks, State oldstate)
 {
 	State state = oldstate;
 	if(state.nodedist>=1){
@@ -127,7 +127,7 @@ State tryincrementingtrack(Tracksystem& tracks, State oldstate)
 	return state;
 }
 
-State travel(Tracksystem& tracks, State state, float pixels)
+State travel(const Tracksystem& tracks, State state, float pixels)
 {
 	bool finishedtrip = false;
 
@@ -143,7 +143,7 @@ State travel(Tracksystem& tracks, State state, float pixels)
 	return state;
 }
 
-float distancefromto(Tracksystem& tracks, State state1, State state2, float maxdist, bool mustalign)
+float distancefromto(const Tracksystem& tracks, State state1, State state2, float maxdist, bool mustalign)
 {
 	State state = state1;
 	float arclength = tracks.gettrack(state.track)->getarclength(1);
@@ -194,7 +194,7 @@ float distancefromto(Tracksystem& tracks, State state1, State state2, float maxd
 	return distance;
 }
 
-bool isendofline(Tracksystem& tracksystem, State state)
+bool isendofline(const Tracksystem& tracksystem, State state)
 {
 	if(state.nodedist<=0)
 		if(!state.alignedwithtrack)
@@ -207,7 +207,7 @@ bool isendofline(Tracksystem& tracksystem, State state)
 	return false;
 }
 
-Vec gettrackextension(Tracksystem& tracksystem, State fromstate, float distance, Angle& angle){
+Vec gettrackextension(const Tracksystem& tracksystem, State fromstate, float distance, Angle& angle){
     if(fromstate){
         angle = Tracks::getorientation(tracksystem, fromstate);
     }
