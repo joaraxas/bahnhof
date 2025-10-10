@@ -160,14 +160,6 @@ Track* Track::previoustrack(){
 
 bool Track::isabovepreviousnode()
 {
-	if(std::isinf(radius)){
-		if(abs(previousnode->getpos().y - nextnode->getpos().y)>1)
-			return previousnode->getpos().y >= nextnode->getpos().y;
-		if(cos(previousnode->getdir()) > 0)
-			return (nextnode->getpos().x >= previousnode->getpos().x);
-		return (nextnode->getpos().x <= previousnode->getpos().x);
-	}
-	
 	return aboveprev;
 }
 
