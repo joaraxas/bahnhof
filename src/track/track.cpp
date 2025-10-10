@@ -124,7 +124,10 @@ float Track::getarclength(float nodedist)
 
 Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir().getradiansup() + nodedist*phi + Angle(pi*!isabovepreviousnode());
+	if(isabovepreviousnode()){
+		return previousnode->getdir().getradiansup() + nodedist*phi;
+	}
+	return previousnode->getdir().getradiansdown() + nodedist*phi;
 }
 
 float Track::getradius(State state)
