@@ -72,13 +72,15 @@ bool Ringsector::intersectsrect(const Rectangle& shape) const
 {
 	// First check whether one point from either body is inside the other.
 	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
-	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
+	Vec rightoutercorner = globalcoords({outerradius,0}, rightlimitangle, midpoint);
 	if(shape.contains(rightoutercorner))
 		return true;
+	// Next, check whether any corners of the rectangle are within the ringsector
 	auto othervertices = shape.getvertices();
 	if(contains(othervertices.front()))
 		return true;
-
+	// If not, check for intersection of the ringsector's and rectangle's edges.
+	// All collision cases are now covered
 	return intersectsanyedge(othervertices);
 }
 
@@ -86,18 +88,21 @@ bool Ringsector::intersectsrotrect(const RotatedRectangle& shape) const
 {
 	// First check whether one point from either body is inside the other.
 	// This is to catch the case when one shape in entirely enclosed by the other. If so we can't use edges.
-	Vec rightoutercorner(midpoint.x+outerradius*cos(-rightlimitangle), midpoint.y+outerradius*sin(-rightlimitangle));
+	Vec rightoutercorner = globalcoords({outerradius,0}, rightlimitangle, midpoint);
 	if(shape.contains(rightoutercorner))
 		return true;
+	// Next, check whether any corners of the rectangle are within the ringsector
 	auto othervertices = shape.getvertices();
 	if(contains(othervertices.front()))
 		return true;
-
+	// If not, check for intersection of the ringsector's and rectangle's edges.
+	// All collision cases are now covered
 	return intersectsanyedge(othervertices);
 }
 
 bool Ringsector::intersectsringsector(const Ringsector&) const
 {
+	std::cout<<"Warning: call to unimplemented Ringsector::intersectsringsector"<<std::endl;
 	return false; // for now this won't happen
 }
 
