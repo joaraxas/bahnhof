@@ -58,9 +58,10 @@ void Train::update(int ms)
 		minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
-	float minradiusmeter = minradius*150*0.001;
-	float maxspeed = sqrt(safetyfactor*g*minradiusmeter*normalgauge/2/wagonheight)*1000/150;
-	
+	float minradiusmeter = pixelstometers(minradius);
+	float maxspeed_m_s = sqrt(safetyfactor*g*minradiusmeter*normalgauge/2/wagonheight);
+	float maxspeed = meterstopixels(maxspeed_m_s);
+
 	if(abs(speed)>maxspeed)
 		speed = maxspeed*sign(speed);
 	float pixels = ms*0.001*abs(speed);

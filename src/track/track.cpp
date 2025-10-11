@@ -278,14 +278,14 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 				SDL_SetRenderDrawColor(renderer, 220,0,0,255);
 				break;
 		}
-		float sleeperwidth = 2600/150;
-		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
+		float sleeperdrawwidth = meterstopixels(sleeperwidth);
+		if(scale<0.2) sleeperdrawwidth *= 0.25/scale;
 		int nSleepers = round(getarclength(1)/3*fmin(1,scale));
 		if(scale<0.3) nSleepers = round(getarclength(1)/20*fmin(1,scale));
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
-			Vec drawposl = getpos(nodedist, sleeperwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperwidth/2);{
+			Vec drawposl = getpos(nodedist, sleeperdrawwidth/2);
+			Vec drawposr = getpos(nodedist, -sleeperdrawwidth/2);{
 				r->renderline(drawposl, drawposr);
 			}
 		}
@@ -309,7 +309,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	if(!std::isinf(radius))
 		nSegments = discretizecurve(phi, radius);
 	float gauge = 0;
-	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
+	if(nicetracks && scale>0.3) gauge = meterstopixels(normalgauge);
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
@@ -337,12 +337,11 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 
 std::unique_ptr<Shape> Track::getcollisionmask()
 {
-	float ballastwidth = 4000/150;
 	if(std::isinf(radius))
 		return std::make_unique<RotatedRectangle>(
 			getpos(0.5, 0), 
 			getarclength(1), 
-			ballastwidth,
+			meterstopixels(ballastwidth),
 			getorientation(0)
 		);
 	return std::make_unique<Ringsector>(
@@ -350,7 +349,7 @@ std::unique_ptr<Shape> Track::getcollisionmask()
 			getorientation(0),
 			phi,
 			radius,
-			ballastwidth
+			meterstopixels(ballastwidth)
 		);
 }
 

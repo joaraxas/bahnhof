@@ -11,7 +11,21 @@
 
 const double pi = 3.141592653589793238;
 const float g = 9.8;
+
+template<typename T>
+constexpr double meterstopixels(T m)
+{
+    return m*1000/150;
+}
+
+template<typename T>
+constexpr double pixelstometers(T pixels)
+{
+    return pixels*0.001*150;
+}
 const float normalgauge = 1.435;
+const float ballastwidth = 4.000;
+const float sleeperwidth = 2.600;
 
 struct SDL_FPoint;
 struct Angle;
