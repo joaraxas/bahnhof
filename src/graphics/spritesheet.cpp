@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
@@ -20,7 +19,7 @@ Spritesheet::~Spritesheet()
     SDL_DestroyTexture(tex);
 }
 
-void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, float imageangle, int imageindex, 
+void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle imageangle, int imageindex, 
 						int imagetype, float imagescale, Uint8 imagealpha, Uint8 red, Uint8 green, Uint8 blue)
 {
 	int x = int(pos.x);

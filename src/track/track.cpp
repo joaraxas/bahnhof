@@ -1,6 +1,5 @@
-#include<iostream>
-#include<string>
 #include<map>
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/track/trackinternal.h"
@@ -15,13 +14,46 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 	nextnode = &next;
 	id = myid;
 
-	Vec d = localcoords(nextnode->getpos(), previousnode->getdir(), previousnode->getpos());
-	float dx = d.x; float dy = -d.y;
-	radius = 0.5*(dy*dy+dx*dx)/dy;
-	phi = sign(dy)*atan2(dx, sign(dy)*(radius-dy));
-	if(abs(radius)>1e5){
+	Localvec d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
+	if(abs(d.y/d.x)<1e-3){
+		// straight track must point in dir.radiansup()
 		radius = INFINITY;
-		phi = 0;
+		phi = Angle::zero;
+		aboveprev = true; // define straight track direction so that this always holds
+		if(nextnode->getpos().y > previousnode->getpos().y){
+			// define straight tracks to always point upwards
+			nextnode = &previous;
+			previousnode = &next;
+		}
+		if(nextnode->getpos().y == previousnode->getpos().y){
+			// if y value is identical, define track to point to the right
+			if(nextnode->getpos().x < previousnode->getpos().x){
+				nextnode = &previous;
+				previousnode = &next;
+			}
+		}
+	}
+	else{
+		// curved track always defined to turn to the left
+		if(d.x*d.y<0){ // note: this assumes max pi curve angle
+			// Curves to the right, reverse track direction
+			nextnode = &previous;
+			previousnode = &next;
+			d = localcoords(nextnode->getpos(), previousnode->getdir().getradiansup(), previousnode->getpos());
+		}
+
+		if(d.y>0){
+			aboveprev = true;
+		}
+		else{
+			// Below previous node, rotate local coords by pi, making dy positive
+			d.x = -d.x;
+			d.y = -d.y;
+			aboveprev = false;
+		}
+
+		radius = 0.5*(d.y*d.y+d.x*d.x)/d.y;
+		phi = Angle(atan2(d.x, radius-d.y));
 	}
 }
 
@@ -48,16 +80,15 @@ void Track::disconnectfromnodes()
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
 	Vec currentpos;
-	Vec previousoffsetpos = globalcoords(Vec(0,transverseoffset), previousnode->getdir(), previousnode->getpos());
+	Vec previousoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(0), previousnode->getpos());
 	if(std::isinf(radius)){
-		Vec nextoffsetpos = globalcoords(Vec(0,transverseoffset), nextnode->getdir(), nextnode->getpos());
+		Vec nextoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(1), nextnode->getpos());
 		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
-		Vec localpos;
-		localpos.x = (radius+transverseoffset)*sin(nodedist*phi);
-		localpos.y =-(radius+transverseoffset)*(1-cos(nodedist*phi));
-		currentpos = globalcoords(localpos, previousnode->getdir(), previousoffsetpos);	
+		Localvec localpos((radius-transverseoffset)*sin(nodedist*phi),
+						  (radius-transverseoffset)*(1-cos(nodedist*phi)));
+		currentpos = globalcoords(localpos, getorientation(0), previousoffsetpos);	
 	}
 	return currentpos;
 }
@@ -65,29 +96,16 @@ Vec Track::getpos(float nodedist, float transverseoffset)
 State Track::getcloseststate(Vec pos)
 {
 	State closeststate(id, 0, true);
-	Vec d = localcoords(pos, previousnode->getdir(), previousnode->getpos());
+	Localvec d = localcoords(pos, getorientation(0), previousnode->getpos());
 	float dx = d.x; float dy = d.y;
 	if(std::isinf(radius)){
-		if(isabovepreviousnode()){
-			closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy<=0);
-		}
-		else{
-			closeststate.nodedist = fmax(fmin(1, -dx/getarclength(1)), 0);
-			closeststate.alignedwithtrack = (dy>=0);
-		}
+		closeststate.nodedist = fmax(fmin(1, dx/getarclength(1)), 0);
+		closeststate.alignedwithtrack = (dy<=0);
 	}
 	else{
-		if(isabovepreviousnode()){
-			float angle = atan2(dx, sign(radius)*(radius+dy));
-			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) <= sign(radius)*pow(radius,2);
-		}
-		else{
-			float angle = atan2(-dx, sign(radius)*(radius+dy));
-			closeststate.nodedist = fmax(fmin(1, angle/abs(phi)), 0);
-			closeststate.alignedwithtrack = sign(radius)*((pow(radius+dy, 2) + pow(dx, 2))) >= sign(radius)*pow(radius,2);
-		}
+		Angle angletocenter{atan2(dx, radius-dy)};
+		closeststate.nodedist = fmax(fmin(1, angletocenter/phi), 0);
+		closeststate.alignedwithtrack = (pow(radius-dy, 2) + pow(dx, 2)) >= pow(radius,2);
 	}
 	return closeststate;
 }
@@ -99,19 +117,29 @@ float Track::getarclength(float nodedist)
 		arclength = nodedist*norm(previousnode->getpos() - nextnode->getpos());
 	}
 	else{
-		arclength = nodedist*abs(radius*phi);
+		arclength = nodedist*phi.arclength(radius);
 	}
 	return arclength;
 }
 
-float Track::getorientation(float nodedist)
+Angle Track::getorientation(float nodedist)
 {
-	return previousnode->getdir() - nodedist*phi + pi*!isabovepreviousnode();
+	if(isabovepreviousnode()){
+		return previousnode->getdir().getradiansup() + nodedist*phi;
+	}
+	return previousnode->getdir().getradiansdown() + nodedist*phi;
 }
 
 float Track::getradius(State state)
 {
-	return radius*(2*state.alignedwithtrack-1)*(2*isabovepreviousnode()-1);
+	// Turning left: positive
+	// Turning right: negative
+	return radius*(2*state.alignedwithtrack-1);
+}
+
+float Track::getminradius()
+{
+	return abs(radius);
 }
 
 Track* Track::nexttrack(){
@@ -135,22 +163,12 @@ Track* Track::previoustrack(){
 
 bool Track::isabovepreviousnode()
 {
-	if(std::isinf(radius)){
-		if(abs(previousnode->getpos().y - nextnode->getpos().y)>1)
-			return previousnode->getpos().y >= nextnode->getpos().y;
-		else
-			if(cos(previousnode->getdir()) > 0)
-				return (nextnode->getpos().x >= previousnode->getpos().x);
-			else
-				return (nextnode->getpos().x <= previousnode->getpos().x);
-	}
-	else
-		return radius*phi >= 0;
+	return aboveprev;
 }
 
 bool Track::isbelownextnode()
 {
-	return cos(getorientation(1) - nextnode->getdir()) > 0;
+	return cos(getorientation(1) - nextnode->getdir().getradiansup()) > 0;
 }
 
 void Track::split(Track& track1, Track& track2, State where)
@@ -165,6 +183,8 @@ void Track::split(Track& track1, Track& track2, State where)
 
 State Track::getnewstateaftersplit(Track& track1, Track& track2, State wheresplit, State oldstate)
 {
+	// track1 must connect to previousnode, track2 to nextnode
+	// orientation of track1 and track2 is deterministic and will agree with *this
 	if(oldstate.track == id){
 		if(oldstate.nodedist<wheresplit.nodedist){
 			oldstate.track = track1.id;
@@ -220,28 +240,32 @@ signalid Track::nextsignal(State state, bool startfromtrackend, bool mustalign)
 	return reachedsignal;
 }
 
+void Track::renderballast(Rendering* r, TracksDisplayMode mode)
+{
+	float scale = r->getcamscale();
+	//// ballast ////
+	if(nicetracks && scale>0.3){
+		SDL_Color ballastcolor;
+		switch(mode){
+			case TracksDisplayMode::normal:
+				ballastcolor = {127,127,127,255};
+				break;
+			case TracksDisplayMode::planned:
+				ballastcolor = {255,255,255,63};
+				break;
+			case TracksDisplayMode::impossible:
+				ballastcolor = {127,0,0,127};
+				break;
+		}
+		std::unique_ptr<Shape> shape = getcollisionmask();
+		shape->renderfilled(r, ballastcolor);
+	}
+}
+
 void Track::render(Rendering* r, TracksDisplayMode mode)
 {
 	float scale = r->getcamscale();
-	//// banvall ////
-	/*if(nicetracks){
-		SDL_SetRenderDrawColor(renderer, 127,127,127,255);
-		float sleeperwidth = 4000/200;
-		int nSleepers = round(getarclength(1)/0.25);
-		if(std::isinf(radius)) nSleepers = round(getarclength(1));
-		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
-			float nodedist = float(iSleeper+0.5)/float(nSleepers);
-			Vec drawposl = getpos(nodedist, sleeperwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperwidth/2);
-			if(drawposl.x>0)
-			if(drawposl.x<SCREEN_WIDTH)
-			if(drawposl.y>0)
-			if(drawposl.y<SCREEN_HEIGHT){
-				SDL_RenderDrawLine(renderer, drawposl.x, drawposl.y, drawposr.x, drawposr.y);
-			}
-		}
-	}*/
-	//// syllar ////
+	//// sleepers ////
 	if(nicetracks){
 		switch(mode){
 			case TracksDisplayMode::normal:
@@ -251,22 +275,22 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 				SDL_SetRenderDrawColor(renderer, 255,255,255,127);
 				break;
 			case TracksDisplayMode::impossible:
-				SDL_SetRenderDrawColor(renderer, 127,0,0,255);
+				SDL_SetRenderDrawColor(renderer, 220,0,0,255);
 				break;
 		}
-		float sleeperwidth = 2600/150;
-		if(scale<0.2) sleeperwidth = 2600/150*0.25/scale;
+		float sleeperdrawwidth = meterstopixels(sleeperwidth);
+		if(scale<0.2) sleeperdrawwidth *= 0.25/scale;
 		int nSleepers = round(getarclength(1)/3*fmin(1,scale));
 		if(scale<0.3) nSleepers = round(getarclength(1)/20*fmin(1,scale));
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
-			Vec drawposl = getpos(nodedist, sleeperwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperwidth/2);{
+			Vec drawposl = getpos(nodedist, sleeperdrawwidth/2);
+			Vec drawposr = getpos(nodedist, -sleeperdrawwidth/2);{
 				r->renderline(drawposl, drawposr);
 			}
 		}
 	}
-	//// rals ////
+	//// rails ////
 	if(nicetracks){
 		switch(mode){
 			case TracksDisplayMode::normal:
@@ -283,9 +307,9 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	else SDL_SetRenderDrawColor(renderer, 255*isabovepreviousnode(),0, 255*isbelownextnode(),255);
 	int nSegments = 1;
 	if(!std::isinf(radius))
-		nSegments = fmax(1,round(abs(phi/2/pi*4*128)));
+		nSegments = discretizecurve(phi, radius);
 	float gauge = 0;
-	if(nicetracks && scale>0.3) gauge = normalgauge*1000/150;
+	if(nicetracks && scale>0.3) gauge = meterstopixels(normalgauge);
 	for(int iSegment = 0; iSegment < nSegments; iSegment++){
 		float nodedist = float(iSegment)/float(nSegments);
 		Vec drawpos1l = getpos(nodedist, gauge/2);
@@ -306,7 +330,27 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 			radiustext = std::to_string(radius);
 		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});
 		r->rendertext("track #"+std::to_string(id), midpoint.x, midpoint.y+14/scale, {255,255,255,255});
+		r->rendertext("phi "+std::string(phi), midpoint.x, midpoint.y+28/scale, {255,255,255,255});
 	}
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 }
+
+std::unique_ptr<Shape> Track::getcollisionmask()
+{
+	if(std::isinf(radius))
+		return std::make_unique<RotatedRectangle>(
+			getpos(0.5, 0), 
+			getarclength(1), 
+			meterstopixels(ballastwidth),
+			getorientation(0)
+		);
+	return std::make_unique<Ringsector>(
+			getpos(0, 0), 
+			getorientation(0),
+			phi,
+			radius,
+			meterstopixels(ballastwidth)
+		);
 }
+
+} //namespace Tracks

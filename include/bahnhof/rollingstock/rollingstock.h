@@ -20,7 +20,7 @@ public:
     Axes(Wagon& w, Tracks::Tracksystem& t, State midstate);
     ~Axes();
     virtual Vec getpos();
-    virtual float getorientation();
+    virtual Angle getorientation();
     virtual void travel(float pixels);
     virtual State frontendstate();
     virtual State backendstate();
@@ -35,7 +35,7 @@ class Cargo
 {
 public:
     Cargo(Wagon& w, ResourceManager& r, const WagonType& type);
-    virtual void render(Rendering* r, Vec pos, float angle, float scale);
+    virtual void render(Rendering* r, Vec pos, Angle angle, float scale);
     virtual int load(const resourcetype type, const int amount);
     virtual int unload(resourcetype& type);
     Resource* getloadedresource();

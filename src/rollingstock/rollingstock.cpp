@@ -1,8 +1,6 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/gamestate.h"
-#include "bahnhof/common/shape.h"
+#include "bahnhof/common/geometry.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
@@ -100,7 +98,7 @@ Vec Axes::getpos(){
 	return Tracks::getpos(tracks, state);
 }
 
-float Axes::getorientation(){
+Angle Axes::getorientation(){
 	return Tracks::getorientation(tracks, state);
 }
 
@@ -148,7 +146,7 @@ Cargo::Cargo(Wagon& w, ResourceManager& r, const WagonType& type) :
     renderstorage(type.renderstorage)
 {}
 
-void Cargo::render(Rendering* r, Vec pos, float angle, float scale)
+void Cargo::render(Rendering* r, Vec pos, Angle angle, float scale)
 {
 	if(getloadedresourcetype()!=none){
 		Resource* resource = getloadedresource();

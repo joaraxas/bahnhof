@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
@@ -8,15 +6,17 @@
 
 namespace Tracks
 {
-Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), updown(isupordown)
+Switch::Switch(Node* mynode, Track* track, bool isupordown) : node(mynode), pointsupwards(isupordown)
 {
 	tracksystem = node->tracksystem;
     id = tracksystem->addswitchtolist(this);
     addtrack(track);
 	sprite.setspritesheet(tracksystem->game->getsprites(), sprites::switchsprite);
 	sprite.zoomed = false;
-	sprite.imageangle = node->dir - pi/2;
-    if(!updown) sprite.imageangle+=pi;
+    if(pointsupwards)
+        sprite.imageangle = node->dir.getradiansup() - Angle(pi/2);
+    else
+        sprite.imageangle = node->dir.getradiansdown() - Angle(pi/2);
 }
 
 Switch::~Switch()
@@ -30,13 +30,13 @@ void Switch::addtrack(Track* track){
         insertionindex = tracks.size();
         float newtrackcurvature = 1./getradiusoriginatingfromnode(track, node->id);
         for(int iTrack=0; iTrack<tracks.size(); iTrack++){
-            if(newtrackcurvature < 1./getradiusoriginatingfromnode(tracks[iTrack], node->id))
+            if(newtrackcurvature > 1./getradiusoriginatingfromnode(tracks[iTrack], node->id))
                 insertionindex = iTrack;
             if(insertionindex==iTrack) break;
         }
     }
     tracks.insert(tracks.begin()+insertionindex, track);
-    if(updown)
+    if(pointsupwards)
         node->trackup = tracks[switchstate];
     else
         node->trackdown = tracks[switchstate];
@@ -48,7 +48,7 @@ void Switch::removetrack(Track* track){
     auto it = find(tracks.begin(), tracks.end(), track);
     if (it != tracks.end())
         tracks.erase(it);
-    if(updown)
+    if(pointsupwards)
         node->trackup = tracks[switchstate];
     else
         node->trackdown = tracks[switchstate];
@@ -61,7 +61,7 @@ float getradiusoriginatingfromnode(Track* track, nodeid node)
 }
 
 Vec Switch::pos(){
-    return getswitchpos(node->pos, node->dir, updown);
+    return getswitchpos(node->pos, node->dir, pointsupwards);
 }
 
 int Switch::getstateforordergeneration(){
@@ -93,7 +93,7 @@ void Switch::setswitch(int newstate)
         else
             std::cout<<"Error: tried to set switch "<<id<<" to illegal state " << newstate<<std::endl;
     }
-    if(updown)
+    if(pointsupwards)
         node->trackup = tracks[switchstate];
     else
         node->trackdown = tracks[switchstate];

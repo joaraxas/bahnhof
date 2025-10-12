@@ -22,7 +22,8 @@ public:
     virtual void render(Rendering* rendering);
     void update(int ms);
     virtual void trigger() {};
-    bool checkclick(Vec pos);
+    bool checkcollisionwithpoint(Vec pos);
+    bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
     std::string name;
     const BuildingType& type;

@@ -9,7 +9,9 @@
 #include "bahnhof/graphics/sprite.h"
 
 namespace Tracks{
-    class Tracksystem;}
+    class Tracksystem;
+    struct Tracksection;
+}
 
 class Game;
 class Rendering;
@@ -30,14 +32,16 @@ protected:
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
-    void updateangle(Vec pos);
-    Game* game;
-    InputManager& input;
-    Tracks::Tracksystem& tracksystem;
-    Vec anchorpoint{0,0};
-    float angle;
-    bool droppedanchor = false;
     float cost;
+    Vec anchorpoint{0,0};
+    bool droppedanchor = false;
+    Angle angle;
+    bool angleisset;
+    Game* game;
+    Tracks::Tracksystem& tracksystem;
+private:
+    void updateangle(Vec pos);
+    InputManager& input;
 };
 
 class TrackBuilder : public Builder
@@ -47,9 +51,14 @@ public:
     void render(Rendering*);
     void reset();
 private:
+    bool canfit();
     void build();
-    Vec origin{0,0};
+    bool islayingtrack();
+    Tracks::Tracksection planconstruction(Vec pos);
+    bool buildingfromstartpoint();
+    Vec trackstartpoint{0,0};
     nodeid selectednode = 0;
+    State selectedstate;
 };
 
 class SignalBuilder : public Builder
@@ -71,7 +80,7 @@ public:
     void reset();
     void setbuildingtype(const BuildingType& b);
 private:
-    bool canfit() {return Builder::canfit();};
+    bool canfit();
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;

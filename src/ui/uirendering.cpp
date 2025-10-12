@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
@@ -10,7 +9,7 @@ UIRendering::UIRendering(InterfaceManager& newui) : ui(newui)
     setuiscale(getlogicalscale());
 }
 
-void UIRendering::rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool originiscenter, int centerx, int centery)
+void UIRendering::rendertexture(Rendering* r, SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool originiscenter, int centerx, int centery)
 {
     SDL_Rect screenrect = uitoscreen(*rect);
     r->rendertexture(tex, &screenrect, srcrect, angle, ported, false, originiscenter, centerx, centery);

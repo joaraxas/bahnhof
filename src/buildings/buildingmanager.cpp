@@ -1,10 +1,9 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/track/track.h"
 
 
 BuildingManager::BuildingManager(Game* g) : game(g)
@@ -34,7 +33,7 @@ void BuildingManager::render(Rendering* r)
 bool BuildingManager::leftclick(Vec mappos)
 {
 	for(auto& building : buildings){
-		if(building->checkclick(mappos)){
+		if(building->checkcollisionwithpoint(mappos)){
 			building->leftclick(mappos);
 			return true;
 		}
@@ -45,4 +44,25 @@ bool BuildingManager::leftclick(Vec mappos)
 void BuildingManager::addbuilding(std::unique_ptr<Building> b)
 {
 	buildings.emplace_back(std::move(b));
+}
+
+bool BuildingManager::checkcollision(const Shape& shape)
+{
+	for(auto& building : buildings){
+		if(building->checkcollisionwithshape(shape))
+			return true;
+	}
+	return false;
+}
+
+bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
+{
+    std::vector<std::unique_ptr<Shape>> trackshapes = 
+        Tracks::Input::gettrackcollisionmasks(section);
+    for(auto& shape : trackshapes){
+        if(checkcollision(*shape)){
+            return true;
+        }
+    }
+	return false;
 }

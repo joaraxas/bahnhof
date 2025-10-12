@@ -3,46 +3,23 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "orientation.h"
 
 class Rendering;
+class Rectangle;
+class RotatedRectangle;
+class Ringsector;
 
 class Shape
 {
 public:
-    virtual ~Shape() {};
-    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const {};
-    virtual Vec mid() const {return Vec(0,0);};
-    virtual bool contains(Vec) const {return false;};
-    virtual float getorientation() const {return 0;};
-};
-
-class Rectangle : public Shape
-{
-public:
-    Rectangle(const SDL_Rect& rect);
-    Rectangle(int x, int y, int w, int h);
-    Rectangle(Vec pos, int w, int h);
-    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
-    Vec mid() const;
-    bool contains(Vec) const;
-protected:
-    SDL_Rect rect;
-};
-
-class RotatedRectangle : public Shape
-{
-public:
-    RotatedRectangle(float mid_x, float mid_y, int w, int h);
-    RotatedRectangle(Vec mid, int w, int h, float rotation);
-    RotatedRectangle(float mid_x, float mid_y, int w, int h, float rotation);
-    void renderfilled(Rendering* r, SDL_Color color, bool ported, bool zoomed) const;
-    Vec mid() const;
-    float getorientation() const {return angle;};
-    bool contains(Vec) const;
-protected:
-    float mid_x;
-    float mid_y;
-    int w;
-    int h;
-    float angle;
+    virtual ~Shape() = default;
+    virtual void renderfilled(Rendering* r, SDL_Color color, bool ported=true, bool zoomed=true) const = 0;
+    virtual Vec mid() const = 0;
+    virtual Angle getorientation() const {return Angle::zero;};
+    virtual bool contains(Vec) const = 0;
+    virtual bool intersects(const Shape&) const = 0;
+    virtual bool intersectsrect(const Rectangle&) const = 0;
+    virtual bool intersectsrotrect(const RotatedRectangle&) const = 0;
+    virtual bool intersectsringsector(const Ringsector&) const = 0;
 };

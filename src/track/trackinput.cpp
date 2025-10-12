@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/track/trackinternal.h"
@@ -13,20 +11,23 @@ namespace Tracks
 {
 namespace Input
 {
-State getstateat(Tracksystem& tracksystem, Vec pos)
+State getstateat(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
-	return getcloseststate(tracksystem, pos);
+	return getcloseststate(tracksystem, pos, mindist);
 }
 
-State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
+State getendpointat(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
 	float mindistsquared = mindist*mindist/tracksystem.game->getcamera().getscale();
 	Node* closestnode = nullptr;
 	for(auto const node: tracksystem.allnodes()){
 		if(node->trackdown && node->trackup)
 			continue;
-		if(!node->trackdown && !node->trackup) // this should never happen
+		if(!node->trackdown && !node->trackup){
+			std::cout<<"Warning: node " << node->id << " has no tracks attached" << std::endl;
+			// this should never happen
 			continue;
+			} 
 		float distsquared = pow(node->getpos().x-pos.x, 2) + pow(node->getpos().y-pos.y, 2);
 		if(distsquared < mindistsquared){
 			closestnode = node;
@@ -46,7 +47,7 @@ State getendpointat(Tracksystem& tracksystem, Vec pos, float mindist)
 	return State(closestnode->trackdown->id, 0, false);
 }
 
-Vec plansignalat(Tracksystem& tracksystem, Vec pos)
+Vec plansignalat(const Tracksystem& tracksystem, Vec pos)
 {
 	State signalstate = getcloseststate(tracksystem, pos);
 	return getsignalposfromstate(tracksystem, signalstate);
@@ -58,16 +59,16 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, Angle* angle)
 {
 	trackid clickedtrack = 0;
-	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
 	if(clickedtrack){
 		nodeid clickednode = 0;
-		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
-			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), gettangent(tracksystem, clickedstate), -1);
 		}
 		else
 			tonode = tracksystem.getnode(clickednode);
@@ -78,19 +79,45 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec po
 		}
 		return section;
 	}
-	return Construction::extendtracktopos(tracksystem, fromnode, pos);
+	
+	if(!angle)
+		return Construction::extendtracktopos(tracksystem, fromnode, topos);
+	
+	Node* tonode = new Node(
+		tracksystem, 
+		topos, 
+		Tangent(*angle), 
+		-1
+	);
+	Tracksection section = Construction::connecttwonodes(tracksystem, fromnode, tonode);
+	section.nodes.push_back(tonode);
+	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, Angle* angle)
+{
+	Node* fromnode = new Node(
+		tracksystem,
+		getpos(tracksystem, fromstate),
+		gettangent(tracksystem, fromstate),
+		-1
+	);
+	Tracksection section = planconstructionto(tracksystem, fromnode, topos, angle);
+	section.nodes.push_back(fromnode);
+	section.tracksplits[fromnode] = fromstate;
+	return section;
+}
+
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, Angle* angle)
 {
 	trackid clickedtrack = 0;
-	State clickedstate = whatdidiclick(tracksystem, pos, &clickedtrack, nullptr, nullptr, nullptr);
+	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
 	if(clickedtrack){
 		nodeid clickednode = 0;
-		whatdidiclick(tracksystem, pos, nullptr, &clickednode, nullptr, nullptr);
+		whatdidiclick(tracksystem, topos, nullptr, &clickednode, nullptr, nullptr);
 		Node* tonode;
 		if(!clickednode){
-			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), getorientation(tracksystem, clickedstate), -1);
+			tonode = new Node(tracksystem, getpos(tracksystem, clickedstate), gettangent(tracksystem, clickedstate), -1);
 		}
 		else
 			tonode = tracksystem.getnode(clickednode);
@@ -101,10 +128,22 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec pos)
 		}
 		return section;
 	}
-	return Construction::extendtracktopos(tracksystem, frompos, pos);
+	if(!angle)
+		return Construction::extendtracktopos(tracksystem, frompos, topos);
+	
+	Node* tonode = new Node(
+		tracksystem, 
+		topos, 
+		Tangent(*angle), 
+		-1
+	);
+	Tracksection section = Construction::extendtracktopos(tracksystem, tonode, frompos);
+	section.nodes.push_back(tonode);
+	return section;
+	
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, float& angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, float distancetoextend, Angle& angle)
 {
 	State neareststate = Tracks::Input::getendpointat(tracksystem, frompos, 20);
 	Vec trackextension = Tracks::gettrackextension(tracksystem, neareststate, distancetoextend, angle);
@@ -140,7 +179,7 @@ void discardsection(Tracksection& section)
 	}
 }
 
-nodeid selectnodeat(Tracksystem& tracksystem, Vec pos)
+nodeid selectnodeat(const Tracksystem& tracksystem, Vec pos)
 {
 	nodeid selectednode = 0;
 	whatdidiclick(tracksystem, pos, nullptr, &selectednode, nullptr, nullptr);
@@ -158,7 +197,7 @@ bool switchat(Tracksystem& tracks, Vec pos)
 	return(clickedsignal||clickedswitch);
 }
 
-Order* generateorderat(Tracksystem& tracks, Vec pos)
+Order* generateorderat(const Tracksystem& tracks, Vec pos)
 {
 	Order* neworder = nullptr;
 	trackid clickedtrack=0; signalid clickedsignal=0; switchid clickedswitch=0;
@@ -187,14 +226,34 @@ void deleteat(Tracksystem& tracks, Vec pos)
 	tracks.references->validatereferences();
 }
 
-float getcostoftracks(Tracksection section){
+float getcostoftracks(const Tracksection& section)
+{
 	float cost = 0;
 	for(auto track : section.tracks)
 		cost += 0.003*track->getarclength(1);
 	return cost;
 }
 
-State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, switchid* _switch)
+float getminradiusofsection(const Tracksection& section)
+{
+	if(!section)
+		return 0;
+	float minradius = INFINITY;
+	for(auto track: section.tracks){
+		minradius = std::fmin(minradius, abs(track->getminradius()));
+	}
+	return minradius;
+}
+
+std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section)
+{
+	std::vector<std::unique_ptr<Shape>> shapes;
+	for(auto track : section.tracks)
+		shapes.push_back(track->getcollisionmask());
+	return shapes;
+}
+
+State whatdidiclick(const Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, switchid* _switch)
 {
 	float trackdist = INFINITY, nodedist = INFINITY, signaldist = INFINITY, switchdist = INFINITY;
 	State closeststate; nodeid closestnode = 0; signalid closestsignal = 0; nodeid closestswitch = 0;
@@ -243,9 +302,8 @@ State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, node
 	return returnstate;
 }
 
-State getcloseststate(Tracksystem& tracksystem, Vec pos)
+State getcloseststate(const Tracksystem& tracksystem, Vec pos, float mindist)
 {
-	float mindist = INFINITY;
 	State closeststate;
 	for(auto track: tracksystem.alltracks()){
 		State state = track->getcloseststate(pos);
@@ -258,7 +316,7 @@ State getcloseststate(Tracksystem& tracksystem, Vec pos)
 	return closeststate;
 }
 
-nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
+nodeid getclosestnode(const Tracksystem& tracksystem, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	nodeid closestnode = 0;
@@ -272,7 +330,7 @@ nodeid getclosestnode(Tracksystem& tracksystem, Vec pos)
 	return closestnode;
 }
 
-signalid getclosestsignal(Tracksystem& tracks, Vec pos)
+signalid getclosestsignal(const Tracksystem& tracks, Vec pos)
 {
 	float mindistsquared = INFINITY;
 	signalid closestsignal = 0;
@@ -286,7 +344,7 @@ signalid getclosestsignal(Tracksystem& tracks, Vec pos)
 	return closestsignal;
 }
 
-nodeid getclosestswitch(Tracksystem& tracks, Vec pos)
+nodeid getclosestswitch(const Tracksystem& tracks, Vec pos)
 {
 	float mindist = INFINITY;
 	switchid closestswitch = 0;

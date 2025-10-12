@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/rollingstock/train.h"
@@ -69,9 +67,9 @@ bool Signal::isred(Train* fortrain)
 	return false;
 }
 
-Vec getsignalposfromstate(Tracksystem& tracksystem, State state)
+Vec getsignalposfromstate(const Tracksystem& tracksystem, State state)
 {
-	float orientation = getorientation(tracksystem, state);
+	Angle orientation = getorientation(tracksystem, state);
 	float transverseoffset = -20;
 	return getpos(tracksystem, state) - Vec(sin(orientation), cos(orientation))*transverseoffset;
 }

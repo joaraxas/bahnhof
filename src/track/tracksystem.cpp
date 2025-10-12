@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/input/input.h"
@@ -41,7 +39,7 @@ Tracksection& Tracksection::operator+=(const Tracksection& rhs)
 Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys)
 {
 	game = &whatgame;
-	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), 0, -1);
+	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), Tangent(0), -1);
 	addnode(*newnode);
 	for(int iNode = 1; iNode<xs.size(); iNode++){
 		Tracksection section = Input::planconstructionto(*this, newnode, Vec(xs[iNode], ys[iNode]));
@@ -117,30 +115,30 @@ void Tracksystem::removesignal(signalid toremove)
 }
 
 
-Node* Tracksystem::getnode(nodeid node)
+Node* Tracksystem::getnode(nodeid node) const
 {
 	if(nodes.contains(node))
-		return nodes[node];
+		return nodes.at(node);
 	else{
 		std::cout << "Error: failed to find node with id" << node << std::endl;
 		return nullptr;
 	}
 }
 
-Switch* Tracksystem::getswitch(switchid _switch)
+Switch* Tracksystem::getswitch(switchid _switch) const
 {
 	if(switches.contains(_switch))
-		return switches[_switch];
+		return switches.at(_switch);
 	else{
 		std::cout << "Error: failed to find switch with id" << _switch << std::endl;
 		return nullptr;
 	}
 }
 
-Track* Tracksystem::gettrack(trackid track)
+Track* Tracksystem::gettrack(trackid track) const
 {
 	if(tracks.contains(track)){
-		return tracks[track];
+		return tracks.at(track);
 	}
 	else{
 		std::cout << "Error: failed to find track with id" << track << std::endl;
@@ -148,17 +146,17 @@ Track* Tracksystem::gettrack(trackid track)
 	}
 }
 
-Signal* Tracksystem::getsignal(signalid signal)
+Signal* Tracksystem::getsignal(signalid signal) const
 {
 	if(signals.contains(signal))
-		return signals[signal];
+		return signals.at(signal);
 	else{
 		std::cout << "Error: failed to find signal with id" << signal << std::endl;
 		return nullptr;
 	}
 }
 
-std::vector<Track*> Tracksystem::alltracks()
+std::vector<Track*> Tracksystem::alltracks() const
 {
 	std::vector<Track*> trackrefs;
 	for(auto const& [id, track] : tracks)
@@ -166,7 +164,7 @@ std::vector<Track*> Tracksystem::alltracks()
 	return trackrefs;
 }
 
-std::vector<Node*> Tracksystem::allnodes()
+std::vector<Node*> Tracksystem::allnodes() const
 {
 	std::vector<Node*> noderefs;
 	for(auto const& [id, node] : nodes)
@@ -174,7 +172,7 @@ std::vector<Node*> Tracksystem::allnodes()
 	return noderefs;
 }
 
-std::vector<Switch*> Tracksystem::allswitches()
+std::vector<Switch*> Tracksystem::allswitches() const
 {
 	std::vector<Switch*> refs;
 	for(auto const& [id, _switch] : switches)
@@ -182,7 +180,7 @@ std::vector<Switch*> Tracksystem::allswitches()
 	return refs;
 }
 
-std::vector<Signal*> Tracksystem::allsignals()
+std::vector<Signal*> Tracksystem::allsignals() const
 {
 	std::vector<Signal*> refs;
 	for(auto const& [id, signal] : signals)

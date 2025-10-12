@@ -1,32 +1,30 @@
-#include<iostream>
-#include<string>
 #include<map>
+#include "bahnhof/common/orientation.h"
 #include "bahnhof/track/trackinternal.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 
-
 namespace Tracks{
 namespace Construction{
 
-Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec pos)
+Tracksection extendtracktopos(Tracksystem& tracksystem, Vec frompos, Vec topos)
 {
-	Vec posdiff = pos - frompos;
-	float dir = atan2(-posdiff.y,posdiff.x);
+	Vec posdiff = topos - frompos;
+	if(posdiff.iszero()) return Tracksection{};
+	Tangent dir(posdiff);
 	Node* fromnode = new Node(tracksystem, frompos, dir, -1);
-	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, pos);
+	Tracksection newsection = Construction::extendtracktopos(tracksystem, fromnode, topos);
 	newsection = newsection + Tracksection({},{fromnode});
 	return newsection;
 }
 
-Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos)
+Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec topos)
 {
-	Vec posdiff = pos - fromnode->getpos();
-	float dir = truncate(2*atan2(-posdiff.y,posdiff.x) - fromnode->getdir());
-    Node* tonodepointer = new Node(tracksystem, pos, dir, -1);
-    Track* newtrack = new Track(tracksystem, *fromnode, *tonodepointer, -1);
-	Tracksection section({newtrack}, {tonodepointer});
+	Tangent dir = gettangentatpointoncurvestartingfromnode(*fromnode, topos);
+	Node* tonode = new Node(tracksystem, topos, dir, -1);
+	Track* newtrack = new Track(tracksystem, *fromnode, *tonode, -1);
+	Tracksection section({newtrack}, {tonode});
 	return section;
 }
 
@@ -34,36 +32,49 @@ Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2)
 {
 	if(node1==node2)
 		return Tracksection({},{}); // TODO: Also stop other illegal connections, like where track already exists
-	Vec newnodepoint;
-	Vec pos1 = node1->getpos();
-	Vec pos2 = node2->getpos();
-	float y1 = -pos1.y;
-	float y2 = -pos2.y;
-	float x1 = pos1.x;
-	float x2 = pos2.x;
-	float tanth1 = tan(node1->getdir());
-	float tanth2 = tan(node2->getdir());
 
-	float intersectx = (y2-y1+x1*tanth1 - x2*tanth2)/(tanth1 - tanth2); // TODO: This looks like it will fail if nodes are parallel
-	float intersecty = -(y1 + (intersectx - x1)*tanth1);
-	if(abs(tanth1)>1e5){
-		intersectx = x1;
-		intersecty = -(y2 + (intersectx - x2)*tanth2);
+	Vec newnodepoint;
+	Tangent newdir;
+	Vec pos1 = node1->getpos();
+	Angle angle1 = node1->getdir().getradiansup();
+	Vec pos2 = node2->getpos();
+	Localvec p2 = localcoords(pos2, angle1, pos1);
+	float tandir2 = tan(node2->getdir() - angle1);
+	if(abs(tandir2)<1e-4){ //nodes are parallel
+		if(abs(p2.y)<1){
+			Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
+			return Tracksection({newtrack},{});
+		}
+		newnodepoint = globalcoords(p2*0.5, angle1, pos1);
+		newdir = gettangentatpointoncurvestartingfromnode(*node1, newnodepoint);
 	}
-	Vec tangentintersection(intersectx, intersecty);
-	float disttointersect1 = distancebetween(pos1, tangentintersection);
-	float disttointersect2 = distancebetween(pos2, tangentintersection);
-	if(disttointersect1 > disttointersect2)
-		newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
-	else
-		newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
-	if(distancebetween(pos1, newnodepoint)> 10 && distancebetween(pos2, newnodepoint)> 10){ // TODO: bug when connecting two nodes where one is in plane of other but directions not parallel
-		Tracksection section = extendtracktopos(tracksystem, node1, newnodepoint);
-		section.tracks.push_back(new Track(tracksystem, *section.nodes.back(), *node2, -1));
-		return section;
+	else{
+		Localvec intersection_local(p2.x-p2.y/tandir2, 0);
+		Vec tangentintersection = globalcoords(intersection_local, angle1, pos1);
+
+		float disttointersect1 = abs(intersection_local.x);
+		float disttointersect2 = distancebetween(pos2, tangentintersection);
+		if(disttointersect1 > disttointersect2){
+			newnodepoint = tangentintersection + (pos1 - tangentintersection)/disttointersect1*disttointersect2;
+			newdir = node1->getdir();
+		}
+		else{
+			newnodepoint = tangentintersection + (pos2 - tangentintersection)/disttointersect2*disttointersect1;
+			newdir = node2->getdir();
+		}
+		if(
+			(distancebetween(pos1, newnodepoint) < 10 && newdir.absanglediff(node1->getdir()) < 5.0/180.0*pi) ||
+			(distancebetween(pos2, newnodepoint) < 10 && newdir.absanglediff(node2->getdir()) < 5.0/180.0*pi)
+		){
+			Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
+			return Tracksection({newtrack},{});
+		}
 	}
-	Track* newtrack = new Track(tracksystem, *node1, *node2, -1);
-	return Tracksection({newtrack},{});
+	Node* tonode = new Node(tracksystem, newnodepoint, newdir, -1);
+	Track* newtrack1 = new Track(tracksystem, *node1, *tonode, -1);
+	Track* newtrack2 = new Track(tracksystem, *tonode, *node2, -1);
+	Tracksection section({newtrack1, newtrack2}, {tonode});
+	return section;
 }
 
 void splittrack(Tracksystem& tracksystem, Node* node, State state)
@@ -82,6 +93,11 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	tracksystem.removetrack(state.track);
 }	
 
+Tangent gettangentatpointoncurvestartingfromnode(Node& startnode, Vec topos)
+{
+	Vec posdiff = topos - startnode.getpos();
+	return Tangent(-startnode.getdir() + 2*Angle(posdiff));
+}
 
 }
 }

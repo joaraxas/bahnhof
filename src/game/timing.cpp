@@ -1,4 +1,3 @@
-#include<iostream>
 #include<SDL.h>
 #include "bahnhof/common/timing.h"
 #include "bahnhof/common/math.h"

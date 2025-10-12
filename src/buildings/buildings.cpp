@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/shape.h"
@@ -49,9 +47,14 @@ void Building::update(int ms)
 	}
 }
 
-bool Building::checkclick(Vec pos)
+bool Building::checkcollisionwithpoint(Vec pos)
 {
 	return shape->contains(pos);
+}
+
+bool Building::checkcollisionwithshape(const Shape& othershape)
+{
+	return shape->intersects(othershape);
 }
 
 bool Building::leftclick(Vec pos)

@@ -10,8 +10,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${bahnhof_SOURCE_DIR}/cmake")
 
 add_executable(bahnhof
     src/main.cpp
-    src/math.cpp
-    src/shape.cpp
+    src/math/math.cpp
+    src/math/rectangle.cpp
+    src/math/rotatedrectangle.cpp
+    src/math/ringsector.cpp
+    src/math/intersection.cpp
+    src/math/orientation.cpp
     src/graphics/rendering.cpp
     src/graphics/graphics.cpp
     src/graphics/sprite.cpp
@@ -25,6 +29,9 @@ add_executable(bahnhof
     src/input/input.cpp
     src/input/textinput.cpp
     src/input/builder.cpp
+    src/input/trackbuilder.cpp
+    src/input/signalbuilder.cpp
+    src/input/buildingbuilder.cpp
     src/ui/ui.cpp
     src/ui/uirendering.cpp
     src/ui/host.cpp

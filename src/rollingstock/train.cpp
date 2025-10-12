@@ -1,5 +1,3 @@
-#include<iostream>
-#include<string>
 #include<map>
 #include<algorithm>
 #include "bahnhof/graphics/graphics.h"
@@ -55,16 +53,15 @@ void Train::update(int ms)
 			proceed();
 	
 	float minradius = INFINITY;
-	// uncomment to remove radius speed restriction
-	// /*
-	// for(auto w : wagons)
-	// 	minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
-	// */
+	// comment to remove radius speed restriction
+	for(auto w : wagons)
+		minradius = fmin(minradius, abs(getradius(*tracksystem, w->axes->frontendstate())));
 	float wagonheight = 2.5;
 	float safetyfactor = 0.5;
-	float minradiusmeter = minradius*150*0.001;
-	float maxspeed = sqrt(safetyfactor*g*minradiusmeter*normalgauge/2/wagonheight)*1000/150;
-	
+	float minradiusmeter = pixelstometers(minradius);
+	float maxspeed_m_s = sqrt(safetyfactor*g*minradiusmeter*normalgauge/2/wagonheight);
+	float maxspeed = meterstopixels(maxspeed_m_s);
+
 	if(abs(speed)>maxspeed)
 		speed = maxspeed*sign(speed);
 	float pixels = ms*0.001*abs(speed);
@@ -160,12 +157,12 @@ void Train::render(Rendering* r)
 {
 	if(selected){
 		Vec frontpos = getpos(*tracksystem, forwardstate());
-		float forwarddir = getorientation(*tracksystem, forwardstate());
+		Angle forwarddir = getorientation(*tracksystem, forwardstate());
 		light.imagetype = 0;
 		light.imageangle = forwarddir;
 		light.render(r, frontpos);
 		Vec backpos = getpos(*tracksystem, backwardstate());
-		float backwarddir = getorientation(*tracksystem, backwardstate());
+		Angle backwarddir = getorientation(*tracksystem, backwardstate());
 		light.imagetype = 1;
 		light.imageangle = backwarddir;
 		light.render(r, backpos);

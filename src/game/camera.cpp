@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/common/math.h"

@@ -1,6 +1,4 @@
 #pragma once
-#include<iostream>
-#include<string>
 #include<map>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
@@ -38,6 +36,7 @@ void Rendering::render(Gamestate* gamestate)
 		SDL_Rect rect = {x,y,128,128};
 		rendertexture(fieldtex, &rect);
 	}}
+	Tracks::renderbelowtracks(tracksystem, this);
 	Tracks::render(tracksystem, this);
 	gamestate->gettrainmanager().render(this);
 	gamestate->getbuildingmanager().render(this);
@@ -61,7 +60,7 @@ SDL_Rect Rendering::rendertext(std::string text, int x, int y, SDL_Color color, 
 		int w, h;
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 		rect = {x, y, w, h};
-		rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+		rendertexture(tex, &rect, nullptr, Angle::zero, ported, zoomed);
 		SDL_DestroyTexture(tex);
 	}
 	return rect;
@@ -76,14 +75,14 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 		int w, h;
 		SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 		SDL_Rect rect = {x-int(w*0.5), y-int(h*0.5), w, h};
-		rendertexture(tex, &rect, nullptr, 0, ported, zoomed);
+		rendertexture(tex, &rect, nullptr, Angle::zero, ported, zoomed);
 		SDL_DestroyTexture(tex);
 		TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_LEFT);
 	}
 	return rect;
 }
 
-void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, float angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
+void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
 	if(originiscenter){
 		centerx = int(rect->w)*0.5;
@@ -101,10 +100,10 @@ void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrec
 		rect->x = screenpos.x-centerx; rect->y = screenpos.y-centery;
 	}
 	if(originiscenter)
-		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), NULL, SDL_FLIP_NONE);
 	else{
 		SDL_Point center = {centerx, centery};
-		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle * 180 / pi, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), &center, SDL_FLIP_NONE);
 	}
 }
 
@@ -145,13 +144,16 @@ void Rendering::renderfilledrectangle(SDL_Rect rect, bool ported, bool zoomed)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices, int ninds, SDL_Color color, bool ported, bool zoomed)
+void Rendering::renderfilledpolygon(const std::vector<Vec>& edges, const std::vector<int>& indices, SDL_Color color, bool ported, bool zoomed)
 {
+	std::vector<SDL_Vertex> verts(edges.size());
 	if(ported && zoomed){
-		for (int i = 0; i < iverts; ++i) {
-			Vec scaledv = cam->screencoord(verts[i].position);
+		for (int i = 0; i < edges.size(); ++i) {
+			Vec scaledv = cam->screencoord(edges[i]);
 			verts[i].position.x = scaledv.x;
 			verts[i].position.y = scaledv.y;
+			verts[i].color = color;
+			verts[i].tex_coord = {0, 0};
 		}
 	}
 	else{
@@ -160,11 +162,7 @@ void Rendering::renderfilledpolygon(SDL_Vertex* verts, int iverts, int* indices,
 		if(zoomed)
 			std::cout<<"error: zoomed non-ported polygon rendering is not supported yet!"<<std::endl;
 	}
-	for (int i = 0; i < iverts; ++i) {
-        verts[i].color = color;
-        verts[i].tex_coord = {0, 0};
-    }
-	SDL_RenderGeometry(renderer, NULL, verts, 4, indices, 6);
+	SDL_RenderGeometry(renderer, NULL, verts.data(), verts.size(), indices.data(), indices.size());
 }
 
 float Rendering::getcamscale()

@@ -3,6 +3,8 @@
 #include "state.h"
 #include "tracksdisplaymode.h"
 #include "bahnhof/common/math.h"
+#include "bahnhof/common/shape.h"
+#include "bahnhof/common/orientation.h"
 #include "bahnhof/graphics/sprite.h"
 
 class Rendering;
@@ -22,12 +24,12 @@ class Node
 {
 friend class Switch;
 public:
-    Node(Tracksystem& newtracksystem, Vec posstart, float dirstart, nodeid myid);
+    Node(Tracksystem& newtracksystem, Vec posstart, Tangent dirstart, nodeid myid);
     void connecttrack(Track* track, bool fromupordown);
     void disconnecttrack(Track* track, bool fromupordown);
     void render(Rendering* r);
     Vec getpos();
-    float getdir();
+    Tangent getdir();
     bool hasswitch();
     Track* trackup = nullptr;
     Track* trackdown = nullptr;
@@ -38,17 +40,17 @@ private:
     std::unique_ptr<Switch> switchup = nullptr;
     std::unique_ptr<Switch> switchdown = nullptr;
     Vec pos;
-    float dir;
+    Tangent dir;
     inline static Sprite sprite;
 };
 
-Vec getswitchpos(Vec nodepos, float nodedir, bool updown);
+Vec getswitchpos(Vec nodepos, Tangent nodedir, bool pointsupwards);
 
 class Switch
 {
 friend class Node;
 public:
-    Switch(Node* node, Track* track, bool updown);
+    Switch(Node* node, Track* track, bool isupordown);
     ~Switch();
     void render(Rendering* r);
     void setswitch(int newstate);
@@ -60,7 +62,7 @@ private:
     void removetrack(Track* track);
     Tracksystem* tracksystem;
     Node* node;
-    bool updown;
+    bool pointsupwards;
     int switchstate = 0;
     std::vector<Track*> tracks;
     Icon sprite;
@@ -76,11 +78,13 @@ public:
     void connecttonodes();
     void disconnectfromnodes();
     void render(Rendering* r, TracksDisplayMode mode);
+    void renderballast(Rendering* r, TracksDisplayMode mode);
     Vec getpos(float nodedist, float transverseoffset=0);
     State getcloseststate(Vec pos);
     float getarclength(float nodedist);
-    float getorientation(float nodedist);
+    Angle getorientation(float nodedist);
     float getradius(State state);
+    float getminradius();
     Track* nexttrack();
     Track* previoustrack();
     void split(Track& track1, Track& track2, State where);
@@ -88,14 +92,16 @@ public:
     void connectsignal(State signalstate, signalid signal);
     void disconnectsignal(signalid signal);
     signalid nextsignal(State state, bool startfromtrackend=false, bool mustalign=true);
+    std::unique_ptr<Shape> getcollisionmask();
     Node* previousnode;
     Node* nextnode;
     trackid id;
 private:
     bool isabovepreviousnode();
     bool isbelownextnode();
+    bool aboveprev;
     Tracksystem* tracksystem;
-    float phi;
+    Angle phi;
     float radius;
     std::map<float,signalid> signals;
 };
@@ -129,18 +135,18 @@ private:
     Icon sprite;
 };
 
-Vec getsignalposfromstate(Tracksystem&, State state);
+Vec getsignalposfromstate(const Tracksystem&, State state);
 
-State tryincrementingtrack(Tracksystem&, State state);
+State tryincrementingtrack(const Tracksystem&, State state);
 float distancebetween(Vec, Vec);
 
 namespace Input
 {
-    State whatdidiclick(Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
-    State getcloseststate(Tracksystem& tracksystem, Vec pos);
-    nodeid getclosestnode(Tracksystem& tracksystem, Vec pos);
-    signalid getclosestsignal(Tracksystem& tracksystem, Vec pos);
-    nodeid getclosestswitch(Tracksystem& tracksystem, Vec pos);
+    State whatdidiclick(const Tracksystem& tracksystem, Vec mousepos, trackid* track, nodeid* node, signalid* signal, nodeid* _switch);
+    State getcloseststate(const Tracksystem& tracksystem, Vec pos, float mindist=INFINITY);
+    nodeid getclosestnode(const Tracksystem& tracksystem, Vec pos);
+    signalid getclosestsignal(const Tracksystem& tracksystem, Vec pos);
+    nodeid getclosestswitch(const Tracksystem& tracksystem, Vec pos);
 }
 
 namespace Construction
@@ -149,6 +155,7 @@ namespace Construction
     Tracksection extendtracktopos(Tracksystem& tracksystem, Node* fromnode, Vec pos);
     Tracksection connecttwonodes(Tracksystem& tracksystem, Node* node1, Node* node2);
     void splittrack(Tracksystem&, Node* node, State state);
+    Tangent gettangentatpointoncurvestartingfromnode(Node& startnode, Vec curvetopos);
 };
 
 }

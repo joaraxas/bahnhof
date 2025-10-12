@@ -1,4 +1,3 @@
-#include<iostream>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/ui/tables.h"
@@ -108,6 +107,8 @@ void GoTrain::leftclick(Vec mousepos)
 {
     bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
     go = !go;
+    if(!go)
+        dynamic_cast<TrainPanel*>(panel)->gettrain().speed = 0;
 }
 
 void GoTrain::update(int ms)
