@@ -24,7 +24,7 @@ double Tangent::absanglediff(const Tangent& other) const
 
 Tangent::operator std::string() const
 {
-    return std::to_string(_angle);
+    return std::string(getradiansup());
 }
 
 double sin(const Tangent& tangent)

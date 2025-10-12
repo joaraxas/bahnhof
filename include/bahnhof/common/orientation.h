@@ -19,6 +19,7 @@ struct Angle
     Angle operator -() const {return Angle(-_angle);};
     friend bool operator ==(const Angle& lhs, const Angle& rhs) {return lhs._angle == rhs._angle;};
     operator std::string() const {return std::to_string(getdegrees())+"°";};
+    friend std::ostream& operator<<(std::ostream& os, const Angle& a) {return os << std::string(a);};
 
     bool isbetween(const Angle& lower, const Angle& upper);
     double getdegrees() const {return _angle*180/pi;};
@@ -51,6 +52,7 @@ struct Tangent
     Tangent operator +(Angle rot) const {return Tangent(_angle+rot._angle);};
     Tangent operator -(Angle rot) const {return Tangent(_angle-rot._angle);};
     operator std::string() const;
+    friend std::ostream& operator<<(std::ostream& os, const Tangent& t) {return os << std::string(t);};
 
     Angle getradiansup() const {return Angle(_angle);};
     Angle getradiansdown() const {return Angle(_angle+pi);};

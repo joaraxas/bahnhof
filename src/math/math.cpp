@@ -70,6 +70,18 @@ Angle Vec::toangle() const
 Localvec operator+(Localvec v1, const Localvec& v2) {return v1+=v2;}
 Localvec operator-(Localvec v1, const Localvec& v2) {return v1-=v2;}
 
+std::ostream& operator<<(std::ostream& os, const Vec& v)
+{
+	os << '[' << v.x << ', ' << v.y << ']';
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Localvec& v)
+{
+	os << '(' << v.x << ', ' << v.y << ')';
+	return os;
+}
+
 Localvec localcoords(const Vec& globalvec, const Angle& angle, const Vec& origin)
 {
 	const Localvec localvec{globalvec.x - origin.x, -(globalvec.y - origin.y)};
