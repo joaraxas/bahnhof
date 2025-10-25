@@ -2,23 +2,34 @@
 #include<iostream>
 #include<chrono>
 
-class Timer{
-    std::string operationname;
-    using clock = std::chrono::high_resolution_clock;
-    using timeunits = std::chrono::microseconds;
+namespace Performance{
+    using namespace std::chrono;
+    using clock = high_resolution_clock;
 
-    timeunits since() {
-        return std::chrono::duration_cast<timeunits>(clock::now()-t);
+class Timer{
+    microseconds since() {
+        return duration_cast<microseconds>(clock::now()-t);
     }
-    std::string fmt(timeunits diff) {
+    std::string fmt(microseconds diff) {
         return std::to_string(diff.count()) + " us";
     }
     
-    clock timer;
+    std::string operationname;
     clock::time_point t;
 public:
-    Timer(std::string s) : t{clock::now()}, operationname{s} {}
-    void stop() {
-        std::cout<<operationname<<": "<<fmt(since())<<std::endl;
+    Timer(std::string s) : t{clock::now()}, operationname{s} {restart();}
+    ~Timer() {
+        // thanks to this, it's enough to create a Timer object at 
+        // the start of a function to measure its footprint
+        measure();
+    }
+    void restart() {
+        t = clock::now();
+    }
+    void measure() {
+        auto time = since();
+        std::cout<<operationname<<": "<<'\t'<<fmt(time)<<std::endl;
     }
 };
+
+}
