@@ -37,6 +37,7 @@ Tracksection& Tracksection::operator+=(const Tracksection& rhs)
 }
 
 Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys)
+	: references{this}
 {
 	game = &whatgame;
 	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), Tangent(0), -1);
@@ -46,7 +47,6 @@ Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<floa
 		Input::buildsection(*this, section);
 		newnode = section.nodes.back();
 	}
-	references = std::make_unique<Referencehandler>(this);
 }
 
 Tracksystem::~Tracksystem()

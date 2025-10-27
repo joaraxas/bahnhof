@@ -113,7 +113,7 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingS
 	rollingstock(r)
 {
 	Tracks::Tracksystem& tracksystem = game->getgamestate().gettracksystems();
-	tracksystem.references->buildings.push_back(this);
+	tracksystem.references.buildings.push_back(this);
 	name = "Schweizerische Wagons- und Aufzügefabrik AG";
 }
 

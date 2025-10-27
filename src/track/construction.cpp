@@ -88,7 +88,7 @@ void splittrack(Tracksystem& tracksystem, Node* node, State state)
 	tracksystem.addtrack(*track1);
 	tracksystem.addtrack(*track2);
 
-	tracksystem.references->movereferenceswhentracksplits(state, *track1, *track2);
+	tracksystem.references.movereferenceswhentracksplits(state, *track1, *track2);
 
 	tracksystem.removetrack(state.track);
 }	

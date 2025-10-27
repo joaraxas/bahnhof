@@ -87,11 +87,11 @@ WagonInfo Wagon::getinfo()
 namespace RollingStock{
 
 Axes::Axes(Wagon& w, Tracks::Tracksystem& t, State midstate) : wagon(w), tracks(t), state(midstate) {
-	tracks.references->wagons.push_back(this);
+	tracks.references.wagons.push_back(this);
 }
 
 Axes::~Axes(){
-	tracks.references->removewagonreference(this);
+	tracks.references.removewagonreference(this);
 }
 
 Vec Axes::getpos(){

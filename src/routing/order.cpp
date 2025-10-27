@@ -32,14 +32,14 @@ Gotostate::Gotostate(State whichstate, bool mustpass)
 void Gotostate::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 {
 	Order::assignroute(newroute, tracksystem);
-	tracks->references->trackorders.push_back(this);
+	tracks->references.trackorders.push_back(this);
 	posleft = getpos(*tracks, state, 12);
 	posright = getpos(*tracks, state,-12);
 }
 
 Gotostate::~Gotostate()
 {
-	tracks->references->removetrackorderreference(this);
+	tracks->references.removetrackorderreference(this);
 }
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
@@ -60,7 +60,7 @@ void Setsignal::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 	offset = 0;
 	Order::assignroute(newroute, tracksystem);
 	pos = getsignalpos(*tracks, signal);
-	tracks->references->signalorders.push_back(this);
+	tracks->references.signalorders.push_back(this);
 	for(int iSignal=0; iSignal<route->signals.size(); iSignal++)
 		if(route->signals[iSignal]==signal)
 			offset++;
@@ -69,7 +69,7 @@ void Setsignal::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 Setsignal::~Setsignal()
 {
-	tracks->references->removesignalorderreference(this);
+	tracks->references.removesignalorderreference(this);
 }
 
 Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
@@ -98,7 +98,7 @@ void Setswitch::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 	offset = 0;
 	Order::assignroute(newroute, tracksystem);
 	pos = getswitchpos(*tracks, _switch);
-	tracks->references->switchorders.push_back(this);
+	tracks->references.switchorders.push_back(this);
 	for(int iSwitch=0; iSwitch<route->switches.size(); iSwitch++)
 		if(route->switches[iSwitch]==_switch)
 			offset++;
@@ -107,7 +107,7 @@ void Setswitch::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 Setswitch::~Setswitch()
 {
-	tracks->references->removeswitchorderreference(this);
+	tracks->references.removeswitchorderreference(this);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
