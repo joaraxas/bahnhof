@@ -30,7 +30,7 @@ public:
     virtual void scroll(Vec pos, int distance) {};
     virtual void leftpressed(Vec pos, int mslogic) {};
     virtual void update(int ms) {};
-    virtual void render(Rendering*) {};
+    virtual void render(Rendering*) = 0;
     virtual SDL_Rect getglobalrect();
     SDL_Rect getlocalrect();
 protected:

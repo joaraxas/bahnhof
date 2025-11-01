@@ -21,6 +21,7 @@ public:
     SDL_Rect getglobalrect();
     virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
     virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info, 1, 1);};
+    void render(Rendering* r) {};
 protected:
     Table* table;
     std::string str;
