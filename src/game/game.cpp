@@ -1,12 +1,12 @@
-#include<map>
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/common/camera.h"
+#include "bahnhof/common/timing.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/resources/storage.h"
 #include "bahnhof/resources/resources.h"
-#include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
 #include "bahnhof/buildings/buildingmanager.h"
-#include "bahnhof/common/camera.h"
-#include "bahnhof/common/timing.h"
 #include "bahnhof/ui/ui.h"
 
 

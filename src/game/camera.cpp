@@ -1,6 +1,5 @@
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/timing.h"
-#include "bahnhof/common/math.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 

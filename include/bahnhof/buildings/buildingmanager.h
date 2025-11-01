@@ -1,8 +1,5 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
-#include "bahnhof/common/math.h"
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 
 class Game;

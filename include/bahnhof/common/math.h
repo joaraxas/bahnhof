@@ -1,13 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <memory>
-#include <cmath>
-#include <vector>
-#include <algorithm>
-#include <unordered_map>
-#include <map>
-#include <unordered_set>
+#include "forwardincludes.h"
 
 const double pi = 3.141592653589793238;
 const float g = 9.8;

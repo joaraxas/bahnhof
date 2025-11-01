@@ -1,6 +1,6 @@
 #pragma once
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/graphics/sprite.h"
-#include "bahnhof/common/math.h"
 #include "bahnhof/resources/resourcetypes.h"
 
 

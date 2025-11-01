@@ -1,8 +1,4 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
-#include<map>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/orientation.h"
 #include "bahnhof/graphics/spritenames.h"

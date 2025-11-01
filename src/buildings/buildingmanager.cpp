@@ -1,5 +1,4 @@
 #include<map>
-#include "bahnhof/common/math.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
