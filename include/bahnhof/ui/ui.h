@@ -17,6 +17,7 @@ enum TextStyle{
     Info,
     Highlighted,
     InvertedInfo,
+    InvertedHighlighted,
     MapOverlay
 };
 

@@ -6,10 +6,10 @@ namespace UI{
 
 class Coord{
 public:
-    Coord() {Coord{0};};
-    Coord(int v) : value{v} {};
-    Coord(float v) : value{static_cast<int>(std::lround(v))} {};
-    Coord(double v) : value{static_cast<int>(std::lround(v))} {};
+    constexpr Coord() {Coord{0};};
+    constexpr Coord(int v) : value{v} {};
+    constexpr Coord(float v) : value{static_cast<int>(std::lround(v))} {};
+    constexpr Coord(double v) : value{static_cast<int>(std::lround(v))} {};
 
     operator int() {return value;};
 

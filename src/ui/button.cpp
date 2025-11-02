@@ -11,9 +11,9 @@
 
 namespace UI{
 
-Button::Button(Host* newpanel, Vec newpos) : Element(newpanel)
+Button::Button(Host* newpanel, UIVec newpos) : Element(newpanel)
 {
-    rect = {int(newpos.x), int(newpos.y), 100, 40};
+    rect = {newpos.x, newpos.y, 100, 40};
 }
 
 void Button::mousehover(Vec pos, int ms)
@@ -23,25 +23,33 @@ void Button::mousehover(Vec pos, int ms)
 
 void Button::render(Rendering* r)
 {
-    int i = highlighted*127;
-    SDL_SetRenderDrawColor(renderer,i,i,i,255);
-    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    TextStyle style = UI::Info;
+    if(highlighted)
+        style = UI::InvertedHighlighted;
+    ui->getuirendering().renderrectangle(r, getglobalrect(), style, true);
     highlighted = false;
 }
 
-TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
+TextButton::TextButton(Host* newpanel, 
+    UIVec newpos, 
+    std::string newtext, 
+    Coord width
+) : Button(newpanel, newpos)
 {
     text = newtext;
     rect.w = width;
     rect.h = 20;
-    UIRect paddedtextrect = ui->getuirendering().gettextsize(text, rect, mintextoffset_x, mintextoffset_y);
+    UIRect paddedtextrect = ui->getuirendering().gettextsize(
+        text, rect, mintextoffset_x, mintextoffset_y);
     rect.h = fmax(rect.h, double(paddedtextrect.h));
 }
 
 void TextButton::render(Rendering* r)
 {
     Button::render(r);
-    ui->getuirendering().rendertext(r, text, getglobalrect(), InvertedInfo, true, mintextoffset_x, mintextoffset_y);
+    ui->getuirendering().rendertext(
+        r, text, getglobalrect(), InvertedInfo, true, 
+        mintextoffset_x, mintextoffset_y);
 }
 
 void Close::leftclick(Vec mousepos)
@@ -90,7 +98,10 @@ void SetRoute::leftclick(Vec mousepos)
 {
     SDL_Rect panelrect = panel->getlocalrect();
     Vec uimousepos = ui->getuirendering().screentoui(mousepos);
-    SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), int(uimousepos.y-panelrect.y), 150, 100};
+    SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), 
+                          int(uimousepos.y-panelrect.y), 
+                          150, 
+                          100};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }
 

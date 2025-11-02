@@ -62,6 +62,9 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
     case UI::InvertedInfo:
         color = {255,255,255,255};
         break;
+    case UI::InvertedHighlighted:
+        color = {127,127,127,255};
+        break;
     case UI::MapOverlay:
         color = {255,255,255,255};
         break;
