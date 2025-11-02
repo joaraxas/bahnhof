@@ -187,8 +187,8 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 	createbutton<TurnTrain>();
 	createbutton<CoupleTrain>();
 
-	int column_2_x = margin_x+80+elementdistance_x;
-	int columns_y = margin_y+20+elementdistance_y;
+	Coord column_2_x = margin_x+80+elementdistance_x;
+	Coord columns_y = margin_y+20+elementdistance_y;
 
 	UIRect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
@@ -196,7 +196,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 	UIRect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
-	int column_3_x = column_2_x + 100 + elementdistance_x;
+	Coord column_3_x = column_2_x + 100 + elementdistance_x;
 	UIRect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 	
@@ -226,10 +226,10 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		Panel(newui, {200,400,500,150}),
 		building(b)
 {
-	int column_2_x = margin_x + 80 + elementdistance_x;
-	int typenamewidth = 80;
-	int column_3_x = rect.w - typenamewidth - margin_x;
-	int namewidth = column_3_x - column_2_x - elementdistance_x;
+	Coord column_2_x = margin_x + 80 + elementdistance_x;
+	Coord typenamewidth = 80;
+	Coord column_3_x = rect.w - typenamewidth - margin_x;
+	Coord namewidth = column_3_x - column_2_x - elementdistance_x;
 	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
 	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
 }

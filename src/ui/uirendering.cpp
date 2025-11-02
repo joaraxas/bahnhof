@@ -163,7 +163,7 @@ void UIRendering::decreaseuiscale()
 
 void UIRendering::setuiscale(float newscale)
 {
-    uiscale = std::fmax(0.8, newscale);;
+    uiscale = std::fmax(0.8, newscale);
     int newfontsize = 12*uiscale;
     setfontsize(newfontsize);
 }

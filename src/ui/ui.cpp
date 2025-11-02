@@ -28,7 +28,7 @@ void InterfaceManager::render(Rendering* r)
 {
     cleanup();
 
-    int viewheight = uirendering.screentoui(getviewsize()).y;
+    UI::Coord viewheight = uirendering.screentoui(getviewsize()).y;
     uirendering.renderscaleruler(r, 20, viewheight-20, 200);
 
     for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)

@@ -73,7 +73,7 @@ void Switch::render(Rendering* r)
 	float scale = r->getcamscale();
 	//if(scale>0.3){
         Vec switchpos = pos();
-        sprite.imagetype = fmin(1, switchstate);
+        sprite.imagetype = std::min(1, switchstate);
         sprite.render(r, switchpos);
         if(!nicetracks)
             r->rendertext(std::to_string(switchstate), switchpos.x, switchpos.y+7, {0,0,0,0});

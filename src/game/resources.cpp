@@ -113,7 +113,7 @@ int Storage::loadstorage(resourcetype resource, int amount)
 {
 	if(resource!=none){
 		if(storedresources.count(resource)){
-			amount = fmin(amount, 20-storedresources[resource]);
+			amount = std::min(amount, 20-storedresources[resource]);
 			storedresources[resource] += amount;
 		}
 		else
@@ -128,7 +128,7 @@ int Storage::unloadstorage(resourcetype resource, int amount)
 {
 	int unloadedamount = 0;
 	if(storedresources.count(resource)){
-		unloadedamount = fmin(storedresources[resource], amount);
+		unloadedamount = std::min(storedresources[resource], amount);
 		storedresources[resource] -= unloadedamount;
 		if(storedresources[resource] == 0)
 			storedresources.erase(resource);

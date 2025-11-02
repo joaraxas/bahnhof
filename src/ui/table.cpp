@@ -86,7 +86,7 @@ void ClickableTable::scroll(Vec pos, int distance)
 {
     linescrolloffset -= 3*distance;
 
-    int lineheightleft = 0;
+    Coord lineheightleft = 0;
     for(int index=toplineindex; index<lines.size(); index++){
         lineheightleft += lines[index]->getlocalrect().h;
         if(lineheightleft>rect.h+linescrolloffset){
@@ -106,7 +106,7 @@ void ClickableTable::scroll(Vec pos, int distance)
         if(toplineindex == 0)
             linescrolloffset = 0;
         else{
-            toplineindex = std::fmax(toplineindex-1, 0);
+            toplineindex = std::max(toplineindex-1, 0);
             linescrolloffset = linescrolloffset + lines[toplineindex]->getlocalrect().h;
         }
     }

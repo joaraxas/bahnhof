@@ -105,9 +105,9 @@ void PurchaseOptionTableLine::render(Rendering* r, UIRect maxarea, TextStyle sty
                     false, 
                     textpadding, 
                     rowoffset);
-    rect.h = std::fmax(
-        std::fmax(double(namerect.h), double(pricerect.h)), 
-        uiiconsize.y+2*rowoffset);
+    rect.h = std::max(
+        std::max(namerect.h, pricerect.h), 
+            uiiconsize.y+2*rowoffset);
     UIRect uiiconrect = getlocalrect();
     uiiconrect.x += xmargin + textpadding;
     uiiconrect.y += rowoffset;

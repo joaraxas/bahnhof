@@ -11,17 +11,25 @@ public:
     constexpr Coord(float v) : value{static_cast<int>(std::lround(v))} {};
     constexpr Coord(double v) : value{static_cast<int>(std::lround(v))} {};
 
-    operator int() {return value;};
+    explicit operator int() const {return value;};
 
     Coord& operator+=(int v) {value+=v; return *this;};
     Coord& operator-=(int v) {value-=v; return *this;};
     Coord& operator*=(const int v) {value*=v; return *this;};
     Coord& operator+=(const Coord v) {value+=v.value; return *this;};
     Coord& operator-=(const Coord v) {value-=v.value; return *this;};
-    double operator*(const double d) {return d*value;};
+    double operator*(const double d) const {return d*value;};
     friend double operator*(const double d, Coord c) {return c*d;};
-    float operator*(const float d) {return d*value;};
+    float operator*(const float d) const {return d*value;};
     friend float operator*(const float d, Coord c) {return c*d;};
+    Coord operator-() const {return Coord{-value};};
+
+    bool operator<(const Coord c) const {return value<c.value;};
+    bool operator>(const Coord c) const {return value>c.value;};
+    bool operator<=(const Coord c) const {return value<=c.value;};
+    bool operator>=(const Coord c) const {return value>=c.value;};
+    bool operator==(const Coord c) const {return value==c.value;};
+    bool operator!=(const Coord c) const {return value!=c.value;};
 private:
     int value;
 };

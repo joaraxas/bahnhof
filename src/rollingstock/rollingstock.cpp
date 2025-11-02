@@ -163,7 +163,7 @@ int Cargo::load(const resourcetype type,  const int amount){
 	int loadedamount = 0;
 	if(storableresources.contains(type)){
 		if(loadedresource == type || loadedresource == none){
-			loadedamount = fmin(amount, maxamount - loadamount);
+			loadedamount = std::min(amount, maxamount - loadamount);
 			loadamount += loadedamount;
 			if(loadedamount>0)
 				loadedresource = type;

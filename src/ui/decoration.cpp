@@ -90,7 +90,7 @@ void EditableText::addtext(const std::string& string){
 }
 
 void EditableText::movecursorleft(){
-    cursorindex = std::fmax(0, cursorindex-1);
+    cursorindex = std::max(0, cursorindex-1);
 }
 
 void EditableText::movecursorright(){
@@ -99,7 +99,7 @@ void EditableText::movecursorright(){
 
 void EditableText::updatewritingarea(){
     UIRect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
-    rect.h = std::fmax(double(textrect.h), double(originalrect.h));
+    rect.h = std::max(textrect.h, originalrect.h);
 }
 
 

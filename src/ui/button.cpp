@@ -41,7 +41,7 @@ TextButton::TextButton(Host* newpanel,
     rect.h = 20;
     UIRect paddedtextrect = ui->getuirendering().gettextsize(
         text, rect, mintextoffset_x, mintextoffset_y);
-    rect.h = fmax(rect.h, double(paddedtextrect.h));
+    rect.h = std::max(rect.h, paddedtextrect.h);
 }
 
 void TextButton::render(Rendering* r)
