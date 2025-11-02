@@ -14,7 +14,7 @@ TableLine::TableLine(Host* p, Table* t, std::string s) :
     table(t),
     str(s)
 {
-    SDL_Rect tablerect = table->getlocalrect();
+    UIRect tablerect = table->getlocalrect();
     rect = {tablerect.x, tablerect.y, tablerect.w, 20};
 }
 
@@ -24,11 +24,11 @@ UIRect TableLine::getglobalrect()
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
-void TableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
+void TableLine::render(Rendering* r, UIRect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect.x = maxarea.x;
     rect.y = maxarea.y;
-    SDL_Rect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style, false, xmargin, ymargin);
+    UIRect textrect = ui->getuirendering().rendertext(r, str, getlocalrect(), style, false, xmargin, ymargin);
     rect.h = textrect.h;
 }
 
@@ -39,7 +39,7 @@ TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo) :
 
 void TrainTableLine::render(
     Rendering* r, 
-    SDL_Rect maxarea, 
+    UIRect maxarea, 
     TextStyle style, 
     int xmargin, 
     int ymargin
@@ -48,7 +48,7 @@ void TrainTableLine::render(
     rect = maxarea;
     int textpadding = 5;
     int namerowwidth = 60;
-    SDL_Rect namerect = getlocalrect();
+    UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x = xmargin;
     
@@ -56,7 +56,7 @@ void TrainTableLine::render(
         r, str, namerect, style, false, textpadding, ymargin);
     rect.h = namerect.h;
     
-    SDL_Rect trainiconrect = getlocalrect();
+    UIRect trainiconrect = getlocalrect();
     trainiconrect = {trainiconrect.x+xmargin+namerowwidth, 
                      trainiconrect.y+ymargin, 
                      trainiconrect.w-namerowwidth-2*xmargin, 
@@ -75,7 +75,7 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::nam
     icon.ported = false;
 }
 
-void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
+void PurchaseOptionTableLine::render(Rendering* r, UIRect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect = maxarea;
     UIRendering& uiren = ui->getuirendering();
@@ -87,13 +87,13 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle s
     int iconwidth = uiiconsize.x + xmargin + textpadding;
     int namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
     
-    SDL_Rect namerect = getlocalrect();
+    UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x += iconwidth;
     namerect.y += uiiconsize.y * 0.5 - 12 * 0.5 - 1;
     namerect = uiren.rendertext(
         r, str, namerect, style, false, textpadding, rowoffset);
-    SDL_Rect pricerect = getlocalrect();
+    UIRect pricerect = getlocalrect();
     pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
     pricerect.w = pricerowwidth;
     pricerect.y = namerect.y;
@@ -106,16 +106,16 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle s
                     textpadding, 
                     rowoffset);
     rect.h = std::fmax(
-        std::fmax(namerect.h, pricerect.h), 
+        std::fmax(double(namerect.h), double(pricerect.h)), 
         uiiconsize.y+2*rowoffset);
-    SDL_Rect uiiconrect = getlocalrect();
+    UIRect uiiconrect = getlocalrect();
     uiiconrect.x += xmargin + textpadding;
     uiiconrect.y += rowoffset;
     SDL_Rect screeniconrect = uiren.uitoscreen(uiiconrect);
     icon.render(r, 
                 Vec(screeniconrect.x+screeniconsize.x*0.5, 
                 screeniconrect.y+screeniconsize.y*0.5)
-                );
+    );
 }
 
 } //end namespace UI

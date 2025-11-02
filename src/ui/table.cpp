@@ -15,7 +15,7 @@
 
 namespace UI{
 
-Table::Table(Host* newpanel, SDL_Rect newrect) : Element(newpanel)
+Table::Table(Host* newpanel, UIRect newrect) : Element(newpanel) 
 {
     rect = newrect;
 }
@@ -38,14 +38,16 @@ bool Table::checkclick(Vec mousepos)
 
 void Table::render(Rendering* r)
 {
-    SDL_Rect maxarea = {0,0,rect.w,rect.h};
+    UIRect maxarea = {0,0,rect.w,rect.h};
 
     float scale = ui->getuirendering().getuiscale();
-	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
-                                                       SDL_PIXELFORMAT_RGBA8888, 
-                                                       SDL_TEXTUREACCESS_TARGET, 
-                                                       ceil(maxarea.w*scale), 
-                                                       ceil(maxarea.h*scale));
+	SDL_Texture* tablerendertarget = SDL_CreateTexture(
+        renderer, 
+        SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, 
+        ceil(maxarea.w*scale), 
+        ceil(maxarea.h*scale)
+    );
   	SDL_SetTextureBlendMode(tablerendertarget, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderTarget(renderer, tablerendertarget);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -54,7 +56,7 @@ void Table::render(Rendering* r)
     for(int index=0; index<lines.size(); index++){
         auto& line = lines[index];
         line->render(r, maxarea);
-        SDL_Rect textrect = line->getlocalrect();
+        UIRect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
         if(maxarea.y>=rect.h){
@@ -124,7 +126,7 @@ int ClickableTable::getlineindexat(Vec mousepos)
 
 void ClickableTable::render(Rendering* r)
 {
-    SDL_Rect maxarea = {0,-linescrolloffset,rect.w,rect.h};
+    UIRect maxarea = {0,-linescrolloffset,rect.w,rect.h};
 
     float scale = ui->getuirendering().getuiscale();
 	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
@@ -148,7 +150,7 @@ void ClickableTable::render(Rendering* r)
             as for other rect renders */
             ui->getuirendering().renderrectangle(r, {0,0,rect.w,0}, style);
         }
-        SDL_Rect textrect = line->getlocalrect();
+        UIRect textrect = line->getlocalrect();
         maxarea.y += textrect.h;
         maxarea.h -= textrect.h;
         ui->getuirendering().renderrectangle(r, textrect, style);
@@ -166,7 +168,7 @@ void ClickableTable::render(Rendering* r)
     SDL_DestroyTexture(tablerendertarget);
 }
 
-Dropdown::Dropdown(Host* p, SDL_Rect r) : ClickableTable(p, r)
+Dropdown::Dropdown(Host* p, UIRect r) : ClickableTable(p, r)
 {
     ui->setdropdown(this);
 }
@@ -184,7 +186,7 @@ void Dropdown::render(Rendering* r)
     ClickableTable::render(r);
 }
 
-RouteDropdown::RouteDropdown(Host* p, SDL_Rect r) : 
+RouteDropdown::RouteDropdown(Host* p, UIRect r) : 
     Dropdown(p, r), 
     routing(ui->getgame().getgamestate().getrouting())
 {}
@@ -212,7 +214,7 @@ void RouteDropdown::lineclicked(int index)
         dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
-MainInfoTable::MainInfoTable(Host* newpanel, SDL_Rect newrect) : Table(newpanel, newrect) {}
+MainInfoTable::MainInfoTable(Host* newpanel, UIRect newrect) : Table(newpanel, newrect) {}
 
 void MainInfoTable::update(int ms)
 {
@@ -228,7 +230,7 @@ void MainInfoTable::update(int ms)
 }
 
 
-TrainTable::TrainTable(Host* newpanel, SDL_Rect newrect) : 
+TrainTable::TrainTable(Host* newpanel, UIRect newrect) : 
     ClickableTable(newpanel, newrect)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
@@ -267,7 +269,7 @@ void TrainInfoTable::update(int ms)
 }
 
 
-RouteTable::RouteTable(Host* p, SDL_Rect r) : 
+RouteTable::RouteTable(Host* p, UIRect r) : 
     ClickableTable(p, r), 
     routing(ui->getgame().getgamestate().getrouting())
 {};
@@ -352,7 +354,7 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, SDL_Rect r) : 
+ConstructionTable::ConstructionTable(Host* p, UIRect r) : 
     ClickableTable(p, r), 
     input(game->getinputmanager()),
     buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
@@ -378,7 +380,7 @@ void ConstructionTable::lineclicked(int index)
 }
 
 
-WagonTable::WagonTable(Host* p, SDL_Rect r, WagonFactory& f) : 
+WagonTable::WagonTable(Host* p, UIRect r, WagonFactory& f) : 
     ClickableTable(p, r), 
     input(game->getinputmanager()),
     factory(f)
