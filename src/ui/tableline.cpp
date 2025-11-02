@@ -80,12 +80,12 @@ void PurchaseOptionTableLine::render(Rendering* r, UIRect maxarea, TextStyle sty
     rect = maxarea;
     UIRendering& uiren = ui->getuirendering();
     Vec screeniconsize = icon.getsize();
-    Vec uiiconsize = uiren.screentoui(screeniconsize);
-    int rowoffset = ymargin;
-    int textpadding = 5;
-    int pricerowwidth = 50;
-    int iconwidth = uiiconsize.x + xmargin + textpadding;
-    int namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
+    UIVec uiiconsize = uiren.screentoui(screeniconsize);
+    Coord rowoffset = ymargin;
+    Coord textpadding = 5;
+    Coord pricerowwidth = 50;
+    Coord iconwidth = uiiconsize.x + xmargin + textpadding;
+    Coord namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
     
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;

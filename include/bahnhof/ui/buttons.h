@@ -84,7 +84,7 @@ public:
 class IncreaseUIScale : public TextButton
 {
 public:
-    IncreaseUIScale(Host* p, Vec pos) : 
+    IncreaseUIScale(Host* p, UIVec pos) : 
         TextButton(p, pos, "Increase UI size") {};
     void leftclick(Vec mousepos);
 };
@@ -92,7 +92,7 @@ public:
 class DecreaseUIScale : public TextButton
 {
 public:
-    DecreaseUIScale(Host* p, Vec pos) : 
+    DecreaseUIScale(Host* p, UIVec pos) : 
         TextButton(p, pos, "Decrease UI size") {};
     void leftclick(Vec mousepos);
 };

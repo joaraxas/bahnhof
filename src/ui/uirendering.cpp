@@ -211,10 +211,10 @@ void UIRendering::renderscaleruler(
 {
     float uiscale = getuiscale();
 
-    int textheight = 14;
+    Coord textheight = 14;
     SDL_Color c = getcolorfromstyle(UI::MapOverlay);
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-    int markersize = 2;
+    Coord markersize = 2;
 	r->renderline(
         uitoscreen(UIVec{leftx,lefty}), 
         uitoscreen(UIVec{leftx+scalelinelength,lefty}), 

@@ -41,7 +41,7 @@ protected:
 private:
     int getlineindexat(Vec pos);
     int toplineindex = 0;
-    int linescrolloffset = 0;
+    Coord linescrolloffset = 0;
 };
 
 class Dropdown : public ClickableTable

@@ -13,26 +13,35 @@ public:
 
     operator int() {return value;};
 
-    // Coord& operator+=(int v) {value+=v;};
-    // Coord& operator-=(int v) {value-=v;};
-    // Coord& operator*=(int v) {value*=v;};
-    Coord& operator+=(Coord v) {value+=v.value; return *this;};
-    Coord& operator-=(Coord v) {value-=v.value; return *this;};
+    Coord& operator+=(int v) {value+=v; return *this;};
+    Coord& operator-=(int v) {value-=v; return *this;};
+    Coord& operator*=(const int v) {value*=v; return *this;};
+    Coord& operator+=(const Coord v) {value+=v.value; return *this;};
+    Coord& operator-=(const Coord v) {value-=v.value; return *this;};
+    double operator*(const double d) {return d*value;};
+    friend double operator*(const double d, Coord c) {return c*d;};
+    float operator*(const float d) {return d*value;};
+    friend float operator*(const float d, Coord c) {return c*d;};
 private:
     int value;
 };
 
-// inline Coord operator+(Coord c1, Coord c2) {return c1+=c2;};
-// inline Coord operator-(Coord c1, Coord c2) {return c1-=c2;};
-// inline Coord operator*(Coord c1, int f) {return c1*=f;};
-// inline Coord operator*(int f, Coord c1) {return c1*f;};
+inline Coord operator*(const int i, Coord c) {return c*=i;};
+inline Coord operator*(Coord c, const int i) {return c*=i;};
+
+inline Coord operator+(Coord c1, const Coord c2) {return c1+=c2;};
+inline Coord operator-(Coord c1, const Coord c2) {return c1-=c2;};
+inline Coord operator+(Coord c1, const int i) {return c1+=i;};
+inline Coord operator-(Coord c1, const int i) {return c1-=i;};
+inline Coord operator+(int i, const Coord c) {return c+i;};
+inline Coord operator-(int i, const Coord c) {return c-i;};
 
 struct UIRect{
     UIRect(Coord xx, Coord yy, Coord ww, Coord hh) :
         x{xx}, y{yy}, w{ww}, h{hh} {};
-    UIRect(const SDL_Rect& r) : x{r.x}, y{r.y}, w{r.w}, h{r.h} {};
+    // UIRect(const SDL_Rect& r) : x{r.x}, y{r.y}, w{r.w}, h{r.h} {};
 
-    operator SDL_Rect() {return {x, y, w, h};};
+    // operator SDL_Rect() {return {x, y, w, h};};
 
     Coord x;
     Coord y;
@@ -47,7 +56,7 @@ struct UIVec{
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
     UIVec& operator-=(UIVec v) {x-=v.x; y-=v.y; return *this;};
 
-    operator Vec() {return Vec{float(x),float(y)};};
+    // operator Vec() {return Vec{float(x),float(y)};};
 
     Coord x;
     Coord y;

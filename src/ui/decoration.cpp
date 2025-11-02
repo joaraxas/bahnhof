@@ -9,7 +9,7 @@
 
 namespace UI{
 
-Text::Text(Host* p, std::string t, SDL_Rect r) : Element(p), text(t)
+Text::Text(Host* p, std::string t, UIRect r) : Element(p), text(t)
 {
     rect = r;
 }
@@ -19,7 +19,7 @@ void Text::render(Rendering* r)
     ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
-EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) : 
+EditableText::EditableText(Host* p, std::string& t, UIRect r) : 
         Text(p, t, r), 
         textreference(t), 
         originalrect(r),
@@ -98,8 +98,8 @@ void EditableText::movecursorright(){
 }
 
 void EditableText::updatewritingarea(){
-    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
-    rect.h = std::fmax(textrect.h, originalrect.h);
+    UIRect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
+    rect.h = std::fmax(double(textrect.h), double(originalrect.h));
 }
 
 
@@ -131,17 +131,23 @@ void TrainIcons::leftclick(Vec mousepos)
 
 int TrainIcons::getwagonidatmousepos(Vec mousepos)
 {
-    mousepos = ui->getuirendering().screentoui(mousepos);
+    UIVec mpos = ui->getuirendering().screentoui(mousepos);
     for(int iRect=0; iRect<iconrects.size(); iRect++){
-        SDL_Rect& rect = iconrects[iRect];
-	    if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
+        UIRect& rect = iconrects[iRect];
+	    if(mpos.x>=rect.x && 
+            mpos.x<=rect.x+rect.w && 
+            mpos.y>=rect.y && 
+            mpos.y<=rect.y+rect.h){
             return iRect;
         }
     }
     return -1;
 }
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo>& wagoninfos, SDL_Rect maxrect, int splitid)
+std::vector<UIRect> rendertrainicons(
+    Rendering* r, InterfaceManager& ui,
+    std::vector<WagonInfo>& wagoninfos, 
+    UIRect maxrect, int splitid)
 {
     SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
     auto scale = ui.getuirendering().getuiscale();
@@ -151,7 +157,7 @@ std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::
     Icon wagonicon;
     wagonicon.ported = false;
     int icon_x = 0;
-    std::vector<SDL_Rect> iconuirects;
+    std::vector<UIRect> iconuirects;
     for(int iWagon = 0; iWagon<wagoninfos.size(); iWagon++){
         WagonInfo& wagoninfo = wagoninfos[iWagon];
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);

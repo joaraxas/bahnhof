@@ -74,8 +74,8 @@ void PlaceBuildings::leftclick(Vec mousepos)
 
 void ManageRoutes::leftclick(Vec mousepos)
 {
-    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
-    SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
+    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
+    UIRect routepanelrect = {viewsize.x-200,0,200,viewsize.y};
     new RouteListPanel(ui, routepanelrect);
 }
 
@@ -96,9 +96,9 @@ void DecreaseUIScale::leftclick(Vec mousepos)
 
 void SetRoute::leftclick(Vec mousepos)
 {
-    SDL_Rect panelrect = panel->getlocalrect();
-    Vec uimousepos = ui->getuirendering().screentoui(mousepos);
-    SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), 
+    UIRect panelrect = panel->getlocalrect();
+    UIVec uimousepos = ui->getuirendering().screentoui(mousepos);
+    UIRect tablerect = {int(uimousepos.x-panelrect.x), 
                           int(uimousepos.y-panelrect.y), 
                           150, 
                           100};
