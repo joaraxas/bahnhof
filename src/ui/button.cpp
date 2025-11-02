@@ -34,8 +34,8 @@ TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int widt
     text = newtext;
     rect.w = width;
     rect.h = 20;
-    SDL_Rect paddedtextrect = ui->getuirendering().gettextsize(text, rect, mintextoffset_x, mintextoffset_y);
-    rect.h = fmax(rect.h, paddedtextrect.h);
+    UIRect paddedtextrect = ui->getuirendering().gettextsize(text, rect, mintextoffset_x, mintextoffset_y);
+    rect.h = fmax(rect.h, double(paddedtextrect.h));
 }
 
 void TextButton::render(Rendering* r)

@@ -4,7 +4,8 @@
 #include "bahnhof/graphics/rendering.h"
 
 
-InterfaceManager::InterfaceManager(Game* newgame) : game(newgame), uirendering(*this)
+InterfaceManager::InterfaceManager(Game* newgame) : 
+    game(newgame), uirendering(*this), movingwindowoffset{0,0}
 {
     new UI::MainPanel(this);
 }
@@ -82,8 +83,9 @@ bool InterfaceManager::click(Vec mousepos, int type)
             movepaneltofront(clickedpanel);
             clickedui = true;
             movingwindow = clickedpanel;
-            SDL_Rect movingwindowrect = movingwindow->getglobalrect();
-            movingwindowoffset = uirendering.screentoui(mousepos)-Vec(movingwindowrect.x, movingwindowrect.y);
+            UI::UIRect movingwindowrect = movingwindow->getglobalrect();
+            movingwindowoffset = uirendering.screentoui(mousepos)
+                - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
             clickedpanel->click(mousepos, type);
         }
     }

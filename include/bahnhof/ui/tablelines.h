@@ -18,7 +18,7 @@ class TableLine : public Element
 public:
     TableLine(Host*, Table*, std::string);
     virtual ~TableLine() {};
-    SDL_Rect getglobalrect();
+    UIRect getglobalrect();
     virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
     virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info, 1, 1);};
     void render(Rendering* r) {};

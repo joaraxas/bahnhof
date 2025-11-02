@@ -18,9 +18,9 @@ TableLine::TableLine(Host* p, Table* t, std::string s) :
     rect = {tablerect.x, tablerect.y, tablerect.w, 20};
 }
 
-SDL_Rect TableLine::getglobalrect()
+UIRect TableLine::getglobalrect()
 {
-    SDL_Rect tablepos = table->getglobalrect();
+    UIRect tablepos = table->getglobalrect();
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 

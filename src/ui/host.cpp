@@ -3,11 +3,11 @@
 
 namespace UI{
 
-Host::Host(InterfaceManager* newui, SDL_Rect newrect)
+Host::Host(InterfaceManager* newui, UIRect newrect) :
+	rect{newrect}
 {
     ui = newui;
     game = &ui->getgame();
-	rect = newrect;
 }
 
 Host::~Host()
@@ -26,12 +26,12 @@ void Host::erase()
 	}
 }
 
-SDL_Rect Host::getglobalrect()
+UIRect Host::getglobalrect()
 {
 	return rect;
 }
 
-SDL_Rect Host::getlocalrect()
+UIRect Host::getlocalrect()
 {
 	return rect;
 }
@@ -112,9 +112,9 @@ void Host::addelement(Element* element){
 	elements.emplace_back(element);
 }
 
-void Host::move(Vec towhattopcorner){
-	rect.x = round(towhattopcorner.x);
-	rect.y = round(towhattopcorner.y);
+void Host::move(UIVec towhattopcorner){
+	rect.x = towhattopcorner.x;
+	rect.y = towhattopcorner.y;
 }
 
 } // namespace UI
