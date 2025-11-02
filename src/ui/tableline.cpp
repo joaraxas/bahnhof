@@ -37,7 +37,13 @@ TrainTableLine::TrainTableLine(Host* p, Table* t, TrainInfo traininfo) :
     info(traininfo)
 {}
 
-void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
+void TrainTableLine::render(
+    Rendering* r, 
+    SDL_Rect maxarea, 
+    TextStyle style, 
+    int xmargin, 
+    int ymargin
+    )
 {
     rect = maxarea;
     int textpadding = 5;
@@ -46,7 +52,8 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int
     namerect.w = namerowwidth;
     namerect.x = xmargin;
     
-    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, ymargin);
+    namerect = ui->getuirendering().rendertext(
+        r, str, namerect, style, false, textpadding, ymargin);
     rect.h = namerect.h;
     
     SDL_Rect trainiconrect = getlocalrect();
@@ -54,7 +61,8 @@ void TrainTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int
                      trainiconrect.y+ymargin, 
                      trainiconrect.w-namerowwidth-2*xmargin, 
                      namerect.h-2*ymargin};
-    // The local rectangle works here because we are rendering to a separate table target
+    // The local rectangle works here because we are rendering to a 
+    // separate table target
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
 }
 
@@ -70,8 +78,9 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::nam
 void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin)
 {
     rect = maxarea;
+    UIRendering& uiren = ui->getuirendering();
     Vec screeniconsize = icon.getsize();
-    Vec uiiconsize = ui->getuirendering().screentoui(screeniconsize);
+    Vec uiiconsize = uiren.screentoui(screeniconsize);
     int rowoffset = ymargin;
     int textpadding = 5;
     int pricerowwidth = 50;
@@ -82,18 +91,31 @@ void PurchaseOptionTableLine::render(Rendering* r, SDL_Rect maxarea, TextStyle s
     namerect.w = namerowwidth;
     namerect.x += iconwidth;
     namerect.y += uiiconsize.y * 0.5 - 12 * 0.5 - 1;
-    namerect = ui->getuirendering().rendertext(r, str, namerect, style, false, textpadding, rowoffset);
+    namerect = uiren.rendertext(
+        r, str, namerect, style, false, textpadding, rowoffset);
     SDL_Rect pricerect = getlocalrect();
     pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
     pricerect.w = pricerowwidth;
     pricerect.y = namerect.y;
-    pricerect = ui->getuirendering().rendertext(r, std::to_string(price)+" Fr", pricerect, style, false, textpadding, rowoffset);
-    rect.h = std::fmax(std::fmax(namerect.h, pricerect.h), uiiconsize.y+2*rowoffset);
+    pricerect = uiren.rendertext(
+                    r, 
+                    std::to_string(price)+" Fr", 
+                    pricerect, 
+                    style, 
+                    false, 
+                    textpadding, 
+                    rowoffset);
+    rect.h = std::fmax(
+        std::fmax(namerect.h, pricerect.h), 
+        uiiconsize.y+2*rowoffset);
     SDL_Rect uiiconrect = getlocalrect();
     uiiconrect.x += xmargin + textpadding;
     uiiconrect.y += rowoffset;
-    SDL_Rect screeniconrect = ui->getuirendering().uitoscreen(uiiconrect);
-    icon.render(r, Vec(screeniconrect.x+screeniconsize.x*0.5, screeniconrect.y+screeniconsize.y*0.5));
+    SDL_Rect screeniconrect = uiren.uitoscreen(uiiconrect);
+    icon.render(r, 
+                Vec(screeniconrect.x+screeniconsize.x*0.5, 
+                screeniconrect.y+screeniconsize.y*0.5)
+                );
 }
 
 } //end namespace UI
