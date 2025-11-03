@@ -195,14 +195,14 @@ UIRect UIRendering::screentoui(SDL_Rect screenrect)
 Vec UIRendering::uitoscreen(UIVec uipos)
 {
     float scale = getuiscale();
-    Vec pos = Vec(uipos.x*scale, uipos.y*scale);
+    Vec pos(uipos.x*scale, uipos.y*scale);
     return pos;
 }
 
 UIVec UIRendering::screentoui(Vec pos)
 {
     float scale = getuiscale();
-    UIVec uipos = Vec(pos.x/scale, pos.y/scale);
+    UIVec uipos(pos.x/scale, pos.y/scale);
     return uipos;
 }
 

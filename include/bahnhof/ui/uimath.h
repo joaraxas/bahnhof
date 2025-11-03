@@ -1,6 +1,5 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
-#include "bahnhof/common/math.h"
 
 namespace UI{
 
@@ -13,15 +12,13 @@ public:
 
     explicit operator int() const {return value;};
 
-    Coord& operator+=(int v) {value+=v; return *this;};
-    Coord& operator-=(int v) {value-=v; return *this;};
-    Coord& operator*=(const int v) {value*=v; return *this;};
-    Coord& operator+=(const Coord v) {value+=v.value; return *this;};
-    Coord& operator-=(const Coord v) {value-=v.value; return *this;};
+    Coord operator+=(int v) {value+=v; return *this;};
+    Coord operator-=(int v) {value-=v; return *this;};
+    Coord operator*=(const int v) {value*=v; return *this;};
+    Coord operator+=(const Coord v) {value+=v.value; return *this;};
+    Coord operator-=(const Coord v) {value-=v.value; return *this;};
     double operator*(const double d) const {return d*value;};
     friend double operator*(const double d, Coord c) {return c*d;};
-    float operator*(const float d) const {return d*value;};
-    friend float operator*(const float d, Coord c) {return c*d;};
     Coord operator-() const {return Coord{-value};};
 
     bool operator<(const Coord c) const {return value<c.value;};
@@ -47,9 +44,6 @@ inline Coord operator-(int i, const Coord c) {return c-i;};
 struct UIRect{
     UIRect(Coord xx, Coord yy, Coord ww, Coord hh) :
         x{xx}, y{yy}, w{ww}, h{hh} {};
-    // UIRect(const SDL_Rect& r) : x{r.x}, y{r.y}, w{r.w}, h{r.h} {};
-
-    // operator SDL_Rect() {return {x, y, w, h};};
 
     Coord x;
     Coord y;
@@ -59,12 +53,8 @@ struct UIRect{
 
 struct UIVec{
     UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
-    // UIVec(int xx, int yy) : x{xx}, y{yy} {};
-    UIVec(Vec v) : x{v.x}, y{v.y} {};
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
     UIVec& operator-=(UIVec v) {x-=v.x; y-=v.y; return *this;};
-
-    // operator Vec() {return Vec{float(x),float(y)};};
 
     Coord x;
     Coord y;
