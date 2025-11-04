@@ -41,16 +41,6 @@ inline Coord operator-(Coord c1, const int i) {return c1-=i;};
 inline Coord operator+(int i, const Coord c) {return c+i;};
 inline Coord operator-(int i, const Coord c) {return c-i;};
 
-struct UIRect{
-    UIRect(Coord xx, Coord yy, Coord ww, Coord hh) :
-        x{xx}, y{yy}, w{ww}, h{hh} {};
-
-    Coord x;
-    Coord y;
-    Coord w;
-    Coord h;
-};
-
 struct UIVec{
     UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
@@ -63,5 +53,18 @@ struct UIVec{
 inline UIVec operator+(UIVec u, UIVec v) {return u+=v;};
 inline UIVec operator-(UIVec u, UIVec v) {return u-=v;};
 
+
+struct UIRect{
+    UIRect(Coord xx, Coord yy, Coord ww, Coord hh) :
+        x{xx}, y{yy}, w{ww}, h{hh} {};
+    bool contains(UIVec pos) {
+        return pos.x>=x && pos.x<=x+w && pos.y>=y && pos.y<=y+h;
+    };
+
+    Coord x;
+    Coord y;
+    Coord w;
+    Coord h;
+};
 
 }

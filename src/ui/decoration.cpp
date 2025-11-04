@@ -34,7 +34,7 @@ EditableText::~EditableText()
     }
 }
 
-void EditableText::leftclick(Vec mousepos)
+void EditableText::leftclick(UIVec mousepos)
 {
     ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
 }
@@ -110,12 +110,12 @@ void TrainIcons::render(Rendering* r)
     rendersplitafterwagonid = -1;
 }
 
-void TrainIcons::mousehover(Vec pos, int ms)
+void TrainIcons::mousehover(UIVec pos, int ms)
 {
     rendersplitafterwagonid = std::fmin(getwagonidatmousepos(pos), train.getinfo().wagoninfos.size()-2);
 }
 
-void TrainIcons::leftclick(Vec mousepos)
+void TrainIcons::leftclick(UIVec mousepos)
 {
     int wagonid = getwagonidatmousepos(mousepos);
     if(wagonid<0) return;
@@ -129,15 +129,11 @@ void TrainIcons::leftclick(Vec mousepos)
     train.split(wheretosplit, nullptr);
 }
 
-int TrainIcons::getwagonidatmousepos(Vec mousepos)
+int TrainIcons::getwagonidatmousepos(UIVec mousepos)
 {
-    UIVec mpos = ui->getuirendering().screentoui(mousepos);
     for(int iRect=0; iRect<iconrects.size(); iRect++){
         UIRect& rect = iconrects[iRect];
-	    if(mpos.x>=rect.x && 
-            mpos.x<=rect.x+rect.w && 
-            mpos.y>=rect.y && 
-            mpos.y<=rect.y+rect.h){
+	    if(rect.contains(mousepos)){
             return iRect;
         }
     }

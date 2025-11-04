@@ -26,11 +26,11 @@ class Element
 public:
     Element(Host*);
     virtual ~Element() {};
-    virtual bool checkclick(Vec pos);
-    virtual void mousehover(Vec pos, int ms) {};
-    virtual void leftclick(Vec pos) {};
-    virtual void scroll(Vec pos, int distance) {};
-    virtual void leftpressed(Vec pos, int mslogic) {};
+    virtual bool checkclick(UIVec pos);
+    virtual void mousehover(UIVec pos, int ms) {};
+    virtual void leftclick(UIVec pos) {};
+    virtual void scroll(UIVec pos, int distance) {};
+    virtual void leftpressed(UIVec pos, int mslogic) {};
     virtual void update(int ms) {};
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
@@ -47,11 +47,11 @@ class Host
 public:
     Host(InterfaceManager* newui, UIRect newrect);
     virtual ~Host();
-    bool checkclick(Vec pos);
-    void mousehover(Vec pos, int ms);
-    void click(Vec pos, int type);
-    void scroll(Vec pos, int distance);
-    void mousepress(Vec pos, int mslogic, int type);
+    bool checkclick(UIVec pos);
+    void mousehover(UIVec pos, int ms);
+    void click(UIVec pos, int type);
+    void scroll(UIVec pos, int distance);
+    void mousepress(UIVec pos, int mslogic, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
@@ -62,7 +62,7 @@ public:
     UIRect getlocalrect();
     Ownership* owner = nullptr;
 protected:
-    Element* getelementat(Vec pos);
+    Element* getelementat(UIVec pos);
     Game* game;
     UIRect rect;
     std::vector<std::unique_ptr<Element>> elements;
@@ -136,6 +136,7 @@ public:
     bool leftbuttonup(Vec pos);
     bool leftpressed(Vec pos, int mslogic);
     void render(Rendering*);
+    
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void movepaneltofront(UI::Host*);
@@ -144,7 +145,7 @@ public:
     UIRendering& getuirendering() {return uirendering;};
     UI::Host* movingwindow = nullptr;
 private:
-    UI::Host* getpanelat(Vec pos);
+    UI::Host* getpanelat(UI::UIVec pos);
     void cleanup();
     std::vector<std::unique_ptr<UI::Host>> panels;
     std::vector<UI::Host*> panelstodelete;

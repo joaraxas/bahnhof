@@ -22,7 +22,7 @@ class Table : public Element
 public:
     Table(Host*, UIRect newrect);
     virtual ~Table();
-    bool checkclick(Vec pos);
+    bool checkclick(UIVec pos);
     virtual void render(Rendering*);
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
@@ -32,14 +32,14 @@ class ClickableTable : public Table
 {
 public:
     ClickableTable(Host* h, UIRect r) : Table(h, r) {};
-    void leftclick(Vec pos);
-    void scroll(Vec pos, int distance);
+    void leftclick(UIVec pos);
+    void scroll(UIVec pos, int distance);
     virtual void render(Rendering*);
 protected:
     virtual void lineclicked(int index) {selectedlineindex = index;};
     int selectedlineindex = -1;
 private:
-    int getlineindexat(Vec pos);
+    int getlineindexat(UIVec pos);
     int toplineindex = 0;
     Coord linescrolloffset = 0;
 };

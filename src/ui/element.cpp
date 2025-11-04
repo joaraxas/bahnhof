@@ -11,17 +11,9 @@ Element::Element(Host* newpanel)
     game = &ui->getgame();
 }
 
-bool Element::checkclick(Vec mousepos)
+bool Element::checkclick(UIVec mousepos)
 {
-    SDL_Rect absrect = ui->getuirendering().uitoscreen(getglobalrect());
-	if(mousepos.x>=absrect.x && 
-        mousepos.x<=absrect.x+absrect.w && 
-        mousepos.y>=absrect.y && 
-        mousepos.y<=absrect.y+absrect.h)
-    {
-        return true;
-    }
-    return false;
+    return getglobalrect().contains(mousepos);
 }
 
 UIRect Element::getglobalrect()

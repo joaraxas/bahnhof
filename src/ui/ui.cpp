@@ -3,6 +3,7 @@
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/rendering.h"
 
+using namespace UI;
 
 InterfaceManager::InterfaceManager(Game* newgame) : 
     game(newgame), uirendering(*this), movingwindowoffset{0,0}
@@ -38,12 +39,12 @@ void InterfaceManager::render(Rendering* r)
         dropdown->render(r);
 }
 
-UI::Host* InterfaceManager::getpanelat(Vec screenpos)
+UI::Host* InterfaceManager::getpanelat(UIVec uipos)
 {
     cleanup();
     
     for(auto& panel: panels){
-        if(panel->checkclick(screenpos))
+        if(panel->checkclick(uipos))
             return panel.get();
     }
     return nullptr;
@@ -51,16 +52,17 @@ UI::Host* InterfaceManager::getpanelat(Vec screenpos)
 
 bool InterfaceManager::mousehover(Vec mousepos, int ms)
 {
+    UIVec uimpos = uirendering.screentoui(mousepos);
     if(dropdown){
-        if(dropdown->checkclick(mousepos)){
-            dropdown->mousehover(mousepos, ms);
+        if(dropdown->checkclick(uimpos)){
+            dropdown->mousehover(uimpos, ms);
             return true;
         }
     }
     
-    UI::Host* hoveredoverpanel = getpanelat(mousepos);
+    UI::Host* hoveredoverpanel = getpanelat(uimpos);
     if(hoveredoverpanel){
-        hoveredoverpanel->mousehover(mousepos, ms);
+        hoveredoverpanel->mousehover(uimpos, ms);
         return true;
     }
     return false;
@@ -68,25 +70,26 @@ bool InterfaceManager::mousehover(Vec mousepos, int ms)
 
 bool InterfaceManager::click(Vec mousepos, int type)
 {
+    UIVec uimpos = uirendering.screentoui(mousepos);
     bool clickedui = false;
     if(dropdown){
-        if(dropdown->checkclick(mousepos)){
+        if(dropdown->checkclick(uimpos)){
             clickedui = true;
             if(type==SDL_BUTTON_LEFT)
-                dropdown->leftclick(mousepos);
+                dropdown->leftclick(uimpos);
         }
         setdropdown(nullptr);
     }
     if(!clickedui){
-        UI::Host* clickedpanel = getpanelat(mousepos);
+        UI::Host* clickedpanel = getpanelat(uimpos);
         if(clickedpanel){
             movepaneltofront(clickedpanel);
             clickedui = true;
             movingwindow = clickedpanel;
             UI::UIRect movingwindowrect = movingwindow->getglobalrect();
-            movingwindowoffset = uirendering.screentoui(mousepos)
+            movingwindowoffset = uimpos
                 - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
-            clickedpanel->click(mousepos, type);
+            clickedpanel->click(uimpos, type);
         }
     }
     cleanup();
@@ -95,18 +98,19 @@ bool InterfaceManager::click(Vec mousepos, int type)
 
 bool InterfaceManager::scroll(Vec mousepos, int distance)
 {
+    UIVec uimpos = uirendering.screentoui(mousepos);
     bool clickedui = false;
     if(dropdown){
-        if(dropdown->checkclick(mousepos)){
+        if(dropdown->checkclick(uimpos)){
             clickedui = true;
-            dropdown->scroll(mousepos, distance);
+            dropdown->scroll(uimpos, distance);
         }
     }
     if(!clickedui){
-        UI::Host* clickedpanel = getpanelat(mousepos);
+        UI::Host* clickedpanel = getpanelat(uimpos);
         if(clickedpanel){
             clickedui = true;
-            clickedpanel->scroll(mousepos, distance);
+            clickedpanel->scroll(uimpos, distance);
         }
     }
     cleanup();
@@ -116,22 +120,24 @@ bool InterfaceManager::scroll(Vec mousepos, int distance)
 bool InterfaceManager::leftbuttonup(Vec mousepos)
 {
     movingwindow = nullptr;
+    UI::UIVec uimpos = uirendering.screentoui(mousepos);
 
-    if(dropdown && dropdown->checkclick(mousepos))
+    if(dropdown && dropdown->checkclick(uimpos))
         return true;
-    if(getpanelat(mousepos))
+    if(getpanelat(uimpos))
         return true;
     return false;
 }
 
 bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
 {
-    UI::Host* pressedpanel = getpanelat(mousepos);
+    UIVec uimpos = uirendering.screentoui(mousepos);
+    UI::Host* pressedpanel = getpanelat(uimpos);
     if(pressedpanel){
-        pressedpanel->mousepress(mousepos, mslogic, SDL_BUTTON_LEFT);
+        pressedpanel->mousepress(uimpos, mslogic, SDL_BUTTON_LEFT);
     }
     if(movingwindow){
-        movingwindow->move(uirendering.screentoui(mousepos) - movingwindowoffset);
+        movingwindow->move(uimpos - movingwindowoffset);
         return true;
     }
     return false;

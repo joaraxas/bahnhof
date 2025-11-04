@@ -23,7 +23,7 @@ Table::Table(Host* newpanel, UIRect newrect) : Element(newpanel)
 Table::~Table() // Needed to correctly destroy unique_ptrs
 {}
 
-bool Table::checkclick(Vec mousepos)
+bool Table::checkclick(UIVec mousepos)
 {
     bool clicked = Element::checkclick(mousepos);
 	if(clicked){
@@ -71,7 +71,7 @@ void Table::render(Rendering* r)
     SDL_DestroyTexture(tablerendertarget);
 }
 
-void ClickableTable::leftclick(Vec pos)
+void ClickableTable::leftclick(UIVec pos)
 {
     int nlines = lines.size();
     if(nlines > 0){
@@ -82,7 +82,7 @@ void ClickableTable::leftclick(Vec pos)
     }
 }
 
-void ClickableTable::scroll(Vec pos, int distance)
+void ClickableTable::scroll(UIVec pos, int distance)
 {
     linescrolloffset -= 3*distance;
 
@@ -112,7 +112,7 @@ void ClickableTable::scroll(Vec pos, int distance)
     }
 }
 
-int ClickableTable::getlineindexat(Vec mousepos)
+int ClickableTable::getlineindexat(UIVec mousepos)
 {
     int lineindex = -1;
     int numlines = lines.size();

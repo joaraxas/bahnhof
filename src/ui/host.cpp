@@ -48,16 +48,12 @@ void Host::render(Rendering* r)
 		element->render(r);
 }
 
-bool Host::checkclick(Vec pos)
+bool Host::checkclick(UIVec pos)
 {
-	SDL_Rect absrect = ui->getuirendering().uitoscreen(getglobalrect());
-	if(pos.x>=absrect.x && pos.x<=absrect.x+absrect.w && pos.y>=absrect.y && pos.y<=absrect.y+absrect.h){
-		return true;
-	}
-    return false;
+	return getglobalrect().contains(pos);
 }
 
-Element* Host::getelementat(Vec pos)
+Element* Host::getelementat(UIVec pos)
 {
 	for(auto& element: elements)
 		if(element->checkclick(pos)){
@@ -66,7 +62,7 @@ Element* Host::getelementat(Vec pos)
 	return nullptr;
 }
 
-void Host::mousehover(Vec pos, int ms)
+void Host::mousehover(UIVec pos, int ms)
 {
 	Element* hoveredelement = getelementat(pos);
 	if(hoveredelement){
@@ -74,7 +70,7 @@ void Host::mousehover(Vec pos, int ms)
 	}
 }
 
-void Host::click(Vec pos, int type)
+void Host::click(UIVec pos, int type)
 {
 	Element* clickedelement = getelementat(pos);
 	if(clickedelement){
@@ -87,7 +83,7 @@ void Host::click(Vec pos, int type)
 	}
 }
 
-void Host::scroll(Vec pos, int distance)
+void Host::scroll(UIVec pos, int distance)
 {
 	Element* clickedelement = getelementat(pos);
 	if(clickedelement){
@@ -95,7 +91,7 @@ void Host::scroll(Vec pos, int distance)
 	}
 }
 
-void Host::mousepress(Vec pos, int mslogic, int type)
+void Host::mousepress(UIVec pos, int mslogic, int type)
 {
 	Element* clickedelement = getelementat(pos);
 	if(clickedelement){

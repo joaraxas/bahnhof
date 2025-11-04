@@ -27,7 +27,7 @@ class EditableText : public Text
 public:
     EditableText(Host* p, std::string& t, UIRect r);
     ~EditableText();
-    void leftclick(Vec mousepos);
+    void leftclick(UIVec mousepos);
     void render(Rendering*);
     void updatesource();
     void startwriting();
@@ -53,10 +53,10 @@ class TrainIcons : public Element
 public:
     TrainIcons(Host* p, UIRect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
-    void mousehover(Vec pos, int ms);
-    void leftclick(Vec mousepos);
+    void mousehover(UIVec pos, int ms);
+    void leftclick(UIVec mousepos);
 private:
-    int getwagonidatmousepos(Vec mousepos);
+    int getwagonidatmousepos(UIVec mousepos);
     Train& train;
     std::vector<UIRect> iconrects;
     int rendersplitafterwagonid = -1;
