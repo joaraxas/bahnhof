@@ -11,6 +11,8 @@ InterfaceManager::InterfaceManager(Game* newgame) :
     new UI::MainPanel(this);
 }
 
+InterfaceManager::~InterfaceManager() {}
+
 void InterfaceManager::update(int ms)
 {
     cleanup();

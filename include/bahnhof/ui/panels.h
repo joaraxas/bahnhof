@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/common/math.h"
-#include "bahnhof/ui/ui.h"
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/host.h"
 
 class Game;
 class Gamestate;
@@ -17,18 +17,6 @@ namespace UI{
 class Dropdown;
 class RouteListPanel;
 class Text;
-
-class Ownership
-{
-public:
-    ~Ownership();
-    void set(Host* newhost);
-    bool exists();
-    void deletereference();
-    void resetreference();
-private:
-    Host* host = nullptr;
-};
 
 class Panel : public Host
 {

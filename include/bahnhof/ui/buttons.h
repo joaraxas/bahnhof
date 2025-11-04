@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/common/math.h"
-#include "bahnhof/ui/ui.h"
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/element.h"
 
 class Game;
 class Gamestate;

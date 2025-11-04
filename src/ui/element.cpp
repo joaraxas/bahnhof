@@ -1,5 +1,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/host.h"
+#include "bahnhof/ui/element.h"
 #include "bahnhof/ui/decoration.h"
 
 namespace UI{

@@ -12,37 +12,7 @@
 #include "bahnhof/buildings/buildingmanager.h"
 
 namespace UI{
-
-Ownership::~Ownership()
-{
-	deletereference();
-}
-
-void Ownership::set(Host* newhost)
-{
-	deletereference();
-	host = newhost;
-	host->owner = this;
-}
-
-bool Ownership::exists()
-{
-	return host!=nullptr;
-}
-
-void Ownership::deletereference()
-{
-	if(host){
-		host->erase();
-		resetreference();
-	}
-}
-
-void Ownership::resetreference()
-{
-	host = nullptr;
-}
-
+	
 Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
 {
     ui->addpanel(this);

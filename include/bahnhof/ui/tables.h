@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/ui/ui.h"
-#include "bahnhof/common/math.h"
+#include "bahnhof/ui/element.h"
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/buildings/buildingtypes.h"
 

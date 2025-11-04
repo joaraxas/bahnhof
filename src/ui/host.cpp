@@ -1,7 +1,39 @@
 #include "bahnhof/ui/ui.h"
-#include "bahnhof/ui/panels.h"
+#include "bahnhof/ui/host.h"
+#include "bahnhof/ui/element.h"
 
 namespace UI{
+
+Ownership::~Ownership()
+{
+	deletereference();
+}
+
+void Ownership::set(Host* newhost)
+{
+	deletereference();
+	host = newhost;
+	host->owner = this;
+}
+
+bool Ownership::exists()
+{
+	return host!=nullptr;
+}
+
+void Ownership::deletereference()
+{
+	if(host){
+		host->erase();
+		resetreference();
+	}
+}
+
+void Ownership::resetreference()
+{
+	host = nullptr;
+}
+
 
 Host::Host(InterfaceManager* newui, UIRect newrect) :
 	rect{newrect}

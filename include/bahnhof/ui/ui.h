@@ -1,7 +1,9 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/common/math.h"
 #include "bahnhof/common/orientation.h"
 #include "bahnhof/ui/uimath.h"
+#include "bahnhof/ui/uistyle.h"
 
 class Game;
 class Rendering;
@@ -11,63 +13,6 @@ namespace UI{
 
 class Host;
 class Dropdown;
-class Ownership;
-
-enum TextStyle{
-    Info,
-    Highlighted,
-    InvertedInfo,
-    InvertedHighlighted,
-    MapOverlay
-};
-
-class Element
-{
-public:
-    Element(Host*);
-    virtual ~Element() {};
-    virtual bool checkclick(UIVec pos);
-    virtual void mousehover(UIVec pos, int ms) {};
-    virtual void leftclick(UIVec pos) {};
-    virtual void scroll(UIVec pos, int distance) {};
-    virtual void leftpressed(UIVec pos, int mslogic) {};
-    virtual void update(int ms) {};
-    virtual void render(Rendering*) = 0;
-    virtual UIRect getglobalrect();
-    UIRect getlocalrect();
-protected:
-    Host* panel;
-    UIRect rect = {0,0,100,100};
-    InterfaceManager* ui;
-    Game* game;
-};
-
-class Host
-{
-public:
-    Host(InterfaceManager* newui, UIRect newrect);
-    virtual ~Host();
-    bool checkclick(UIVec pos);
-    void mousehover(UIVec pos, int ms);
-    void click(UIVec pos, int type);
-    void scroll(UIVec pos, int distance);
-    void mousepress(UIVec pos, int mslogic, int type);
-    virtual void update(int ms);
-    virtual void render(Rendering*);
-    void addelement(Element*);
-    void move(UIVec towhattopcorner);
-    virtual void erase();
-    InterfaceManager& getui();
-    UIRect getglobalrect();
-    UIRect getlocalrect();
-    Ownership* owner = nullptr;
-protected:
-    Element* getelementat(UIVec pos);
-    Game* game;
-    UIRect rect;
-    std::vector<std::unique_ptr<Element>> elements;
-    InterfaceManager* ui;
-};
 
 }
 
@@ -116,7 +61,7 @@ public:
     SDL_Rect uitoscreen(UIRect rect);
     UIRect screentoui(SDL_Rect rect);
     Vec uitoscreen(UIVec pos);
-    UI::UIVec screentoui(Vec pos);
+    UIVec screentoui(Vec pos);
     void renderscaleruler(
         Rendering* r, Coord leftx, Coord lefty, Coord scalelinelength);
 private:
@@ -129,6 +74,7 @@ private:
 class InterfaceManager{
 public:
     InterfaceManager(Game*);
+    ~InterfaceManager();
     void update(int ms);
     bool mousehover(Vec pos, int ms);
     bool click(Vec pos, int type);
