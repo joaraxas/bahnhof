@@ -24,7 +24,7 @@ UIRect TableLine::getglobalrect()
     return {tablepos.x+rect.x, tablepos.y+rect.y, rect.w, rect.h};
 }
 
-void TableLine::render(Rendering* r, UIRect maxarea, TextStyle style, int xmargin, int ymargin)
+void TableLine::render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin)
 {
     rect.x = maxarea.x;
     rect.y = maxarea.y;
@@ -41,13 +41,13 @@ void TrainTableLine::render(
     Rendering* r, 
     UIRect maxarea, 
     TextStyle style, 
-    int xmargin, 
-    int ymargin
+    Coord xmargin, 
+    Coord ymargin
     )
 {
     rect = maxarea;
-    int textpadding = 5;
-    int namerowwidth = 60;
+    Coord textpadding = 5;
+    Coord namerowwidth = 60;
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x = xmargin;
@@ -75,7 +75,12 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::nam
     icon.ported = false;
 }
 
-void PurchaseOptionTableLine::render(Rendering* r, UIRect maxarea, TextStyle style, int xmargin, int ymargin)
+void PurchaseOptionTableLine::render(
+    Rendering* r, 
+    UIRect maxarea, 
+    TextStyle style, 
+    Coord xmargin, 
+    Coord ymargin)
 {
     rect = maxarea;
     UIRendering& uiren = ui->getuirendering();

@@ -160,8 +160,17 @@ std::vector<UIRect> rendertrainicons(
         if(splitid>=0 && iWagon>splitid)
             splitoffset = 5*scale;
         Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5+splitoffset, screenrect.y+screenrect.h*0.5));
-        SDL_Rect iconrect = {screenrect.x+icon_x, screenrect.y, int(iconsize.x+iconoffset), screenrect.h};
+        wagonicon.render(
+            r, 
+            Vec(screenrect.x+icon_x+iconsize.x*0.5+splitoffset, 
+                screenrect.y+screenrect.h*0.5)
+        );
+        SDL_Rect iconrect = {
+            screenrect.x+icon_x, 
+            screenrect.y, 
+            int(iconsize.x+iconoffset), 
+            screenrect.h
+        };
         iconuirects.push_back(ui.getuirendering().screentoui(iconrect));
         icon_x += iconsize.x + iconoffset;
     }

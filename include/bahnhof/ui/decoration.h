@@ -19,8 +19,8 @@ public:
     SDL_Color color = {0,0,0,255};
     bool centered = true;
     TextStyle style = Info;
-    static constexpr int margin_x = 2;
-    static constexpr int margin_y = 1;
+    static constexpr Coord margin_x = 2;
+    static constexpr Coord margin_y = 1;
 };
 
 class EditableText : public Text
