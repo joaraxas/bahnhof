@@ -136,7 +136,7 @@ void RoutePanel::erase()
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
     UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
-    rect = {int(viewsize.x*0.5-150),int(viewsize.y)-150,300,150};
+    rect = {viewsize.x*0.5-150,viewsize.y-150,300,150};
 	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new TrainTable(this, tablerect));
 }

@@ -7,10 +7,7 @@ class Coord{
 public:
     constexpr Coord() {Coord{0};};
     constexpr Coord(int v) : value{v} {};
-    constexpr Coord(float v) : value{static_cast<int>(std::lround(v))} {};
     constexpr Coord(double v) : value{static_cast<int>(std::lround(v))} {};
-
-    explicit operator int() const {return value;};
 
     Coord operator+=(int v) {value+=v; return *this;};
     Coord operator-=(int v) {value-=v; return *this;};
