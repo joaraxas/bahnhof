@@ -130,10 +130,10 @@ void ClickableTable::render(Rendering* r)
 
     float scale = ui->getuirendering().getuiscale();
 	SDL_Texture* tablerendertarget = SDL_CreateTexture(renderer, 
-                                                       SDL_PIXELFORMAT_RGBA8888, 
-                                                       SDL_TEXTUREACCESS_TARGET, 
-                                                       ceil(maxarea.w*scale), 
-                                                       ceil(maxarea.h*scale));
+                                            SDL_PIXELFORMAT_RGBA8888, 
+                                            SDL_TEXTUREACCESS_TARGET, 
+                                            ceil(maxarea.w*scale), 
+                                            ceil(maxarea.h*scale));
   	SDL_SetTextureBlendMode(tablerendertarget, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderTarget(renderer, tablerendertarget);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -146,8 +146,8 @@ void ClickableTable::render(Rendering* r)
             style = Highlighted;
         line->render(r, maxarea, style, 2, 2);
         if(linescrolloffset>0 && index==toplineindex){
-            /* small hack: render line as rectangle here to ensure same integer rounding 
-            as for other rect renders */
+            /* small hack: render line as rectangle here to ensure same 
+            integer rounding as for other rect renders */
             ui->getuirendering().renderrectangle(r, {0,0,rect.w,0}, style);
         }
         UIRect textrect = line->getlocalrect();

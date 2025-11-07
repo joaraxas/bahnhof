@@ -171,11 +171,13 @@ void UIRendering::setuiscale(float newscale)
 SDL_Rect UIRendering::uitoscreen(UIRect uirect)
 {
     float scale = getuiscale();
+    // Computing the height and width as a difference ensures that (y+h)-y=h also for the
+    // SDL_Rect
     SDL_Rect screenrect = {
-        int(round(uirect.x*scale)), 
-        int(round(uirect.y*scale)), 
-        int(round(uirect.w*scale)), 
-        int(round(uirect.h*scale))
+        static_cast<int>(std::lround(uirect.x*scale)),
+        static_cast<int>(std::lround(uirect.y*scale)),
+        static_cast<int>(std::lround((uirect.x+uirect.w)*scale)-std::lround(uirect.x*scale)),
+        static_cast<int>(std::lround((uirect.y+uirect.h)*scale)-std::lround(uirect.y*scale))
     };
     return screenrect;
 }
@@ -183,11 +185,13 @@ SDL_Rect UIRendering::uitoscreen(UIRect uirect)
 UIRect UIRendering::screentoui(SDL_Rect screenrect)
 {
     float scale = getuiscale();
+    // Computing the height and width as a difference should ensures that (y+h)-y=h also 
+    // for the UIRect
     UIRect uirect = {
-        int(round(screenrect.x/scale)), 
-        int(round(screenrect.y/scale)), 
-        int(round(screenrect.w/scale)), 
-        int(round(screenrect.h/scale))
+        screenrect.x/scale,
+        screenrect.y/scale,
+        (screenrect.x+screenrect.w)/scale - screenrect.x/scale,
+        (screenrect.y+screenrect.h)/scale - screenrect.y/scale
     };
     return uirect;
 }

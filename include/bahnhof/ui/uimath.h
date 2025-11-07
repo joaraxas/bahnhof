@@ -24,6 +24,8 @@ public:
     bool operator>=(const Coord c) const {return value>=c.value;};
     bool operator==(const Coord c) const {return value==c.value;};
     bool operator!=(const Coord c) const {return value!=c.value;};
+
+    friend std::ostream& operator<<(std::ostream& o, Coord c) {return o<<c.value;};
 private:
     int value;
 };
