@@ -38,6 +38,11 @@ public:
         UIRect rectangle, 
         TextStyle style, 
         bool filled=false);
+    void renderline(
+        Rendering* r, 
+        UIVec start, 
+        UIVec end, 
+        TextStyle style);
     UIRect rendertext(
         Rendering*, 
         std::string, 

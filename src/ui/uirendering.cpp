@@ -48,6 +48,15 @@ void UIRendering::renderrectangle(
     }
 }
 
+
+void UIRendering::renderline(
+    Rendering* r, UIVec start, UIVec end, TextStyle style)
+{
+    SDL_Color color = getcolorfromstyle(style);
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    r->renderline(uitoscreen(start), uitoscreen(end), false);
+}
+
 SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
 {
     SDL_Color color;
@@ -217,26 +226,24 @@ void UIRendering::renderscaleruler(
     float uiscale = getuiscale();
 
     Coord textheight = 14;
-    SDL_Color c = getcolorfromstyle(UI::MapOverlay);
-    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
     Coord markersize = 2;
-	r->renderline(
-        uitoscreen(UIVec{leftx,lefty}), 
-        uitoscreen(UIVec{leftx+scalelinelength,lefty}), 
-        false
+	renderline(r,
+        {leftx, lefty}, 
+        {leftx+scalelinelength, lefty},
+        UI::MapOverlay
     );
-	r->renderline(
-        uitoscreen(UIVec(leftx,lefty-markersize)), 
-        uitoscreen(UIVec(leftx,lefty+markersize)), 
-        false
+	renderline(r,
+        {leftx, lefty-markersize}, 
+        {leftx, lefty+markersize}, 
+        UI::MapOverlay
     );
-	r->renderline(
-        uitoscreen(UIVec(leftx+scalelinelength,lefty-markersize)), 
-        uitoscreen(UIVec(leftx+scalelinelength,lefty+markersize)), 
-        false
+	renderline(r,
+        {leftx+scalelinelength, lefty-markersize}, 
+        {leftx+scalelinelength, lefty+markersize}, 
+        UI::MapOverlay
     );
     std::string scaletext = std::to_string(
-        int(round(scalelinelength*0.001*150/r->getcamscale()*uiscale))
+        iround(pixelstometers(scalelinelength) / r->getcamscale() * uiscale)
         ) + " m";
 	rendertext(r, 
         scaletext, 
