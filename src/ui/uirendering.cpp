@@ -119,19 +119,14 @@ UIRect UIRendering::gettextsize(
     std::string text, UIRect maxrect, Coord margin_x, Coord margin_y)
 {
     Coord maxtextuiwidth = maxrect.w - 2*margin_x;
-    SDL_Texture* tex = loadtext(
-        text, {0,0,0,255}, maxtextuiwidth*uiscale);
-    int textscreenwidth, textscreenheight;
-	SDL_QueryTexture(
-        tex, NULL, NULL, &textscreenwidth, &textscreenheight);
-	SDL_DestroyTexture(tex);
-    Coord textuiwidth = textscreenwidth/uiscale;
-    Coord textuiheight = textscreenheight/uiscale;
+    auto textsz = textsize(text, maxtextuiwidth*uiscale);
+    Coord textuiwidth = textsz.first/uiscale;
+    Coord textuiheight = textsz.second/uiscale;
     return UIRect{
-            maxrect.x, 
-            maxrect.y, 
-            textuiwidth+2*margin_x, 
-            textuiheight+2*margin_y
+        maxrect.x, 
+        maxrect.y, 
+        textuiwidth+2*margin_x, 
+        textuiheight+2*margin_y
     };
 }
 
