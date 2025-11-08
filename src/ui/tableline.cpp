@@ -46,8 +46,8 @@ void TrainTableLine::render(
     )
 {
     rect = maxarea;
-    Coord textpadding = 5;
-    Coord namerowwidth = 60;
+    Coord textpadding{5};
+    Coord namerowwidth{60};
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x = xmargin;
@@ -66,9 +66,13 @@ void TrainTableLine::render(
     rendertrainicons(r, *ui, info.wagoninfos, trainiconrect);
 }
 
-PurchaseOptionTableLine::PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost) : 
-    TableLine(p, t, name),
-    price(cost)
+PurchaseOptionTableLine::PurchaseOptionTableLine(
+    Host* p, 
+    Table* t, 
+    sprites::name iconname, 
+    std::string name, 
+    float cost
+    ) : TableLine(p, t, name), price(cost)
 {
     SpriteManager& sprites = game->getsprites();
     icon.setspritesheet(sprites, iconname);
@@ -103,23 +107,23 @@ void PurchaseOptionTableLine::render(
     pricerect.w = pricerowwidth;
     pricerect.y = namerect.y;
     pricerect = uiren.rendertext(
-                    r, 
-                    std::to_string(price)+" Fr", 
-                    pricerect, 
-                    style, 
-                    false, 
-                    textpadding, 
-                    rowoffset);
+        r, 
+        std::to_string(price)+" Fr", 
+        pricerect, 
+        style, 
+        false, 
+        textpadding, 
+        rowoffset);
     rect.h = std::max(
         std::max(namerect.h, pricerect.h), 
-            uiiconsize.y+2*rowoffset);
+        uiiconsize.y+2*rowoffset);
     UIRect uiiconrect = getlocalrect();
     uiiconrect.x += xmargin + textpadding;
     uiiconrect.y += rowoffset;
     SDL_Rect screeniconrect = uiren.uitoscreen(uiiconrect);
     icon.render(r, 
-                Vec(screeniconrect.x+screeniconsize.x*0.5, 
-                screeniconrect.y+screeniconsize.y*0.5)
+        Vec(screeniconrect.x+screeniconsize.x*0.5, 
+        screeniconrect.y+screeniconsize.y*0.5)
     );
 }
 

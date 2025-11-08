@@ -16,7 +16,8 @@ Text::Text(Host* p, std::string t, UIRect r) : Element(p), text(t)
 
 void Text::render(Rendering* r)
 {
-    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, margin_x, margin_y);
+    ui->getuirendering().rendertext(
+        r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
 EditableText::EditableText(Host* p, std::string& t, UIRect r) : 
@@ -24,7 +25,8 @@ EditableText::EditableText(Host* p, std::string& t, UIRect r) :
         textreference(t), 
         originalrect(r),
         shortenedtext(t) {
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
 };
 
 EditableText::~EditableText()
@@ -42,13 +44,18 @@ void EditableText::leftclick(UIVec mousepos)
 void EditableText::render(Rendering* r)
 {
     if(beingedited){
-        ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
+        ui->getuirendering().renderrectangle(
+            r, getglobalrect(), InvertedInfo, true);
         std::string textwithcursor = text;
         textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
-        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), Info, centered, margin_x, margin_y);
+        ui->getuirendering().rendertext(
+            r, textwithcursor, getglobalrect(), Info, 
+            centered, margin_x, margin_y);
     }
     else{
-        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, margin_x, margin_y);
+        ui->getuirendering().rendertext(
+            r, shortenedtext, getglobalrect(), style, centered, 
+            margin_x, margin_y);
     }
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
@@ -72,7 +79,8 @@ void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
     rect = originalrect;
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
 }
 
 void EditableText::deleteselection(){
@@ -98,7 +106,8 @@ void EditableText::movecursorright(){
 }
 
 void EditableText::updatewritingarea(){
-    UIRect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
+    UIRect textrect = ui->getuirendering().gettextsize(
+        text+"|", originalrect, margin_x, margin_y);
     rect.h = std::max(textrect.h, originalrect.h);
 }
 
@@ -106,13 +115,18 @@ void EditableText::updatewritingarea(){
 void TrainIcons::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
-    iconrects = rendertrainicons(r, *ui, traininfo.wagoninfos, getglobalrect(), rendersplitafterwagonid);
+    iconrects = rendertrainicons(
+        r, *ui, traininfo.wagoninfos, getglobalrect(), 
+        rendersplitafterwagonid);
     rendersplitafterwagonid = -1;
 }
 
 void TrainIcons::mousehover(UIVec pos, int ms)
 {
-    rendersplitafterwagonid = std::fmin(getwagonidatmousepos(pos), train.getinfo().wagoninfos.size()-2);
+    rendersplitafterwagonid = std::fmin(
+        getwagonidatmousepos(pos), 
+        train.getinfo().wagoninfos.size()-2
+    );
 }
 
 void TrainIcons::leftclick(UIVec mousepos)
