@@ -21,13 +21,16 @@ Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
 Panel::Panel(InterfaceManager* newui) : 
 	Panel::Panel(newui, {100,100,100,100}) {}
 
-template <class T, typename... Args> void Panel::createbutton(Args&&... args){
+template <class T, typename... Args> 
+Element* Panel::createbutton(Args&&... args)
+{
 	T* button = new T(
 		this, 
 		UIVec(margin_x, margin_y+yoffset), 
 		std::forward<Args>(args)...);
 	addelement(button);
-	yoffset += elementdistance_y + button->getlocalrect().h;
+	// yoffset += elementdistance_y + button->getlocalrect().h;
+	return button;
 }
 
 void Panel::render(Rendering* r)
@@ -40,22 +43,28 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	createbutton<PlaceTrack>();
-	createbutton<PlaceSignal>();
-	createbutton<PlaceBuildings>();
-	createbutton<ManageRoutes>();
-	createbutton<ManageTrains>();
-	createbutton<IncreaseUIScale>();
-	createbutton<DecreaseUIScale>();
-	rect = {0,0,180,yoffset + 2*margin_y};
+	Layout* l = new Layout(this);
+	addelement(l);
+	Layout* layout = new Layout(this);
+	l->addelement(addelement(layout));
+	layout->addelement(createbutton<PlaceTrack>());
+	layout->addelement(createbutton<PlaceSignal>());
+	layout->addelement(createbutton<PlaceBuildings>());
+	layout->addelement(createbutton<ManageRoutes>());
+	layout->addelement(createbutton<ManageTrains>());
+	layout->addelement(createbutton<IncreaseUIScale>());
+	layout->addelement(createbutton<DecreaseUIScale>());
+	layout->organize();
 
 	UIRect tablerect = {
-		margin_x+80+elementdistance_x, 
-		margin_y, 
-		getlocalrect().w-80-elementdistance_x-2*margin_x, 
-		getlocalrect().h-2*margin_y
+		0, 
+		0, 
+		60, 
+		100
 	};
-	addelement(new MainInfoTable(this, tablerect));
+	l->addelement(addelement(new MainInfoTable(this, tablerect)));
+	l->organize();
+	rect = l->getlocalrect();
 }
 
 MainPanel::~MainPanel()

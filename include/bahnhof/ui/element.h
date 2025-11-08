@@ -24,11 +24,24 @@ public:
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
     UIRect getlocalrect();
+    virtual void place(UIRect r);
 protected:
     Host* panel;
     UIRect rect = {0,0,100,100};
     InterfaceManager* ui;
     Game* game;
+};
+
+class Layout : public Element
+{
+public:
+    Layout(Host* h) : Element(h) {};
+    bool checkclick(UIVec pos) {return false;};
+    virtual Element* addelement(Element* el);
+    virtual void organize();
+    void render(Rendering* r) {};
+private:
+    std::vector<Element*> elements;
 };
 
 } // namespace UI

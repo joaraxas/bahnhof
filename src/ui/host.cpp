@@ -132,8 +132,9 @@ void Host::mousepress(UIVec pos, int mslogic, int type)
 	}
 }
 
-void Host::addelement(Element* element){
+Element* Host::addelement(Element* element){
 	elements.emplace_back(element);
+	return element;
 }
 
 void Host::moveto(UIVec towhattopcorner){

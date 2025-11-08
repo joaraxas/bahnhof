@@ -25,7 +25,7 @@ public:
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
-    template <class T, typename... Args> void createbutton(Args&&... args);
+    template <class T, typename... Args> Element* createbutton(Args&&... args);
     static constexpr Coord margin_x = 15;
     static constexpr Coord margin_y = 10;
     Coord yoffset = 0;

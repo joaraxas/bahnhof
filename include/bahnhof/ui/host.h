@@ -34,7 +34,7 @@ public:
     void mousepress(UIVec pos, int mslogic, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
-    void addelement(Element*);
+    Element* addelement(Element*);
     void moveto(UIVec towhattopcorner);
     virtual void erase();
     InterfaceManager& getui();
