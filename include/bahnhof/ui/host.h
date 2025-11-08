@@ -36,7 +36,7 @@ public:
     virtual void update(int ms);
     virtual void render(Rendering*);
     void addelement(Element*);
-    void move(UIVec towhattopcorner);
+    void moveto(UIVec towhattopcorner);
     virtual void erase();
     InterfaceManager& getui();
     UIRect getglobalrect();

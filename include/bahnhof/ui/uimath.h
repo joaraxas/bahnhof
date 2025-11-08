@@ -3,11 +3,20 @@
 
 namespace UI{
 
+inline int iround(double d) {
+    long l = std::lround(d);
+    if(l>std::numeric_limits<int>::max())
+        l = std::numeric_limits<int>::max();
+    if(l<std::numeric_limits<int>::min())
+        l = std::numeric_limits<int>::min();
+    return static_cast<int>(l);
+}
+
 class Coord{
 public:
     constexpr Coord() {Coord{0};};
     constexpr Coord(int v) : value{v} {};
-    constexpr Coord(double v) : value{static_cast<int>(std::lround(v))} {};
+    constexpr Coord(double v) : value{iround(v)} {};
 
     Coord operator*=(const int v) {value*=v; return *this;};
     Coord operator+=(const Coord v) {value+=v.value; return *this;};

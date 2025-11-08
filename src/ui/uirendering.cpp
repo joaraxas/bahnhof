@@ -174,10 +174,10 @@ SDL_Rect UIRendering::uitoscreen(UIRect uirect)
     // Computing the height and width as a difference ensures that (y+h)-y=h also for the
     // SDL_Rect
     SDL_Rect screenrect = {
-        static_cast<int>(std::lround(uirect.x*scale)),
-        static_cast<int>(std::lround(uirect.y*scale)),
-        static_cast<int>(std::lround((uirect.x+uirect.w)*scale)-std::lround(uirect.x*scale)),
-        static_cast<int>(std::lround((uirect.y+uirect.h)*scale)-std::lround(uirect.y*scale))
+        iround(uirect.x*scale),
+        iround(uirect.y*scale),
+        iround((uirect.x+uirect.w)*scale)-iround(uirect.x*scale),
+        iround((uirect.y+uirect.h)*scale)-iround(uirect.y*scale)
     };
     return screenrect;
 }

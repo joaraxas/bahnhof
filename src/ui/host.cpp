@@ -140,7 +140,7 @@ void Host::addelement(Element* element){
 	elements.emplace_back(element);
 }
 
-void Host::move(UIVec towhattopcorner){
+void Host::moveto(UIVec towhattopcorner){
 	rect.x = towhattopcorner.x;
 	rect.y = towhattopcorner.y;
 }

@@ -139,7 +139,7 @@ bool InterfaceManager::leftpressed(Vec mousepos, int mslogic)
         pressedpanel->mousepress(uimpos, mslogic, SDL_BUTTON_LEFT);
     }
     if(movingwindow){
-        movingwindow->move(uimpos - movingwindowoffset);
+        movingwindow->moveto(uimpos - movingwindowoffset);
         return true;
     }
     return false;
