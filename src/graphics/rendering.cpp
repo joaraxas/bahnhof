@@ -25,6 +25,11 @@ Rendering::Rendering(Game* whatgame, Camera* whatcam)
 	fieldtex = loadimage("backgrounds/field.png");
 }
 
+Rendering::~Rendering()
+{
+    SDL_DestroyTexture(fieldtex);
+}
+
 void Rendering::render(Gamestate* gamestate)
 {
 	Tracks::Tracksystem& tracksystem = gamestate->gettracksystems();

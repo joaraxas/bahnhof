@@ -15,7 +15,6 @@ namespace UI{
 	
 Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
 {
-    ui->addpanel(this);
 	createbutton<Close>();
 }
 

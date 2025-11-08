@@ -39,6 +39,7 @@ Host::Host(InterfaceManager* newui, UIRect newrect) :
 	rect{newrect}
 {
     ui = newui;
+	ui->addpanel(this);
     game = &ui->getgame();
 }
 

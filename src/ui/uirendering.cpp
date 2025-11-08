@@ -13,7 +13,7 @@ UIRendering::UIRendering(InterfaceManager& newui) : ui(newui)
 void UIRendering::rendertexture(
     Rendering* r, 
     SDL_Texture* tex, 
-    UIRect* rect, 
+    UIRect rect, 
     SDL_Rect* srcrect, 
     Angle angle, 
     bool ported, 
@@ -21,7 +21,7 @@ void UIRendering::rendertexture(
     int centerx, 
     int centery)
 {
-    SDL_Rect screenrect = uitoscreen(*rect);
+    SDL_Rect screenrect = uitoscreen(rect);
     r->rendertexture(
         tex, 
         &screenrect, 
@@ -141,7 +141,7 @@ std::string UIRendering::croptexttowidth(
     maxwidth -= 2*margin_x;
     int maxwidthint = round(maxwidth*uiscale);
     int ncharactersfitting;
-    TTF_MeasureText(font, text.c_str(), maxwidthint, NULL, &ncharactersfitting);
+    TTF_MeasureUTF8(font, text.c_str(), maxwidthint, NULL, &ncharactersfitting);
 
     if(ncharactersfitting>=text.size())
         return text;

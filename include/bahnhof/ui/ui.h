@@ -26,7 +26,7 @@ public:
     void rendertexture(
         Rendering* r, 
         SDL_Texture* tex, 
-        UIRect* rect, 
+        UIRect rect, 
         SDL_Rect* srcrect=nullptr, 
         Angle angle=Angle::zero, 
         bool ported=false, 

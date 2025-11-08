@@ -66,8 +66,7 @@ void Table::render(Rendering* r)
 
     SDL_SetTextureAlphaMod(tablerendertarget, 255);
 	SDL_SetRenderTarget(renderer, NULL);
-    UIRect global = getglobalrect();
-    ui->getuirendering().rendertexture(r, tablerendertarget, &global);
+    ui->getuirendering().rendertexture(r, tablerendertarget, getglobalrect());
     SDL_DestroyTexture(tablerendertarget);
 }
 
@@ -163,8 +162,7 @@ void ClickableTable::render(Rendering* r)
 
     SDL_SetTextureAlphaMod(tablerendertarget, 255);
 	SDL_SetRenderTarget(renderer, NULL);
-    UIRect global = getglobalrect();
-    ui->getuirendering().rendertexture(r, tablerendertarget, &global);
+    ui->getuirendering().rendertexture(r, tablerendertarget, getglobalrect());
     SDL_DestroyTexture(tablerendertarget);
 }
 

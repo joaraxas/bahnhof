@@ -25,6 +25,7 @@ class Rendering
 {
 public:
     Rendering(Game* whatgame, Camera* whatcam);
+    ~Rendering();
     void render(Gamestate* gamestate);
     SDL_Rect rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
     SDL_Rect rendercenteredtext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
