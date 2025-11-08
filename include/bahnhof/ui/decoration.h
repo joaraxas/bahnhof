@@ -1,6 +1,7 @@
 #pragma once
-#include "bahnhof/common/math.h"
-#include "bahnhof/ui/ui.h"
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/element.h"
+#include "bahnhof/ui/uistyle.h"
 
 class Rendering;
 class Train;
@@ -12,22 +13,22 @@ namespace UI{
 class Text : public Element
 {
 public:
-    Text(Host* p, std::string t, SDL_Rect r);
+    Text(Host* p, std::string t, UIRect r);
     void render(Rendering*);
     std::string text;
     SDL_Color color = {0,0,0,255};
     bool centered = true;
     TextStyle style = Info;
-    static constexpr int margin_x = 2;
-    static constexpr int margin_y = 1;
+    static constexpr Coord margin_x = 2;
+    static constexpr Coord margin_y = 1;
 };
 
 class EditableText : public Text
 {
 public:
-    EditableText(Host* p, std::string& t, SDL_Rect r);
+    EditableText(Host* p, std::string& t, UIRect r);
     ~EditableText();
-    void leftclick(Vec mousepos);
+    void leftclick(UIVec mousepos);
     void render(Rendering*);
     void updatesource();
     void startwriting();
@@ -45,23 +46,26 @@ private:
     std::string shortenedtext;
     bool beingedited;
     int cursorindex;
-    SDL_Rect originalrect;
+    UIRect originalrect;
 };
 
 class TrainIcons : public Element
 {
 public:
-    TrainIcons(Host* p, SDL_Rect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
+    TrainIcons(Host* p, UIRect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
-    void mousehover(Vec pos, int ms);
-    void leftclick(Vec mousepos);
+    void mousehover(UIVec pos, int ms);
+    void leftclick(UIVec mousepos);
 private:
-    int getwagonidatmousepos(Vec mousepos);
+    int getwagonidatmousepos(UIVec mousepos);
     Train& train;
-    std::vector<SDL_Rect> iconrects;
+    std::vector<UIRect> iconrects;
     int rendersplitafterwagonid = -1;
 };
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo>& wagoninfos, SDL_Rect rect, int splitid=-1);
+std::vector<UIRect> rendertrainicons(
+    Rendering* r, InterfaceManager& ui, 
+    std::vector<WagonInfo>& wagoninfos, UIRect rect, 
+    int splitid=-1);
 
 }

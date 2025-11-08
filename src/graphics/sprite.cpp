@@ -59,3 +59,16 @@ void Icon::render(Rendering* r, Vec pos)
 	imagescale = r->getgame().getui().getuirendering().getuiscale();
 	Sprite::render(r, pos);
 }
+
+void Icon::render(Rendering* r, UI::UIRect rect)
+{
+	auto uiren = r->getgame().getui().getuirendering();
+	UI::UIVec centerpos = rect.mid();
+	render(r, uiren.uitoscreen(centerpos));
+}
+
+UI::UIVec Icon::getuisize(UIRendering& uiren)
+{
+	Vec sheetsize = Sprite::getsize();
+	return uiren.screentoui(sheetsize);
+}

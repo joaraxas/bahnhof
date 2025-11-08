@@ -1,5 +1,5 @@
 #pragma once
-#include<map>
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
@@ -23,6 +23,11 @@ Rendering::Rendering(Game* whatgame, Camera* whatcam)
 	game = whatgame;
 	cam = whatcam;
 	fieldtex = loadimage("backgrounds/field.png");
+}
+
+Rendering::~Rendering()
+{
+    SDL_DestroyTexture(fieldtex);
 }
 
 void Rendering::render(Gamestate* gamestate)

@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/common/math.h"
-#include "bahnhof/ui/ui.h"
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/host.h"
 
 class Game;
 class Gamestate;
@@ -18,31 +18,19 @@ class Dropdown;
 class RouteListPanel;
 class Text;
 
-class Ownership
-{
-public:
-    ~Ownership();
-    void set(Host* newhost);
-    bool exists();
-    void deletereference();
-    void resetreference();
-private:
-    Host* host = nullptr;
-};
-
 class Panel : public Host
 {
 public:
-    Panel(InterfaceManager* newui, SDL_Rect newrect); //TODO: Maybe get rid of this and always handle rect setting in each panel ctor
+    Panel(InterfaceManager* newui, UIRect newrect); //TODO: Maybe get rid of this and always handle rect setting in each panel ctor
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
     template <class T, typename... Args> void createbutton(Args&&... args);
-    static constexpr int margin_x = 15;
-    static constexpr int margin_y = 10;
-    int yoffset = 0;
-    static constexpr int elementdistance_x = 15;
-    static constexpr int elementdistance_y = 5;
+    static constexpr Coord margin_x = 15;
+    static constexpr Coord margin_y = 10;
+    Coord yoffset = 0;
+    static constexpr Coord elementdistance_x = 15;
+    static constexpr Coord elementdistance_y = 5;
 };
 
 class MainPanel : public Panel
@@ -55,7 +43,7 @@ public:
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid);
+    RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid);
     ~RoutePanel();
     void erase();
 private:
@@ -65,7 +53,7 @@ private:
 class RouteListPanel : public Panel
 {
 public:
-    RouteListPanel(InterfaceManager* newui, SDL_Rect newrect);
+    RouteListPanel(InterfaceManager* newui, UIRect newrect);
     ~RouteListPanel();
     void erase();
     void addroutepanel(int routeindex);
@@ -83,7 +71,7 @@ public:
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain);
+    TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain);
     ~TrainPanel();
     Train& gettrain() {return train;};
 private:
@@ -94,7 +82,7 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect);
+    BuildingConstructionPanel(InterfaceManager* newui, UIRect);
     ~BuildingConstructionPanel();
     void erase() override;
 };

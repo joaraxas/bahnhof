@@ -71,34 +71,48 @@ void Storage::render(Rendering* r)
 {
 	ResourceManager& allresources = game->getresources();
 	InterfaceManager& ui = allresources.getgame().getui();
+
 	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
 	r->renderrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	
 	int xoffset = 0;
 	int nCols = 0;
-	float camscale = r->getcamscale();
-	float uiscale = ui.getuirendering().getuiscale();
-	int iconwidth = 20*uiscale/camscale;
-	int frameoffset = fmax(1,int(2*uiscale/camscale));
+	const float camscale = r->getcamscale();
+	const float uiscale = ui.getuirendering().getuiscale();
+	const int iconwidth = 20*uiscale/camscale;
+	const int frameoffset = fmax(1,int(2*uiscale/camscale));
+
 	for(auto resourcepair : storedresources){
 		Resource* resource = allresources.get(resourcepair.first);
 		int amount = resourcepair.second;
-		if(amount*iconwidth*iconwidth<rect.w*rect.h*0.6){
+		if(amount*iconwidth*iconwidth < rect.w*rect.h*0.6){
 			int maxrows = floor(rect.h/iconwidth);
 			for(int i=0; i<amount; i++){
 				nCols = floor(i/maxrows);
-				int y = frameoffset+rect.y+iconwidth/2+iconwidth*i-nCols*maxrows*iconwidth;
-				int x = frameoffset+xoffset+rect.x+iconwidth/2+iconwidth*nCols;
+				int x = rect.x +
+						frameoffset +
+						xoffset +
+						iconwidth/2 +
+						iconwidth*nCols;
+				int y = rect.y +
+						frameoffset +
+						iconwidth/2 +
+						iconwidth*i -
+						nCols*maxrows*iconwidth;
 				resource->render(r, Vec(x, y));
 			}
 			xoffset += (1+nCols)*iconwidth;
 		}
 		else{
-			int y = rect.y+frameoffset;
-			int x = rect.x+frameoffset+xoffset;
+			int x = rect.x + frameoffset + xoffset;
+			int y = rect.y + frameoffset;
 			SDL_Rect textrect = r->rendertext(std::to_string(amount), x, y);
 			int textwidth = textrect.w/camscale;
-			resource->render(r, Vec(x+textwidth+iconwidth/2, y+iconwidth/2));
+			resource->render(r, 
+							 Vec(x + textwidth + iconwidth/2, 
+							 	 y + iconwidth/2)
+			);
 			xoffset += textwidth+iconwidth;
 		}
 	}
@@ -113,7 +127,7 @@ int Storage::loadstorage(resourcetype resource, int amount)
 {
 	if(resource!=none){
 		if(storedresources.count(resource)){
-			amount = fmin(amount, 20-storedresources[resource]);
+			amount = std::min(amount, 20-storedresources[resource]);
 			storedresources[resource] += amount;
 		}
 		else
@@ -128,7 +142,7 @@ int Storage::unloadstorage(resourcetype resource, int amount)
 {
 	int unloadedamount = 0;
 	if(storedresources.count(resource)){
-		unloadedamount = fmin(storedresources[resource], amount);
+		unloadedamount = std::min(storedresources[resource], amount);
 		storedresources[resource] -= unloadedamount;
 		if(storedresources[resource] == 0)
 			storedresources.erase(resource);

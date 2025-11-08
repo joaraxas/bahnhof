@@ -91,6 +91,20 @@ SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 	return tex;	
 }
 
+std::pair<int,int> textsize(std::string text, int maxwidth)
+{
+	SDL_Surface* surf = nullptr;
+	surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), {0, 0, 0, 0}, maxwidth);
+	if(!surf){
+		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
+		return {0,0};	
+	}
+	int w = surf->w;
+	int h = surf->h;
+	SDL_FreeSurface(surf);
+	return {w, h};
+}
+
 void close()
 {
 	SDL_DestroyRenderer(renderer);

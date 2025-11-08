@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/ui/ui.h"
-#include "bahnhof/common/math.h"
+#include "bahnhof/ui/element.h"
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/buildings/buildingtypes.h"
 
@@ -20,9 +20,9 @@ class TableLine;
 class Table : public Element
 {
 public:
-    Table(Host*, SDL_Rect newrect);
+    Table(Host*, UIRect newrect);
     virtual ~Table();
-    bool checkclick(Vec pos);
+    bool checkclick(UIVec pos);
     virtual void render(Rendering*);
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
@@ -31,23 +31,23 @@ protected:
 class ClickableTable : public Table
 {
 public:
-    ClickableTable(Host* h, SDL_Rect r) : Table(h, r) {};
-    void leftclick(Vec pos);
-    void scroll(Vec pos, int distance);
+    ClickableTable(Host* h, UIRect r) : Table(h, r) {};
+    void leftclick(UIVec pos);
+    void scroll(UIVec pos, int distance);
     virtual void render(Rendering*);
 protected:
     virtual void lineclicked(int index) {selectedlineindex = index;};
     int selectedlineindex = -1;
 private:
-    int getlineindexat(Vec pos);
+    int getlineindexat(UIVec pos);
     int toplineindex = 0;
-    int linescrolloffset = 0;
+    Coord linescrolloffset = 0;
 };
 
 class Dropdown : public ClickableTable
 {
 public:
-    Dropdown(Host* p, SDL_Rect r);
+    Dropdown(Host* p, UIRect r);
     virtual void update(int ms) {};
     void render(Rendering* r);
 };
@@ -55,7 +55,7 @@ public:
 class RouteDropdown : public Dropdown
 {
 public:
-    RouteDropdown(Host* p, SDL_Rect r);
+    RouteDropdown(Host* p, UIRect r);
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -67,14 +67,14 @@ private:
 class MainInfoTable : public Table
 {
 public:
-    MainInfoTable(Host*, SDL_Rect newrect);
+    MainInfoTable(Host*, UIRect newrect);
     void update(int ms);
 };
 
 class RouteTable : public ClickableTable
 {
 public:
-    RouteTable(Host* p, SDL_Rect r);
+    RouteTable(Host* p, UIRect r);
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -86,7 +86,8 @@ private:
 class OrderTable : public ClickableTable
 {
 public:
-    OrderTable(Host* newpanel, SDL_Rect newrect, Route* myroute) : ClickableTable(newpanel, newrect), route(myroute) {};
+    OrderTable(Host* newpanel, UIRect newrect, Route* myroute) : 
+        ClickableTable(newpanel, newrect), route(myroute) {};
     virtual void update(int ms);
     void render(Rendering* r);
 protected:
@@ -100,7 +101,8 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Host* p, SDL_Rect r, Train& t) : OrderTable(p, r, nullptr), train(t) {};
+    TrainOrderTable(Host* p, UIRect r, Train& t) : 
+        OrderTable(p, r, nullptr), train(t) {};
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -110,7 +112,7 @@ private:
 class TrainTable : public ClickableTable
 {
 public:
-    TrainTable(Host*, SDL_Rect newrect);
+    TrainTable(Host*, UIRect newrect);
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -121,7 +123,7 @@ private:
 class TrainInfoTable : public Table
 {
 public:
-    TrainInfoTable(Host* p, SDL_Rect r, Train& t): Table(p, r), train(t) {};
+    TrainInfoTable(Host* p, UIRect r, Train& t): Table(p, r), train(t) {};
     void update(int ms);
 private:
     Train& train;
@@ -130,7 +132,7 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, SDL_Rect r);
+    ConstructionTable(Host* p, UIRect r);
 private:
     void lineclicked(int index);
     InputManager& input;
@@ -140,7 +142,7 @@ private:
 class WagonTable : public ClickableTable
 {
 public:
-    WagonTable(Host* p, SDL_Rect r, WagonFactory& f);
+    WagonTable(Host* p, UIRect r, WagonFactory& f);
 private:
     void lineclicked(int index);
     InputManager& input;

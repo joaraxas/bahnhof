@@ -1,7 +1,7 @@
 #pragma once
-#include "bahnhof/ui/ui.h"
-#include "bahnhof/common/math.h"
+#include "bahnhof/ui/element.h"
 #include "bahnhof/rollingstock/trainmanager.h"
+#include "bahnhof/ui/uistyle.h"
 
 class Game;
 class Gamestate;
@@ -18,9 +18,9 @@ class TableLine : public Element
 public:
     TableLine(Host*, Table*, std::string);
     virtual ~TableLine() {};
-    SDL_Rect getglobalrect();
-    virtual void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
-    virtual void render(Rendering* r, SDL_Rect maxarea) {render(r, maxarea, Info, 1, 1);};
+    UIRect getglobalrect();
+    virtual void render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin);
+    virtual void render(Rendering* r, UIRect maxarea) {render(r, maxarea, Info, 1, 1);};
     void render(Rendering* r) {};
 protected:
     Table* table;
@@ -31,7 +31,7 @@ class TrainTableLine : public TableLine
 {
 public:
     TrainTableLine(Host*, Table*, TrainInfo);
-    void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
+    void render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin);
 private:
     TrainInfo info;
 };
@@ -40,7 +40,7 @@ class PurchaseOptionTableLine : public TableLine
 {
 public:
     PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost);
-    void render(Rendering* r, SDL_Rect maxarea, TextStyle style, int xmargin, int ymargin);
+    void render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin);
 private:
     Icon icon;
     int price;

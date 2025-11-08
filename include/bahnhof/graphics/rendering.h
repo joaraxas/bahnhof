@@ -1,7 +1,4 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/orientation.h"
 
@@ -25,6 +22,7 @@ class Rendering
 {
 public:
     Rendering(Game* whatgame, Camera* whatcam);
+    ~Rendering();
     void render(Gamestate* gamestate);
     SDL_Rect rendertext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);
     SDL_Rect rendercenteredtext(std::string text, int x, int y, SDL_Color color={0,0,0,255}, bool ported=true, bool zoomed=false, int maxwidth=0);

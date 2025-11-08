@@ -1,6 +1,6 @@
 #pragma once
-#include "bahnhof/common/math.h"
-#include "bahnhof/ui/ui.h"
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/element.h"
 
 class Game;
 class Gamestate;
@@ -13,9 +13,9 @@ namespace UI{
 class Button : public Element
 {
 public:
-    Button(Host*, Vec newpos);
+    Button(Host*, UIVec newpos);
     virtual ~Button() {};
-    void mousehover(Vec pos, int ms);
+    void mousehover(UIVec pos, int ms);
     virtual void render(Rendering*);
 private:
     bool highlighted = false;
@@ -24,114 +24,128 @@ private:
 class TextButton : public Button
 {
 public:
-    TextButton(Host*, Vec newpos, std::string text, int width=80);
+    TextButton(Host*, UIVec newpos, std::string text, Coord width=80);
     virtual ~TextButton() {};
     virtual void render(Rendering*);
 protected:
     std::string text;
-    static constexpr int mintextoffset_x = 6;
-    static constexpr int mintextoffset_y = 4;
+    static constexpr Coord mintextoffset_x{6};
+    static constexpr Coord mintextoffset_y{4};
 };
 
 class Close : public TextButton
 {
 public:
-    Close(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Close") {};
-    void leftclick(Vec mousepos);
+    Close(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Close") {};
+    void leftclick(UIVec mousepos);
 };
 
 class PlaceSignal : public TextButton
 {
 public:
-    PlaceSignal(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build signal") {};
-    void leftclick(Vec mousepos);
+    PlaceSignal(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Build signal") {};
+    void leftclick(UIVec mousepos);
 };
 
 class PlaceTrack : public TextButton
 {
 public:
-    PlaceTrack(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Build track") {};
-    void leftclick(Vec mousepos);
+    PlaceTrack(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Build track") {};
+    void leftclick(UIVec mousepos);
 };
 
 class PlaceBuildings : public TextButton
 {
 public:
-    PlaceBuildings(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Raise building") {};
-    void leftclick(Vec mousepos);
+    PlaceBuildings(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Raise building") {};
+    void leftclick(UIVec mousepos);
 };
 
 class ManageRoutes : public TextButton
 {
 public:
-    ManageRoutes(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage routes") {};
-    void leftclick(Vec mousepos);
+    ManageRoutes(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Manage routes") {};
+    void leftclick(UIVec mousepos);
 };
 
 class ManageTrains : public TextButton
 {
 public:
-    ManageTrains(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Manage trains") {};
-    void leftclick(Vec mousepos);
+    ManageTrains(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Manage trains") {};
+    void leftclick(UIVec mousepos);
 };
 
 class IncreaseUIScale : public TextButton
 {
 public:
-    IncreaseUIScale(Host* p, Vec pos) : TextButton(p, pos, "Increase UI size") {};
-    void leftclick(Vec mousepos);
+    IncreaseUIScale(Host* p, UIVec pos) : 
+        TextButton(p, pos, "Increase UI size") {};
+    void leftclick(UIVec mousepos);
 };
 
 class DecreaseUIScale : public TextButton
 {
 public:
-    DecreaseUIScale(Host* p, Vec pos) : TextButton(p, pos, "Decrease UI size") {};
-    void leftclick(Vec mousepos);
+    DecreaseUIScale(Host* p, UIVec pos) : 
+        TextButton(p, pos, "Decrease UI size") {};
+    void leftclick(UIVec mousepos);
 };
 
 class SetRoute : public TextButton
 {
 public:
-    SetRoute(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "No route set") {};
+    SetRoute(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "No route set") {};
     void update(int ms);
-    void leftclick(Vec mousepos);
+    void leftclick(UIVec mousepos);
 };
 
 class GoTrain : public TextButton
 {
 public:
-    GoTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Start route") {};
+    GoTrain(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Start route") {};
     void update(int ms);
-    void leftclick(Vec mousepos);
+    void leftclick(UIVec mousepos);
 };
 
 class GasTrain : public TextButton
 {
 public:
-    GasTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Gas") {};
-    void leftpressed(Vec mousepos, int mslogic);
+    GasTrain(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Gas") {};
+    void leftpressed(UIVec mousepos, int mslogic);
 };
 
 class BrakeTrain : public TextButton
 {
 public:
-    BrakeTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Brake") {};
-    void leftpressed(Vec mousepos, int mslogic);
+    BrakeTrain(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Brake") {};
+    void leftpressed(UIVec mousepos, int mslogic);
 };
 
 class TurnTrain : public TextButton
 {
 public:
-    TurnTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Reverse") {};
-    void leftclick(Vec mousepos);
+    TurnTrain(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Reverse") {};
+    void leftclick(UIVec mousepos);
 };
 
 class CoupleTrain : public TextButton
 {
 public:
-    CoupleTrain(Host* newpanel, Vec newpos) : TextButton(newpanel, newpos, "Accept coupling") {};
+    CoupleTrain(Host* newpanel, UIVec newpos) : 
+        TextButton(newpanel, newpos, "Accept coupling") {};
     void update(int ms);
-    void leftclick(Vec mousepos);
+    void leftclick(UIVec mousepos);
 };
 
 
@@ -141,9 +155,9 @@ namespace Routing
 class AddOrder : public TextButton
 {
 public:
-    AddOrder(Host* newpanel, Vec newpos, Route* whatroute, std::string text) : 
-                            TextButton(newpanel, newpos, text, 120),
-                            route(whatroute) {}
+    AddOrder(Host* newpanel, UIVec newpos, Route* whatroute, std::string text) : 
+        TextButton(newpanel, newpos, text, 120),
+        route(whatroute) {}
 protected:
     Route* route;
 };
@@ -151,36 +165,41 @@ protected:
 class AddTurn : public AddOrder
 {
 public:
-    AddTurn(Host* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
-    void leftclick(Vec mousepos);
+    AddTurn(Host* newpanel, UIVec newpos, Route* whatroute) : 
+        AddOrder(newpanel, newpos, whatroute, "Reverse direction") {}
+    void leftclick(UIVec mousepos);
 };
 
 class AddCouple : public AddOrder
 {
 public:
-    AddCouple(Host* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Couple") {};
-    void leftclick(Vec mousepos);
+    AddCouple(Host* newpanel, UIVec newpos, Route* whatroute) : 
+        AddOrder(newpanel, newpos, whatroute, "Couple") {};
+    void leftclick(UIVec mousepos);
 };
 
 class AddDecouple : public AddOrder
 {
 public:
-    AddDecouple(Host* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Decouple") {};
-    void leftclick(Vec mousepos);
+    AddDecouple(Host* newpanel, UIVec newpos, Route* whatroute) : 
+        AddOrder(newpanel, newpos, whatroute, "Decouple") {};
+    void leftclick(UIVec mousepos);
 };
 
 class AddLoadResource : public AddOrder
 {
 public:
-    AddLoadResource(Host* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Load resource") {};
-    void leftclick(Vec mousepos);
+    AddLoadResource(Host* newpanel, UIVec newpos, Route* whatroute) : 
+        AddOrder(newpanel, newpos, whatroute, "Load resource") {};
+    void leftclick(UIVec mousepos);
 };
 
 class RemoveOrder : public AddOrder
 {
 public:
-    RemoveOrder(Host* newpanel, Vec newpos, Route* whatroute) : AddOrder(newpanel, newpos, whatroute, "Remove selected") {};
-    void leftclick(Vec mousepos);
+    RemoveOrder(Host* newpanel, UIVec newpos, Route* whatroute) : 
+        AddOrder(newpanel, newpos, whatroute, "Remove selected") {};
+    void leftclick(UIVec mousepos);
 };
 
 } //namespace Routing

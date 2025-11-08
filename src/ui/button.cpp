@@ -11,86 +11,96 @@
 
 namespace UI{
 
-Button::Button(Host* newpanel, Vec newpos) : Element(newpanel)
+Button::Button(Host* newpanel, UIVec newpos) : Element(newpanel)
 {
-    rect = {int(newpos.x), int(newpos.y), 100, 40};
+    rect = {newpos.x, newpos.y, 100, 40};
 }
 
-void Button::mousehover(Vec pos, int ms)
+void Button::mousehover(UIVec pos, int ms)
 {
     highlighted = true;
 }
 
 void Button::render(Rendering* r)
 {
-    int i = highlighted*127;
-    SDL_SetRenderDrawColor(renderer,i,i,i,255);
-    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+    TextStyle style = UI::Info;
+    if(highlighted)
+        style = UI::InvertedHighlighted;
+    ui->getuirendering().renderrectangle(r, getglobalrect(), style, true);
     highlighted = false;
 }
 
-TextButton::TextButton(Host* newpanel, Vec newpos, std::string newtext, int width) : Button(newpanel, newpos)
+TextButton::TextButton(Host* newpanel, 
+    UIVec newpos, 
+    std::string newtext, 
+    Coord width
+) : Button(newpanel, newpos)
 {
     text = newtext;
     rect.w = width;
     rect.h = 20;
-    SDL_Rect paddedtextrect = ui->getuirendering().gettextsize(text, rect, mintextoffset_x, mintextoffset_y);
-    rect.h = fmax(rect.h, paddedtextrect.h);
+    UIRect paddedtextrect = ui->getuirendering().gettextsize(
+        text, rect, mintextoffset_x, mintextoffset_y);
+    rect.h = std::max(rect.h, paddedtextrect.h);
 }
 
 void TextButton::render(Rendering* r)
 {
     Button::render(r);
-    ui->getuirendering().rendertext(r, text, getglobalrect(), InvertedInfo, true, mintextoffset_x, mintextoffset_y);
+    ui->getuirendering().rendertext(
+        r, text, getglobalrect(), InvertedInfo, true, 
+        mintextoffset_x, mintextoffset_y);
 }
 
-void Close::leftclick(Vec mousepos)
+void Close::leftclick(UIVec mousepos)
 {
     panel->erase();
 }
 
-void PlaceSignal::leftclick(Vec mousepos)
+void PlaceSignal::leftclick(UIVec mousepos)
 {
     game->getinputmanager().placesignal();
 }
 
-void PlaceTrack::leftclick(Vec mousepos)
+void PlaceTrack::leftclick(UIVec mousepos)
 {
     game->getinputmanager().placetrack();
 }
 
-void PlaceBuildings::leftclick(Vec mousepos)
+void PlaceBuildings::leftclick(UIVec mousepos)
 {
     new BuildingConstructionPanel(ui, {180,0,300,200});
 }
 
-void ManageRoutes::leftclick(Vec mousepos)
+void ManageRoutes::leftclick(UIVec mousepos)
 {
-    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
-    SDL_Rect routepanelrect = {int(viewsize.x)-200,0,200,int(viewsize.y)};
+    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
+    UIRect routepanelrect = {viewsize.x-200,0,200,viewsize.y};
     new RouteListPanel(ui, routepanelrect);
 }
 
-void ManageTrains::leftclick(Vec mousepos)
+void ManageTrains::leftclick(UIVec mousepos)
 {
     new TrainListPanel(ui);
 }
 
-void IncreaseUIScale::leftclick(Vec mousepos)
+void IncreaseUIScale::leftclick(UIVec mousepos)
 {
     ui->getuirendering().increaseuiscale();
 }
 
-void DecreaseUIScale::leftclick(Vec mousepos)
+void DecreaseUIScale::leftclick(UIVec mousepos)
 {
     ui->getuirendering().decreaseuiscale();
 }
 
-void SetRoute::leftclick(Vec mousepos)
+void SetRoute::leftclick(UIVec mousepos)
 {
-    SDL_Rect panelrect = panel->getlocalrect();
-    Vec uimousepos = ui->getuirendering().screentoui(mousepos);
-    SDL_Rect tablerect = {int(uimousepos.x-panelrect.x), int(uimousepos.y-panelrect.y), 150, 100};
+    UIRect panelrect = panel->getlocalrect();
+    UIRect tablerect = {mousepos.x-panelrect.x, 
+                        mousepos.y-panelrect.y, 
+                        150, 
+                        100};
     Dropdown* ntable = new RouteDropdown(panel, tablerect);
 }
 
@@ -103,7 +113,7 @@ void SetRoute::update(int ms)
         text = "No route set";
 }
 
-void GoTrain::leftclick(Vec mousepos)
+void GoTrain::leftclick(UIVec mousepos)
 {
     bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
     go = !go;
@@ -120,25 +130,25 @@ void GoTrain::update(int ms)
         text = "Start route";
 }
 
-void GasTrain::leftpressed(Vec mousepos, int mslogic)
+void GasTrain::leftpressed(UIVec mousepos, int mslogic)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.gas(mslogic);
 }
 
-void BrakeTrain::leftpressed(Vec mousepos, int mslogic)
+void BrakeTrain::leftpressed(UIVec mousepos, int mslogic)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.brake(mslogic);
 }
 
-void TurnTrain::leftclick(Vec mousepos)
+void TurnTrain::leftclick(UIVec mousepos)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.shiftdirection();
 }
 
-void CoupleTrain::leftclick(Vec mousepos)
+void CoupleTrain::leftclick(UIVec mousepos)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.wantstocouple = 1 - train.wantstocouple;
@@ -156,27 +166,27 @@ void CoupleTrain::update(int ms)
 namespace Routing
 {
 
-void AddTurn::leftclick(Vec mousepos)
+void AddTurn::leftclick(UIVec mousepos)
 {
     route->insertorderatselected(new Turn());
 }
 
-void AddCouple::leftclick(Vec mousepos)
+void AddCouple::leftclick(UIVec mousepos)
 {
     route->insertorderatselected(new Couple());
 }
 
-void AddDecouple::leftclick(Vec mousepos)
+void AddDecouple::leftclick(UIVec mousepos)
 {
     route->insertorderatselected(new Decouple());
 }
 
-void AddLoadResource::leftclick(Vec mousepos)
+void AddLoadResource::leftclick(UIVec mousepos)
 {
     route->insertorderatselected(new Loadresource());
 }
 
-void RemoveOrder::leftclick(Vec mousepos)
+void RemoveOrder::leftclick(UIVec mousepos)
 {
     route->removeselectedorder();
 }

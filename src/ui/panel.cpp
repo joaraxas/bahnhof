@@ -12,57 +12,28 @@
 #include "bahnhof/buildings/buildingmanager.h"
 
 namespace UI{
-
-Ownership::~Ownership()
+	
+Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
 {
-	deletereference();
-}
-
-void Ownership::set(Host* newhost)
-{
-	deletereference();
-	host = newhost;
-	host->owner = this;
-}
-
-bool Ownership::exists()
-{
-	return host!=nullptr;
-}
-
-void Ownership::deletereference()
-{
-	if(host){
-		host->erase();
-		resetreference();
-	}
-}
-
-void Ownership::resetreference()
-{
-	host = nullptr;
-}
-
-Panel::Panel(InterfaceManager* newui, SDL_Rect newrect) : Host(newui, newrect)
-{
-    ui->addpanel(this);
 	createbutton<Close>();
 }
 
-Panel::Panel(InterfaceManager* newui) : Panel::Panel(newui, {100,100,100,100}) {}
+Panel::Panel(InterfaceManager* newui) : 
+	Panel::Panel(newui, {100,100,100,100}) {}
 
 template <class T, typename... Args> void Panel::createbutton(Args&&... args){
-	T* button = new T(this, Vec(margin_x,margin_y+yoffset), std::forward<Args>(args)...);
+	T* button = new T(
+		this, 
+		UIVec(margin_x, margin_y+yoffset), 
+		std::forward<Args>(args)...);
 	addelement(button);
 	yoffset += elementdistance_y + button->getlocalrect().h;
 }
 
 void Panel::render(Rendering* r)
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-    r->renderfilledrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
-    r->renderrectangle(ui->getuirendering().uitoscreen(getglobalrect()), false, false);
+	ui->getuirendering().renderrectangle(r, getglobalrect(), PanelBackground, true);
+	ui->getuirendering().renderrectangle(r, getglobalrect(), PanelBorder, false);
 	Host::render(r);
 }
 
@@ -78,7 +49,12 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	createbutton<DecreaseUIScale>();
 	rect = {0,0,180,yoffset + 2*margin_y};
 
-	SDL_Rect tablerect = {margin_x+80+elementdistance_x, margin_y, getlocalrect().w-80-elementdistance_x-2*margin_x, getlocalrect().h-2*margin_y};
+	UIRect tablerect = {
+		margin_x+80+elementdistance_x, 
+		margin_y, 
+		getlocalrect().w-80-elementdistance_x-2*margin_x, 
+		getlocalrect().h-2*margin_y
+	};
 	addelement(new MainInfoTable(this, tablerect));
 }
 
@@ -86,9 +62,15 @@ MainPanel::~MainPanel()
 {}
 
 
-RouteListPanel::RouteListPanel(InterfaceManager* newui, SDL_Rect newrect) : Panel(newui, newrect)
+RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) : 
+	Panel(newui, newrect)
 {
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y*2-yoffset};
+	UIRect tablerect = {
+		margin_x, 
+		margin_y+yoffset, 
+		getlocalrect().w-2*margin_x, 
+		getlocalrect().h-margin_y*2-yoffset
+	};
 	addelement(new RouteTable(this, tablerect));
 	routepanelref = std::make_unique<Ownership>();
 }
@@ -111,13 +93,13 @@ void RouteListPanel::erase()
 
 void RouteListPanel::addroutepanel(int routeindex)
 {
-    SDL_Rect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
+    UIRect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
 	routepanelref->deletereference();
 	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
 }
 
 
-RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid) :
+RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 	Panel(newui, newrect)
 {
     RouteManager& routing = game->getgamestate().getrouting();
@@ -127,9 +109,9 @@ RoutePanel::RoutePanel(InterfaceManager* newui, SDL_Rect newrect, int routeid) :
 	createbutton<Routing::AddCouple>(route);
 	createbutton<Routing::AddDecouple>(route);
 	createbutton<Routing::RemoveOrder>(route);
-	SDL_Rect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
+	UIRect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
 	yoffset += 16;
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new OrderTable(this, tablerect, route));
 	addelement(new EditableText(this, route->name, routenamerect));
 	game->getinputmanager().editroute(route);
@@ -147,9 +129,9 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    Vec viewsize = ui->getuirendering().screentoui(getviewsize());
-    rect = {int(viewsize.x*0.5-150),int(viewsize.y)-150,300,150};
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
+    rect = {viewsize.x*0.5-150,viewsize.y-150,300,150};
+	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new TrainTable(this, tablerect));
 }
 
@@ -157,7 +139,7 @@ TrainListPanel::~TrainListPanel()
 {}
 
 
-TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& manager, Train& newtrain) : 
+TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain) : 
 		Panel(newui, newrect), 
 		trainmanager(manager), 
 		train(newtrain)
@@ -169,29 +151,29 @@ TrainPanel::TrainPanel(InterfaceManager* newui, SDL_Rect newrect, TrainManager& 
 	createbutton<TurnTrain>();
 	createbutton<CoupleTrain>();
 
-	int column_2_x = margin_x+80+elementdistance_x;
-	int columns_y = margin_y+20+elementdistance_y;
+	Coord column_2_x = margin_x+80+elementdistance_x;
+	Coord columns_y = margin_y+20+elementdistance_y;
 
-	SDL_Rect traininfotablerect = {column_2_x, columns_y, 100, 100};
+	UIRect traininfotablerect = {column_2_x, columns_y, 100, 100};
 	addelement(new TrainInfoTable(this, traininfotablerect, train));
 
-	SDL_Rect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
+	UIRect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
 	addelement(new TrainIcons(this, trainiconsrect, train));
 
-	int column_3_x = column_2_x + 100 + elementdistance_x;
-	SDL_Rect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
+	Coord column_3_x = column_2_x + 100 + elementdistance_x;
+	UIRect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
 	addelement(new TrainOrderTable(this, routetablerect, train));
 	
-	SDL_Rect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
+	UIRect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
 	addelement(new EditableText(this, train.name, trainnamerect));
 }
 
 TrainPanel::~TrainPanel()
 {}
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, SDL_Rect r) : Panel(newui, r)
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
 {
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
+	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
 	addelement(new ConstructionTable(this, tablerect));
 }
 
@@ -208,10 +190,10 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		Panel(newui, {200,400,500,150}),
 		building(b)
 {
-	int column_2_x = margin_x + 80 + elementdistance_x;
-	int typenamewidth = 80;
-	int column_3_x = rect.w - typenamewidth - margin_x;
-	int namewidth = column_3_x - column_2_x - elementdistance_x;
+	Coord column_2_x = margin_x + 80 + elementdistance_x;
+	Coord typenamewidth = 80;
+	Coord column_3_x = rect.w - typenamewidth - margin_x;
+	Coord namewidth = column_3_x - column_2_x - elementdistance_x;
 	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
 	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
 }
@@ -223,14 +205,14 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		BuildingPanel(newui, f),
 		factory(f)
 {
-	SDL_Rect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
 	addelement(new WagonTable(this, tablerect, *f));
 }
 
 void FactoryPanel::render(Rendering* r)
 {
 	BuildingPanel::render(r);
-	SDL_Rect queuerect = {rect.x + margin_x, 
+	UIRect queuerect = {rect.x + margin_x, 
 						  rect.y + getlocalrect().h - margin_y - 20, 
 						  getlocalrect().w-2*margin_x, 
 						  20};

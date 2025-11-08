@@ -9,22 +9,24 @@
 
 namespace UI{
 
-Text::Text(Host* p, std::string t, SDL_Rect r) : Element(p), text(t)
+Text::Text(Host* p, std::string t, UIRect r) : Element(p), text(t)
 {
     rect = r;
 }
 
 void Text::render(Rendering* r)
 {
-    ui->getuirendering().rendertext(r, text, getglobalrect(), style, centered, margin_x, margin_y);
+    ui->getuirendering().rendertext(
+        r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
-EditableText::EditableText(Host* p, std::string& t, SDL_Rect r) : 
+EditableText::EditableText(Host* p, std::string& t, UIRect r) : 
         Text(p, t, r), 
         textreference(t), 
         originalrect(r),
         shortenedtext(t) {
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
 };
 
 EditableText::~EditableText()
@@ -34,7 +36,7 @@ EditableText::~EditableText()
     }
 }
 
-void EditableText::leftclick(Vec mousepos)
+void EditableText::leftclick(UIVec mousepos)
 {
     ui->getgame().getinputmanager().gettextinputmanager().starttextinput(this);
 }
@@ -42,13 +44,18 @@ void EditableText::leftclick(Vec mousepos)
 void EditableText::render(Rendering* r)
 {
     if(beingedited){
-        ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo, true);
+        ui->getuirendering().renderrectangle(
+            r, getglobalrect(), InvertedInfo, true);
         std::string textwithcursor = text;
         textwithcursor.insert(textwithcursor.begin()+cursorindex, '|');
-        ui->getuirendering().rendertext(r, textwithcursor, getglobalrect(), Info, centered, margin_x, margin_y);
+        ui->getuirendering().rendertext(
+            r, textwithcursor, getglobalrect(), Info, 
+            centered, margin_x, margin_y);
     }
     else{
-        ui->getuirendering().rendertext(r, shortenedtext, getglobalrect(), style, centered, margin_x, margin_y);
+        ui->getuirendering().rendertext(
+            r, shortenedtext, getglobalrect(), style, centered, 
+            margin_x, margin_y);
     }
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
@@ -72,7 +79,8 @@ void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
     rect = originalrect;
-    shortenedtext = ui->getuirendering().croptexttowidth(text, rect.w, margin_x);
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
 }
 
 void EditableText::deleteselection(){
@@ -90,7 +98,7 @@ void EditableText::addtext(const std::string& string){
 }
 
 void EditableText::movecursorleft(){
-    cursorindex = std::fmax(0, cursorindex-1);
+    cursorindex = std::max(0, cursorindex-1);
 }
 
 void EditableText::movecursorright(){
@@ -98,24 +106,30 @@ void EditableText::movecursorright(){
 }
 
 void EditableText::updatewritingarea(){
-    SDL_Rect textrect = ui->getuirendering().gettextsize(text+"|", originalrect, margin_x, margin_y);
-    rect.h = std::fmax(textrect.h, originalrect.h);
+    UIRect textrect = ui->getuirendering().gettextsize(
+        text+"|", originalrect, margin_x, margin_y);
+    rect.h = std::max(textrect.h, originalrect.h);
 }
 
 
 void TrainIcons::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
-    iconrects = rendertrainicons(r, *ui, traininfo.wagoninfos, getglobalrect(), rendersplitafterwagonid);
+    iconrects = rendertrainicons(
+        r, *ui, traininfo.wagoninfos, getglobalrect(), 
+        rendersplitafterwagonid);
     rendersplitafterwagonid = -1;
 }
 
-void TrainIcons::mousehover(Vec pos, int ms)
+void TrainIcons::mousehover(UIVec pos, int ms)
 {
-    rendersplitafterwagonid = std::fmin(getwagonidatmousepos(pos), train.getinfo().wagoninfos.size()-2);
+    rendersplitafterwagonid = std::fmin(
+        getwagonidatmousepos(pos), 
+        train.getinfo().wagoninfos.size()-2
+    );
 }
 
-void TrainIcons::leftclick(Vec mousepos)
+void TrainIcons::leftclick(UIVec mousepos)
 {
     int wagonid = getwagonidatmousepos(mousepos);
     if(wagonid<0) return;
@@ -129,38 +143,45 @@ void TrainIcons::leftclick(Vec mousepos)
     train.split(wheretosplit, nullptr);
 }
 
-int TrainIcons::getwagonidatmousepos(Vec mousepos)
+int TrainIcons::getwagonidatmousepos(UIVec mousepos)
 {
-    mousepos = ui->getuirendering().screentoui(mousepos);
     for(int iRect=0; iRect<iconrects.size(); iRect++){
-        SDL_Rect& rect = iconrects[iRect];
-	    if(mousepos.x>=rect.x && mousepos.x<=rect.x+rect.w && mousepos.y>=rect.y && mousepos.y<=rect.y+rect.h){
+        UIRect& rect = iconrects[iRect];
+	    if(rect.contains(mousepos)){
             return iRect;
         }
     }
     return -1;
 }
 
-std::vector<SDL_Rect> rendertrainicons(Rendering* r, InterfaceManager& ui, std::vector<WagonInfo>& wagoninfos, SDL_Rect maxrect, int splitid)
+std::vector<UIRect> rendertrainicons(
+    Rendering* r, InterfaceManager& ui,
+    std::vector<WagonInfo>& wagoninfos, 
+    UIRect maxrect, int splitid)
 {
-    SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
-    auto scale = ui.getuirendering().getuiscale();
-    int iconoffset = 2*scale;
-    int splitoffset = 0;
+    Coord iconoffset = 2;
+    Coord splitoffset = 0;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
     Icon wagonicon;
     wagonicon.ported = false;
-    int icon_x = 0;
-    std::vector<SDL_Rect> iconuirects;
+    Coord icon_x = 0;
+    std::vector<UIRect> iconuirects;
+
     for(int iWagon = 0; iWagon<wagoninfos.size(); iWagon++){
         WagonInfo& wagoninfo = wagoninfos[iWagon];
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
         if(splitid>=0 && iWagon>splitid)
-            splitoffset = 5*scale;
-        Vec iconsize = wagonicon.getsize();
-        wagonicon.render(r, Vec(screenrect.x+icon_x+iconsize.x*0.5+splitoffset, screenrect.y+screenrect.h*0.5));
-        SDL_Rect iconrect = {screenrect.x+icon_x, screenrect.y, int(iconsize.x+iconoffset), screenrect.h};
-        iconuirects.push_back(ui.getuirendering().screentoui(iconrect));
+            splitoffset = 5;
+        UIVec iconsize = wagonicon.getuisize(ui.getuirendering());
+        UIRect iconrect = {
+            maxrect.x + icon_x + splitoffset, 
+            maxrect.y, 
+            iconsize.x + iconoffset, 
+            maxrect.h
+        };
+        wagonicon.render(r, iconrect);
+        iconrect.x-=splitoffset; // the clickable mask should not be offset
+        iconuirects.push_back(iconrect);
         icon_x += iconsize.x + iconoffset;
     }
     return iconuirects;
