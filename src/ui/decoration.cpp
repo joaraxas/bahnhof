@@ -159,33 +159,29 @@ std::vector<UIRect> rendertrainicons(
     std::vector<WagonInfo>& wagoninfos, 
     UIRect maxrect, int splitid)
 {
-    SDL_Rect screenrect = ui.getuirendering().uitoscreen(maxrect);
-    auto scale = ui.getuirendering().getuiscale();
-    int iconoffset = 2*scale;
-    int splitoffset = 0;
+    Coord iconoffset = 2;
+    Coord splitoffset = 0;
 	SpriteManager& spritemanager = ui.getgame().getsprites();
     Icon wagonicon;
     wagonicon.ported = false;
-    int icon_x = 0;
+    Coord icon_x = 0;
     std::vector<UIRect> iconuirects;
+
     for(int iWagon = 0; iWagon<wagoninfos.size(); iWagon++){
         WagonInfo& wagoninfo = wagoninfos[iWagon];
         wagonicon.setspritesheet(spritemanager, wagoninfo.iconname);
         if(splitid>=0 && iWagon>splitid)
-            splitoffset = 5*scale;
-        Vec iconsize = wagonicon.getsize();
-        wagonicon.render(
-            r, 
-            Vec(screenrect.x+icon_x+iconsize.x*0.5+splitoffset, 
-                screenrect.y+screenrect.h*0.5)
-        );
-        SDL_Rect iconrect = {
-            screenrect.x+icon_x, 
-            screenrect.y, 
-            int(iconsize.x+iconoffset), 
-            screenrect.h
+            splitoffset = 5;
+        UIVec iconsize = wagonicon.getuisize(ui.getuirendering());
+        UIRect iconrect = {
+            maxrect.x + icon_x + splitoffset, 
+            maxrect.y, 
+            iconsize.x + iconoffset, 
+            maxrect.h
         };
-        iconuirects.push_back(ui.getuirendering().screentoui(iconrect));
+        wagonicon.render(r, iconrect);
+        iconrect.x-=splitoffset; // the clickable mask should not be offset
+        iconuirects.push_back(iconrect);
         icon_x += iconsize.x + iconoffset;
     }
     return iconuirects;

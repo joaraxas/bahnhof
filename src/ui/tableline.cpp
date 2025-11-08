@@ -90,21 +90,21 @@ void PurchaseOptionTableLine::render(
     UIRendering& uiren = ui->getuirendering();
     const UIVec uiiconsize = icon.getuisize(uiren);
     const Coord rowoffset = ymargin;
-    const Coord textpadding = 5;
+    const Coord textpadding = 3;
     const Coord pricerowwidth = 50;
-    const Coord iconwidth = uiiconsize.x + xmargin + textpadding;
+    const Coord iconwidth = uiiconsize.x + 2*textpadding;
     const Coord namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
 
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
-    namerect.x += iconwidth;
-    namerect.y += uiiconsize.y * 0.5 - 12 * 0.5 - 1;
+    namerect.x += xmargin+iconwidth;
+    namerect.y += uiiconsize.y * 0.5 - 14 * 0.5;
     namerect = uiren.rendertext(
         r, str, namerect, style, false, textpadding, rowoffset);
     
     UIRect pricerect = getlocalrect();
-    pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
-    pricerect.w = pricerowwidth;
+    pricerect.x += pricerect.w - pricerowwidth;
+    pricerect.w = pricerowwidth - xmargin;
     pricerect.y = namerect.y;
     pricerect = uiren.rendertext(
         r, 
@@ -120,6 +120,7 @@ void PurchaseOptionTableLine::render(
         uiiconsize.y+2*rowoffset
     );
     UIRect uiiconrect = getlocalrect();
+    uiiconrect.x = xmargin;
     uiiconrect.w = iconwidth;
     icon.render(r, uiiconrect);
 }
