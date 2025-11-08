@@ -9,7 +9,9 @@ enum TextStyle{
     Highlighted,
     InvertedInfo,
     InvertedHighlighted,
-    MapOverlay
+    MapOverlay,
+    PanelBackground,
+    PanelBorder,
 };
 
 }

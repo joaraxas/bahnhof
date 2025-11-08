@@ -25,7 +25,7 @@ Panel::Panel(InterfaceManager* newui) :
 template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 	T* button = new T(
 		this, 
-		UIVec(margin_x,margin_y+yoffset), 
+		UIVec(margin_x, margin_y+yoffset), 
 		std::forward<Args>(args)...);
 	addelement(button);
 	yoffset += elementdistance_y + button->getlocalrect().h;
@@ -33,13 +33,8 @@ template <class T, typename... Args> void Panel::createbutton(Args&&... args){
 
 void Panel::render(Rendering* r)
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 127);
-	SDL_Rect globalrect = ui->getuirendering().uitoscreen(getglobalrect());
-    r->renderfilledrectangle(
-		globalrect, false, false);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 127);
-    r->renderrectangle(
-		globalrect, false, false);
+	ui->getuirendering().renderrectangle(r, getglobalrect(), PanelBackground, true);
+	ui->getuirendering().renderrectangle(r, getglobalrect(), PanelBorder, false);
 	Host::render(r);
 }
 

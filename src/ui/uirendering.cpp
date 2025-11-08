@@ -68,6 +68,12 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
     case UI::MapOverlay:
         color = {255,255,255,255};
         break;
+    case UI::PanelBackground:
+        color = {255,255,255,127};
+        break;
+    case UI::PanelBorder:
+        color = {0,0,0,127};
+        break;
     default:
         std::cout<<"Warning: UI style "<<style<<" not supported in InterfaceManager::rendertext"<<std::endl;
         break;

@@ -46,7 +46,7 @@ UI::Host* InterfaceManager::getpanelat(UIVec uipos)
     cleanup();
     
     for(auto& panel: panels){
-        if(panel->checkclick(uipos))
+        if(panel->getglobalrect().contains(uipos))
             return panel.get();
     }
     return nullptr;

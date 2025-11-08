@@ -28,7 +28,6 @@ class Host
 public:
     Host(InterfaceManager* newui, UIRect newrect);
     virtual ~Host();
-    bool checkclick(UIVec pos);
     void mousehover(UIVec pos, int ms);
     void click(UIVec pos, int type);
     void scroll(UIVec pos, int distance);

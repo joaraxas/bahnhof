@@ -80,11 +80,6 @@ void Host::render(Rendering* r)
 		element->render(r);
 }
 
-bool Host::checkclick(UIVec pos)
-{
-	return getglobalrect().contains(pos);
-}
-
 Element* Host::getelementat(UIVec pos)
 {
 	for(auto& element: elements)
