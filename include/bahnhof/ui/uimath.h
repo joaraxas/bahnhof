@@ -9,8 +9,6 @@ public:
     constexpr Coord(int v) : value{v} {};
     constexpr Coord(double v) : value{static_cast<int>(std::lround(v))} {};
 
-    Coord operator+=(int v) {value+=v; return *this;};
-    Coord operator-=(int v) {value-=v; return *this;};
     Coord operator*=(const int v) {value*=v; return *this;};
     Coord operator+=(const Coord v) {value+=v.value; return *this;};
     Coord operator-=(const Coord v) {value-=v.value; return *this;};
@@ -32,13 +30,8 @@ private:
 
 inline Coord operator*(const int i, Coord c) {return c*=i;};
 inline Coord operator*(Coord c, const int i) {return c*=i;};
-
 inline Coord operator+(Coord c1, const Coord c2) {return c1+=c2;};
 inline Coord operator-(Coord c1, const Coord c2) {return c1-=c2;};
-inline Coord operator+(Coord c1, const int i) {return c1+=i;};
-inline Coord operator-(Coord c1, const int i) {return c1-=i;};
-inline Coord operator+(int i, const Coord c) {return c+i;};
-inline Coord operator-(int i, const Coord c) {return c-i;};
 
 struct UIVec{
     UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
