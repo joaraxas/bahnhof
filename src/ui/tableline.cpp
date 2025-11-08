@@ -46,12 +46,12 @@ void TrainTableLine::render(
     )
 {
     rect = maxarea;
-    Coord textpadding{5};
-    Coord namerowwidth{60};
+    const Coord textpadding{5};
+    const Coord namerowwidth{60};
+
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x = xmargin;
-    
     namerect = ui->getuirendering().rendertext(
         r, str, namerect, style, false, textpadding, ymargin);
     rect.h = namerect.h;
@@ -88,20 +88,20 @@ void PurchaseOptionTableLine::render(
 {
     rect = maxarea;
     UIRendering& uiren = ui->getuirendering();
-    Vec screeniconsize = icon.getsize();
-    UIVec uiiconsize = uiren.screentoui(screeniconsize);
-    Coord rowoffset = ymargin;
-    Coord textpadding = 5;
-    Coord pricerowwidth = 50;
-    Coord iconwidth = uiiconsize.x + xmargin + textpadding;
-    Coord namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
-    
+    const UIVec uiiconsize = icon.getuisize(uiren);
+    const Coord rowoffset = ymargin;
+    const Coord textpadding = 5;
+    const Coord pricerowwidth = 50;
+    const Coord iconwidth = uiiconsize.x + xmargin + textpadding;
+    const Coord namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
+
     UIRect namerect = getlocalrect();
     namerect.w = namerowwidth;
     namerect.x += iconwidth;
     namerect.y += uiiconsize.y * 0.5 - 12 * 0.5 - 1;
     namerect = uiren.rendertext(
         r, str, namerect, style, false, textpadding, rowoffset);
+    
     UIRect pricerect = getlocalrect();
     pricerect.x = pricerect.x + pricerect.w - pricerowwidth;
     pricerect.w = pricerowwidth;
@@ -114,17 +114,14 @@ void PurchaseOptionTableLine::render(
         false, 
         textpadding, 
         rowoffset);
+
     rect.h = std::max(
         std::max(namerect.h, pricerect.h), 
-        uiiconsize.y+2*rowoffset);
-    UIRect uiiconrect = getlocalrect();
-    uiiconrect.x += xmargin + textpadding;
-    uiiconrect.y += rowoffset;
-    SDL_Rect screeniconrect = uiren.uitoscreen(uiiconrect);
-    icon.render(r, 
-        Vec(screeniconrect.x+screeniconsize.x*0.5, 
-        screeniconrect.y+screeniconsize.y*0.5)
+        uiiconsize.y+2*rowoffset
     );
+    UIRect uiiconrect = getlocalrect();
+    uiiconrect.w = iconwidth;
+    icon.render(r, uiiconrect);
 }
 
 } //end namespace UI

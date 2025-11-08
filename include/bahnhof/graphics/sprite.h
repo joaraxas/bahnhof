@@ -2,6 +2,7 @@
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/orientation.h"
 #include "bahnhof/graphics/spritenames.h"
+#include "bahnhof/ui/uimath.h"
 
 class Game;
 class Rendering;
@@ -70,10 +71,14 @@ private:
     int imagetypes = 0;
 };
 
+class UIRendering;
+
 class Icon : public Sprite
 {
 public:
     Icon();
     void setspritesheet(SpriteManager& s, sprites::name name);
     void render(Rendering* r, Vec pos);
+    void render(Rendering* r, UI::UIRect rect);
+    UI::UIVec getuisize(UIRendering& uiren);
 };

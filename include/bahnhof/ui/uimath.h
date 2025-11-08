@@ -61,6 +61,7 @@ struct UIRect{
     bool contains(UIVec pos) {
         return pos.x>=x && pos.x<=x+w && pos.y>=y && pos.y<=y+h;
     };
+    UIVec mid() {return{x+w*0.5, y+h*0.5};};
 
     Coord x;
     Coord y;
