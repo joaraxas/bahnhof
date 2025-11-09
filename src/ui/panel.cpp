@@ -43,9 +43,9 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	Layout* l = new Layout(this);
+	Layout* l = new HBox(this);
 	addelement(l);
-	Layout* layout = new Layout(this);
+	Layout* layout = new VBox(this);
 	l->addelement(addelement(layout));
 	layout->addelement(createbutton<PlaceTrack>());
 	layout->addelement(createbutton<PlaceSignal>());

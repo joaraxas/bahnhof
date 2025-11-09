@@ -31,8 +31,8 @@ UIRect Element::getlocalrect()
 
 void Element::place(UIRect r)
 {
-    rect.x = r.x+2;
-    rect.y = r.y+3;
+    rect.x = r.x+3;
+    rect.y = r.y+2;
 }
 
 
@@ -50,29 +50,56 @@ UIVec Layout::organize()
     return sz;
 }
 
-void Layout::place(UIRect placerect)
+void HBox::place(UIRect placerect)
 {
     rect = placerect;
-    Coord totminsize = std::accumulate(minsizes.begin(), minsizes.end(), Coord{0});
-    Coord extrawidth = std::floor((placerect.w-totminsize)*(1./elements.size()));
+    Coord totminwidth = std::accumulate(minwidths.begin(), minwidths.end(), Coord{0});
+    Coord extrawidth = std::floor((placerect.w-totminwidth)*(1./elements.size()));
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
-        placerect.w = minsizes[i]+extrawidth;
+        placerect.w = minwidths[i]+extrawidth;
         if(i==elements.size()) placerect.w = rect.w-placerect.x;
         el->place(placerect);
         placerect.x += placerect.w;
     }
 }
 
-UIVec Layout::getminimumsize()
+UIVec HBox::getminimumsize()
 {
     UIVec sz{0,0};
-    minsizes.clear();
+    minwidths.clear();
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.x += r.x;
         sz.y = std::max(sz.y, r.y);
-        minsizes.push_back(r.x);
+        minwidths.push_back(r.x);
+    }
+    return sz;
+}
+
+void VBox::place(UIRect placerect)
+{
+    rect = placerect;
+    Coord totminheight = std::accumulate(minheights.begin(), minheights.end(), Coord{0});
+    Coord extraheight = std::floor((placerect.h-totminheight)*(1./elements.size()));
+    for(int i=0; i<elements.size(); ++i){
+        auto el = elements[i];
+        placerect.h = minheights[i]+extraheight;
+        if(i==elements.size()) placerect.h = rect.h-placerect.y;
+        el->place(placerect);
+        placerect.y += placerect.h;
+    }
+}
+
+UIVec VBox::getminimumsize()
+{
+    UIVec sz{0,0};
+    minheights.clear();
+    for(auto el : elements){
+        auto r = el->getminimumsize();
+        sz.y += r.y;
+        sz.x = std::max(sz.x, r.x);
+        minheights.push_back(r.y);
     }
     return sz;
 }

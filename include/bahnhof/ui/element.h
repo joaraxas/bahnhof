@@ -24,7 +24,7 @@ public:
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
     virtual UIRect getlocalrect();
-    virtual UIVec getminimumsize() {return {rect.w+4, rect.h+6};};
+    virtual UIVec getminimumsize() {return {rect.w+6, rect.h+4};};
     virtual void place(UIRect r);
 protected:
     Host* panel;
@@ -38,14 +38,32 @@ class Layout : public Element
 public:
     Layout(Host* h) : Element(h) {};
     bool checkclick(UIVec pos) {return false;};
-    virtual Element* addelement(Element* el);
-    virtual UIVec organize();
-    virtual void place(UIRect r);
+    Element* addelement(Element* el);
+    UIVec organize();
+protected:
+    std::vector<Element*> elements;
+};
+
+class HBox : public Layout
+{
+public:
+    HBox(Host* h) : Layout(h) {};
     void render(Rendering* r) {};
+    virtual void place(UIRect r);
     virtual UIVec getminimumsize();
 private:
-    std::vector<Element*> elements;
-    std::vector<Coord> minsizes;
+    std::vector<Coord> minwidths;
+};
+
+class VBox : public Layout
+{
+public:
+    VBox(Host* h) : Layout(h) {};
+    void render(Rendering* r) {};
+    virtual void place(UIRect r);
+    virtual UIVec getminimumsize();
+private:
+    std::vector<Coord> minheights;
 };
 
 } // namespace UI
