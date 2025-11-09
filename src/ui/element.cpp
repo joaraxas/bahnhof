@@ -31,8 +31,8 @@ UIRect Element::getlocalrect()
 
 void Element::place(UIRect r)
 {
-    rect.x = r.x;
-    rect.y = r.y;
+    rect.x = r.x+2;
+    rect.y = r.y+3;
 }
 
 
@@ -42,22 +42,39 @@ Element* Layout::addelement(Element* el)
     return el;
 }
 
-void Layout::organize()
+UIVec Layout::organize()
 {
-    rect = UIRect{rect.x, rect.y, 2, 0};
-    for(auto el : elements){
-        auto r = el->getlocalrect();
-        rect.w += r.w+2;
-        rect.h = std::max(rect.h, r.h+6);
-    }
+    UIVec sz{getminimumsize()};
+    UIRect placerect{0, 0, sz.x, sz.y};
+    place(placerect);
+    return sz;
+}
 
-    UIRect placerect{rect.x+2, rect.y+3, rect.w-4, rect.h-6};
-    for(auto el : elements){
+void Layout::place(UIRect placerect)
+{
+    rect = placerect;
+    Coord totminsize = std::accumulate(minsizes.begin(), minsizes.end(), Coord{0});
+    Coord extrawidth = std::floor((placerect.w-totminsize)*(1./elements.size()));
+    for(int i=0; i<elements.size(); ++i){
+        auto el = elements[i];
+        placerect.w = minsizes[i]+extrawidth;
+        if(i==elements.size()) placerect.w = rect.w-placerect.x;
         el->place(placerect);
-        if(dynamic_cast<Layout*>(el))
-            dynamic_cast<Layout*>(el)->organize();
-        placerect.x += el->getlocalrect().w + 2;
+        placerect.x += placerect.w;
     }
+}
+
+UIVec Layout::getminimumsize()
+{
+    UIVec sz{0,0};
+    minsizes.clear();
+    for(auto el : elements){
+        auto r = el->getminimumsize();
+        sz.x += r.x;
+        sz.y = std::max(sz.y, r.y);
+        minsizes.push_back(r.x);
+    }
+    return sz;
 }
 
 }

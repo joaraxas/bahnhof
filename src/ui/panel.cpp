@@ -19,7 +19,7 @@ Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
 }
 
 Panel::Panel(InterfaceManager* newui) : 
-	Panel::Panel(newui, {100,100,100,100}) {}
+	Panel::Panel(newui, {0,0,100,100}) {}
 
 template <class T, typename... Args> 
 Element* Panel::createbutton(Args&&... args)
@@ -54,7 +54,6 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	layout->addelement(createbutton<ManageTrains>());
 	layout->addelement(createbutton<IncreaseUIScale>());
 	layout->addelement(createbutton<DecreaseUIScale>());
-	layout->organize();
 
 	UIRect tablerect = {
 		0, 
@@ -63,8 +62,8 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 		100
 	};
 	l->addelement(addelement(new MainInfoTable(this, tablerect)));
-	l->organize();
-	rect = l->getlocalrect();
+	UIVec sz = l->organize();
+	rect.w = sz.x; rect.h = sz.y;
 }
 
 MainPanel::~MainPanel()
