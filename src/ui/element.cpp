@@ -36,13 +36,17 @@ void Element::place(UIRect r)
 }
 
 
+Layout::Layout(Host* h, std::vector<Element*> newels) :
+    Element(h), elements{newels}
+{}
+
 Element* Layout::addelement(Element* el)
 {
     elements.push_back(el);
     return el;
 }
 
-UIVec Layout::organize()
+UIVec Layout::consolidate()
 {
     UIVec sz{getminimumsize()};
     UIRect placerect{0, 0, sz.x, sz.y};

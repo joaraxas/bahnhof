@@ -43,26 +43,21 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	Layout* l = new HBox(this);
-	addelement(l);
-	Layout* layout = new VBox(this);
-	l->addelement(addelement(layout));
-	layout->addelement(createbutton<PlaceTrack>());
-	layout->addelement(createbutton<PlaceSignal>());
-	layout->addelement(createbutton<PlaceBuildings>());
-	layout->addelement(createbutton<ManageRoutes>());
-	layout->addelement(createbutton<ManageTrains>());
-	layout->addelement(createbutton<IncreaseUIScale>());
-	layout->addelement(createbutton<DecreaseUIScale>());
+	Layout* l = new HBox(this, {
+		addelement(new VBox(this, {
+			createbutton<PlaceTrack>(),
+			createbutton<PlaceSignal>(),
+			createbutton<PlaceBuildings>(),
+			createbutton<ManageRoutes>(),
+			createbutton<ManageTrains>(),
+			createbutton<IncreaseUIScale>(),
+			createbutton<DecreaseUIScale>(),
+		})),
 
-	UIRect tablerect = {
-		0, 
-		0, 
-		60, 
-		100
-	};
-	l->addelement(addelement(new MainInfoTable(this, tablerect)));
-	UIVec sz = l->organize();
+		addelement(new MainInfoTable(this, {0,0,60,100}))
+	});
+	addelement(l);
+	UIVec sz = l->consolidate();
 	rect.w = sz.x; rect.h = sz.y;
 }
 

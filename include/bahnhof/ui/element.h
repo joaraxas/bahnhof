@@ -37,9 +37,11 @@ class Layout : public Element
 {
 public:
     Layout(Host* h) : Element(h) {};
+    Layout(Host* h, std::vector<Element*> newels);
+    virtual ~Layout() {};
     bool checkclick(UIVec pos) {return false;};
     Element* addelement(Element* el);
-    UIVec organize();
+    UIVec consolidate();
 protected:
     std::vector<Element*> elements;
 };
@@ -48,6 +50,7 @@ class HBox : public Layout
 {
 public:
     HBox(Host* h) : Layout(h) {};
+    HBox(Host* h, std::vector<Element*> e) : Layout(h, e) {};
     void render(Rendering* r) {};
     virtual void place(UIRect r);
     virtual UIVec getminimumsize();
@@ -59,6 +62,7 @@ class VBox : public Layout
 {
 public:
     VBox(Host* h) : Layout(h) {};
+    VBox(Host* h, std::vector<Element*> e) : Layout(h, e) {};
     void render(Rendering* r) {};
     virtual void place(UIRect r);
     virtual UIVec getminimumsize();
