@@ -33,6 +33,16 @@ Element* Panel::createbutton(Args&&... args)
 	return button;
 }
 
+template <class T, typename... Args> 
+Element* Panel::createelement(Args&&... args)
+{
+	T* el = new T(
+		this, 
+		std::forward<Args>(args)...);
+	addelement(el);
+	return el;
+}
+
 void Panel::render(Rendering* r)
 {
 	ui->getuirendering().renderrectangle(r, getglobalrect(), PanelBackground, true);
@@ -44,16 +54,15 @@ void Panel::render(Rendering* r)
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
 	Layout* l = new HBox(this, {
-		addelement(new VBox(this, {
+		createelement<VBox>(
 			createbutton<PlaceTrack>(),
 			createbutton<PlaceSignal>(),
 			createbutton<PlaceBuildings>(),
 			createbutton<ManageRoutes>(),
 			createbutton<ManageTrains>(),
 			createbutton<IncreaseUIScale>(),
-			createbutton<DecreaseUIScale>(),
-		})),
-
+			createbutton<DecreaseUIScale>()
+		),
 		addelement(new MainInfoTable(this, {0,0,60,100}))
 	});
 	addelement(l);

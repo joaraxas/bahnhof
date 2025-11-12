@@ -26,6 +26,7 @@ public:
     virtual void render(Rendering*);
 protected:
     template <class T, typename... Args> Element* createbutton(Args&&... args);
+    template <class T, typename... Args> Element* createelement(Args&&... args);
     static constexpr Coord margin_x = 15;
     static constexpr Coord margin_y = 10;
     Coord yoffset = 0;
