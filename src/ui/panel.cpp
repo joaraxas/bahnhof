@@ -53,7 +53,8 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	Layout* l = new HBox(this, {
+	Layout* l = dynamic_cast<Layout*>(
+	createelement<HBox>(
 		createelement<VBox>(
 			createbutton<PlaceTrack>(),
 			createbutton<PlaceSignal>(),
@@ -63,9 +64,9 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			createbutton<IncreaseUIScale>(),
 			createbutton<DecreaseUIScale>()
 		),
-		addelement(new MainInfoTable(this, {0,0,60,100}))
-	});
-	addelement(l);
+		createelement<MainInfoTable>(UI::UIRect{0,0,60,100})
+	)
+	);
 	UIVec sz = l->consolidate();
 	rect.w = sz.x; rect.h = sz.y;
 }

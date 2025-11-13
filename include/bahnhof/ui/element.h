@@ -37,9 +37,7 @@ class Layout : public Element
 {
 public:
     Layout(Host* h) : Element(h) {};
-    Layout(Host* h, std::vector<Element*> newels);
-    template<typename... Args>
-    Layout(Host* h, Args&&... args) : Element(h), elements{std::forward<Args>(args)...} {};
+    template<typename... Args> Layout(Host* h, Args&&... args) : Element(h), elements{std::forward<Args>(args)...} {};
     virtual ~Layout() {};
     bool checkclick(UIVec pos) {return false;};
     Element* addelement(Element* el);
@@ -52,7 +50,7 @@ class HBox : public Layout
 {
 public:
     HBox(Host* h) : Layout(h) {};
-    HBox(Host* h, std::vector<Element*> e) : Layout(h, e) {};
+    template<typename... Args> HBox(Host* h, Args&&... args) : Layout(h, std::forward<Args>(args)...) {};
     void render(Rendering* r) {};
     virtual void place(UIRect r);
     virtual UIVec getminimumsize();
@@ -64,9 +62,7 @@ class VBox : public Layout
 {
 public:
     VBox(Host* h) : Layout(h) {};
-    // VBox(Host* h, std::vector<Element*> e) : Layout(h, e) {};
-    template<typename... Args>
-    VBox(Host* h, Args&&... args) : Layout(h, std::forward<Args>(args)...) {};
+    template<typename... Args> VBox(Host* h, Args&&... args) : Layout(h, std::forward<Args>(args)...) {};
     void render(Rendering* r) {};
     virtual void place(UIRect r);
     virtual UIVec getminimumsize();

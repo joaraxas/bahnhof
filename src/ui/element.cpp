@@ -35,11 +35,6 @@ void Element::place(UIRect r)
     rect.y = r.y+2;
 }
 
-
-Layout::Layout(Host* h, std::vector<Element*> newels) :
-    Element(h), elements{newels}
-{}
-
 Element* Layout::addelement(Element* el)
 {
     elements.push_back(el);
