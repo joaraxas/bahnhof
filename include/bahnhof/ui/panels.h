@@ -17,6 +17,7 @@ namespace UI{
 class Dropdown;
 class RouteListPanel;
 class Text;
+class Layout;
 
 class Panel : public Host
 {
@@ -26,12 +27,16 @@ public:
     virtual void render(Rendering*);
 protected:
     template <class T, typename... Args> Element* createbutton(Args&&... args);
-    template <class T, typename... Args> Element* createelement(Args&&... args);
+    template <class T, typename... Args> T* create(Args&&... args);
+    Layout* setlayout(Layout* l);
+    void applylayout();
     static constexpr Coord margin_x = 15;
     static constexpr Coord margin_y = 10;
     Coord yoffset = 0;
     static constexpr Coord elementdistance_x = 15;
     static constexpr Coord elementdistance_y = 5;
+private:
+    Layout* layout{nullptr};
 };
 
 class MainPanel : public Panel

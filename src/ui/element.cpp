@@ -35,10 +35,10 @@ void Element::place(UIRect r)
     rect.y = r.y+2;
 }
 
-Element* Layout::addelement(Element* el)
+void Layout::addelement(std::vector<Element*> els)
 {
-    elements.push_back(el);
-    return el;
+    for(auto el : els)
+        elements.push_back(el);
 }
 
 UIVec Layout::consolidate()
@@ -52,8 +52,14 @@ UIVec Layout::consolidate()
 void HBox::place(UIRect placerect)
 {
     rect = placerect;
-    Coord totminwidth = std::accumulate(minwidths.begin(), minwidths.end(), Coord{0});
-    Coord extrawidth = std::floor((placerect.w-totminwidth)*(1./elements.size()));
+
+    Coord totminwidth = std::accumulate(
+        minwidths.begin(), minwidths.end(), Coord{0}
+    );
+    Coord extrawidth = std::floor(
+        (placerect.w-totminwidth)*(1./elements.size())
+    );
+
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
         placerect.w = minwidths[i]+extrawidth;
@@ -79,8 +85,14 @@ UIVec HBox::getminimumsize()
 void VBox::place(UIRect placerect)
 {
     rect = placerect;
-    Coord totminheight = std::accumulate(minheights.begin(), minheights.end(), Coord{0});
-    Coord extraheight = std::floor((placerect.h-totminheight)*(1./elements.size()));
+
+    Coord totminheight = std::accumulate(
+        minheights.begin(), minheights.end(), Coord{0}
+    );
+    Coord extraheight = std::floor(
+        (placerect.h-totminheight)*(1./elements.size())
+    );
+    
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
         placerect.h = minheights[i]+extraheight;

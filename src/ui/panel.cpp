@@ -13,7 +13,8 @@
 
 namespace UI{
 	
-Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
+Panel::Panel(InterfaceManager* newui, UIRect newrect) : 
+	Host(newui, newrect)
 {
 	createbutton<Close>();
 }
@@ -34,13 +35,27 @@ Element* Panel::createbutton(Args&&... args)
 }
 
 template <class T, typename... Args> 
-Element* Panel::createelement(Args&&... args)
+T* Panel::create(Args&&... args)
 {
 	T* el = new T(
 		this, 
 		std::forward<Args>(args)...);
 	addelement(el);
 	return el;
+}
+
+Layout* Panel::setlayout(Layout* l)
+{
+	layout = l;
+	return layout;
+}
+
+void Panel::applylayout()
+{
+	if(layout){
+		UIVec sz = layout->consolidate();
+		rect.w = sz.x; rect.h = sz.y;
+	}
 }
 
 void Panel::render(Rendering* r)
@@ -53,9 +68,9 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	Layout* l = dynamic_cast<Layout*>(
-	createelement<HBox>(
-		createelement<VBox>(
+	setlayout(
+	create<HBox>(
+		create<VBox>(
 			createbutton<PlaceTrack>(),
 			createbutton<PlaceSignal>(),
 			createbutton<PlaceBuildings>(),
@@ -64,11 +79,10 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			createbutton<IncreaseUIScale>(),
 			createbutton<DecreaseUIScale>()
 		),
-		createelement<MainInfoTable>(UI::UIRect{0,0,60,100})
+		create<MainInfoTable>(UI::UIRect{0,0,60,100})
 	)
 	);
-	UIVec sz = l->consolidate();
-	rect.w = sz.x; rect.h = sz.y;
+	applylayout();
 }
 
 MainPanel::~MainPanel()
