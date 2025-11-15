@@ -220,6 +220,11 @@ UIVec UIRendering::screentoui(Vec pos)
     return uipos;
 }
 
+UIVec UIRendering::getuiviewsize()
+{
+    return screentoui(getviewsize());
+}
+
 void UIRendering::renderscaleruler(
     Rendering* r, Coord leftx, Coord lefty, Coord scalelinelength)
 {

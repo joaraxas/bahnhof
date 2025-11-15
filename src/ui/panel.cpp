@@ -57,7 +57,6 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	setlayout(
 	create<HBox>(
 		create<VBox>(
-			create<Close>(),
 			create<PlaceTrack>(),
 			create<PlaceSignal>(),
 			create<PlaceBuildings>(),
@@ -123,16 +122,21 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
-	create<Routing::AddTurn>(route);
-	create<Routing::AddLoadResource>(route);
-	create<Routing::AddCouple>(route);
-	create<Routing::AddDecouple>(route);
-	create<Routing::RemoveOrder>(route);
-	UIRect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
-	yoffset += 16;
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new OrderTable(this, tablerect, route));
-	addelement(new EditableText(this, route->name, routenamerect));
+	UIRect routenamerect = {0, 0, getlocalrect().w, 14};
+	UIRect tablerect = {0, 0, getlocalrect().w, getlocalrect().h-300};
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<Routing::AddTurn>(route),
+			create<Routing::AddLoadResource>(route),
+			create<Routing::AddCouple>(route),
+			create<Routing::AddDecouple>(route),
+			create<Routing::RemoveOrder>(route),
+			create<EditableText>(route->name, routenamerect),
+			create<OrderTable>(tablerect, route)
+		)
+	);
+	applylayout();
 	game->getinputmanager().editroute(route);
 }
 
@@ -148,10 +152,14 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
-    rect = {viewsize.x*0.5-150,viewsize.y-150,300,150};
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new TrainTable(this, tablerect));
+    UIRect tablerect = {0, 0, 300, 100};
+	setlayout(create<VBox>(
+		create<Close>(),
+		create<TrainTable>(tablerect)
+	));
+	applylayout();
+    UIVec viewsize = ui->getuirendering().getuiviewsize();
+	rect = {viewsize.x*0.5-rect.w*0.5,viewsize.y-rect.h,rect.w,rect.h};
 }
 
 TrainListPanel::~TrainListPanel()
@@ -163,6 +171,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 		trainmanager(manager), 
 		train(newtrain)
 {
+	create<Close>();
 	create<SetRoute>();
 	create<GoTrain>();
 	create<GasTrain>();
@@ -193,6 +202,7 @@ TrainPanel::~TrainPanel()
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
 {
 	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
+	create<Close>();
 	addelement(new ConstructionTable(this, tablerect));
 }
 
@@ -213,6 +223,7 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 	Coord typenamewidth = 80;
 	Coord column_3_x = rect.w - typenamewidth - margin_x;
 	Coord namewidth = column_3_x - column_2_x - elementdistance_x;
+	create<Close>();
 	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
 	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
 }
@@ -225,6 +236,7 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		factory(f)
 {
 	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
+	create<Close>();
 	addelement(new WagonTable(this, tablerect, *f));
 }
 

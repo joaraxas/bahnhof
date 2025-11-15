@@ -78,7 +78,8 @@ void EditableText::startwriting(){
 void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
-    rect = originalrect;
+    rect.w = originalrect.w;
+    rect.h = originalrect.h;
     shortenedtext = ui->getuirendering().croptexttowidth(
         text, rect.w, margin_x);
 }

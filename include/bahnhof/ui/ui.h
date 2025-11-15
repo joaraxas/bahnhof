@@ -67,6 +67,7 @@ public:
     UIRect screentoui(SDL_Rect rect);
     Vec uitoscreen(UIVec pos);
     UIVec screentoui(Vec pos);
+    UIVec getuiviewsize();
     void renderscaleruler(
         Rendering* r, Coord leftx, Coord lefty, Coord scalelinelength);
 private:
