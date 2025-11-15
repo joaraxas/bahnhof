@@ -15,24 +15,10 @@ namespace UI{
 	
 Panel::Panel(InterfaceManager* newui, UIRect newrect) : 
 	Host(newui, newrect)
-{
-	createbutton<Close>();
-}
+{}
 
 Panel::Panel(InterfaceManager* newui) : 
 	Panel::Panel(newui, {0,0,100,100}) {}
-
-template <class T, typename... Args> 
-Element* Panel::createbutton(Args&&... args)
-{
-	T* button = new T(
-		this, 
-		UIVec(margin_x, margin_y+yoffset), 
-		std::forward<Args>(args)...);
-	addelement(button);
-	// yoffset += elementdistance_y + button->getlocalrect().h;
-	return button;
-}
 
 template <class T, typename... Args> 
 T* Panel::create(Args&&... args)
@@ -71,13 +57,14 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	setlayout(
 	create<HBox>(
 		create<VBox>(
-			createbutton<PlaceTrack>(),
-			createbutton<PlaceSignal>(),
-			createbutton<PlaceBuildings>(),
-			createbutton<ManageRoutes>(),
-			createbutton<ManageTrains>(),
-			createbutton<IncreaseUIScale>(),
-			createbutton<DecreaseUIScale>()
+			create<Close>(),
+			create<PlaceTrack>(),
+			create<PlaceSignal>(),
+			create<PlaceBuildings>(),
+			create<ManageRoutes>(),
+			create<ManageTrains>(),
+			create<IncreaseUIScale>(),
+			create<DecreaseUIScale>()
 		),
 		create<MainInfoTable>(UI::UIRect{0,0,60,100})
 	)
@@ -93,12 +80,17 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 	Panel(newui, newrect)
 {
 	UIRect tablerect = {
-		margin_x, 
-		margin_y+yoffset, 
-		getlocalrect().w-2*margin_x, 
-		getlocalrect().h-margin_y*2-yoffset
+		0, 0, 
+		getlocalrect().w, 
+		getlocalrect().h-50
 	};
-	addelement(new RouteTable(this, tablerect));
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<RouteTable>(tablerect)
+		)
+	);
+	applylayout();
 	routepanelref = std::make_unique<Ownership>();
 }
 
@@ -131,11 +123,11 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
-	createbutton<Routing::AddTurn>(route);
-	createbutton<Routing::AddLoadResource>(route);
-	createbutton<Routing::AddCouple>(route);
-	createbutton<Routing::AddDecouple>(route);
-	createbutton<Routing::RemoveOrder>(route);
+	create<Routing::AddTurn>(route);
+	create<Routing::AddLoadResource>(route);
+	create<Routing::AddCouple>(route);
+	create<Routing::AddDecouple>(route);
+	create<Routing::RemoveOrder>(route);
 	UIRect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
 	yoffset += 16;
 	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
@@ -171,12 +163,12 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 		trainmanager(manager), 
 		train(newtrain)
 {
-	createbutton<SetRoute>();
-	createbutton<GoTrain>();
-	createbutton<GasTrain>();
-	createbutton<BrakeTrain>();
-	createbutton<TurnTrain>();
-	createbutton<CoupleTrain>();
+	create<SetRoute>();
+	create<GoTrain>();
+	create<GasTrain>();
+	create<BrakeTrain>();
+	create<TurnTrain>();
+	create<CoupleTrain>();
 
 	Coord column_2_x = margin_x+80+elementdistance_x;
 	Coord columns_y = margin_y+20+elementdistance_y;

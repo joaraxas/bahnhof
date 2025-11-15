@@ -11,9 +11,9 @@
 
 namespace UI{
 
-Button::Button(Host* newpanel, UIVec newpos) : Element(newpanel)
+Button::Button(Host* newpanel) : Element(newpanel)
 {
-    rect = {newpos.x, newpos.y, 100, 40};
+    rect = {0, 0, 100, 40};
 }
 
 void Button::mousehover(UIVec pos, int ms)
@@ -31,10 +31,9 @@ void Button::render(Rendering* r)
 }
 
 TextButton::TextButton(Host* newpanel, 
-    UIVec newpos, 
     std::string newtext, 
     Coord width
-) : Button(newpanel, newpos)
+) : Button(newpanel)
 {
     text = newtext;
     rect.w = width;

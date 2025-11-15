@@ -26,7 +26,6 @@ public:
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
-    template <class T, typename... Args> Element* createbutton(Args&&... args);
     template <class T, typename... Args> T* create(Args&&... args);
     Layout* setlayout(Layout* l);
     void applylayout();
