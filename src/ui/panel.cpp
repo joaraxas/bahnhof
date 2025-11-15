@@ -171,29 +171,32 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 		trainmanager(manager), 
 		train(newtrain)
 {
-	create<Close>();
-	create<SetRoute>();
-	create<GoTrain>();
-	create<GasTrain>();
-	create<BrakeTrain>();
-	create<TurnTrain>();
-	create<CoupleTrain>();
+	setlayout(
+	create<VBox>(
+		addelement(new EditableText(this, train.name, {0, 0, 300, 20})),
+		
+		create<HBox>(
+			create<VBox>(
+				create<Close>(),
+				create<SetRoute>(),
+				create<GoTrain>(),
+				create<GasTrain>(),
+				create<BrakeTrain>(),
+				create<TurnTrain>(),
+				create<CoupleTrain>()
+			),
 
-	Coord column_2_x = margin_x+80+elementdistance_x;
-	Coord columns_y = margin_y+20+elementdistance_y;
-
-	UIRect traininfotablerect = {column_2_x, columns_y, 100, 100};
-	addelement(new TrainInfoTable(this, traininfotablerect, train));
-
-	UIRect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
-	addelement(new TrainIcons(this, trainiconsrect, train));
-
-	Coord column_3_x = column_2_x + 100 + elementdistance_x;
-	UIRect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
-	addelement(new TrainOrderTable(this, routetablerect, train));
-	
-	UIRect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
-	addelement(new EditableText(this, train.name, trainnamerect));
+			create<VBox>(
+				create<HBox>(
+					create<TrainInfoTable>(UIRect{0, 0, 80, 150}, train),
+					create<TrainOrderTable>(UIRect{0, 0, 200, 150}, train)
+				),
+				create<TrainIcons>(UIRect{0, 0, 200, 30}, train)
+			)
+		)
+	)
+	);
+	applylayout();
 }
 
 TrainPanel::~TrainPanel()
