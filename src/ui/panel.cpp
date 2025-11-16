@@ -204,9 +204,14 @@ TrainPanel::~TrainPanel()
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
 {
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
-	create<Close>();
-	addelement(new ConstructionTable(this, tablerect));
+	UIRect tablerect = {0, 0, 200, 100};
+	setlayout(
+	create<VBox>(
+		create<Close>(),
+		create<ConstructionTable>(tablerect)
+	)
+	);
+	applylayout();
 }
 
 BuildingConstructionPanel::~BuildingConstructionPanel()
