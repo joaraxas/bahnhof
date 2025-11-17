@@ -36,6 +36,11 @@ Layout* Panel::setlayout(Layout* l)
 	return layout;
 }
 
+Layout* Panel::getlayout()
+{
+	return layout;
+}
+
 void Panel::applylayout()
 {
 	if(layout){
@@ -227,13 +232,14 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		Panel(newui, {200,400,500,150}),
 		building(b)
 {
-	Coord column_2_x = margin_x + 80 + elementdistance_x;
-	Coord typenamewidth = 80;
-	Coord column_3_x = rect.w - typenamewidth - margin_x;
-	Coord namewidth = column_3_x - column_2_x - elementdistance_x;
-	create<Close>();
-	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
-	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
+	setlayout(
+		create<HBox>(
+			create<Close>(),
+			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<Text>(building->type.name, UIRect{0, 0, 80, 30})
+		)
+	);
+	applylayout();
 }
 
 BuildingPanel::~BuildingPanel()
@@ -243,9 +249,13 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		BuildingPanel(newui, f),
 		factory(f)
 {
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	create<Close>();
-	addelement(new WagonTable(this, tablerect, *f));
+	Layout* newlayout = create<VBox>();
+	newlayout->addelement({
+		getlayout(),
+		create<WagonTable>(UIRect{0,0,300,100}, *f)
+	});
+	setlayout(newlayout);
+	applylayout();
 }
 
 void FactoryPanel::render(Rendering* r)

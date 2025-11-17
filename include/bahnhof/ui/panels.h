@@ -28,6 +28,7 @@ public:
 protected:
     template <class T, typename... Args> T* create(Args&&... args);
     Layout* setlayout(Layout* l);
+    Layout* getlayout();
     void applylayout();
     static constexpr Coord margin_x = 15;
     static constexpr Coord margin_y = 10;
