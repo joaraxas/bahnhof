@@ -178,7 +178,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 {
 	setlayout(
 	create<VBox>(
-		addelement(new EditableText(this, train.name, {0, 0, 300, 20})),
+		create<EditableText>(train.name, UIRect{0, 0, 300, 20}),
 		
 		create<HBox>(
 			create<VBox>(
@@ -250,7 +250,7 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		factory(f)
 {
 	Layout* newlayout = create<VBox>();
-	newlayout->addelement({
+	newlayout->addelements({
 		getlayout(),
 		create<WagonTable>(UIRect{0,0,300,100}, *f)
 	});

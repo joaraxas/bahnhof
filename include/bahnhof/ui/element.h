@@ -42,7 +42,8 @@ public:
     virtual UIVec getminimumsize() override = 0;
     void render(Rendering* r) final {};
     bool checkclick(UIVec pos) final {return false;};
-    void addelement(std::vector<Element*> els);
+    void addelements(std::vector<Element*> els);
+    void addelement(Element* el);
     UIVec consolidate();
 protected:
     std::vector<Element*> elements;

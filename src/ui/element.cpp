@@ -35,10 +35,15 @@ void Element::place(UIRect r)
     rect.y = r.y+2;
 }
 
-void Layout::addelement(std::vector<Element*> els)
+void Layout::addelements(std::vector<Element*> els)
 {
     for(auto el : els)
-        elements.push_back(el);
+        addelement(el);
+}
+
+void Layout::addelement(Element* el)
+{
+    elements.push_back(el);
 }
 
 UIVec Layout::consolidate()
