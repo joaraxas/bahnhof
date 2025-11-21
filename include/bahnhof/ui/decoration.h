@@ -7,6 +7,7 @@ class Rendering;
 class Train;
 struct TrainInfo;
 struct WagonInfo;
+class WagonFactory;
 
 namespace UI{
 
@@ -49,10 +50,10 @@ private:
     UIRect originalrect;
 };
 
-class TrainIcons : public Element
+class TrainCoupler : public Element
 {
 public:
-    TrainIcons(Host* p, UIRect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
+    TrainCoupler(Host* p, UIRect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
     void mousehover(UIVec pos, int ms);
     void leftclick(UIVec mousepos);
@@ -61,6 +62,19 @@ private:
     Train& train;
     std::vector<UIRect> iconrects;
     int rendersplitafterwagonid = -1;
+};
+
+class WagonQueue : public Element
+{
+public:
+    WagonQueue(Host* h, UIRect maxarea, WagonFactory& f) : 
+        Element{h}, factory{f} {rect = maxarea;};
+    void render(Rendering* r);
+    void leftclick(UIVec mousepos);
+private:
+    int getwagonidatmousepos(UIVec mousepos);
+    WagonFactory& factory;
+    std::vector<UIRect> iconrects;
 };
 
 std::vector<UIRect> rendertrainicons(

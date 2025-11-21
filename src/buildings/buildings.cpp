@@ -107,7 +107,8 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r) : 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
+		RollingStockManager& r) : 
 	Building(g, wagonfactory, std::move(s)), 
 	state(st),
 	rollingstock(r)
@@ -154,6 +155,15 @@ void WagonFactory::orderwagon(const WagonType& type)
 			timeleft = 3500;
 		productionqueue.push_back(&type);
 		game->getgamestate().money -= type.cost;
+	}
+}
+
+void WagonFactory::removefromqueue(int wagonid)
+{
+	if(wagonid>=0 && wagonid<productionqueue.size()){
+		game->getgamestate().money+=productionqueue[wagonid]->cost;
+		productionqueue.erase(productionqueue.begin() + wagonid);
+		if(wagonid==0) timeleft = 3500;
 	}
 }
 

@@ -196,7 +196,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 					create<TrainInfoTable>(UIRect{0, 0, 80, 150}, train),
 					create<TrainOrderTable>(UIRect{0, 0, 200, 150}, train)
 				),
-				create<TrainIcons>(UIRect{0, 0, 200, 30}, train)
+				create<TrainCoupler>(UIRect{0, 0, 200, 30}, train)
 			)
 		)
 	)
@@ -252,25 +252,11 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 	Layout* newlayout = create<VBox>();
 	newlayout->addelements({
 		getlayout(),
-		create<WagonTable>(UIRect{0,0,300,100}, *f)
+		create<WagonTable>(UIRect{0,0,300,100}, *f),
+		create<WagonQueue>(UIRect{0,0,300,20}, *f)
 	});
 	setlayout(newlayout);
 	applylayout();
-}
-
-void FactoryPanel::render(Rendering* r)
-{
-	BuildingPanel::render(r);
-	UIRect queuerect = {rect.x + margin_x, 
-						  rect.y + getlocalrect().h - margin_y - 20, 
-						  getlocalrect().w-2*margin_x, 
-						  20};
-	std::vector<WagonInfo> wagoninfos;
-	for(const WagonType* type : factory->getqueue()){
-		WagonInfo info(type->iconname, none, 0);
-		wagoninfos.push_back(info);
-	}
-	rendertrainicons(r, *ui, wagoninfos, queuerect); // TODO: This should be delegated to a queue decoration class accessing the waiting objects, but that requires abstracting the queue into its own class. We'll do this when needed.
 }
 
 FactoryPanel::~FactoryPanel()

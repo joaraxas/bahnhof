@@ -52,12 +52,14 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
+    WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
+        RollingStockManager& r);
     void trigger();
     bool leftclick(Vec pos);
     State& getstate() {return state;};
     const std::vector<WagonType*> getavailabletypes();
     void orderwagon(const WagonType& type);
+    void removefromqueue(int wagonid);
     const std::deque<const WagonType*>& getqueue();
 private:
     std::deque<const WagonType*> productionqueue;
