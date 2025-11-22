@@ -15,7 +15,8 @@
 
 namespace UI{
 
-Table::Table(Host* newpanel, UIRect newrect) : Element(newpanel) 
+Table::Table(Host* newpanel, UIRect newrect) : 
+    Element(newpanel), minsize(newrect.w, newrect.h)
 {
     rect = newrect;
 }
@@ -68,6 +69,13 @@ void Table::render(Rendering* r)
 	SDL_SetRenderTarget(renderer, NULL);
     ui->getuirendering().rendertexture(r, tablerendertarget, getglobalrect());
     SDL_DestroyTexture(tablerendertarget);
+}
+
+void Table::place(UIRect r)
+{
+    rect = r;
+    rect.w = std::max(r.w, minsize.x);
+    rect.h = std::max(r.h, minsize.y);
 }
 
 void ClickableTable::leftclick(UIVec pos)

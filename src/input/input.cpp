@@ -141,21 +141,21 @@ void InputManager::leftclickmap(Vec mousepos)
     
     case idle:{
         Gamestate& gamestate = game->getgamestate();
-        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+        if(gamestate.getbuildingmanager().leftclick(mousepos))
+            break;
+        
         Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
         if(clickedtrain){
             selecttrain(clickedtrain);
             break;
         }
         
+        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
         if(Tracks::Input::switchat(tracksystem, mousepos)){
             break;
         }
 
         selecttrain(nullptr);
-
-        if(gamestate.getbuildingmanager().leftclick(mousepos))
-            break;
         break;
     }
     

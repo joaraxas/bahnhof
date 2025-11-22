@@ -22,10 +22,14 @@ class Table : public Element
 public:
     Table(Host*, UIRect newrect);
     virtual ~Table();
-    bool checkclick(UIVec pos);
-    virtual void render(Rendering*);
+    bool checkclick(UIVec pos) override;
+    virtual void render(Rendering*) override;
+    virtual UIVec getminimumsize() override {return minsize;};
+    void place(UIRect r) override;
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
+private:
+    UIVec minsize;
 };
 
 class ClickableTable : public Table

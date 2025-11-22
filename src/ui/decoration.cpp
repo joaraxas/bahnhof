@@ -61,6 +61,15 @@ void EditableText::render(Rendering* r)
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
 
+void EditableText::place(UIRect r)
+{
+    originalrect.x = r.x+3;
+    originalrect.y = r.y+2;
+    originalrect.w = r.w-6;
+    rect = originalrect;
+    updatewritingarea();
+}
+
 void EditableText::updatesource()
 {
     if(!text.empty()){
@@ -74,6 +83,7 @@ void EditableText::startwriting(){
     beingedited = true;
     fallbacktext = text;
     updatewritingarea();
+    // TODO: The text should now be rendered above other elements.
 }
 
 void EditableText::stopwriting(){

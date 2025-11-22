@@ -31,6 +31,8 @@ public:
     ~EditableText();
     void leftclick(UIVec mousepos);
     void render(Rendering*);
+    UIVec getminimumsize() {return {originalrect.w+6, originalrect.h+4};};
+    void place(UIRect r);
     void updatesource();
     void startwriting();
     void stopwriting();
