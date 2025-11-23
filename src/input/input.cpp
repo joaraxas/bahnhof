@@ -138,7 +138,7 @@ void InputManager::leftclickmap(Vec mousepos)
     case placingbuildings:
         builder->leftclickmap(mousepos);
         break;
-    
+   
     case idle:{
         Gamestate& gamestate = game->getgamestate();
         if(gamestate.getbuildingmanager().leftclick(mousepos))

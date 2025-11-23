@@ -24,8 +24,9 @@ public:
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
     virtual UIRect getlocalrect();
-    virtual UIVec getminimumsize() {return {rect.w+6, rect.h+4};};
+    virtual UIVec getminimumsize() {return {rect.w+2*mindist.x, rect.h+2*mindist.y};};
     virtual void place(UIRect r);
+    static constexpr UIVec mindist{3,2};
 protected:
     Host* panel;
     UIRect rect = {0,0,100,100};

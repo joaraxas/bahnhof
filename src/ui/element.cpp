@@ -31,8 +31,8 @@ UIRect Element::getlocalrect()
 
 void Element::place(UIRect r)
 {
-    rect.x = r.x+3;
-    rect.y = r.y+2;
+    rect.x = r.x+Element::mindist.x;
+    rect.y = r.y+Element::mindist.y;
 }
 
 void Layout::addelements(std::vector<Element*> els)

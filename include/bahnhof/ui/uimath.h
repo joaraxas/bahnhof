@@ -43,7 +43,7 @@ inline Coord operator+(Coord c1, const Coord c2) {return c1+=c2;};
 inline Coord operator-(Coord c1, const Coord c2) {return c1-=c2;};
 
 struct UIVec{
-    UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
+    constexpr UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
     UIVec& operator-=(UIVec v) {x-=v.x; y-=v.y; return *this;};
 
