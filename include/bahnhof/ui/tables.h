@@ -24,12 +24,12 @@ public:
     virtual ~Table();
     bool checkclick(UIVec pos) override;
     virtual void render(Rendering*) override;
-    virtual UIVec getminimumsize() override {return minsize;};
+    virtual UIVec getminimumsize() override;
     void place(UIRect r) override;
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
 private:
-    UIVec minsize;
+    const UIVec minsize;
 };
 
 class ClickableTable : public Table

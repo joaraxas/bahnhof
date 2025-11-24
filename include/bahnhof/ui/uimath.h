@@ -46,13 +46,16 @@ struct UIVec{
     constexpr UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
     UIVec& operator-=(UIVec v) {x-=v.x; y-=v.y; return *this;};
+    UIVec& operator*=(double c) {x*=c; y*=c; return *this;};
 
     Coord x;
     Coord y;
 };
 
-inline UIVec operator+(UIVec u, UIVec v) {return u+=v;};
-inline UIVec operator-(UIVec u, UIVec v) {return u-=v;};
+inline constexpr UIVec operator+(UIVec u, UIVec v) {return u+=v;};
+inline constexpr UIVec operator-(UIVec u, UIVec v) {return u-=v;};
+inline constexpr UIVec operator*(int i, UIVec v) {return v*=i;};
+inline constexpr UIVec operator*(UIVec v, int i) {return v*=i;};
 
 
 struct UIRect{

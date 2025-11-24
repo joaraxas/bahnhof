@@ -71,11 +71,17 @@ void Table::render(Rendering* r)
     SDL_DestroyTexture(tablerendertarget);
 }
 
+
+UIVec Table::getminimumsize()
+{
+    return minsize + 2*Element::mindist;
+}
+
 void Table::place(UIRect r)
 {
-    rect = r;
-    rect.w = std::max(r.w, minsize.x);
-    rect.h = std::max(r.h, minsize.y);
+    Element::place(r);
+    rect.w = std::max(r.w-2*Element::mindist.x, minsize.x);
+    rect.h = std::max(r.h-2*Element::mindist.y, minsize.y);
 }
 
 void ClickableTable::leftclick(UIVec pos)
