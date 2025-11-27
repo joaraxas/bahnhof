@@ -29,10 +29,15 @@ UIRect Element::getlocalrect()
     return rect;
 }
 
+UIVec Element::getminimumsize()
+{
+    return {rect.w+2*padding.x, rect.h+2*padding.y};
+}
+
 void Element::place(UIRect r)
 {
-    rect.x = r.x+Element::mindist.x;
-    rect.y = r.y+Element::mindist.y;
+    rect.x = r.x+getpadding().x;
+    rect.y = r.y+getpadding().y;
 }
 
 void Layout::addelements(std::vector<Element*> els)
@@ -57,6 +62,10 @@ UIVec Layout::consolidate()
 void HBox::place(UIRect placerect)
 {
     rect = placerect;
+    placerect.x += getpadding().x;
+    placerect.y += getpadding().y;
+    placerect.w -= 2*getpadding().x;
+    placerect.h -= 2*getpadding().y;
 
     Coord totminwidth = std::accumulate(
         minwidths.begin(), minwidths.end(), Coord{0}
@@ -84,12 +93,17 @@ UIVec HBox::getminimumsize()
         sz.y = std::max(sz.y, r.y);
         minwidths.push_back(r.x);
     }
+    sz += 2*getpadding();
     return sz;
 }
 
 void VBox::place(UIRect placerect)
 {
     rect = placerect;
+    placerect.x += getpadding().x;
+    placerect.y += getpadding().y;
+    placerect.w -= 2*getpadding().x;
+    placerect.h -= 2*getpadding().y;
 
     Coord totminheight = std::accumulate(
         minheights.begin(), minheights.end(), Coord{0}
@@ -117,6 +131,7 @@ UIVec VBox::getminimumsize()
         sz.x = std::max(sz.x, r.x);
         minheights.push_back(r.y);
     }
+    sz += 2*getpadding();
     return sz;
 }
 

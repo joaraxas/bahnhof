@@ -31,7 +31,7 @@ public:
     ~EditableText();
     void leftclick(UIVec mousepos);
     void render(Rendering*);
-    UIVec getminimumsize() {return {originalrect.w+Element::mindist.x*2, originalrect.h+Element::mindist.y*2};};
+    UIVec getminimumsize() {return {originalrect.w+getpadding().x*2, originalrect.h+getpadding().y*2};};
     void place(UIRect r);
     void updatesource();
     void startwriting();

@@ -24,21 +24,25 @@ public:
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
     virtual UIRect getlocalrect();
-    virtual UIVec getminimumsize() {return {rect.w+2*mindist.x, rect.h+2*mindist.y};};
+    virtual UIVec getminimumsize();
     virtual void place(UIRect r);
-    static constexpr UIVec mindist{3,2};
+    UIVec getpadding() {return padding;};
+    void setpadding(UIVec s) {padding = s;};
 protected:
     Host* panel;
     UIRect rect = {0,0,100,100};
     InterfaceManager* ui;
     Game* game;
+private:
+    UIVec padding{2,2};
 };
 
 class Layout : public Element
 {
 public:
-    Layout(Host* h) : Element(h) {};
-    template<typename... Args> Layout(Host* h, Args&&... args) : Element(h), elements{std::forward<Args>(args)...} {};
+    template<typename... Args> Layout(Host* h, Args&&... args) : 
+        Element(h), elements{std::forward<Args>(args)...} 
+        {setpadding(UIVec{0,0});};
     virtual ~Layout() {};
     virtual UIVec getminimumsize() override = 0;
     void render(Rendering* r) final {};

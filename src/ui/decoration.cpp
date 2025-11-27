@@ -63,9 +63,9 @@ void EditableText::render(Rendering* r)
 
 void EditableText::place(UIRect r)
 {
-    originalrect.x = r.x+Element::mindist.x;
-    originalrect.y = r.y+Element::mindist.y;
-    originalrect.w = r.w-Element::mindist.x*2;
+    originalrect.x = r.x+getpadding().x;
+    originalrect.y = r.y+getpadding().y;
+    originalrect.w = r.w-getpadding().x*2;
     rect = originalrect;
     updatewritingarea();
 }

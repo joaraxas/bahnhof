@@ -33,6 +33,7 @@ T* Panel::create(Args&&... args)
 Layout* Panel::setlayout(Layout* l)
 {
 	layout = l;
+	layout->setpadding({4,4});
 	return layout;
 }
 
@@ -70,8 +71,8 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),
-		create<MainInfoTable>(UI::UIRect{0,0,60,100})
-	)
+			create<MainInfoTable>(UI::UIRect{0,0,60,100})
+		)
 	);
 	applylayout();
 }
