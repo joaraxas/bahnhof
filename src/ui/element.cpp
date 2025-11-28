@@ -97,6 +97,13 @@ UIVec HBox::getminimumsize()
     return sz;
 }
 
+void HBox::addelement(Element* el)
+{
+    Layout::addelement(el);
+    auto r = el->getminimumsize();
+    minwidths.push_back(r.x);
+}
+
 void VBox::place(UIRect placerect)
 {
     rect = placerect;
@@ -115,7 +122,8 @@ void VBox::place(UIRect placerect)
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
         placerect.h = minheights[i]+extraheight;
-        if(i==elements.size()) placerect.h = rect.h-placerect.y;
+        if(i==elements.size())
+            placerect.h = rect.h-placerect.y;
         el->place(placerect);
         placerect.y += placerect.h;
     }
@@ -133,6 +141,13 @@ UIVec VBox::getminimumsize()
     }
     sz += 2*getpadding();
     return sz;
+}
+
+void VBox::addelement(Element* el)
+{
+    Layout::addelement(el);
+    auto r = el->getminimumsize();
+    minheights.push_back(r.y);
 }
 
 }

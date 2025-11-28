@@ -48,7 +48,7 @@ public:
     void render(Rendering* r) final {};
     bool checkclick(UIVec pos) final {return false;};
     void addelements(std::vector<Element*> els);
-    void addelement(Element* el);
+    virtual void addelement(Element* el);
     UIVec consolidate();
 protected:
     std::vector<Element*> elements;
@@ -57,10 +57,12 @@ protected:
 class HBox : public Layout
 {
 public:
-    HBox(Host* h) : Layout(h) {};
-    template<typename... Args> HBox(Host* h, Args&&... args) : Layout(h, std::forward<Args>(args)...) {};
+    template<typename... Args> HBox(Host* h, Args&&... args) : 
+        Layout(h, std::forward<Args>(args)...) 
+        {getminimumsize();};
     void place(UIRect r) override;
     UIVec getminimumsize() override;
+    void addelement(Element* el) override;
 private:
     std::vector<Coord> minwidths;
 };
@@ -68,10 +70,12 @@ private:
 class VBox : public Layout
 {
 public:
-    VBox(Host* h) : Layout(h) {};
-    template<typename... Args> VBox(Host* h, Args&&... args) : Layout(h, std::forward<Args>(args)...) {};
+    template<typename... Args> VBox(Host* h, Args&&... args) : 
+        Layout(h, std::forward<Args>(args)...) 
+        {getminimumsize();};
     void place(UIRect r) override;
     UIVec getminimumsize() override;
+    void addelement(Element* el) override;
 private:
     std::vector<Coord> minheights;
 };

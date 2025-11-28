@@ -33,7 +33,7 @@ T* Panel::create(Args&&... args)
 Layout* Panel::setlayout(Layout* l)
 {
 	layout = l;
-	layout->setpadding({4,4});
+	layout->setpadding({8,8});
 	return layout;
 }
 
@@ -85,9 +85,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 	Panel(newui, newrect)
 {
 	UIRect tablerect = {
-		0, 0, 
-		getlocalrect().w, 
-		getlocalrect().h-50
+		0, 0, 100, 50
 	};
 	setlayout(
 		create<VBox>(
@@ -95,14 +93,14 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 			create<RouteTable>(tablerect)
 		)
 	);
-	applylayout();
+	getlayout()->place(getlocalrect());
 	routepanelref = std::make_unique<Ownership>();
 }
 
 RouteListPanel::~RouteListPanel()
 {
 	// This prevents calling RoutePanel::erase() in case the RouteListPanel was deleted for an unexpected reason, 
-	// like closing the game window. Calling RoutePanel::erase() will throw a segfault as it needs the InputManager
+	// like closing the game window. Calling RoutePanel::erase() will cause a segfault as it needs the InputManager
 	// which has already been destroyed at this point.
 	routepanelref->resetreference();
 }
@@ -117,7 +115,7 @@ void RouteListPanel::erase()
 
 void RouteListPanel::addroutepanel(int routeindex)
 {
-    UIRect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
+    UIRect routepanelrect = {getglobalrect().x-200,0,200,getglobalrect().h};
 	routepanelref->deletereference();
 	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
 }
@@ -128,8 +126,8 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
-	UIRect routenamerect = {0, 0, getlocalrect().w, 14};
-	UIRect tablerect = {0, 0, getlocalrect().w, getlocalrect().h-300};
+	UIRect routenamerect = {0, 0, 100, 14};
+	UIRect tablerect = {0, 0, 100, 100};
 	setlayout(
 		create<VBox>(
 			create<Close>(),
@@ -142,7 +140,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 			create<OrderTable>(tablerect, route)
 		)
 	);
-	applylayout();
+	getlayout()->place(getlocalrect());
 	game->getinputmanager().editroute(route);
 }
 

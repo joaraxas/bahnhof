@@ -66,7 +66,7 @@ UIRect Host::getglobalrect()
 
 UIRect Host::getlocalrect()
 {
-	return rect;
+	return {0,0,rect.w,rect.h};
 }
 
 void Host::update(int ms)
