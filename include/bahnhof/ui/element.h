@@ -25,7 +25,7 @@ public:
     virtual UIRect getglobalrect();
     virtual UIRect getlocalrect();
     virtual UIVec getminimumsize();
-    virtual void place(UIRect r);
+    virtual UIRect place(UIRect r);
     UIVec getpadding() {return padding;};
     void setpadding(UIVec s) {padding = s;};
 protected:
@@ -60,7 +60,7 @@ public:
     template<typename... Args> HBox(Host* h, Args&&... args) : 
         Layout(h, std::forward<Args>(args)...) 
         {getminimumsize();};
-    void place(UIRect r) override;
+    UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
 private:
@@ -73,7 +73,7 @@ public:
     template<typename... Args> VBox(Host* h, Args&&... args) : 
         Layout(h, std::forward<Args>(args)...) 
         {getminimumsize();};
-    void place(UIRect r) override;
+    UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
 private:

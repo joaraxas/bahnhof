@@ -61,13 +61,15 @@ void EditableText::render(Rendering* r)
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
 
-void EditableText::place(UIRect r)
+UIRect EditableText::place(UIRect r)
 {
     originalrect.x = r.x+getpadding().x;
     originalrect.y = r.y+getpadding().y;
-    originalrect.w = r.w-getpadding().x*2;
+    originalrect.w = std::max(r.w-getpadding().x*2, 
+                                getminimumsize().x);
     rect = originalrect;
     updatewritingarea();
+    return originalrect;
 }
 
 void EditableText::updatesource()

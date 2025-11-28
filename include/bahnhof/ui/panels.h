@@ -30,11 +30,6 @@ protected:
     Layout* setlayout(Layout* l);
     Layout* getlayout();
     void applylayout();
-    static constexpr Coord margin_x = 15;
-    static constexpr Coord margin_y = 10;
-    Coord yoffset = 0;
-    static constexpr Coord elementdistance_x = 15;
-    static constexpr Coord elementdistance_y = 5;
 private:
     Layout* layout{nullptr};
 };

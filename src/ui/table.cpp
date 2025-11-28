@@ -77,11 +77,12 @@ UIVec Table::getminimumsize()
     return minsize + 2*getpadding();
 }
 
-void Table::place(UIRect r)
+UIRect Table::place(UIRect r)
 {
     Element::place(r);
     rect.w = std::max(r.w-2*getpadding().x, minsize.x);
     rect.h = std::max(r.h-2*getpadding().y, minsize.y);
+    return rect;
 }
 
 void ClickableTable::leftclick(UIVec pos)

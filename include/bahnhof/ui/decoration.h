@@ -32,7 +32,7 @@ public:
     void leftclick(UIVec mousepos);
     void render(Rendering*);
     UIVec getminimumsize() {return {originalrect.w+getpadding().x*2, originalrect.h+getpadding().y*2};};
-    void place(UIRect r);
+    UIRect place(UIRect r);
     void updatesource();
     void startwriting();
     void stopwriting();

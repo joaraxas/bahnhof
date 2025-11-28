@@ -34,10 +34,11 @@ UIVec Element::getminimumsize()
     return {rect.w+2*padding.x, rect.h+2*padding.y};
 }
 
-void Element::place(UIRect r)
+UIRect Element::place(UIRect r)
 {
     rect.x = r.x+getpadding().x;
     rect.y = r.y+getpadding().y;
+    return rect;
 }
 
 void Layout::addelements(std::vector<Element*> els)
@@ -59,7 +60,7 @@ UIVec Layout::consolidate()
     return sz;
 }
 
-void HBox::place(UIRect placerect)
+UIRect HBox::place(UIRect placerect)
 {
     UIVec sz{getminimumsize()};
     placerect = {placerect.x, 
@@ -86,6 +87,8 @@ void HBox::place(UIRect placerect)
         el->place(placerect);
         placerect.x += placerect.w;
     }
+
+    return rect;
 }
 
 UIVec HBox::getminimumsize()
@@ -109,7 +112,7 @@ void HBox::addelement(Element* el)
     minwidths.push_back(r.x);
 }
 
-void VBox::place(UIRect placerect)
+UIRect VBox::place(UIRect placerect)
 {
     UIVec sz{getminimumsize()};
     placerect = {placerect.x, 
@@ -137,6 +140,8 @@ void VBox::place(UIRect placerect)
         el->place(placerect);
         placerect.y += placerect.h;
     }
+
+    return rect;
 }
 
 UIVec VBox::getminimumsize()
