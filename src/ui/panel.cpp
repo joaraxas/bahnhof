@@ -94,6 +94,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 		)
 	);
 	getlayout()->place(getlocalrect());
+	rect = getlayout()->getglobalrect();
 	routepanelref = std::make_unique<Ownership>();
 }
 
@@ -141,6 +142,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 		)
 	);
 	getlayout()->place(getlocalrect());
+	rect = getlayout()->getglobalrect();
 	game->getinputmanager().editroute(route);
 }
 

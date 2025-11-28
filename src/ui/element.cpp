@@ -61,6 +61,11 @@ UIVec Layout::consolidate()
 
 void HBox::place(UIRect placerect)
 {
+    UIVec sz{getminimumsize()};
+    placerect = {placerect.x, 
+                placerect.y, 
+                std::max(sz.x,placerect.w), 
+                std::max(sz.y,placerect.h)};
     rect = placerect;
     placerect.x += getpadding().x;
     placerect.y += getpadding().y;
@@ -106,6 +111,11 @@ void HBox::addelement(Element* el)
 
 void VBox::place(UIRect placerect)
 {
+    UIVec sz{getminimumsize()};
+    placerect = {placerect.x, 
+                placerect.y, 
+                std::max(sz.x,placerect.w), 
+                std::max(sz.y,placerect.h)};
     rect = placerect;
     placerect.x += getpadding().x;
     placerect.y += getpadding().y;
