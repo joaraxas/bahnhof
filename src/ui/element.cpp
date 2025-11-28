@@ -52,14 +52,6 @@ void Layout::addelement(Element* el)
     elements.push_back(el);
 }
 
-UIVec Layout::consolidate()
-{
-    UIVec sz{getminimumsize()};
-    UIRect placerect{0, 0, sz.x, sz.y};
-    place(placerect);
-    return sz;
-}
-
 UIRect HBox::place(UIRect placerect)
 {
     UIVec sz{getminimumsize()};

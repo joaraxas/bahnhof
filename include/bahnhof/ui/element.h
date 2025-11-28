@@ -49,7 +49,6 @@ public:
     bool checkclick(UIVec pos) final {return false;};
     void addelements(std::vector<Element*> els);
     virtual void addelement(Element* el);
-    UIVec consolidate();
 protected:
     std::vector<Element*> elements;
 };

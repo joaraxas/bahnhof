@@ -42,11 +42,12 @@ Layout* Panel::getlayout()
 	return layout;
 }
 
-void Panel::applylayout()
+void Panel::applylayout(UIVec minsize=UIVec{10,10})
 {
 	if(layout){
-		UIVec sz = layout->consolidate();
-		rect.w = sz.x; rect.h = sz.y;
+		UIRect layoutrect = layout->place({0,0,minsize.x,minsize.y});
+		rect.w = layoutrect.w;
+		rect.h = layoutrect.h;
 	}
 }
 
@@ -93,8 +94,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 			create<RouteTable>(tablerect)
 		)
 	);
-	getlayout()->place(getlocalrect());
-	rect = getlayout()->getglobalrect();
+	applylayout({rect.w,rect.h});
 	routepanelref = std::make_unique<Ownership>();
 }
 
@@ -141,8 +141,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 			create<OrderTable>(tablerect, route)
 		)
 	);
-	getlayout()->place(getlocalrect());
-	rect = getlayout()->getglobalrect();
+	applylayout({rect.w,rect.h});
 	game->getinputmanager().editroute(route);
 }
 

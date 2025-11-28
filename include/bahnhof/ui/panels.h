@@ -29,7 +29,7 @@ protected:
     template <class T, typename... Args> T* create(Args&&... args);
     Layout* setlayout(Layout* l);
     Layout* getlayout();
-    void applylayout();
+    void applylayout(UIVec minsize);
 private:
     Layout* layout{nullptr};
 };
