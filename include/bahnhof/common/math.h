@@ -68,3 +68,4 @@ float sign(float a);
 float truncate(float dir, float denominator);
 float anglediff(float a, float b, float wraparound);
 int randint(int maxinclusive);
+float randfloat(float maxexclusive);
