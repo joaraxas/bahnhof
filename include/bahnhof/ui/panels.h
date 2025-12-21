@@ -83,7 +83,7 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui, UIRect);
+    BuildingConstructionPanel(InterfaceManager* newui);
     ~BuildingConstructionPanel();
     void erase() override;
 };

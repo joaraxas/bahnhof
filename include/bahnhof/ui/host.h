@@ -40,6 +40,7 @@ public:
     InterfaceManager& getui();
     UIRect getglobalrect();
     UIRect getlocalrect();
+    void placewherefree();
     Ownership* owner = nullptr;
 protected:
     Element* getelementat(UIVec pos);

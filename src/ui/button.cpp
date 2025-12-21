@@ -68,7 +68,7 @@ void PlaceTrack::leftclick(UIVec mousepos)
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    new BuildingConstructionPanel(ui, {180,0,300,200});
+    new BuildingConstructionPanel(ui);
 }
 
 void ManageRoutes::leftclick(UIVec mousepos)

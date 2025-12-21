@@ -92,6 +92,7 @@ public:
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void movepaneltofront(UI::Host*);
+    UI::UIVec findfreespace(const UI::UIVec size);
     void setdropdown(UI::Dropdown*);
     Game& getgame();
     UIRendering& getuirendering() {return uirendering;};
@@ -103,6 +104,7 @@ private:
     std::vector<UI::Host*> panelstodelete;
     UI::Dropdown* dropdown = nullptr;
     UI::UIVec movingwindowoffset;
+    UI::UIVec placepanelspos={200,50};
     Game* game;
     UIRendering uirendering;
 };

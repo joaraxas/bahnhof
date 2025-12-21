@@ -142,4 +142,9 @@ void Host::moveto(UIVec towhattopcorner){
 	rect.y = towhattopcorner.y;
 }
 
+void Host::placewherefree(){
+	UIVec size{rect.w, rect.h};
+	moveto(ui->findfreespace(size));
+}
+
 } // namespace UI

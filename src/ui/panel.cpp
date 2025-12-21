@@ -198,12 +198,13 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 	)
 	);
 	applylayout();
+	placewherefree();
 }
 
 TrainPanel::~TrainPanel()
 {}
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) : Panel(newui)
 {
 	setlayout(
 	create<VBox>(
@@ -212,6 +213,7 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UI
 	)
 	);
 	applylayout();
+	placewherefree();
 }
 
 BuildingConstructionPanel::~BuildingConstructionPanel()
@@ -237,6 +239,7 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		)
 	);
 	applylayout();
+	placewherefree();
 }
 
 BuildingPanel::~BuildingPanel()
@@ -254,6 +257,7 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 	});
 	setlayout(newlayout);
 	applylayout();
+	placewherefree();
 }
 
 FactoryPanel::~FactoryPanel()

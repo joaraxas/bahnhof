@@ -184,6 +184,17 @@ void InterfaceManager::movepaneltofront(UI::Host* selectedpanel)
     }
 }
 
+UI::UIVec InterfaceManager::findfreespace(const UI::UIVec size)
+{
+    placepanelspos += {30,30};
+    if(placepanelspos.x+size.x > uirendering.getuiviewsize().x)
+        placepanelspos.x = 10;
+    if(placepanelspos.y+size.y > uirendering.getuiviewsize().y)
+        placepanelspos.y = 10;
+    
+    return placepanelspos;
+}
+
 void InterfaceManager::setdropdown(UI::Dropdown* dr)
 {
     if(dropdown)
