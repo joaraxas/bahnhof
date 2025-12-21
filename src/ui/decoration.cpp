@@ -65,9 +65,10 @@ UIRect EditableText::place(UIRect r)
 {
     originalrect.x = r.x+getpadding().x;
     originalrect.y = r.y+getpadding().y;
-    originalrect.w = std::max(r.w-getpadding().x*2, 
-                                getminimumsize().x);
+    originalrect.w = std::max(r.w-getpadding().x*2, originalrect.w);
     rect = originalrect;
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
     return originalrect;
 }
 

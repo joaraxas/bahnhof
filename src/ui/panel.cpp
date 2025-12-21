@@ -32,6 +32,8 @@ T* Panel::create(Args&&... args)
 
 Layout* Panel::setlayout(Layout* l)
 {
+	if(layout)
+		layout->setpadding({0,0});
 	layout = l;
 	layout->setpadding({8,8});
 	return layout;
@@ -226,10 +228,12 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		building(b)
 {
 	setlayout(
-		create<HBox>(
-			create<Close>(),
-			create<EditableText>(building->name, UIRect{0, 0, 200, 20}),
-			create<Text>(building->type.name, UIRect{0, 0, 80, 30})
+		create<VBox>(
+			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<HBox>(
+				create<Close>(),
+				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
+			)
 		)
 	);
 	applylayout();
