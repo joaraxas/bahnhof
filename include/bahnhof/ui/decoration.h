@@ -33,6 +33,7 @@ public:
     void render(Rendering*);
     UIVec getminimumsize() {return {originalrect.w+getpadding().x*2, originalrect.h+getpadding().y*2};};
     UIRect place(UIRect r);
+    bool resizable_x() const override {return true;};
     void updatesource();
     void startwriting();
     void stopwriting();
