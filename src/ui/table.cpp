@@ -393,7 +393,7 @@ void ConstructionTable::lineclicked(int index)
 }
 
 
-WagonTable::WagonTable(Host* p, UIRect r, WagonFactory& f) : 
+WagonTable::WagonTable(Host* p, WagonFactory& f, UIRect r) : 
     ClickableTable(p, r), 
     input(game->getinputmanager()),
     factory(f)

@@ -73,14 +73,14 @@ private:
 class MainInfoTable : public Table
 {
 public:
-    MainInfoTable(Host*, UIRect newrect);
+    MainInfoTable(Host*, UIRect newrect={0,0,60,100});
     void update(int ms);
 };
 
 class RouteTable : public ClickableTable
 {
 public:
-    RouteTable(Host* p, UIRect r);
+    RouteTable(Host* p, UIRect r={0, 0, 100, 50});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -92,7 +92,7 @@ private:
 class OrderTable : public ClickableTable
 {
 public:
-    OrderTable(Host* newpanel, UIRect newrect, Route* myroute) : 
+    OrderTable(Host* newpanel, Route* myroute, UIRect newrect={0,0,100,100}) : 
         ClickableTable(newpanel, newrect), route(myroute) {};
     virtual void update(int ms);
     void render(Rendering* r);
@@ -107,8 +107,8 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Host* p, UIRect r, Train& t) : 
-        OrderTable(p, r, nullptr), train(t) {};
+    TrainOrderTable(Host* p, Train& t, UIRect r={0, 0, 200, 150}) : 
+        OrderTable(p, nullptr, r), train(t) {};
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -118,7 +118,7 @@ private:
 class TrainTable : public ClickableTable
 {
 public:
-    TrainTable(Host*, UIRect newrect);
+    TrainTable(Host*, UIRect newrect={0,0,300,100});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -129,7 +129,7 @@ private:
 class TrainInfoTable : public Table
 {
 public:
-    TrainInfoTable(Host* p, UIRect r, Train& t): Table(p, r), train(t) {};
+    TrainInfoTable(Host* p, Train& t, UIRect r={0, 0, 80, 150}): Table(p, r), train(t) {};
     void update(int ms);
 private:
     Train& train;
@@ -138,7 +138,7 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, UIRect r);
+    ConstructionTable(Host* p, UIRect r={0, 0, 200, 100});
 private:
     void lineclicked(int index);
     InputManager& input;
@@ -148,7 +148,7 @@ private:
 class WagonTable : public ClickableTable
 {
 public:
-    WagonTable(Host* p, UIRect r, WagonFactory& f);
+    WagonTable(Host* p, WagonFactory& f, UIRect r={0,0,150,80});
 private:
     void lineclicked(int index);
     InputManager& input;

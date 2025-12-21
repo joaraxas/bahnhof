@@ -72,7 +72,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),
-		create<MainInfoTable>(UI::UIRect{0,0,60,100})
+		create<MainInfoTable>()
 		)
 	);
 	applylayout();
@@ -85,13 +85,10 @@ MainPanel::~MainPanel()
 RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) : 
 	Panel(newui, newrect)
 {
-	UIRect tablerect = {
-		0, 0, 100, 50
-	};
 	setlayout(
 		create<VBox>(
 			create<Close>(),
-			create<RouteTable>(tablerect)
+			create<RouteTable>()
 		)
 	);
 	applylayout({rect.w,rect.h});
@@ -127,8 +124,6 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
-	UIRect routenamerect = {0, 0, 100, 14};
-	UIRect tablerect = {0, 0, 100, 100};
 	setlayout(
 		create<VBox>(
 			create<Close>(),
@@ -137,8 +132,8 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 			create<Routing::AddCouple>(route),
 			create<Routing::AddDecouple>(route),
 			create<Routing::RemoveOrder>(route),
-			create<EditableText>(route->name, routenamerect),
-			create<OrderTable>(tablerect, route)
+			create<EditableText>(route->name),
+			create<OrderTable>(route)
 		)
 	);
 	applylayout({rect.w,rect.h});
@@ -157,10 +152,9 @@ void RoutePanel::erase()
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    UIRect tablerect = {0, 0, 300, 100};
 	setlayout(create<VBox>(
 		create<Close>(),
-		create<TrainTable>(tablerect)
+		create<TrainTable>()
 	));
 	applylayout();
     UIVec viewsize = ui->getuirendering().getuiviewsize();
@@ -178,7 +172,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 {
 	setlayout(
 	create<VBox>(
-		create<EditableText>(train.name, UIRect{0, 0, 300, 20}),
+		create<EditableText>(train.name),
 		
 		create<HBox>(
 			create<VBox>(
@@ -193,10 +187,10 @@ TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& ma
 
 			create<VBox>(
 				create<HBox>(
-					create<TrainInfoTable>(UIRect{0, 0, 80, 150}, train),
-					create<TrainOrderTable>(UIRect{0, 0, 200, 150}, train)
+					create<TrainInfoTable>(train),
+					create<TrainOrderTable>(train)
 				),
-				create<TrainCoupler>(UIRect{0, 0, 200, 30}, train)
+				create<TrainCoupler>(train)
 			)
 		)
 	)
@@ -209,11 +203,10 @@ TrainPanel::~TrainPanel()
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
 {
-	UIRect tablerect = {0, 0, 200, 100};
 	setlayout(
 	create<VBox>(
 		create<Close>(),
-		create<ConstructionTable>(tablerect)
+		create<ConstructionTable>()
 	)
 	);
 	applylayout();
@@ -235,7 +228,7 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 	setlayout(
 		create<HBox>(
 			create<Close>(),
-			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<EditableText>(building->name, UIRect{0, 0, 200, 20}),
 			create<Text>(building->type.name, UIRect{0, 0, 80, 30})
 		)
 	);
@@ -252,8 +245,8 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 	Layout* newlayout = create<VBox>();
 	newlayout->addelements({
 		getlayout(),
-		create<WagonTable>(UIRect{0,0,300,100}, *f),
-		create<WagonQueue>(UIRect{0,0,300,20}, *f)
+		create<WagonTable>(*f),
+		create<WagonQueue>(*f)
 	});
 	setlayout(newlayout);
 	applylayout();
