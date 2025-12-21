@@ -69,9 +69,9 @@ UIRect HBox::place(UIRect placerect)
         minwidths.begin(), minwidths.end(), Coord{0}
     );
     Coord extrawidth{0};
-    if(numresizableelements>0)
+    if(numresizableelements_x>0)
         extrawidth = std::floor(
-            (placerect.w-totminwidth)*(1./numresizableelements)
+            (placerect.w-totminwidth)*(1./numresizableelements_x)
         );
 
     for(int i=0; i<elements.size(); ++i){
@@ -91,14 +91,17 @@ UIVec HBox::getminimumsize()
 {
     UIVec sz{0,0};
     minwidths.clear();
-    numresizableelements = 0;
+    numresizableelements_x = 0;
+    anyresizableelement_y = false;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.x += r.x;
         sz.y = std::max(sz.y, r.y);
         minwidths.push_back(r.x);
         if(el->resizable_x())
-            ++numresizableelements;
+            ++numresizableelements_x;
+        if(!anyresizableelement_y && el->resizable_y())
+            anyresizableelement_y = true;
     }
     sz += 2*getpadding();
     return sz;
@@ -110,7 +113,9 @@ void HBox::addelement(Element* el)
     auto r = el->getminimumsize();
     minwidths.push_back(r.x);
     if(el->resizable_x())
-        ++numresizableelements;
+        ++numresizableelements_x;
+    if(el->resizable_y())
+        anyresizableelement_y = true;
 }
 
 UIRect VBox::place(UIRect placerect)
@@ -130,9 +135,9 @@ UIRect VBox::place(UIRect placerect)
         minheights.begin(), minheights.end(), Coord{0}
     );
     Coord extraheight{0};
-    if(numresizableelements>0){
+    if(numresizableelements_y>0){
         extraheight = std::floor(
-            (placerect.h-totminheight)*(1./numresizableelements)
+            (placerect.h-totminheight)*(1./numresizableelements_y)
         );
     }
     
@@ -154,14 +159,17 @@ UIVec VBox::getminimumsize()
 {
     UIVec sz{0,0};
     minheights.clear();
-    numresizableelements = 0;
+    numresizableelements_y = 0;
+    anyresizableelement_x = false;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.y += r.y;
         sz.x = std::max(sz.x, r.x);
         minheights.push_back(r.y);
         if(el->resizable_y())
-            ++numresizableelements;
+            ++numresizableelements_y;
+        if(!anyresizableelement_x && el->resizable_x())
+            anyresizableelement_x = true;
     }
     sz += 2*getpadding();
     return sz;
@@ -173,7 +181,9 @@ void VBox::addelement(Element* el)
     auto r = el->getminimumsize();
     minheights.push_back(r.y);
     if(el->resizable_y())
-        ++numresizableelements;
+        ++numresizableelements_y;
+    if(el->resizable_x())
+        anyresizableelement_x = true;
 }
 
 }

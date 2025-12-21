@@ -64,10 +64,12 @@ public:
     UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
-    bool resizable_x() const override {return numresizableelements>0;};
+    bool resizable_x() const override {return numresizableelements_x>0;};
+    bool resizable_y() const override {return anyresizableelement_y;};
 private:
     std::vector<Coord> minwidths;
-    int numresizableelements = 0;
+    int numresizableelements_x = 0;
+    bool anyresizableelement_y = false;
 };
 
 class VBox : public Layout
@@ -79,10 +81,12 @@ public:
     UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
-    bool resizable_y() const override {return numresizableelements>0;};
+    bool resizable_x() const override {return anyresizableelement_x;};
+    bool resizable_y() const override {return numresizableelements_y>0;};
 private:
     std::vector<Coord> minheights;
-    int numresizableelements = 0;
+    bool anyresizableelement_x = false;
+    int numresizableelements_y = 0;
 };
 
 } // namespace UI

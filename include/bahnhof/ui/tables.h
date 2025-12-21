@@ -80,7 +80,7 @@ public:
 class RouteTable : public ClickableTable
 {
 public:
-    RouteTable(Host* p, UIRect r={0, 0, 100, 50});
+    RouteTable(Host* p, UIRect r={0,0,100,50});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -107,7 +107,7 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Host* p, Train& t, UIRect r={0, 0, 200, 150}) : 
+    TrainOrderTable(Host* p, Train& t, UIRect r={0,0,200,150}) : 
         OrderTable(p, nullptr, r), train(t) {};
     void update(int ms);
 private:
@@ -129,7 +129,7 @@ private:
 class TrainInfoTable : public Table
 {
 public:
-    TrainInfoTable(Host* p, Train& t, UIRect r={0, 0, 80, 150}): Table(p, r), train(t) {};
+    TrainInfoTable(Host* p, Train& t, UIRect r={0,0,80,150}): Table(p, r), train(t) {};
     void update(int ms);
 private:
     Train& train;
@@ -138,7 +138,7 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, UIRect r={0, 0, 200, 100});
+    ConstructionTable(Host* p, UIRect r={0,0,200,100});
 private:
     void lineclicked(int index);
     InputManager& input;

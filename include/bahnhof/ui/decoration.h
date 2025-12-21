@@ -56,7 +56,7 @@ private:
 class TrainCoupler : public Element
 {
 public:
-    TrainCoupler(Host* p, Train& t, UIRect maxarea={0, 0, 200, 20}) : Element(p), train(t) {rect = maxarea;};
+    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
     void mousehover(UIVec pos, int ms);
     void leftclick(UIVec mousepos);
