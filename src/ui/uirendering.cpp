@@ -78,7 +78,7 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
         color = {255,255,255,255};
         break;
     case UI::PanelBackground:
-        color = {255,255,255,127};
+        color = {127,160,100,255};
         break;
     case UI::PanelBorder:
         color = {0,0,0,127};
