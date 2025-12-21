@@ -26,6 +26,8 @@ public:
     virtual void render(Rendering*) override;
     virtual UIVec getminimumsize() override;
     UIRect place(UIRect r) override;
+    bool resizable_x() const override {return true;};
+    bool resizable_y() const override {return true;};
 protected:
     std::vector<std::unique_ptr<TableLine>> lines;
 private:

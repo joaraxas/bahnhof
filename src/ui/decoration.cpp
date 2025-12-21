@@ -68,7 +68,6 @@ UIRect EditableText::place(UIRect r)
     originalrect.w = std::max(r.w-getpadding().x*2, 
                                 getminimumsize().x);
     rect = originalrect;
-    updatewritingarea();
     return originalrect;
 }
 

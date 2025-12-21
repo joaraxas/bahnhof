@@ -72,7 +72,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),
-			create<MainInfoTable>(UI::UIRect{0,0,60,100})
+		create<MainInfoTable>(UI::UIRect{0,0,60,100})
 		)
 	);
 	applylayout();

@@ -28,6 +28,8 @@ public:
     virtual UIRect place(UIRect r);
     UIVec getpadding() {return padding;};
     void setpadding(UIVec s) {padding = s;};
+    virtual bool resizable_x() const {return false;};
+    virtual bool resizable_y() const {return false;};
 protected:
     Host* panel;
     UIRect rect = {0,0,100,100};
@@ -62,8 +64,10 @@ public:
     UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
+    bool resizable_x() const override {return numresizableelements>0;};
 private:
     std::vector<Coord> minwidths;
+    int numresizableelements = 0;
 };
 
 class VBox : public Layout
@@ -75,8 +79,10 @@ public:
     UIRect place(UIRect r) override;
     UIVec getminimumsize() override;
     void addelement(Element* el) override;
+    bool resizable_y() const override {return numresizableelements>0;};
 private:
     std::vector<Coord> minheights;
+    int numresizableelements = 0;
 };
 
 } // namespace UI

@@ -68,13 +68,17 @@ UIRect HBox::place(UIRect placerect)
     Coord totminwidth = std::accumulate(
         minwidths.begin(), minwidths.end(), Coord{0}
     );
-    Coord extrawidth = std::floor(
-        (placerect.w-totminwidth)*(1./elements.size())
-    );
+    Coord extrawidth{0};
+    if(numresizableelements>0)
+        extrawidth = std::floor(
+            (placerect.w-totminwidth)*(1./numresizableelements)
+        );
 
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
-        placerect.w = minwidths[i]+extrawidth;
+        placerect.w = minwidths[i];
+        if(el->resizable_x())
+            placerect.w += extrawidth;
         if(i==elements.size()) placerect.w = rect.w-placerect.x;
         el->place(placerect);
         placerect.x += placerect.w;
@@ -87,11 +91,14 @@ UIVec HBox::getminimumsize()
 {
     UIVec sz{0,0};
     minwidths.clear();
+    numresizableelements = 0;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.x += r.x;
         sz.y = std::max(sz.y, r.y);
         minwidths.push_back(r.x);
+        if(el->resizable_x())
+            ++numresizableelements;
     }
     sz += 2*getpadding();
     return sz;
@@ -102,6 +109,8 @@ void HBox::addelement(Element* el)
     Layout::addelement(el);
     auto r = el->getminimumsize();
     minwidths.push_back(r.x);
+    if(el->resizable_x())
+        ++numresizableelements;
 }
 
 UIRect VBox::place(UIRect placerect)
@@ -120,13 +129,18 @@ UIRect VBox::place(UIRect placerect)
     Coord totminheight = std::accumulate(
         minheights.begin(), minheights.end(), Coord{0}
     );
-    Coord extraheight = std::floor(
-        (placerect.h-totminheight)*(1./elements.size())
-    );
+    Coord extraheight{0};
+    if(numresizableelements>0){
+        extraheight = std::floor(
+            (placerect.h-totminheight)*(1./numresizableelements)
+        );
+    }
     
     for(int i=0; i<elements.size(); ++i){
         auto el = elements[i];
-        placerect.h = minheights[i]+extraheight;
+        placerect.h = minheights[i];
+        if(el->resizable_y())
+            placerect.h += extraheight;
         if(i==elements.size())
             placerect.h = rect.h-placerect.y;
         el->place(placerect);
@@ -140,11 +154,14 @@ UIVec VBox::getminimumsize()
 {
     UIVec sz{0,0};
     minheights.clear();
+    numresizableelements = 0;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.y += r.y;
         sz.x = std::max(sz.x, r.x);
         minheights.push_back(r.y);
+        if(el->resizable_y())
+            ++numresizableelements;
     }
     sz += 2*getpadding();
     return sz;
@@ -155,6 +172,8 @@ void VBox::addelement(Element* el)
     Layout::addelement(el);
     auto r = el->getminimumsize();
     minheights.push_back(r.y);
+    if(el->resizable_y())
+        ++numresizableelements;
 }
 
 }
