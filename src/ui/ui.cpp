@@ -31,7 +31,7 @@ void InterfaceManager::render(Rendering* r)
 {
     cleanup();
 
-    UI::Coord viewheight = uirendering.screentoui(getviewsize()).y;
+    UI::Coord viewheight = uirendering.getuiview().h;
     uirendering.renderscaleruler(r, 20, viewheight-20, 200);
 
     for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)
@@ -188,10 +188,11 @@ void InterfaceManager::movepaneltofront(UI::Host* selectedpanel)
 
 UI::UIVec InterfaceManager::findfreespace(const UI::UIVec size)
 {
+    UIRect view = uirendering.getuiview();
     placepanelspos += {30,30};
-    if(placepanelspos.x+size.x > uirendering.getuiviewsize().x)
+    if(placepanelspos.x+size.x > view.x+view.w)
         placepanelspos.x = 10;
-    if(placepanelspos.y+size.y > uirendering.getuiviewsize().y)
+    if(placepanelspos.y+size.y > view.y+view.h)
         placepanelspos.y = 10;
     
     return placepanelspos;
@@ -211,18 +212,8 @@ Game& InterfaceManager::getgame()
 
 void InterfaceManager::handlewindowsizechange()
 {
-    auto viewsize = uirendering.getuiviewsize();
+    const auto view = uirendering.getuiview();
     for(auto& panel : panels){
-        auto rect = panel->getglobalrect();
-        UIVec newpos{rect.x,rect.y};
-        if(rect.x + 20 > viewsize.x)
-            newpos.x = viewsize.x - rect.w;
-        if(rect.y + 20 > viewsize.y)
-            newpos.y = viewsize.y - rect.h;
-        if(rect.x + rect.w < 20)
-            newpos.x = 0;
-        if(rect.y + rect.h < 20)
-            newpos.y = 0;
-        panel->moveto(newpos);
+        panel->conformtorect(view);
     }
 }

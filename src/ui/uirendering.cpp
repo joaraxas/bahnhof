@@ -222,9 +222,10 @@ UIVec UIRendering::screentoui(Vec pos)
     return uipos;
 }
 
-UIVec UIRendering::getuiviewsize()
+UIRect UIRendering::getuiview()
 {
-    return screentoui(getviewsize());
+    UIVec size = screentoui(getviewsize());
+    return {0,0,size.x,size.y};
 }
 
 void UIRendering::renderscaleruler(

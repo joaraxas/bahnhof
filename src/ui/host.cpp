@@ -141,9 +141,22 @@ void Host::moveto(UIVec towhattopcorner){
 	rect.y = towhattopcorner.y;
 }
 
-void Host::placewherefree(){
+void Host::placeautomatically(){
 	UIVec size{rect.w, rect.h};
 	moveto(ui->findfreespace(size));
+}
+
+void Host::conformtorect(UIRect confrect){
+	UIVec newpos{rect.x,rect.y};
+	if(rect.x + 20 > confrect.x+confrect.w)
+		newpos.x = confrect.x+confrect.w - rect.w;
+	if(rect.y + 20 > confrect.y+confrect.h)
+		newpos.y = confrect.y+confrect.h - rect.h;
+	if(rect.x + rect.w < confrect.x + 20)
+		newpos.x = confrect.x;
+	if(rect.y + rect.h < confrect.y + 20)
+		newpos.y = confrect.y;
+	moveto(newpos);
 }
 
 } // namespace UI

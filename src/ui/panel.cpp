@@ -80,6 +80,11 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 MainPanel::~MainPanel()
 {}
 
+void MainPanel::conformtorect(UIRect confrect)
+{
+	moveto({0,0});
+}
+
 
 RouteListPanel::RouteListPanel(InterfaceManager* newui) : 
 	Panel(newui)
@@ -91,7 +96,7 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui) :
 		)
 	);
 	applylayout();
-	placewherefree();
+	placeautomatically();
 	routepanelref = std::make_unique<Ownership>();
 }
 
@@ -124,7 +129,6 @@ RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
 	
-	rect.h = ui->getuirendering().getuiviewsize().y;
 	setlayout(
 		create<VBox>(
 			create<Close>(),
@@ -137,8 +141,8 @@ RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
 			create<OrderTable>(route)
 		)
 	);
-	applylayout({0,rect.h});
-	rect.x = ui->getuirendering().getuiviewsize().x-rect.w;
+	applylayout();
+	conformtorect(ui->getuirendering().getuiview());
 	game->getinputmanager().editroute(route);
 }
 
@@ -151,6 +155,14 @@ void RoutePanel::erase()
 	Panel::erase();
 }
 
+void RoutePanel::conformtorect(UIRect confrect)
+{
+	rect.x = confrect.x+confrect.w - rect.w;
+	rect.y = confrect.y;
+	rect.h = confrect.h;
+	applylayout({rect.w,rect.h});
+}
+
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
@@ -159,7 +171,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 		create<TrainTable>()
 	));
 	applylayout();
-	placewherefree();
+	placeautomatically();
 }
 
 TrainListPanel::~TrainListPanel()
@@ -197,7 +209,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	)
 	);
 	applylayout();
-	placewherefree();
+	placeautomatically();
 }
 
 TrainPanel::~TrainPanel()
@@ -212,7 +224,7 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) : 
 	)
 	);
 	applylayout();
-	placewherefree();
+	placeautomatically();
 }
 
 BuildingConstructionPanel::~BuildingConstructionPanel()
@@ -238,7 +250,7 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 		)
 	);
 	applylayout();
-	placewherefree();
+	placeautomatically();
 }
 
 BuildingPanel::~BuildingPanel()
@@ -256,7 +268,7 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 	});
 	setlayout(newlayout);
 	applylayout();
-	placewherefree();
+	placeautomatically();
 }
 
 FactoryPanel::~FactoryPanel()

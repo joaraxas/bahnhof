@@ -41,7 +41,8 @@ public:
     InterfaceManager& getui();
     UIRect getglobalrect();
     UIRect getlocalrect();
-    void placewherefree();
+    virtual void placeautomatically();
+    virtual void conformtorect(UIRect confrect);
     Ownership* owner = nullptr;
 protected:
     Element* getelementat(UIVec pos);

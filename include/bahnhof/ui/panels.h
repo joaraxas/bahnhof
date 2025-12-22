@@ -39,17 +39,7 @@ public:
     MainPanel(InterfaceManager* newui);
     ~MainPanel();
     bool usermovable() {return false;};
-};
-
-class RoutePanel : public Panel
-{
-public:
-    RoutePanel(InterfaceManager* newui, int routeid);
-    ~RoutePanel();
-    void erase();
-    bool usermovable() {return false;};
-private:
-    Route* route;
+    void conformtorect(UIRect confrect) override;
 };
 
 class RouteListPanel : public Panel
@@ -61,6 +51,18 @@ public:
     void addroutepanel(int routeindex);
 private:
     std::unique_ptr<UI::Ownership> routepanelref;
+};
+
+class RoutePanel : public Panel
+{
+public:
+    RoutePanel(InterfaceManager* newui, int routeid);
+    ~RoutePanel();
+    void erase();
+    bool usermovable() {return false;};
+    void conformtorect(UIRect confrect) override;
+private:
+    Route* route;
 };
 
 class TrainListPanel : public Panel
