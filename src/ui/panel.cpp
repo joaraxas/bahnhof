@@ -123,7 +123,7 @@ void RouteListPanel::addroutepanel(int routeindex)
 
 
 RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
-	Panel(newui)
+	Panel(newui), input(game->getinputmanager())
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
@@ -142,7 +142,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
 	);
 	applylayout();
 	conformtorect(ui->getuirendering().getuiview());
-	game->getinputmanager().editroute(route);
+	input.editroute(route);
 }
 
 RoutePanel::~RoutePanel()
@@ -150,7 +150,7 @@ RoutePanel::~RoutePanel()
 
 void RoutePanel::erase()
 {
-    game->getinputmanager().editroute(nullptr);
+    input.editroute(nullptr);
 	Panel::erase();
 }
 

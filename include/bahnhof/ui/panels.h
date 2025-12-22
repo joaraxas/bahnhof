@@ -65,6 +65,7 @@ public:
     void conformtorect(UIRect confrect) override;
 private:
     Route* route;
+    InputManager& input;
 };
 
 class TrainListPanel : public Panel
