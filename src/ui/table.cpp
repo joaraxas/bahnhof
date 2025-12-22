@@ -389,7 +389,7 @@ void ConstructionTable::lineclicked(int index)
 {
     BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
-    input.placebuilding(clickedbuilding);
+    input.selectbuildingtoplace(&clickedbuilding);
 }
 
 

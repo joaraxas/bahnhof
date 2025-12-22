@@ -214,7 +214,8 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 TrainPanel::~TrainPanel()
 {}
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) : Panel(newui)
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
+	Panel(newui), input(game->getinputmanager())
 {
 	setlayout(
 	create<VBox>(
@@ -231,7 +232,7 @@ BuildingConstructionPanel::~BuildingConstructionPanel()
 
 void BuildingConstructionPanel::erase()
 {
-	game->getinputmanager().resetinput();
+	input.resetinput();
 	Panel::erase();
 }
 

@@ -90,6 +90,8 @@ public:
     BuildingConstructionPanel(InterfaceManager* newui);
     ~BuildingConstructionPanel();
     void erase() override;
+private:
+    InputManager& input;
 };
 
 class BuildingPanel : public Panel

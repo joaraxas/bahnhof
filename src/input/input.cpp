@@ -4,6 +4,7 @@
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/panels.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -289,21 +290,31 @@ void InputManager::editroute(Route* route)
 
 void InputManager::placesignal()
 {
+    panel.deletereference();
     resetinput();
     inputstate = placingsignals;
 }
 
 void InputManager::placetrack()
 {
+    panel.deletereference();
     resetinput();
     inputstate = placingtracks;
 }
 
-void InputManager::placebuilding(const BuildingType& type)
+void InputManager::placebuildings()
 {
+    if(inputstate!=placingbuildings){
+        panel.set(new UI::BuildingConstructionPanel(&game->getui()));
+    }
     resetinput();
     inputstate = placingbuildings;
+}
+
+void InputManager::selectbuildingtoplace(const BuildingType* type)
+{
     builder->setbuildingtype(type);
+    inputstate = placingbuildings;
 }
 
 void InputManager::resetinput()

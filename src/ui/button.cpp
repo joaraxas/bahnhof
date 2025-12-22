@@ -68,7 +68,7 @@ void PlaceTrack::leftclick(UIVec mousepos)
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    new BuildingConstructionPanel(ui);
+    game->getinputmanager().placebuildings();
 }
 
 void ManageRoutes::leftclick(UIVec mousepos)

@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "bahnhof/ui/ownership.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
 
@@ -54,7 +55,8 @@ public:
     void editroute(Route* route);
     void placesignal();
     void placetrack();
-    void placebuilding(const BuildingType& type);
+    void placebuildings();
+    void selectbuildingtoplace(const BuildingType* type);
     void resetinput();
 private:
     void leftclickmap(Vec mousepos);
@@ -70,4 +72,5 @@ private:
     InputState inputstate = idle;
     const Uint8* keys;
     Route* editingroute = nullptr;
+    UI::Ownership panel;
 };
