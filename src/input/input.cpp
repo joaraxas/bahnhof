@@ -103,6 +103,13 @@ void InputManager::handle(int ms, int mslogic){
             }
             break;
         }
+
+        case SDL_WINDOWEVENT:{
+            if(e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+                ui.handlewindowsizechange();
+            }
+            break;
+        }
         }
     }
 

@@ -94,6 +94,8 @@ public:
     void movepaneltofront(UI::Host*);
     UI::UIVec findfreespace(const UI::UIVec size);
     void setdropdown(UI::Dropdown*);
+    void handlewindowsizechange();
+
     Game& getgame();
     UIRendering& getuirendering() {return uirendering;};
     UI::Host* movingwindow = nullptr;

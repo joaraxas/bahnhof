@@ -208,3 +208,21 @@ Game& InterfaceManager::getgame()
 {
     return *game;
 }
+
+void InterfaceManager::handlewindowsizechange()
+{
+    auto viewsize = uirendering.getuiviewsize();
+    for(auto& panel : panels){
+        auto rect = panel->getglobalrect();
+        UIVec newpos{rect.x,rect.y};
+        if(rect.x + 20 > viewsize.x)
+            newpos.x = viewsize.x - rect.w;
+        if(rect.y + 20 > viewsize.y)
+            newpos.y = viewsize.y - rect.h;
+        if(rect.x + rect.w < 20)
+            newpos.x = 0;
+        if(rect.y + rect.h < 20)
+            newpos.y = 0;
+        panel->moveto(newpos);
+    }
+}
