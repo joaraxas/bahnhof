@@ -19,7 +19,6 @@ Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) :
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id))
 {
 	color = type.color;
-	panel = std::make_unique<UI::Ownership>();
 	if(type.spritename){
 		sprite.setspritesheet(game->getsprites(), type.spritename);
 		sprite.imageangle = shape->getorientation();
@@ -59,8 +58,8 @@ bool Building::checkcollisionwithshape(const Shape& othershape)
 
 bool Building::leftclick(Vec pos)
 {
-	if(!panel->exists()){
-		panel->set(new UI::BuildingPanel(&game->getui(), this));
+	if(!panel.exists()){
+		panel.set(new UI::BuildingPanel(&game->getui(), this));
 	}
 }
 
@@ -138,8 +137,8 @@ void WagonFactory::trigger()
 
 bool WagonFactory::leftclick(Vec pos)
 {
-	if(!panel->exists()){
-		panel->set(new UI::FactoryPanel(&game->getui(), this));
+	if(!panel.exists()){
+		panel.set(new UI::FactoryPanel(&game->getui(), this));
 	}
 }
 

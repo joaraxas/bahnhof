@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/host.h"
+#include "bahnhof/ui/ownership.h"
 
 class Game;
 class Gamestate;
@@ -50,7 +51,7 @@ public:
     void erase();
     void addroutepanel(int routeindex);
 private:
-    std::unique_ptr<UI::Ownership> routepanelref;
+    Ownership routepanelref;
 };
 
 class RoutePanel : public Panel

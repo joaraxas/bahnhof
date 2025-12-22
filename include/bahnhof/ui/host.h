@@ -10,18 +10,7 @@ namespace UI{
 
 class Element;
 class Host;
-
-class Ownership
-{
-public:
-    ~Ownership();
-    void set(Host* newhost);
-    bool exists();
-    void deletereference();
-    void resetreference();
-private:
-    Host* host = nullptr;
-};
+class Ownership;
 
 class Host
 {

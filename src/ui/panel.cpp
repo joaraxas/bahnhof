@@ -97,7 +97,6 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui) :
 	);
 	applylayout();
 	placeautomatically();
-	routepanelref = std::make_unique<Ownership>();
 }
 
 RouteListPanel::~RouteListPanel()
@@ -105,21 +104,21 @@ RouteListPanel::~RouteListPanel()
 	// This prevents calling RoutePanel::erase() in case the RouteListPanel was deleted for an unexpected reason, 
 	// like closing the game window. Calling RoutePanel::erase() will cause a segfault as it needs the InputManager
 	// which has already been destroyed at this point.
-	routepanelref->resetreference();
+	routepanelref.resetreference();
 }
 
 void RouteListPanel::erase()
 {
 	// We need to do this here and not in the destructor because this just adds the route panel to the list of
 	// hosts to be deleted, and that list is being iterated through when the destructor is called.
-	routepanelref->deletereference();
+	routepanelref.deletereference();
 	Panel::erase();
 }
 
 void RouteListPanel::addroutepanel(int routeindex)
 {
-	routepanelref->deletereference();
-	routepanelref->set(new RoutePanel(ui, routeindex));
+	routepanelref.deletereference();
+	routepanelref.set(new RoutePanel(ui, routeindex));
 }
 
 
@@ -178,7 +177,7 @@ TrainListPanel::~TrainListPanel()
 {}
 
 
-TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) : 
+TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) :
 		Panel(newui), 
 		trainmanager(manager), 
 		train(newtrain)
