@@ -78,7 +78,7 @@ void ManageRoutes::leftclick(UIVec mousepos)
 
 void ManageTrains::leftclick(UIVec mousepos)
 {
-    new TrainListPanel(ui);
+    game->getgamestate().gettrainmanager().listtrains();
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)
