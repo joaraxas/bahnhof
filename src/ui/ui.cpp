@@ -87,11 +87,13 @@ bool InterfaceManager::click(Vec mousepos, int type)
         if(clickedpanel){
             movepaneltofront(clickedpanel);
             clickedui = true;
-            movingwindow = clickedpanel;
-            UI::UIRect movingwindowrect = movingwindow->getglobalrect();
-            movingwindowoffset = uimpos
-                - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
             clickedpanel->click(uimpos, type);
+            if(clickedpanel->usermovable()){
+                movingwindow = clickedpanel;
+                UI::UIRect movingwindowrect = movingwindow->getglobalrect();
+                movingwindowoffset = uimpos
+                    - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
+            }
         }
     }
     cleanup();

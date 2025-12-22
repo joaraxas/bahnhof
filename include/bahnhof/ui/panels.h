@@ -38,6 +38,7 @@ class MainPanel : public Panel
 public:
     MainPanel(InterfaceManager* newui);
     ~MainPanel();
+    bool usermovable() {return false;};
 };
 
 class RoutePanel : public Panel
@@ -46,6 +47,7 @@ public:
     RoutePanel(InterfaceManager* newui, int routeid);
     ~RoutePanel();
     void erase();
+    bool usermovable() {return false;};
 private:
     Route* route;
 };

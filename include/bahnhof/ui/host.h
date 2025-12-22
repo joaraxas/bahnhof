@@ -36,6 +36,7 @@ public:
     virtual void render(Rendering*);
     Element* addelement(Element*);
     void moveto(UIVec towhattopcorner);
+    virtual bool usermovable() {return true;};
     virtual void erase();
     InterfaceManager& getui();
     UIRect getglobalrect();
