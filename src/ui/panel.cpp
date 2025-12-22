@@ -159,8 +159,7 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 		create<TrainTable>()
 	));
 	applylayout();
-    UIVec viewsize = ui->getuirendering().getuiviewsize();
-	rect = {viewsize.x*0.5-rect.w*0.5,viewsize.y-rect.h,rect.w,rect.h};
+	placewherefree();
 }
 
 TrainListPanel::~TrainListPanel()
