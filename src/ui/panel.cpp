@@ -13,12 +13,9 @@
 
 namespace UI{
 	
-Panel::Panel(InterfaceManager* newui, UIRect newrect) : 
-	Host(newui, newrect)
-{}
-
 Panel::Panel(InterfaceManager* newui) : 
-	Panel::Panel(newui, {0,0,100,100}) {}
+	Host(newui)
+{}
 
 template <class T, typename... Args> 
 T* Panel::create(Args&&... args)
@@ -170,8 +167,8 @@ TrainListPanel::~TrainListPanel()
 {}
 
 
-TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain) : 
-		Panel(newui, newrect), 
+TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) : 
+		Panel(newui), 
 		trainmanager(manager), 
 		train(newtrain)
 {
@@ -229,7 +226,7 @@ void BuildingConstructionPanel::erase()
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
-		Panel(newui, {200,400,500,150}),
+		Panel(newui),
 		building(b)
 {
 	setlayout(

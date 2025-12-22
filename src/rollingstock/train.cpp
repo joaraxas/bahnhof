@@ -402,7 +402,6 @@ void Train::select()
 	selected = true;
 	if(!panel->exists()){
 		panel->set(new UI::TrainPanel(&game->getui(), 
-									  {300,200,400,220}, 
 									  game->getgamestate().gettrainmanager(), 
 									  *this));
 	}

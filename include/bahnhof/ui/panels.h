@@ -22,7 +22,6 @@ class Layout;
 class Panel : public Host
 {
 public:
-    Panel(InterfaceManager* newui, UIRect newrect); //TODO: Maybe get rid of this and always handle rect setting in each panel ctor
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
@@ -72,7 +71,7 @@ public:
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain);
+    TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain);
     ~TrainPanel();
     Train& gettrain() {return train;};
 private:

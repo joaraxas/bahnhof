@@ -26,7 +26,7 @@ private:
 class Host
 {
 public:
-    Host(InterfaceManager* newui, UIRect newrect);
+    Host(InterfaceManager* newui);
     virtual ~Host();
     void mousehover(UIVec pos, int ms);
     void click(UIVec pos, int type);
@@ -45,7 +45,7 @@ public:
 protected:
     Element* getelementat(UIVec pos);
     Game* game;
-    UIRect rect;
+    UIRect rect{0,0,100,100};
     std::vector<std::unique_ptr<Element>> elements;
     InterfaceManager* ui;
 };

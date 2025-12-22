@@ -35,8 +35,7 @@ void Ownership::resetreference()
 }
 
 
-Host::Host(InterfaceManager* newui, UIRect newrect) :
-	rect{newrect}
+Host::Host(InterfaceManager* newui)
 {
     ui = newui;
 	ui->addpanel(this);
