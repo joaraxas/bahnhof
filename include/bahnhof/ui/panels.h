@@ -44,7 +44,7 @@ public:
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid);
+    RoutePanel(InterfaceManager* newui, int routeid);
     ~RoutePanel();
     void erase();
 private:
@@ -54,7 +54,7 @@ private:
 class RouteListPanel : public Panel
 {
 public:
-    RouteListPanel(InterfaceManager* newui, UIRect newrect);
+    RouteListPanel(InterfaceManager* newui);
     ~RouteListPanel();
     void erase();
     void addroutepanel(int routeindex);

@@ -84,8 +84,8 @@ MainPanel::~MainPanel()
 {}
 
 
-RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) : 
-	Panel(newui, newrect)
+RouteListPanel::RouteListPanel(InterfaceManager* newui) : 
+	Panel(newui)
 {
 	setlayout(
 		create<VBox>(
@@ -93,7 +93,8 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) :
 			create<RouteTable>()
 		)
 	);
-	applylayout({rect.w,rect.h});
+	applylayout();
+	placewherefree();
 	routepanelref = std::make_unique<Ownership>();
 }
 
@@ -115,17 +116,18 @@ void RouteListPanel::erase()
 
 void RouteListPanel::addroutepanel(int routeindex)
 {
-    UIRect routepanelrect = {getglobalrect().x-200,0,200,getglobalrect().h};
 	routepanelref->deletereference();
-	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
+	routepanelref->set(new RoutePanel(ui, routeindex));
 }
 
 
-RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
-	Panel(newui, newrect)
+RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
+	Panel(newui)
 {
     RouteManager& routing = game->getgamestate().getrouting();
     route = routing.getroute(routeid);
+	
+	rect.h = ui->getuirendering().getuiviewsize().y;
 	setlayout(
 		create<VBox>(
 			create<Close>(),
@@ -138,7 +140,8 @@ RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
 			create<OrderTable>(route)
 		)
 	);
-	applylayout({rect.w,rect.h});
+	applylayout({0,rect.h});
+	rect.x = ui->getuirendering().getuiviewsize().x-rect.w;
 	game->getinputmanager().editroute(route);
 }
 

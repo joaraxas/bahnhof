@@ -73,9 +73,7 @@ void PlaceBuildings::leftclick(UIVec mousepos)
 
 void ManageRoutes::leftclick(UIVec mousepos)
 {
-    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
-    UIRect routepanelrect = {viewsize.x-200,0,200,viewsize.y};
-    new RouteListPanel(ui, routepanelrect);
+    new RouteListPanel(ui);
 }
 
 void ManageTrains::leftclick(UIVec mousepos)

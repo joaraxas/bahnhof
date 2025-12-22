@@ -80,7 +80,7 @@ public:
 class RouteTable : public ClickableTable
 {
 public:
-    RouteTable(Host* p, UIRect r={0,0,100,50});
+    RouteTable(Host* p, UIRect r={0,0,120,80});
     void update(int ms);
 private:
     void lineclicked(int index);
