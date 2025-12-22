@@ -77,9 +77,6 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 	applylayout();
 }
 
-MainPanel::~MainPanel()
-{}
-
 void MainPanel::conformtorect(UIRect confrect)
 {
 	moveto({0,0});
@@ -99,35 +96,10 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui) :
 	placeautomatically();
 }
 
-RouteListPanel::~RouteListPanel()
-{
-	// This prevents calling RoutePanel::erase() in case the RouteListPanel was deleted for an unexpected reason, 
-	// like closing the game window. Calling RoutePanel::erase() will cause a segfault as it needs the InputManager
-	// which has already been destroyed at this point.
-	routepanelref.resetreference();
-}
 
-void RouteListPanel::erase()
+RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
+	Panel(newui), input(game->getinputmanager()), route(editroute)
 {
-	// We need to do this here and not in the destructor because this just adds the route panel to the list of
-	// hosts to be deleted, and that list is being iterated through when the destructor is called.
-	routepanelref.deletereference();
-	Panel::erase();
-}
-
-void RouteListPanel::addroutepanel(int routeindex)
-{
-	routepanelref.deletereference();
-	routepanelref.set(new RoutePanel(ui, routeindex));
-}
-
-
-RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
-	Panel(newui), input(game->getinputmanager())
-{
-    RouteManager& routing = game->getgamestate().getrouting();
-    route = routing.getroute(routeid);
-	
 	setlayout(
 		create<VBox>(
 			create<Close>(),
@@ -142,11 +114,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, int routeid) :
 	);
 	applylayout();
 	conformtorect(ui->getuirendering().getuiview());
-	input.editroute(route);
 }
-
-RoutePanel::~RoutePanel()
-{}
 
 void RoutePanel::erase()
 {
@@ -172,9 +140,6 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 	applylayout();
 	placeautomatically();
 }
-
-TrainListPanel::~TrainListPanel()
-{}
 
 
 TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) :
@@ -211,9 +176,6 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	placeautomatically();
 }
 
-TrainPanel::~TrainPanel()
-{}
-
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
 	Panel(newui), input(game->getinputmanager())
 {
@@ -226,9 +188,6 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
 	applylayout();
 	placeautomatically();
 }
-
-BuildingConstructionPanel::~BuildingConstructionPanel()
-{}
 
 void BuildingConstructionPanel::erase()
 {

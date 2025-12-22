@@ -302,9 +302,9 @@ void RouteTable::update(int ms)
 
 void RouteTable::lineclicked(int index)
 {
+    ids = routing.getrouteids();
     if(index<ids.size()){
-        RouteListPanel* rlp = dynamic_cast<RouteListPanel*>(panel);
-        rlp->addroutepanel(ids[index]);
+	    game->getinputmanager().editroute(routing.getroute(ids[index]));
     }
     else if(index==ids.size())
         routing.addroute();

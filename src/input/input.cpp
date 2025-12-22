@@ -285,6 +285,10 @@ void InputManager::selecttrain(Train* whattrain)
 
 void InputManager::editroute(Route* route)
 {
+    if(route){
+    	panel.set(new UI::RoutePanel(&game->getui(), route));
+        inputstate = idle;
+    }
     editingroute = route;
 }
 
@@ -322,5 +326,6 @@ void InputManager::resetinput()
     trackbuilder->reset();
     signalbuilder->reset();
     builder->reset();
+    editingroute = nullptr;
     inputstate = idle;
 }

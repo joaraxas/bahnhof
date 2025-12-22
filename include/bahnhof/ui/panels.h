@@ -39,7 +39,6 @@ class MainPanel : public Panel
 {
 public:
     MainPanel(InterfaceManager* newui);
-    ~MainPanel();
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
 };
@@ -48,18 +47,12 @@ class RouteListPanel : public Panel
 {
 public:
     RouteListPanel(InterfaceManager* newui);
-    ~RouteListPanel();
-    void erase();
-    void addroutepanel(int routeindex);
-private:
-    Ownership routepanelref;
 };
 
 class RoutePanel : public Panel
 {
 public:
-    RoutePanel(InterfaceManager* newui, int routeid);
-    ~RoutePanel();
+    RoutePanel(InterfaceManager* newui, Route* editroute);
     void erase();
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
@@ -72,14 +65,12 @@ class TrainListPanel : public Panel
 {
 public:
     TrainListPanel(InterfaceManager* newui);
-    ~TrainListPanel();
 };
 
 class TrainPanel : public Panel
 {
 public:
     TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain);
-    ~TrainPanel();
     Train& gettrain() {return train;};
 private:
     TrainManager& trainmanager;
@@ -90,7 +81,6 @@ class BuildingConstructionPanel : public Panel
 {
 public:
     BuildingConstructionPanel(InterfaceManager* newui);
-    ~BuildingConstructionPanel();
     void erase() override;
 private:
     InputManager& input;
