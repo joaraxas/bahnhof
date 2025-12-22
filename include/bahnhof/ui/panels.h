@@ -7,6 +7,7 @@ class Game;
 class Gamestate;
 class Rendering;
 class InterfaceManager;
+class InputManager;
 class Route;
 class TrainManager;
 class Train;

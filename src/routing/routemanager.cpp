@@ -1,5 +1,8 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/ui/panels.h"
+#include "bahnhof/track/track.h"
+#include "bahnhof/common/gamestate.h"
 
 
 RouteManager::RouteManager(Tracks::Tracksystem* tracks)
@@ -16,6 +19,12 @@ void RouteManager::addroute()
 int RouteManager::getnumberofroutes()
 {
 	return routes.size();
+}
+
+void RouteManager::listroutes()
+{
+	if(!routelistpanel.exists())
+		routelistpanel.set(new UI::RouteListPanel(&tracksystem->game->getui()));
 }
 
 Route* RouteManager::getroute(int id)

@@ -1,7 +1,8 @@
 #pragma once
-#include<SDL.h>
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/ui/ownership.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -47,9 +48,11 @@ public:
     std::vector<std::string> getroutenames();
     std::vector<int> getrouteids();
     int getnumberofroutes();
+    void listroutes();
 private:
     Tracks::Tracksystem* tracksystem;
     std::vector<std::unique_ptr<Route>> routes;
+    UI::Ownership routelistpanel;
 };
 
 enum ordertype

@@ -73,7 +73,7 @@ void PlaceBuildings::leftclick(UIVec mousepos)
 
 void ManageRoutes::leftclick(UIVec mousepos)
 {
-    new RouteListPanel(ui);
+    game->getgamestate().getrouting().listroutes();
 }
 
 void ManageTrains::leftclick(UIVec mousepos)
