@@ -15,11 +15,11 @@ public:
         Element(h), elements{std::forward<Args>(args)...} 
         {setpadding(UIVec{0,0});};
     virtual ~Layout() {};
+    void addelements(std::vector<Element*> els);
+    virtual void addelement(Element* el);
     virtual UIVec getminimumsize() override = 0;
     void render(Rendering* r) final {};
     bool checkclick(UIVec pos) final {return false;};
-    void addelements(std::vector<Element*> els);
-    virtual void addelement(Element* el);
 protected:
     std::vector<Element*> elements;
 };
@@ -30,9 +30,9 @@ public:
     template<typename... Args> HBox(Host* h, Args&&... args) : 
         Layout(h, std::forward<Args>(args)...) 
         {getminimumsize();};
-    UIRect place(UIRect r) override;
-    UIVec getminimumsize() override;
     void addelement(Element* el) override;
+    UIVec getminimumsize() override;
+    UIRect place(UIRect r) override;
     bool resizable_x() const override {return numresizableelements_x>0;};
     bool resizable_y() const override {return anyresizableelement_y;};
 private:
@@ -47,9 +47,9 @@ public:
     template<typename... Args> VBox(Host* h, Args&&... args) : 
         Layout(h, std::forward<Args>(args)...) 
         {getminimumsize();};
-    UIRect place(UIRect r) override;
-    UIVec getminimumsize() override;
     void addelement(Element* el) override;
+    UIVec getminimumsize() override;
+    UIRect place(UIRect r) override;
     bool resizable_x() const override {return anyresizableelement_x;};
     bool resizable_y() const override {return numresizableelements_y>0;};
 private:
