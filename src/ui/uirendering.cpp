@@ -175,9 +175,11 @@ void UIRendering::setuiscale(float newscale)
 {
     auto oldscale = uiscale;
     uiscale = std::fmax(0.8, newscale);
-    int newfontsize = 12*uiscale;
-    setfontsize(newfontsize);
-    if(uiscale != oldscale) ui.handlewindowsizechange();
+    if(uiscale != oldscale) {
+        int newfontsize = 12*uiscale;
+        setfontsize(newfontsize);
+        ui.handlewindowsizechange();
+    }
 }
 
 SDL_Rect UIRendering::uitoscreen(UIRect uirect)

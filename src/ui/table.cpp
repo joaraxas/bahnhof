@@ -284,6 +284,7 @@ void TrainInfoTable::update(int ms)
 
 RouteTable::RouteTable(Host* p, UIRect r) : 
     ClickableTable(p, r), 
+    input(game->getinputmanager()),
     routing(ui->getgame().getgamestate().getrouting())
 {};
 
@@ -304,7 +305,7 @@ void RouteTable::lineclicked(int index)
 {
     ids = routing.getrouteids();
     if(index<ids.size()){
-	    game->getinputmanager().editroute(routing.getroute(ids[index]));
+	    input.editroute(routing.getroute(ids[index]));
     }
     else if(index==ids.size())
         routing.addroute();

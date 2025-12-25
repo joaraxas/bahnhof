@@ -12,9 +12,7 @@
 namespace UI{
 
 Button::Button(Host* newpanel) : Element(newpanel)
-{
-    rect = {0, 0, 100, 40};
-}
+{}
 
 void Button::mousehover(UIVec pos, int ms)
 {

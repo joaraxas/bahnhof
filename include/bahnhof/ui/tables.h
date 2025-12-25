@@ -84,6 +84,7 @@ public:
     void update(int ms);
 private:
     void lineclicked(int index);
+    InputManager& input;
 	RouteManager& routing;
     std::vector<std::string> names;
     std::vector<int> ids;

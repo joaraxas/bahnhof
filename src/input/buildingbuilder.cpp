@@ -51,6 +51,8 @@ void BuildingBuilder::setbuildingtype(const BuildingType* type)
     cost = 0;
     if(building)
         cost = building->cost;
+    else // This should not happen but could be a way of resetting
+        reset();
 }
 
 bool BuildingBuilder::canfit()

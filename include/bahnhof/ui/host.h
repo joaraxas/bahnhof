@@ -30,11 +30,11 @@ public:
     InterfaceManager& getui();
     UIRect getglobalrect();
     UIRect getlocalrect();
-    virtual void placeautomatically();
     virtual void conformtorect(UIRect confrect);
     Ownership* owner = nullptr;
 protected:
     Element* getelementat(UIVec pos);
+    virtual void placeautomatically();
     Game* game;
     UIRect rect{0,0,100,100};
     std::vector<std::unique_ptr<Element>> elements;
