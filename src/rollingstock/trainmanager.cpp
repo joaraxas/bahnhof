@@ -97,7 +97,7 @@ std::vector<TrainInfo> TrainManager::gettrainsinfo()
 	return infos;
 }
 
-void TrainManager::listtrains()
+void TrainManager::createlistpanel()
 {
 	if(!panel.exists())
     	panel.set(new UI::TrainListPanel(&tracks->game->getui()));

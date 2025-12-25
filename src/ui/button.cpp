@@ -73,12 +73,12 @@ void PlaceBuildings::leftclick(UIVec mousepos)
 
 void ManageRoutes::leftclick(UIVec mousepos)
 {
-    game->getgamestate().getrouting().listroutes();
+    game->getgamestate().getrouting().createlistpanel();
 }
 
 void ManageTrains::leftclick(UIVec mousepos)
 {
-    game->getgamestate().gettrainmanager().listtrains();
+    game->getgamestate().gettrainmanager().createlistpanel();
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)

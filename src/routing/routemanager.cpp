@@ -21,7 +21,7 @@ int RouteManager::getnumberofroutes()
 	return routes.size();
 }
 
-void RouteManager::listroutes()
+void RouteManager::createlistpanel()
 {
 	if(!routelistpanel.exists())
 		routelistpanel.set(new UI::RouteListPanel(&tracksystem->game->getui()));

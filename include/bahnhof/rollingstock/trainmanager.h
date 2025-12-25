@@ -43,7 +43,7 @@ public:
     void deselectall();
     Train* gettrainatpos(Vec pos);
     std::vector<TrainInfo> gettrainsinfo();
-    void listtrains();
+    void createlistpanel();
     void inittrain(State startstate);
     void addtrainstoorphans(float speed=0);
 private:
