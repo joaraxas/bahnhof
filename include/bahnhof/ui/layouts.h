@@ -11,15 +11,12 @@ class Host;
 class Layout : public Element
 {
 public:
-    Layout(Host* h, std::initializer_list<Element*> els={});
+    Layout(Host* h);
     virtual ~Layout() {};
     void addelements(std::vector<Element*> els);
-    virtual void addelement(Element* el);
-    virtual UIVec getminimumsize() override = 0;
+    virtual void addelement(Element* el) = 0;
     void render(Rendering* r) final {};
     bool checkclick(UIVec pos) final {return false;};
-protected:
-    std::vector<Element*> elements;
 };
 
 class HBox : public Layout
@@ -33,6 +30,7 @@ public:
     bool resizable_x() const override {return numresizableelements_x>0;};
     bool resizable_y() const override {return anyresizableelement_y;};
 private:
+    std::vector<Element*> elements;
     std::vector<Coord> minwidths;
     int numresizableelements_x = 0;
     bool anyresizableelement_y = false;
@@ -49,6 +47,7 @@ public:
     bool resizable_x() const override {return anyresizableelement_x;};
     bool resizable_y() const override {return numresizableelements_y>0;};
 private:
+    std::vector<Element*> elements;
     std::vector<Coord> minheights;
     bool anyresizableelement_x = false;
     int numresizableelements_y = 0;

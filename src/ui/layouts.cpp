@@ -3,11 +3,10 @@
 
 namespace UI{
 
-Layout::Layout(Host* host, std::initializer_list<Element*> els) :
+Layout::Layout(Host* host) :
     Element(host)
 {
     setpadding({0,0});
-    addelements(els);
 }
 
 void Layout::addelements(std::vector<Element*> els)
@@ -17,14 +16,9 @@ void Layout::addelements(std::vector<Element*> els)
     }
 }
 
-void Layout::addelement(Element* el)
-{
-    elements.push_back(el);
-}
-
 void HBox::addelement(Element* el)
 {
-    Layout::addelement(el);
+    elements.push_back(el);
     auto r = el->getminimumsize();
     minwidths.push_back(r.x);
     if(el->resizable_x())
@@ -72,7 +66,8 @@ UIRect HBox::place(UIRect placerect)
         placerect.w = minwidths[i];
         if(el->resizable_x())
             placerect.w += extrawidth;
-        if(i==elements.size()) placerect.w = rect.w-placerect.x;
+        if(i==elements.size())
+            placerect.w = rect.w-placerect.x;
         el->place(placerect);
         placerect.x += placerect.w;
     }
@@ -83,7 +78,7 @@ UIRect HBox::place(UIRect placerect)
 
 void VBox::addelement(Element* el)
 {
-    Layout::addelement(el);
+    elements.push_back(el);
     auto r = el->getminimumsize();
     minheights.push_back(r.y);
     if(el->resizable_y())
