@@ -11,9 +11,7 @@ class Host;
 class Layout : public Element
 {
 public:
-    template<typename... Args> Layout(Host* h, Args&&... args) : 
-        Element(h), elements{std::forward<Args>(args)...} 
-        {setpadding(UIVec{0,0});};
+    Layout(Host* h, std::initializer_list<Element*> els);
     virtual ~Layout() {};
     void addelements(std::vector<Element*> els);
     virtual void addelement(Element* el);
@@ -28,7 +26,7 @@ class HBox : public Layout
 {
 public:
     template<typename... Args> HBox(Host* h, Args&&... args) : 
-        Layout(h, std::forward<Args>(args)...) 
+        Layout(h, {args...}) 
         {getminimumsize();};
     void addelement(Element* el) override;
     UIVec getminimumsize() override;
@@ -45,7 +43,7 @@ class VBox : public Layout
 {
 public:
     template<typename... Args> VBox(Host* h, Args&&... args) : 
-        Layout(h, std::forward<Args>(args)...) 
+        Layout(h, {args...}) 
         {getminimumsize();};
     void addelement(Element* el) override;
     UIVec getminimumsize() override;

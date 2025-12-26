@@ -3,6 +3,13 @@
 
 namespace UI{
 
+Layout::Layout(Host* host, std::initializer_list<Element*> els) :
+    Element(host)
+{
+    setpadding({0,0});
+    addelements(els);
+}
+
 void Layout::addelements(std::vector<Element*> els)
 {
     for(auto el : els)
