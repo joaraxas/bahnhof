@@ -12,8 +12,9 @@ Layout::Layout(Host* host, std::initializer_list<Element*> els) :
 
 void Layout::addelements(std::vector<Element*> els)
 {
-    for(auto el : els)
+    for(auto el : els){
         addelement(el);
+    }
 }
 
 void Layout::addelement(Element* el)
@@ -35,18 +36,10 @@ void HBox::addelement(Element* el)
 UIVec HBox::getminimumsize()
 {
     UIVec sz{0,0};
-    minwidths.clear();
-    numresizableelements_x = 0;
-    anyresizableelement_y = false;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.x += r.x;
         sz.y = std::max(sz.y, r.y);
-        minwidths.push_back(r.x);
-        if(el->resizable_x())
-            ++numresizableelements_x;
-        if(!anyresizableelement_y && el->resizable_y())
-            anyresizableelement_y = true;
     }
     sz += 2*getpadding();
     return sz;
@@ -102,18 +95,10 @@ void VBox::addelement(Element* el)
 UIVec VBox::getminimumsize()
 {
     UIVec sz{0,0};
-    minheights.clear();
-    numresizableelements_y = 0;
-    anyresizableelement_x = false;
     for(auto el : elements){
         auto r = el->getminimumsize();
         sz.y += r.y;
         sz.x = std::max(sz.x, r.x);
-        minheights.push_back(r.y);
-        if(el->resizable_y())
-            ++numresizableelements_y;
-        if(!anyresizableelement_x && el->resizable_x())
-            anyresizableelement_x = true;
     }
     sz += 2*getpadding();
     return sz;
