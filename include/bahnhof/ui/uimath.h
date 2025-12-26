@@ -23,6 +23,7 @@ public:
     Coord operator-=(const Coord v) {value-=v.value; return *this;};
     double operator*(const double d) const {return d*value;};
     friend double operator*(const double d, Coord c) {return c*d;};
+    double operator/(const double d) const {return double(value)/d;};
     Coord operator-() const {return Coord{-value};};
 
     bool operator<(const Coord c) const {return value<c.value;};

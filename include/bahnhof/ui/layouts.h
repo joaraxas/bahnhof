@@ -19,38 +19,40 @@ public:
     bool checkclick(UIVec pos) final {return false;};
 };
 
-class HBox : public Layout
+class Box
+{
+protected:
+    void addelement(Element* el);
+    std::vector<Element*> elements;
+    std::vector<UIVec> minsizes;
+    int numresizableelements_x = 0;
+    int numresizableelements_y = 0;
+    bool resizable_x() const {return numresizableelements_x>0;};
+    bool resizable_y() const {return numresizableelements_y>0;};
+};
+
+class HBox : public Layout, private Box
 {
 public:
     template<typename... Args> HBox(Host* h, Args&&... args) : 
         Layout(h) {addelements({args...});};
-    void addelement(Element* el) override;
+    void addelement(Element* el) override {Box::addelement(el);};
     UIVec getminimumsize() override;
     UIRect place(UIRect r) override;
-    bool resizable_x() const override {return numresizableelements_x>0;};
-    bool resizable_y() const override {return anyresizableelement_y;};
-private:
-    std::vector<Element*> elements;
-    std::vector<Coord> minwidths;
-    int numresizableelements_x = 0;
-    bool anyresizableelement_y = false;
+    bool resizable_x() const override {return Box::resizable_x();};
+    bool resizable_y() const override {return Box::resizable_y();};
 };
 
-class VBox : public Layout
+class VBox : public Layout, private Box
 {
 public:
     template<typename... Args> VBox(Host* h, Args&&... args) : 
         Layout(h) {addelements({args...});};
-    void addelement(Element* el) override;
+    void addelement(Element* el) override {Box::addelement(el);};
     UIVec getminimumsize() override;
     UIRect place(UIRect r) override;
-    bool resizable_x() const override {return anyresizableelement_x;};
-    bool resizable_y() const override {return numresizableelements_y>0;};
-private:
-    std::vector<Element*> elements;
-    std::vector<Coord> minheights;
-    bool anyresizableelement_x = false;
-    int numresizableelements_y = 0;
+    bool resizable_x() const override {return Box::resizable_x();};
+    bool resizable_y() const override {return Box::resizable_y();};
 };
 
 } // namespace UI
