@@ -2,6 +2,7 @@
 #include "bahnhof/ui/buttons.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/panels.h"
+#include "bahnhof/ui/layouts.h"
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
@@ -13,21 +14,41 @@
 
 namespace UI{
 	
-Panel::Panel(InterfaceManager* newui, UIRect newrect) : Host(newui, newrect)
+Panel::Panel(InterfaceManager* newui) : 
+	Host(newui)
+{}
+
+template <class T, typename... Args> 
+T* Panel::create(Args&&... args)
 {
-	createbutton<Close>();
+	T* el = new T(
+		this, 
+		std::forward<Args>(args)...);
+	addelement(el);
+	return el;
 }
 
-Panel::Panel(InterfaceManager* newui) : 
-	Panel::Panel(newui, {100,100,100,100}) {}
+Layout* Panel::setlayout(Layout* l)
+{
+	if(layout)
+		layout->setpadding({0,0});
+	layout = l;
+	layout->setpadding({8,8});
+	return layout;
+}
 
-template <class T, typename... Args> void Panel::createbutton(Args&&... args){
-	T* button = new T(
-		this, 
-		UIVec(margin_x, margin_y+yoffset), 
-		std::forward<Args>(args)...);
-	addelement(button);
-	yoffset += elementdistance_y + button->getlocalrect().h;
+Layout* Panel::getlayout()
+{
+	return layout;
+}
+
+void Panel::applylayout(UIVec minsize=UIVec{10,10})
+{
+	if(layout){
+		UIRect layoutrect = layout->place({0,0,minsize.x,minsize.y});
+		rect.w = layoutrect.w;
+		rect.h = layoutrect.h;
+	}
 }
 
 void Panel::render(Rendering* r)
@@ -40,162 +61,156 @@ void Panel::render(Rendering* r)
 
 MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 {
-	createbutton<PlaceTrack>();
-	createbutton<PlaceSignal>();
-	createbutton<PlaceBuildings>();
-	createbutton<ManageRoutes>();
-	createbutton<ManageTrains>();
-	createbutton<IncreaseUIScale>();
-	createbutton<DecreaseUIScale>();
-	rect = {0,0,180,yoffset + 2*margin_y};
-
-	UIRect tablerect = {
-		margin_x+80+elementdistance_x, 
-		margin_y, 
-		getlocalrect().w-80-elementdistance_x-2*margin_x, 
-		getlocalrect().h-2*margin_y
-	};
-	addelement(new MainInfoTable(this, tablerect));
+	setlayout(
+	create<HBox>(
+		create<VBox>(
+			create<PlaceTrack>(),
+			create<PlaceSignal>(),
+			create<PlaceBuildings>(),
+			create<ManageRoutes>(),
+			create<ManageTrains>(),
+			create<IncreaseUIScale>(),
+			create<DecreaseUIScale>()
+		),
+		create<MainInfoTable>()
+		)
+	);
+	applylayout();
 }
 
-MainPanel::~MainPanel()
-{}
-
-
-RouteListPanel::RouteListPanel(InterfaceManager* newui, UIRect newrect) : 
-	Panel(newui, newrect)
+void MainPanel::conformtorect(UIRect confrect)
 {
-	UIRect tablerect = {
-		margin_x, 
-		margin_y+yoffset, 
-		getlocalrect().w-2*margin_x, 
-		getlocalrect().h-margin_y*2-yoffset
-	};
-	addelement(new RouteTable(this, tablerect));
-	routepanelref = std::make_unique<Ownership>();
+	moveto({0,0});
 }
 
-RouteListPanel::~RouteListPanel()
+
+RouteListPanel::RouteListPanel(InterfaceManager* newui) : 
+	Panel(newui)
 {
-	// This prevents calling RoutePanel::erase() in case the RouteListPanel was deleted for an unexpected reason, 
-	// like closing the game window. Calling RoutePanel::erase() will throw a segfault as it needs the InputManager
-	// which has already been destroyed at this point.
-	routepanelref->resetreference();
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<RouteTable>()
+		)
+	);
+	applylayout();
+	placeautomatically();
 }
 
-void RouteListPanel::erase()
+
+RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
+	Panel(newui), input(game->getinputmanager()), route(editroute)
 {
-	// We need to do this here and not in the destructor because this just adds the route panel to the list of
-	// hosts to be deleted, and that list is being iterated through when the destructor is called.
-	routepanelref->deletereference();
-	Panel::erase();
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<Routing::AddTurn>(route),
+			create<Routing::AddLoadResource>(route),
+			create<Routing::AddCouple>(route),
+			create<Routing::AddDecouple>(route),
+			create<Routing::RemoveOrder>(route),
+			create<EditableText>(route->name),
+			create<OrderTable>(route)
+		)
+	);
+	applylayout();
+	conformtorect(ui->getuirendering().getuiview());
 }
-
-void RouteListPanel::addroutepanel(int routeindex)
-{
-    UIRect routepanelrect = {getlocalrect().x-200,0,200,getlocalrect().h};
-	routepanelref->deletereference();
-	routepanelref->set(new RoutePanel(ui, routepanelrect, routeindex));
-}
-
-
-RoutePanel::RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid) :
-	Panel(newui, newrect)
-{
-    RouteManager& routing = game->getgamestate().getrouting();
-    route = routing.getroute(routeid);
-	createbutton<Routing::AddTurn>(route);
-	createbutton<Routing::AddLoadResource>(route);
-	createbutton<Routing::AddCouple>(route);
-	createbutton<Routing::AddDecouple>(route);
-	createbutton<Routing::RemoveOrder>(route);
-	UIRect routenamerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, 14};
-	yoffset += 16;
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new OrderTable(this, tablerect, route));
-	addelement(new EditableText(this, route->name, routenamerect));
-	game->getinputmanager().editroute(route);
-}
-
-RoutePanel::~RoutePanel()
-{}
 
 void RoutePanel::erase()
 {
-    game->getinputmanager().editroute(nullptr);
+    input.editroute(nullptr);
 	Panel::erase();
+}
+
+void RoutePanel::conformtorect(UIRect confrect)
+{
+	rect.x = confrect.x+confrect.w - rect.w;
+	rect.y = confrect.y;
+	rect.h = confrect.h;
+	applylayout({rect.w,rect.h});
 }
 
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
-    rect = {viewsize.x*0.5-150,viewsize.y-150,300,150};
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new TrainTable(this, tablerect));
+	setlayout(create<VBox>(
+		create<Close>(),
+		create<TrainTable>()
+	));
+	applylayout();
+	placeautomatically();
 }
 
-TrainListPanel::~TrainListPanel()
-{}
 
-
-TrainPanel::TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain) : 
-		Panel(newui, newrect), 
+TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) :
+		Panel(newui), 
 		trainmanager(manager), 
 		train(newtrain)
 {
-	createbutton<SetRoute>();
-	createbutton<GoTrain>();
-	createbutton<GasTrain>();
-	createbutton<BrakeTrain>();
-	createbutton<TurnTrain>();
-	createbutton<CoupleTrain>();
+	setlayout(
+	create<VBox>(
+		create<EditableText>(train.name),
+		
+		create<HBox>(
+			create<VBox>(
+				create<Close>(),
+				create<SetRoute>(),
+				create<GoTrain>(),
+				create<GasTrain>(),
+				create<BrakeTrain>(),
+				create<TurnTrain>(),
+				create<CoupleTrain>()
+			),
 
-	Coord column_2_x = margin_x+80+elementdistance_x;
-	Coord columns_y = margin_y+20+elementdistance_y;
-
-	UIRect traininfotablerect = {column_2_x, columns_y, 100, 100};
-	addelement(new TrainInfoTable(this, traininfotablerect, train));
-
-	UIRect trainiconsrect = {column_2_x, columns_y+140+elementdistance_y, 200, 30};
-	addelement(new TrainIcons(this, trainiconsrect, train));
-
-	Coord column_3_x = column_2_x + 100 + elementdistance_x;
-	UIRect routetablerect = {column_3_x, columns_y, rect.w-column_3_x-margin_x, rect.h-columns_y-margin_y-35};
-	addelement(new TrainOrderTable(this, routetablerect, train));
-	
-	UIRect trainnamerect = {column_2_x, margin_y, getlocalrect().w-2*column_2_x, 20};
-	addelement(new EditableText(this, train.name, trainnamerect));
+			create<VBox>(
+				create<HBox>(
+					create<TrainInfoTable>(train),
+					create<TrainOrderTable>(train)
+				),
+				create<TrainCoupler>(train)
+			)
+		)
+	)
+	);
+	applylayout();
+	placeautomatically();
 }
 
-TrainPanel::~TrainPanel()
-{}
-
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, UIRect r) : Panel(newui, r)
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
+	Panel(newui), input(game->getinputmanager())
 {
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-margin_y-yoffset-elementdistance_y};
-	addelement(new ConstructionTable(this, tablerect));
+	setlayout(
+	create<VBox>(
+		create<Close>(),
+		create<ConstructionTable>()
+	)
+	);
+	applylayout();
+	placeautomatically();
 }
-
-BuildingConstructionPanel::~BuildingConstructionPanel()
-{}
 
 void BuildingConstructionPanel::erase()
 {
-	game->getinputmanager().resetinput();
+	input.resetinput();
 	Panel::erase();
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
-		Panel(newui, {200,400,500,150}),
+		Panel(newui),
 		building(b)
 {
-	Coord column_2_x = margin_x + 80 + elementdistance_x;
-	Coord typenamewidth = 80;
-	Coord column_3_x = rect.w - typenamewidth - margin_x;
-	Coord namewidth = column_3_x - column_2_x - elementdistance_x;
-	addelement(new EditableText(this, building->name, {column_2_x, 10, namewidth, 20}));
-	addelement(new Text(this, building->type.name, {column_3_x, 10, typenamewidth, 20}));
+	setlayout(
+		create<VBox>(
+			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<HBox>(
+				create<Close>(),
+				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
+			)
+		)
+	);
+	applylayout();
+	placeautomatically();
 }
 
 BuildingPanel::~BuildingPanel()
@@ -205,23 +220,16 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		BuildingPanel(newui, f),
 		factory(f)
 {
-	UIRect tablerect = {margin_x, margin_y+yoffset, getlocalrect().w-2*margin_x, getlocalrect().h-2*margin_y-yoffset};
-	addelement(new WagonTable(this, tablerect, *f));
-}
-
-void FactoryPanel::render(Rendering* r)
-{
-	BuildingPanel::render(r);
-	UIRect queuerect = {rect.x + margin_x, 
-						  rect.y + getlocalrect().h - margin_y - 20, 
-						  getlocalrect().w-2*margin_x, 
-						  20};
-	std::vector<WagonInfo> wagoninfos;
-	for(const WagonType* type : factory->getqueue()){
-		WagonInfo info(type->iconname, none, 0);
-		wagoninfos.push_back(info);
-	}
-	rendertrainicons(r, *ui, wagoninfos, queuerect); // TODO: This should be delegated to a queue decoration class accessing the waiting objects, but that requires abstracting the queue into its own class. We'll do this when needed.
+	getlayout()->setpadding({0,0});
+	Layout* newlayout = create<VBox>();
+	newlayout->addelements({
+		getlayout(),
+		create<WagonTable>(*f),
+		create<WagonQueue>(*f)
+	});
+	setlayout(newlayout);
+	applylayout();
+	placeautomatically();
 }
 
 FactoryPanel::~FactoryPanel()

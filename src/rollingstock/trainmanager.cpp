@@ -6,6 +6,7 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/routing/routing.h"
+#include "bahnhof/ui/panels.h"
 
 TrainManager::TrainManager(Tracks::Tracksystem* newtracks, RollingStockManager& r) : rollingstock(r)
 {
@@ -94,6 +95,12 @@ std::vector<TrainInfo> TrainManager::gettrainsinfo()
 		infos.push_back(train->getinfo());
 	}
 	return infos;
+}
+
+void TrainManager::createlistpanel()
+{
+	if(!panel.exists())
+    	panel.set(new UI::TrainListPanel(&tracks->game->getui()));
 }
 
 void TrainManager::inittrain(State startstate)

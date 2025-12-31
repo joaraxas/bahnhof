@@ -12,30 +12,29 @@
 void BuildingBuilder::render(Rendering* r)
 {
     Builder::render(r);
-    if(building){ // this should always be true
-        if(building->id==wagonfactory){
-            Angle newangle = angle;
-            Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
-            TracksDisplayMode mode = TracksDisplayMode::planned;
-            if(!canbuild())
-                mode = TracksDisplayMode::impossible;
-            Tracks::render(section, r, mode);
-            Tracks::Input::discardsection(section);
-        }
-        std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
-        SDL_Color color;
-        if(canbuild()){
-            color = building->color;
-            color.a = 127;
-        }
-        else{
-            color = {127, 0, 0, 127};
-        }
-        shape.get()->renderfilled(r, color);
+    if(!building){
+        return;
+    }
+    
+    if(building->id==wagonfactory){
+        Angle newangle = angle;
+        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
+        TracksDisplayMode mode = TracksDisplayMode::planned;
+        if(!canbuild())
+            mode = TracksDisplayMode::impossible;
+        Tracks::render(section, r, mode);
+        Tracks::Input::discardsection(section);
+    }
+    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    SDL_Color color;
+    if(canbuild()){
+        color = building->color;
+        color.a = 127;
     }
     else{
-        std::cout<<"error: no building selected when calling BuildingBuilder::render!"<<std::endl;
+        color = {127, 0, 0, 127};
     }
+    shape.get()->renderfilled(r, color);
 }
 
 void BuildingBuilder::reset()
@@ -43,16 +42,25 @@ void BuildingBuilder::reset()
     Builder::reset();
     building = nullptr;
     angle = Angle::zero;
+    cost = 0;
 }
 
-void BuildingBuilder::setbuildingtype(const BuildingType& type)
+void BuildingBuilder::setbuildingtype(const BuildingType* type)
 {
-    building = &type;
-    cost = building->cost;
+    building = type;
+    cost = 0;
+    if(building)
+        cost = building->cost;
+    else // This should not happen but could be a way of resetting
+        reset();
 }
 
 bool BuildingBuilder::canfit()
 {
+    if(!building){
+        return false;
+    }
+
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
@@ -71,9 +79,9 @@ bool BuildingBuilder::canfit()
 void BuildingBuilder::build()
 {
     if(!building){
-        std::cout<<"error: no building selected at build!";
         return;
     }
+
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building->id)
     {
@@ -109,6 +117,10 @@ void BuildingBuilder::build()
 
 std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
 {
+    if(!building){
+        return nullptr;
+    }
+
     switch (building->id)
     {
     case wagonfactory:{

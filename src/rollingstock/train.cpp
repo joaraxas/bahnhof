@@ -18,7 +18,6 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
 	wagons = newwagons;
-	panel = std::make_unique<UI::Ownership>();
 	speed = 0;
 	for(auto wagon : wagons)
 		wagon->train = this;
@@ -353,7 +352,7 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 			wagon->train = this;
 		std::cout<<"couple me: "<<name<<std::endl;
 		std::cout<<"to other train: "<<train.name<<std::endl;
-		if(train.panel->exists()){
+		if(train.panel.exists()){
 			select();
 		}
 		wantstocouple = false;
@@ -400,9 +399,8 @@ TrainInfo Train::getinfo()
 void Train::select()
 {
 	selected = true;
-	if(!panel->exists()){
-		panel->set(new UI::TrainPanel(&game->getui(), 
-									  {300,200,400,220}, 
+	if(!panel.exists()){
+		panel.set(new UI::TrainPanel(&game->getui(), 
 									  game->getgamestate().gettrainmanager(), 
 									  *this));
 	}

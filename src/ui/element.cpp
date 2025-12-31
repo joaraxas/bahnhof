@@ -1,8 +1,6 @@
-#include "bahnhof/graphics/rendering.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/host.h"
 #include "bahnhof/ui/element.h"
-#include "bahnhof/ui/decoration.h"
 
 namespace UI{
 
@@ -29,4 +27,16 @@ UIRect Element::getlocalrect()
     return rect;
 }
 
+UIVec Element::getminimumsize()
+{
+    return {rect.w+2*padding.x, rect.h+2*padding.y};
 }
+
+UIRect Element::place(UIRect r)
+{
+    rect.x = r.x+getpadding().x;
+    rect.y = r.y+getpadding().y;
+    return rect;
+}
+
+} // namespace UI

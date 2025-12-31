@@ -67,6 +67,7 @@ public:
     UIRect screentoui(SDL_Rect rect);
     Vec uitoscreen(UIVec pos);
     UIVec screentoui(Vec pos);
+    UIRect getuiview();
     void renderscaleruler(
         Rendering* r, Coord leftx, Coord lefty, Coord scalelinelength);
 private:
@@ -91,7 +92,10 @@ public:
     void addpanel(UI::Host*);
     void removepanel(UI::Host*);
     void movepaneltofront(UI::Host*);
+    UI::UIVec findfreespace(const UI::UIVec size);
     void setdropdown(UI::Dropdown*);
+    void handlewindowsizechange();
+
     Game& getgame();
     UIRendering& getuirendering() {return uirendering;};
     UI::Host* movingwindow = nullptr;
@@ -102,6 +106,7 @@ private:
     std::vector<UI::Host*> panelstodelete;
     UI::Dropdown* dropdown = nullptr;
     UI::UIVec movingwindowoffset;
+    UI::UIVec placepanelspos={200,50};
     Game* game;
     UIRendering uirendering;
 };

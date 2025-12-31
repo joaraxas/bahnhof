@@ -37,6 +37,7 @@ add_executable(bahnhof
     src/ui/host.cpp
     src/ui/panel.cpp
     src/ui/element.cpp
+    src/ui/layouts.cpp
     src/ui/decoration.cpp
     src/ui/button.cpp
     src/ui/table.cpp

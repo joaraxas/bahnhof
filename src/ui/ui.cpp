@@ -31,7 +31,7 @@ void InterfaceManager::render(Rendering* r)
 {
     cleanup();
 
-    UI::Coord viewheight = uirendering.screentoui(getviewsize()).y;
+    UI::Coord viewheight = uirendering.getuiview().h;
     uirendering.renderscaleruler(r, 20, viewheight-20, 200);
 
     for(auto pit = panels.rbegin(); pit!=panels.rend(); ++pit)
@@ -87,11 +87,13 @@ bool InterfaceManager::click(Vec mousepos, int type)
         if(clickedpanel){
             movepaneltofront(clickedpanel);
             clickedui = true;
-            movingwindow = clickedpanel;
-            UI::UIRect movingwindowrect = movingwindow->getglobalrect();
-            movingwindowoffset = uimpos
-                - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
             clickedpanel->click(uimpos, type);
+            if(clickedpanel->usermovable()){
+                movingwindow = clickedpanel;
+                UI::UIRect movingwindowrect = movingwindow->getglobalrect();
+                movingwindowoffset = uimpos
+                    - UI::UIVec{movingwindowrect.x, movingwindowrect.y};
+            }
         }
     }
     cleanup();
@@ -184,6 +186,18 @@ void InterfaceManager::movepaneltofront(UI::Host* selectedpanel)
     }
 }
 
+UI::UIVec InterfaceManager::findfreespace(const UI::UIVec size)
+{
+    UIRect view = uirendering.getuiview();
+    placepanelspos += {30,30};
+    if(placepanelspos.x+size.x > view.x+view.w)
+        placepanelspos.x = 10;
+    if(placepanelspos.y+size.y > view.y+view.h)
+        placepanelspos.y = 10;
+    
+    return placepanelspos;
+}
+
 void InterfaceManager::setdropdown(UI::Dropdown* dr)
 {
     if(dropdown)
@@ -194,4 +208,12 @@ void InterfaceManager::setdropdown(UI::Dropdown* dr)
 Game& InterfaceManager::getgame()
 {
     return *game;
+}
+
+void InterfaceManager::handlewindowsizechange()
+{
+    const auto view = uirendering.getuiview();
+    for(auto& panel : panels){
+        panel->conformtorect(view);
+    }
 }

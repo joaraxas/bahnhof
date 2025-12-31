@@ -6,6 +6,7 @@
 #include "bahnhof/ui/decoration.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildings.h"
 
 namespace UI{
 
@@ -60,6 +61,17 @@ void EditableText::render(Rendering* r)
     ui->getuirendering().renderrectangle(r, getglobalrect(), InvertedInfo);
 }
 
+UIRect EditableText::place(UIRect r)
+{
+    originalrect.x = r.x+getpadding().x;
+    originalrect.y = r.y+getpadding().y;
+    originalrect.w = std::max(r.w-getpadding().x*2, originalrect.w);
+    rect = originalrect;
+    shortenedtext = ui->getuirendering().croptexttowidth(
+        text, rect.w, margin_x);
+    return originalrect;
+}
+
 void EditableText::updatesource()
 {
     if(!text.empty()){
@@ -73,12 +85,14 @@ void EditableText::startwriting(){
     beingedited = true;
     fallbacktext = text;
     updatewritingarea();
+    // TODO: The text should now be rendered above other elements.
 }
 
 void EditableText::stopwriting(){
     text = fallbacktext;
     beingedited = false;
-    rect = originalrect;
+    rect.w = originalrect.w;
+    rect.h = originalrect.h;
     shortenedtext = ui->getuirendering().croptexttowidth(
         text, rect.w, margin_x);
 }
@@ -112,7 +126,7 @@ void EditableText::updatewritingarea(){
 }
 
 
-void TrainIcons::render(Rendering* r)
+void TrainCoupler::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
     iconrects = rendertrainicons(
@@ -121,7 +135,7 @@ void TrainIcons::render(Rendering* r)
     rendersplitafterwagonid = -1;
 }
 
-void TrainIcons::mousehover(UIVec pos, int ms)
+void TrainCoupler::mousehover(UIVec pos, int ms)
 {
     rendersplitafterwagonid = std::fmin(
         getwagonidatmousepos(pos), 
@@ -129,7 +143,7 @@ void TrainIcons::mousehover(UIVec pos, int ms)
     );
 }
 
-void TrainIcons::leftclick(UIVec mousepos)
+void TrainCoupler::leftclick(UIVec mousepos)
 {
     int wagonid = getwagonidatmousepos(mousepos);
     if(wagonid<0) return;
@@ -143,7 +157,36 @@ void TrainIcons::leftclick(UIVec mousepos)
     train.split(wheretosplit, nullptr);
 }
 
-int TrainIcons::getwagonidatmousepos(UIVec mousepos)
+int TrainCoupler::getwagonidatmousepos(UIVec mousepos)
+{
+    for(int iRect=0; iRect<iconrects.size(); iRect++){
+        UIRect& rect = iconrects[iRect];
+	    if(rect.contains(mousepos)){
+            return iRect;
+        }
+    }
+    return -1;
+}
+
+
+void WagonQueue::render(Rendering* r)
+{
+    std::vector<WagonInfo> wagoninfos;
+	for(const WagonType* type : factory.getqueue()){
+		WagonInfo info(type->iconname, none, 0);
+		wagoninfos.push_back(info);
+	}
+	iconrects = rendertrainicons(r, *ui, wagoninfos, getglobalrect());
+}
+
+void WagonQueue::leftclick(UIVec mousepos)
+{
+    int wagonid = getwagonidatmousepos(mousepos);
+    if(wagonid<0) return;
+    factory.removefromqueue(wagonid);
+}
+
+int WagonQueue::getwagonidatmousepos(UIVec mousepos)
 {
     for(int iRect=0; iRect<iconrects.size(); iRect++){
         UIRect& rect = iconrects[iRect];

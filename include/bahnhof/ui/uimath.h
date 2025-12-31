@@ -23,6 +23,7 @@ public:
     Coord operator-=(const Coord v) {value-=v.value; return *this;};
     double operator*(const double d) const {return d*value;};
     friend double operator*(const double d, Coord c) {return c*d;};
+    double operator/(const double d) const {return double(value)/d;};
     Coord operator-() const {return Coord{-value};};
 
     bool operator<(const Coord c) const {return value<c.value;};
@@ -43,16 +44,19 @@ inline Coord operator+(Coord c1, const Coord c2) {return c1+=c2;};
 inline Coord operator-(Coord c1, const Coord c2) {return c1-=c2;};
 
 struct UIVec{
-    UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
+    constexpr UIVec(Coord xx, Coord yy) : x{xx}, y{yy} {};
     UIVec& operator+=(UIVec v) {x+=v.x; y+=v.y; return *this;};
     UIVec& operator-=(UIVec v) {x-=v.x; y-=v.y; return *this;};
+    UIVec& operator*=(double c) {x*=c; y*=c; return *this;};
 
     Coord x;
     Coord y;
 };
 
-inline UIVec operator+(UIVec u, UIVec v) {return u+=v;};
-inline UIVec operator-(UIVec u, UIVec v) {return u-=v;};
+inline constexpr UIVec operator+(UIVec u, UIVec v) {return u+=v;};
+inline constexpr UIVec operator-(UIVec u, UIVec v) {return u-=v;};
+inline constexpr UIVec operator*(int i, UIVec v) {return v*=i;};
+inline constexpr UIVec operator*(UIVec v, int i) {return v*=i;};
 
 
 struct UIRect{

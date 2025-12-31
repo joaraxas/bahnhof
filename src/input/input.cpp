@@ -4,6 +4,7 @@
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/panels.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -103,6 +104,13 @@ void InputManager::handle(int ms, int mslogic){
             }
             break;
         }
+
+        case SDL_WINDOWEVENT:{
+            if(e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+                ui.handlewindowsizechange();
+            }
+            break;
+        }
         }
     }
 
@@ -138,24 +146,24 @@ void InputManager::leftclickmap(Vec mousepos)
     case placingbuildings:
         builder->leftclickmap(mousepos);
         break;
-    
+   
     case idle:{
         Gamestate& gamestate = game->getgamestate();
-        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+        if(gamestate.getbuildingmanager().leftclick(mousepos))
+            break;
+        
         Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
         if(clickedtrain){
             selecttrain(clickedtrain);
             break;
         }
         
+        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
         if(Tracks::Input::switchat(tracksystem, mousepos)){
             break;
         }
 
         selecttrain(nullptr);
-
-        if(gamestate.getbuildingmanager().leftclick(mousepos))
-            break;
         break;
     }
     
@@ -277,26 +285,40 @@ void InputManager::selecttrain(Train* whattrain)
 
 void InputManager::editroute(Route* route)
 {
+    if(route){
+    	panel.set(new UI::RoutePanel(&game->getui(), route));
+        inputstate = idle;
+    }
     editingroute = route;
 }
 
 void InputManager::placesignal()
 {
+    panel.deletereference();
     resetinput();
     inputstate = placingsignals;
 }
 
 void InputManager::placetrack()
 {
+    panel.deletereference();
     resetinput();
     inputstate = placingtracks;
 }
 
-void InputManager::placebuilding(const BuildingType& type)
+void InputManager::placebuildings()
 {
+    if(inputstate!=placingbuildings){
+        panel.set(new UI::BuildingConstructionPanel(&game->getui()));
+    }
     resetinput();
     inputstate = placingbuildings;
+}
+
+void InputManager::selectbuildingtoplace(const BuildingType* type)
+{
     builder->setbuildingtype(type);
+    inputstate = placingbuildings;
 }
 
 void InputManager::resetinput()
@@ -304,5 +326,6 @@ void InputManager::resetinput()
     trackbuilder->reset();
     signalbuilder->reset();
     builder->reset();
+    editingroute = nullptr;
     inputstate = idle;
 }

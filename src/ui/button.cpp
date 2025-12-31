@@ -11,10 +11,8 @@
 
 namespace UI{
 
-Button::Button(Host* newpanel, UIVec newpos) : Element(newpanel)
-{
-    rect = {newpos.x, newpos.y, 100, 40};
-}
+Button::Button(Host* newpanel) : Element(newpanel)
+{}
 
 void Button::mousehover(UIVec pos, int ms)
 {
@@ -31,10 +29,9 @@ void Button::render(Rendering* r)
 }
 
 TextButton::TextButton(Host* newpanel, 
-    UIVec newpos, 
     std::string newtext, 
     Coord width
-) : Button(newpanel, newpos)
+) : Button(newpanel)
 {
     text = newtext;
     rect.w = width;
@@ -69,19 +66,17 @@ void PlaceTrack::leftclick(UIVec mousepos)
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    new BuildingConstructionPanel(ui, {180,0,300,200});
+    game->getinputmanager().placebuildings();
 }
 
 void ManageRoutes::leftclick(UIVec mousepos)
 {
-    UIVec viewsize = ui->getuirendering().screentoui(getviewsize());
-    UIRect routepanelrect = {viewsize.x-200,0,200,viewsize.y};
-    new RouteListPanel(ui, routepanelrect);
+    game->getgamestate().getrouting().createlistpanel();
 }
 
 void ManageTrains::leftclick(UIVec mousepos)
 {
-    new TrainListPanel(ui);
+    game->getgamestate().gettrainmanager().createlistpanel();
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)
@@ -96,12 +91,10 @@ void DecreaseUIScale::leftclick(UIVec mousepos)
 
 void SetRoute::leftclick(UIVec mousepos)
 {
-    UIRect panelrect = panel->getlocalrect();
-    UIRect tablerect = {mousepos.x-panelrect.x, 
-                        mousepos.y-panelrect.y, 
-                        150, 
-                        100};
-    Dropdown* ntable = new RouteDropdown(panel, tablerect);
+    UIRect panelrect = panel->getglobalrect();
+    UIVec dropdownpos = {mousepos.x-panelrect.x, 
+                        mousepos.y-panelrect.y};
+    Dropdown* ntable = new RouteDropdown(panel, dropdownpos);
 }
 
 void SetRoute::update(int ms)

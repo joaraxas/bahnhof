@@ -1,4 +1,5 @@
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/ownership.h"
 #include "bahnhof/ui/host.h"
 #include "bahnhof/ui/element.h"
 
@@ -35,8 +36,7 @@ void Ownership::resetreference()
 }
 
 
-Host::Host(InterfaceManager* newui, UIRect newrect) :
-	rect{newrect}
+Host::Host(InterfaceManager* newui)
 {
     ui = newui;
 	ui->addpanel(this);
@@ -66,7 +66,7 @@ UIRect Host::getglobalrect()
 
 UIRect Host::getlocalrect()
 {
-	return rect;
+	return {0,0,rect.w,rect.h};
 }
 
 void Host::update(int ms)
@@ -132,13 +132,32 @@ void Host::mousepress(UIVec pos, int mslogic, int type)
 	}
 }
 
-void Host::addelement(Element* element){
+Element* Host::addelement(Element* element){
 	elements.emplace_back(element);
+	return element;
 }
 
 void Host::moveto(UIVec towhattopcorner){
 	rect.x = towhattopcorner.x;
 	rect.y = towhattopcorner.y;
+}
+
+void Host::placeautomatically(){
+	UIVec size{rect.w, rect.h};
+	moveto(ui->findfreespace(size));
+}
+
+void Host::conformtorect(UIRect confrect){
+	UIVec newpos{rect.x,rect.y};
+	if(rect.x + 20 > confrect.x+confrect.w)
+		newpos.x = confrect.x+confrect.w - rect.w;
+	if(rect.y + 20 > confrect.y+confrect.h)
+		newpos.y = confrect.y+confrect.h - rect.h;
+	if(rect.x + rect.w < confrect.x + 20)
+		newpos.x = confrect.x;
+	if(rect.y + rect.h < confrect.y + 20)
+		newpos.y = confrect.y;
+	moveto(newpos);
 }
 
 } // namespace UI

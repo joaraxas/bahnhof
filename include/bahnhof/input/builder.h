@@ -78,7 +78,7 @@ public:
     BuildingBuilder(InputManager& i, Game* g) : Builder(i, g), buildingmanager(g->getgamestate().getbuildingmanager()) {};
     void render(Rendering*);
     void reset();
-    void setbuildingtype(const BuildingType& b);
+    void setbuildingtype(const BuildingType* b);
 private:
     bool canfit();
     void build();

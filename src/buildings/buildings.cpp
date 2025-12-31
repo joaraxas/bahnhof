@@ -19,7 +19,6 @@ Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) :
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id))
 {
 	color = type.color;
-	panel = std::make_unique<UI::Ownership>();
 	if(type.spritename){
 		sprite.setspritesheet(game->getsprites(), type.spritename);
 		sprite.imageangle = shape->getorientation();
@@ -59,8 +58,8 @@ bool Building::checkcollisionwithshape(const Shape& othershape)
 
 bool Building::leftclick(Vec pos)
 {
-	if(!panel->exists()){
-		panel->set(new UI::BuildingPanel(&game->getui(), this));
+	if(!panel.exists()){
+		panel.set(new UI::BuildingPanel(&game->getui(), this));
 	}
 }
 
@@ -107,7 +106,8 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r) : 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
+		RollingStockManager& r) : 
 	Building(g, wagonfactory, std::move(s)), 
 	state(st),
 	rollingstock(r)
@@ -137,8 +137,8 @@ void WagonFactory::trigger()
 
 bool WagonFactory::leftclick(Vec pos)
 {
-	if(!panel->exists()){
-		panel->set(new UI::FactoryPanel(&game->getui(), this));
+	if(!panel.exists()){
+		panel.set(new UI::FactoryPanel(&game->getui(), this));
 	}
 }
 
@@ -154,6 +154,15 @@ void WagonFactory::orderwagon(const WagonType& type)
 			timeleft = 3500;
 		productionqueue.push_back(&type);
 		game->getgamestate().money -= type.cost;
+	}
+}
+
+void WagonFactory::removefromqueue(int wagonid)
+{
+	if(wagonid>=0 && wagonid<productionqueue.size()){
+		game->getgamestate().money+=productionqueue[wagonid]->cost;
+		productionqueue.erase(productionqueue.begin() + wagonid);
+		if(wagonid==0) timeleft = 3500;
 	}
 }
 

@@ -1,3 +1,4 @@
+#include <random>
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/orientation.h"
 
@@ -135,6 +136,23 @@ float anglediff(float a, float b, float wraparound)
 
 int randint(int maxinclusive)
 {
-	return rand() % (maxinclusive+1);
+	if(maxinclusive<0)
+		throw std::invalid_argument("randint max must be >= 0");
+	using namespace std;
+	random_device rd{};
+	static default_random_engine engine{rd()};
+	uniform_int_distribution<int> dist{0, maxinclusive};
+	return dist(engine);
+}
+
+float randfloat(float maxexclusive)
+{
+	if(maxexclusive<=0)
+		throw std::invalid_argument("randfloat max must be > 0");
+	using namespace std;
+	random_device rd{};
+	static default_random_engine engine{rd()};
+	uniform_real_distribution<float> dist{0.f, maxexclusive};
+	return dist(engine);
 }
 

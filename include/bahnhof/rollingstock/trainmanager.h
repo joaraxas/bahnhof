@@ -1,4 +1,5 @@
 #pragma once
+#include "bahnhof/ui/ownership.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/graphics/sprite.h"
@@ -42,6 +43,7 @@ public:
     void deselectall();
     Train* gettrainatpos(Vec pos);
     std::vector<TrainInfo> gettrainsinfo();
+    void createlistpanel();
     void inittrain(State startstate);
     void addtrainstoorphans(float speed=0);
 private:
@@ -50,4 +52,5 @@ private:
     std::vector<std::unique_ptr<Wagon>> wagons;
     std::vector<std::unique_ptr<Train>> trains;
     Tracks::Tracksystem* tracks = nullptr;
+    UI::Ownership panel;
 };

@@ -23,12 +23,20 @@ public:
     virtual void update(int ms) {};
     virtual void render(Rendering*) = 0;
     virtual UIRect getglobalrect();
-    UIRect getlocalrect();
+    virtual UIRect getlocalrect();
+    virtual UIVec getminimumsize();
+    virtual UIRect place(UIRect r);
+    UIVec getpadding() {return padding;};
+    void setpadding(UIVec s) {padding = s;};
+    virtual bool resizable_x() const {return false;};
+    virtual bool resizable_y() const {return false;};
 protected:
     Host* panel;
     UIRect rect = {0,0,100,100};
     InterfaceManager* ui;
     Game* game;
+private:
+    UIVec padding{2,2};
 };
 
 } // namespace UI

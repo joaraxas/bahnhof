@@ -10,23 +10,12 @@ namespace UI{
 
 class Element;
 class Host;
-
-class Ownership
-{
-public:
-    ~Ownership();
-    void set(Host* newhost);
-    bool exists();
-    void deletereference();
-    void resetreference();
-private:
-    Host* host = nullptr;
-};
+class Ownership;
 
 class Host
 {
 public:
-    Host(InterfaceManager* newui, UIRect newrect);
+    Host(InterfaceManager* newui);
     virtual ~Host();
     void mousehover(UIVec pos, int ms);
     void click(UIVec pos, int type);
@@ -34,17 +23,20 @@ public:
     void mousepress(UIVec pos, int mslogic, int type);
     virtual void update(int ms);
     virtual void render(Rendering*);
-    void addelement(Element*);
+    Element* addelement(Element*);
     void moveto(UIVec towhattopcorner);
+    virtual bool usermovable() {return true;};
     virtual void erase();
     InterfaceManager& getui();
     UIRect getglobalrect();
     UIRect getlocalrect();
+    virtual void conformtorect(UIRect confrect);
     Ownership* owner = nullptr;
 protected:
     Element* getelementat(UIVec pos);
+    virtual void placeautomatically();
     Game* game;
-    UIRect rect;
+    UIRect rect{0,0,100,100};
     std::vector<std::unique_ptr<Element>> elements;
     InterfaceManager* ui;
 };

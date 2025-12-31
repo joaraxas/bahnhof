@@ -7,6 +7,7 @@ class Rendering;
 class Train;
 struct TrainInfo;
 struct WagonInfo;
+class WagonFactory;
 
 namespace UI{
 
@@ -26,10 +27,13 @@ public:
 class EditableText : public Text
 {
 public:
-    EditableText(Host* p, std::string& t, UIRect r);
+    EditableText(Host* p, std::string& t, UIRect r={0, 0, 50, 20});
     ~EditableText();
     void leftclick(UIVec mousepos);
     void render(Rendering*);
+    UIVec getminimumsize() {return {originalrect.w+getpadding().x*2, originalrect.h+getpadding().y*2};};
+    UIRect place(UIRect r);
+    bool resizable_x() const override {return true;};
     void updatesource();
     void startwriting();
     void stopwriting();
@@ -49,10 +53,10 @@ private:
     UIRect originalrect;
 };
 
-class TrainIcons : public Element
+class TrainCoupler : public Element
 {
 public:
-    TrainIcons(Host* p, UIRect maxarea, Train& t) : Element(p), train(t) {rect = maxarea;};
+    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
     void mousehover(UIVec pos, int ms);
     void leftclick(UIVec mousepos);
@@ -61,6 +65,19 @@ private:
     Train& train;
     std::vector<UIRect> iconrects;
     int rendersplitafterwagonid = -1;
+};
+
+class WagonQueue : public Element
+{
+public:
+    WagonQueue(Host* h, WagonFactory& f, UIRect maxarea={0,0,150,20}) : 
+        Element{h}, factory{f} {rect = maxarea;};
+    void render(Rendering* r);
+    void leftclick(UIVec mousepos);
+private:
+    int getwagonidatmousepos(UIVec mousepos);
+    WagonFactory& factory;
+    std::vector<UIRect> iconrects;
 };
 
 std::vector<UIRect> rendertrainicons(

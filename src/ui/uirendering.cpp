@@ -78,7 +78,7 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
         color = {255,255,255,255};
         break;
     case UI::PanelBackground:
-        color = {255,255,255,127};
+        color = {127,160,100,255};
         break;
     case UI::PanelBorder:
         color = {0,0,0,127};
@@ -173,9 +173,13 @@ void UIRendering::decreaseuiscale()
 
 void UIRendering::setuiscale(float newscale)
 {
+    auto oldscale = uiscale;
     uiscale = std::fmax(0.8, newscale);
-    int newfontsize = 12*uiscale;
-    setfontsize(newfontsize);
+    if(uiscale != oldscale) {
+        int newfontsize = 12*uiscale;
+        setfontsize(newfontsize);
+        ui.handlewindowsizechange();
+    }
 }
 
 SDL_Rect UIRendering::uitoscreen(UIRect uirect)
@@ -218,6 +222,12 @@ UIVec UIRendering::screentoui(Vec pos)
     float scale = getuiscale();
     UIVec uipos(pos.x/scale, pos.y/scale);
     return uipos;
+}
+
+UIRect UIRendering::getuiview()
+{
+    UIVec size = screentoui(getviewsize());
+    return {0,0,size.x,size.y};
 }
 
 void UIRendering::renderscaleruler(

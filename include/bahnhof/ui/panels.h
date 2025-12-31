@@ -1,11 +1,13 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/host.h"
+#include "bahnhof/ui/ownership.h"
 
 class Game;
 class Gamestate;
 class Rendering;
 class InterfaceManager;
+class InputManager;
 class Route;
 class TrainManager;
 class Train;
@@ -17,62 +19,58 @@ namespace UI{
 class Dropdown;
 class RouteListPanel;
 class Text;
+class Layout;
 
 class Panel : public Host
 {
 public:
-    Panel(InterfaceManager* newui, UIRect newrect); //TODO: Maybe get rid of this and always handle rect setting in each panel ctor
     Panel(InterfaceManager* newui);
     virtual void render(Rendering*);
 protected:
-    template <class T, typename... Args> void createbutton(Args&&... args);
-    static constexpr Coord margin_x = 15;
-    static constexpr Coord margin_y = 10;
-    Coord yoffset = 0;
-    static constexpr Coord elementdistance_x = 15;
-    static constexpr Coord elementdistance_y = 5;
+    template <class T, typename... Args> T* create(Args&&... args);
+    Layout* setlayout(Layout* l);
+    Layout* getlayout();
+    void applylayout(UIVec minsize);
+private:
+    Layout* layout{nullptr};
 };
 
 class MainPanel : public Panel
 {
 public:
     MainPanel(InterfaceManager* newui);
-    ~MainPanel();
-};
-
-class RoutePanel : public Panel
-{
-public:
-    RoutePanel(InterfaceManager* newui, UIRect newrect, int routeid);
-    ~RoutePanel();
-    void erase();
-private:
-    Route* route;
+    bool usermovable() {return false;};
+    void conformtorect(UIRect confrect) override;
 };
 
 class RouteListPanel : public Panel
 {
 public:
-    RouteListPanel(InterfaceManager* newui, UIRect newrect);
-    ~RouteListPanel();
+    RouteListPanel(InterfaceManager* newui);
+};
+
+class RoutePanel : public Panel
+{
+public:
+    RoutePanel(InterfaceManager* newui, Route* editroute);
     void erase();
-    void addroutepanel(int routeindex);
+    bool usermovable() {return false;};
+    void conformtorect(UIRect confrect) override;
 private:
-    std::unique_ptr<UI::Ownership> routepanelref;
+    Route* route;
+    InputManager& input;
 };
 
 class TrainListPanel : public Panel
 {
 public:
     TrainListPanel(InterfaceManager* newui);
-    ~TrainListPanel();
 };
 
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, UIRect newrect, TrainManager& manager, Train& newtrain);
-    ~TrainPanel();
+    TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain);
     Train& gettrain() {return train;};
 private:
     TrainManager& trainmanager;
@@ -82,9 +80,10 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui, UIRect);
-    ~BuildingConstructionPanel();
+    BuildingConstructionPanel(InterfaceManager* newui);
     void erase() override;
+private:
+    InputManager& input;
 };
 
 class BuildingPanel : public Panel
@@ -101,7 +100,6 @@ class FactoryPanel : public BuildingPanel
 public:
     FactoryPanel(InterfaceManager* newui, WagonFactory* f);
     ~FactoryPanel();
-    void render(Rendering* r);
 private:
     WagonFactory* factory;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include<set>
+#include "bahnhof/ui/ownership.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
@@ -10,9 +11,6 @@ class Game;
 class Shape;
 class Rendering;
 class RollingStockManager;
-namespace UI{
-    class Ownership;
-}
 
 class Building
 {
@@ -28,7 +26,7 @@ public:
     std::string name;
     const BuildingType& type;
 protected:
-    std::unique_ptr<UI::Ownership> panel;
+    UI::Ownership panel;
     SDL_Color color;
     Game* game;
     std::unique_ptr<Shape> shape;
@@ -52,12 +50,14 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, RollingStockManager& r);
+    WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
+        RollingStockManager& r);
     void trigger();
     bool leftclick(Vec pos);
     State& getstate() {return state;};
     const std::vector<WagonType*> getavailabletypes();
     void orderwagon(const WagonType& type);
+    void removefromqueue(int wagonid);
     const std::deque<const WagonType*>& getqueue();
 private:
     std::deque<const WagonType*> productionqueue;

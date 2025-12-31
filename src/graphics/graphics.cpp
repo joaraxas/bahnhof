@@ -10,7 +10,6 @@ bool allowretina = true;
 int init()
 {
 	bool success = true;
-	std::srand((unsigned) time(NULL));
 	int sdlflags = SDL_INIT_VIDEO;
 	int res = SDL_Init(sdlflags);
 	if(res<0){
