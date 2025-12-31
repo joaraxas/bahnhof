@@ -15,10 +15,10 @@
 
 namespace UI{
 
-Table::Table(Host* newpanel, UIRect newrect) : 
-    Element(newpanel), minsize(newrect.w, newrect.h)
+Table::Table(Host* newpanel, UIVec minsz, UIVec pos) : 
+    Element(newpanel), minsize{minsz}
 {
-    rect = newrect;
+    rect = {pos.x, pos.y, minsz.x, minsz.y};
 }
 
 Table::~Table() // Needed to correctly destroy unique_ptrs
@@ -181,7 +181,8 @@ void ClickableTable::render(Rendering* r)
     SDL_DestroyTexture(tablerendertarget);
 }
 
-Dropdown::Dropdown(Host* p, UIRect r) : ClickableTable(p, r)
+Dropdown::Dropdown(Host* p, UIVec pos, UIVec minsz) : 
+    ClickableTable(p, minsz, pos)
 {
     ui->setdropdown(this);
 }
@@ -199,8 +200,8 @@ void Dropdown::render(Rendering* r)
     ClickableTable::render(r);
 }
 
-RouteDropdown::RouteDropdown(Host* p, UIRect r) : 
-    Dropdown(p, r), 
+RouteDropdown::RouteDropdown(Host* p, UIVec pos, UIVec minsz) : 
+    Dropdown(p, pos, minsz), 
     routing(ui->getgame().getgamestate().getrouting())
 {}
 
@@ -227,7 +228,9 @@ void RouteDropdown::lineclicked(int index)
         dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
-MainInfoTable::MainInfoTable(Host* newpanel, UIRect newrect) : Table(newpanel, newrect) {}
+MainInfoTable::MainInfoTable(Host* newpanel, UIVec pos, UIVec minsz) : 
+    Table(newpanel, minsz, pos) 
+{}
 
 void MainInfoTable::update(int ms)
 {
@@ -243,8 +246,8 @@ void MainInfoTable::update(int ms)
 }
 
 
-TrainTable::TrainTable(Host* newpanel, UIRect newrect) : 
-    ClickableTable(newpanel, newrect)
+TrainTable::TrainTable(Host* newpanel, UIVec pos, UIVec minsz) : 
+    ClickableTable(newpanel, minsz, pos)
 {
     trainmanager = &(ui->getgame().getgamestate().gettrainmanager());
 }
@@ -282,8 +285,8 @@ void TrainInfoTable::update(int ms)
 }
 
 
-RouteTable::RouteTable(Host* p, UIRect r) : 
-    ClickableTable(p, r), 
+RouteTable::RouteTable(Host* p, UIVec pos, UIVec minsz) : 
+    ClickableTable(p, minsz, pos), 
     input(game->getinputmanager()),
     routing(ui->getgame().getgamestate().getrouting())
 {};
@@ -368,8 +371,8 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, UIRect r) : 
-    ClickableTable(p, r), 
+ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
+    ClickableTable(p, minsz, pos), 
     input(game->getinputmanager()),
     buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
@@ -394,8 +397,8 @@ void ConstructionTable::lineclicked(int index)
 }
 
 
-WagonTable::WagonTable(Host* p, WagonFactory& f, UIRect r) : 
-    ClickableTable(p, r), 
+WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) : 
+    ClickableTable(p, minsz, pos), 
     input(game->getinputmanager()),
     factory(f)
 {

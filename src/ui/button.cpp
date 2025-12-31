@@ -92,11 +92,9 @@ void DecreaseUIScale::leftclick(UIVec mousepos)
 void SetRoute::leftclick(UIVec mousepos)
 {
     UIRect panelrect = panel->getglobalrect();
-    UIRect tablerect = {mousepos.x-panelrect.x, 
-                        mousepos.y-panelrect.y, 
-                        150, 
-                        100};
-    Dropdown* ntable = new RouteDropdown(panel, tablerect);
+    UIVec dropdownpos = {mousepos.x-panelrect.x, 
+                        mousepos.y-panelrect.y};
+    Dropdown* ntable = new RouteDropdown(panel, dropdownpos);
 }
 
 void SetRoute::update(int ms)

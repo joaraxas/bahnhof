@@ -20,7 +20,7 @@ class TableLine;
 class Table : public Element
 {
 public:
-    Table(Host*, UIRect newrect);
+    Table(Host*, UIVec minsz, UIVec pos={0,0});
     virtual ~Table();
     bool checkclick(UIVec pos) override;
     virtual void render(Rendering*) override;
@@ -37,7 +37,8 @@ private:
 class ClickableTable : public Table
 {
 public:
-    ClickableTable(Host* h, UIRect r) : Table(h, r) {};
+    ClickableTable(Host* h, UIVec minsz, UIVec pos={0,0}) : 
+        Table(h, minsz, pos) {};
     void leftclick(UIVec pos);
     void scroll(UIVec pos, int distance);
     virtual void render(Rendering*);
@@ -53,7 +54,7 @@ private:
 class Dropdown : public ClickableTable
 {
 public:
-    Dropdown(Host* p, UIRect r);
+    Dropdown(Host* p, UIVec pos, UIVec minsz);
     virtual void update(int ms) {};
     void render(Rendering* r);
 };
@@ -61,7 +62,7 @@ public:
 class RouteDropdown : public Dropdown
 {
 public:
-    RouteDropdown(Host* p, UIRect r);
+    RouteDropdown(Host* p, UIVec pos, UIVec minsz={150,100});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -73,14 +74,14 @@ private:
 class MainInfoTable : public Table
 {
 public:
-    MainInfoTable(Host*, UIRect newrect={0,0,60,100});
+    MainInfoTable(Host*, UIVec pos={0,0}, UIVec minsz={60,100});
     void update(int ms);
 };
 
 class RouteTable : public ClickableTable
 {
 public:
-    RouteTable(Host* p, UIRect r={0,0,120,80});
+    RouteTable(Host* p, UIVec pos={0,0}, UIVec minsz={120,80});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -93,8 +94,8 @@ private:
 class OrderTable : public ClickableTable
 {
 public:
-    OrderTable(Host* newpanel, Route* myroute, UIRect newrect={0,0,100,100}) : 
-        ClickableTable(newpanel, newrect), route(myroute) {};
+    OrderTable(Host* newpanel, Route* myroute, UIVec pos={0,0}, UIVec minsz={100,100}) : 
+        ClickableTable(newpanel, minsz, pos), route(myroute) {};
     virtual void update(int ms);
     void render(Rendering* r);
 protected:
@@ -108,8 +109,8 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Host* p, Train& t, UIRect r={0,0,200,150}) : 
-        OrderTable(p, nullptr, r), train(t) {};
+    TrainOrderTable(Host* p, Train& t, UIVec pos={0,0}, UIVec minsz={200,150}) : 
+        OrderTable(p, nullptr, pos, minsz), train(t) {};
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -119,7 +120,7 @@ private:
 class TrainTable : public ClickableTable
 {
 public:
-    TrainTable(Host*, UIRect newrect={0,0,300,100});
+    TrainTable(Host*, UIVec pos={0,0}, UIVec minsz={300,100});
     void update(int ms);
 private:
     void lineclicked(int index);
@@ -130,7 +131,8 @@ private:
 class TrainInfoTable : public Table
 {
 public:
-    TrainInfoTable(Host* p, Train& t, UIRect r={0,0,80,150}): Table(p, r), train(t) {};
+    TrainInfoTable(Host* p, Train& t, UIVec pos={0,0}, UIVec minsz={80,150}): 
+        Table(p, minsz, pos), train(t) {};
     void update(int ms);
 private:
     Train& train;
@@ -139,7 +141,7 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, UIRect r={0,0,200,100});
+    ConstructionTable(Host* p, UIVec pos={0,0}, UIVec minsz={200,100});
 private:
     void lineclicked(int index);
     InputManager& input;
@@ -149,7 +151,7 @@ private:
 class WagonTable : public ClickableTable
 {
 public:
-    WagonTable(Host* p, WagonFactory& f, UIRect r={0,0,150,80});
+    WagonTable(Host* p, WagonFactory& f, UIVec pos={0,0}, UIVec minsz={150,80});
 private:
     void lineclicked(int index);
     InputManager& input;
