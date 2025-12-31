@@ -220,6 +220,7 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 		BuildingPanel(newui, f),
 		factory(f)
 {
+	getlayout()->setpadding({0,0});
 	Layout* newlayout = create<VBox>();
 	newlayout->addelements({
 		getlayout(),
