@@ -15,11 +15,11 @@
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 
-        game(whatgame),
-        textinput(std::make_unique<TextInputManager>(*this)),
-        trackbuilder(std::make_unique<TrackBuilder>(*this, game)),
-        signalbuilder(std::make_unique<SignalBuilder>(*this, game)),
-        builder(std::make_unique<BuildingBuilder>(*this, game))
+    game(whatgame),
+    textinput(std::make_unique<TextInputManager>(*this)),
+    trackbuilder(std::make_unique<TrackBuilder>(*this, game)),
+    builder(std::make_unique<BuildingBuilder>(*this, game)),
+    mode(std::make_unique<IdleMode>())
 {}
 
 InputManager::~InputManager() {}
@@ -133,11 +133,9 @@ void InputManager::handle(int ms, int mslogic){
 
 void InputManager::leftclickmap(Vec mousepos)
 {
+    mode->leftclickmap(mousepos);
     switch (inputstate)
     {
-    case placingsignals:
-        signalbuilder->leftclickmap(mousepos);
-        break;
     
     case placingtracks:
         trackbuilder->leftclickmap(mousepos);
@@ -188,12 +186,9 @@ void InputManager::rightclickmap(Vec mousepos)
 
 void InputManager::leftreleasedmap(Vec mousepos)
 {
+    mode->leftreleasedmap(mousepos);
     switch (inputstate)
     {
-    case placingsignals:
-        signalbuilder->leftreleasedmap(mousepos);
-        break;
-    
     case placingtracks:
         trackbuilder->leftreleasedmap(mousepos);
         break;
@@ -213,10 +208,6 @@ void InputManager::leftreleasedmap(Vec mousepos)
 
 void InputManager::keydown(SDL_Keycode key)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    TrainManager& trainmanager = gamestate.gettrainmanager();
-    RollingStockManager& rollingstock = gamestate.getrollingstockmanager();
     switch (key)
     {
     case SDLK_n:
@@ -230,14 +221,11 @@ void InputManager::keydown(SDL_Keycode key)
 
 void InputManager::render(Rendering* r)
 {
+    mode->render(r);
     switch (inputstate)
     {
     case placingtracks:
         trackbuilder->render(r);
-        break;
-
-    case placingsignals:
-        signalbuilder->render(r);
         break;
 
     case placingbuildings:
@@ -297,7 +285,7 @@ void InputManager::placesignal()
 {
     panel.deletereference();
     resetinput();
-    inputstate = placingsignals;
+    mode = std::make_unique<SignalBuilder>(*this, game);
 }
 
 void InputManager::placetrack()
@@ -325,8 +313,9 @@ void InputManager::selectbuildingtoplace(const BuildingType* type)
 void InputManager::resetinput()
 {
     trackbuilder->reset();
-    signalbuilder->reset();
     builder->reset();
     editingroute = nullptr;
     inputstate = idle;
+    mode->reset();
+    mode = std::make_unique<IdleMode>();
 }

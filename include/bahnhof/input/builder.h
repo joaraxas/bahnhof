@@ -19,7 +19,27 @@ class InputManager;
 class BuildingManager;
 class BuildingType;
 
-class Builder
+class InputMode
+{
+public:
+    virtual ~InputMode() {};
+    virtual void render(Rendering*) = 0;
+    virtual void leftclickmap(Vec mappos) = 0;
+    virtual void leftreleasedmap(Vec mappos) = 0;
+    virtual void reset() = 0;
+};
+
+class IdleMode : public InputMode
+{
+public:
+    virtual ~IdleMode() {};
+    virtual void render(Rendering*) {};
+    virtual void leftclickmap(Vec mappos) {};
+    virtual void leftreleasedmap(Vec mappos) {};
+    virtual void reset() {};
+};
+
+class Builder : public InputMode
 {
 public:
     Builder(InputManager& owner, Game* newgame);
