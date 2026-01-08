@@ -17,7 +17,6 @@
 InputManager::InputManager(Game* whatgame) : 
     game(whatgame),
     textinput(std::make_unique<TextInputManager>(*this)),
-    trackbuilder(std::make_unique<TrackBuilder>(*this, game)),
     builder(std::make_unique<BuildingBuilder>(*this, game)),
     mode(std::make_unique<IdleMode>())
 {}
@@ -136,11 +135,6 @@ void InputManager::leftclickmap(Vec mousepos)
     mode->leftclickmap(mousepos);
     switch (inputstate)
     {
-    
-    case placingtracks:
-        trackbuilder->leftclickmap(mousepos);
-        break;
-    
     case placingbuildings:
         builder->leftclickmap(mousepos);
         break;
@@ -189,10 +183,6 @@ void InputManager::leftreleasedmap(Vec mousepos)
     mode->leftreleasedmap(mousepos);
     switch (inputstate)
     {
-    case placingtracks:
-        trackbuilder->leftreleasedmap(mousepos);
-        break;
-    
     case placingbuildings:
         builder->leftreleasedmap(mousepos);
         break;
@@ -224,10 +214,6 @@ void InputManager::render(Rendering* r)
     mode->render(r);
     switch (inputstate)
     {
-    case placingtracks:
-        trackbuilder->render(r);
-        break;
-
     case placingbuildings:
         builder->render(r);
         break;
@@ -292,7 +278,7 @@ void InputManager::placetrack()
 {
     panel.deletereference();
     resetinput();
-    inputstate = placingtracks;
+    mode = std::make_unique<TrackBuilder>(*this, game);
 }
 
 void InputManager::placebuildings()
@@ -312,7 +298,6 @@ void InputManager::selectbuildingtoplace(const BuildingType* type)
 
 void InputManager::resetinput()
 {
-    trackbuilder->reset();
     builder->reset();
     editingroute = nullptr;
     inputstate = idle;

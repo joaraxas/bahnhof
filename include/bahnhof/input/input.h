@@ -67,7 +67,6 @@ private:
     void selecttrain(Train* train);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
-    std::unique_ptr<TrackBuilder> trackbuilder;
     std::unique_ptr<BuildingBuilder> builder;
     std::unique_ptr<InputMode> mode;
     InputState inputstate = idle;
