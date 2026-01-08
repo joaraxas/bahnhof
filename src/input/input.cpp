@@ -177,12 +177,13 @@ void InputManager::rightclickmap(Vec mousepos)
 {
     Gamestate& gamestate = game->getgamestate();
     Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    resetinput();
     if(editingroute){
         Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
         if(neworder)
             editingroute->insertorderatselected(neworder);
     }
+    else
+        resetinput();
 }
 
 void InputManager::leftreleasedmap(Vec mousepos)
