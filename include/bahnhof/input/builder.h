@@ -31,8 +31,8 @@ public:
     virtual ~InputMode() {};
     virtual void render(Rendering*) = 0;
     virtual void leftclickmap(Vec mappos) = 0;
+    virtual void rightclickmap(Vec mappos) = 0;
     virtual void leftreleasedmap(Vec mappos) = 0;
-    virtual void reset() = 0;
 };
 
 class IdleMode : public InputMode
@@ -41,8 +41,8 @@ public:
     IdleMode(Game& g);
     virtual void render(Rendering*) {};
     virtual void leftclickmap(Vec mappos);
+    virtual void rightclickmap(Vec mappos) {};
     virtual void leftreleasedmap(Vec mappos) {};
-    virtual void reset() {};
 private:
     void selecttrain(Train* train);
     TrainManager& trainmanager;
@@ -54,13 +54,24 @@ class DeleteMode : public InputMode
 {
 public:
     DeleteMode(Game& g);
-    virtual void render(Rendering*) {};
+    virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
+    virtual void rightclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos) {};
-    virtual void reset() {};
 private:
+    InputManager& input;
     BuildingManager& buildingmanager;
     Tracks::Tracksystem& tracksystem;
+};
+
+class RouteMode : public InputMode
+{
+public:
+    RouteMode(Game& g);
+private:
+    InputManager& input;
+    RouteManager& routemanager;
+    Route* route;
 };
 
 class Builder : public InputMode
@@ -70,9 +81,10 @@ public:
     virtual ~Builder() {};
     virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
+    virtual void rightclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos);
-    virtual void reset();
 protected:
+    virtual void reset();
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
@@ -120,6 +132,7 @@ class BuildingBuilder : public Builder
 {
 public:
     BuildingBuilder(InputManager& i, Game* g);
+    void rightclickmap(Vec mappos);
     void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType* b);

@@ -42,12 +42,22 @@ void IdleMode::selecttrain(Train* train)
 
 DeleteMode::DeleteMode(Game& g) :
     buildingmanager(g.getgamestate().getbuildingmanager()),
-    tracksystem(g.getgamestate().gettracksystems())
+    tracksystem(g.getgamestate().gettracksystems()),
+    input(g.getinputmanager())
 {}
 
 void DeleteMode::leftclickmap(Vec mappos)
 {
     Tracks::Input::deleteat(tracksystem, mappos);
+}
+
+void DeleteMode::rightclickmap(Vec mappos)
+{
+    input.resetinput();
+}
+
+void DeleteMode::render(Rendering* r)
+{
 }
 
 
@@ -70,6 +80,11 @@ void Builder::leftclickmap(Vec mappos)
 {
     anchorpoint = mappos;
     droppedanchor = true;
+}
+
+void Builder::rightclickmap(Vec mappos)
+{
+    input.resetinput();
 }
 
 void Builder::leftreleasedmap(Vec mappos)

@@ -16,6 +16,18 @@ BuildingBuilder::BuildingBuilder(InputManager& i, Game* g) :
     panel.set(new UI::BuildingConstructionPanel(&g->getui(), *this));
 }
 
+void BuildingBuilder::rightclickmap(Vec mappos)
+{
+    if(!building){
+        Builder::rightclickmap(mappos);
+        return;
+    }
+    Builder::reset();
+    building = nullptr;
+    angle = Angle::zero;
+    cost = 0;
+}
+
 void BuildingBuilder::render(Rendering* r)
 {
     Builder::render(r);

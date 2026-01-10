@@ -132,7 +132,7 @@ void InputManager::rightclickmap(Vec mousepos)
         //     editingroute->insertorderatselected(neworder);
     }
     else
-        resetinput();
+        mode->rightclickmap(mousepos);
 }
 
 void InputManager::keydown(SDL_Keycode key)
@@ -195,7 +195,6 @@ void InputManager::resetinput()
 {
     editingroute = nullptr;
     inputstate = idle;
-    mode->reset();
     mode = std::make_unique<IdleMode>(*game);
 }
 
