@@ -54,11 +54,10 @@ public:
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
     void editroute(Route* route);
-    void placesignal();
-    void placetrack();
     void placebuildings();
     void selectbuildingtoplace(const BuildingType* type);
     void resetinput();
+    void setinputmode(std::unique_ptr<InputMode> m);
 private:
     void leftclickmap(Vec mousepos);
     void rightclickmap(Vec mousepos);

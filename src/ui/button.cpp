@@ -6,6 +6,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/builder.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 
@@ -56,12 +57,14 @@ void Close::leftclick(UIVec mousepos)
 
 void PlaceSignal::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placesignal();
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<SignalBuilder>(input, game));
 }
 
 void PlaceTrack::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placetrack();
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<TrackBuilder>(input, game));
 }
 
 void PlaceBuildings::leftclick(UIVec mousepos)

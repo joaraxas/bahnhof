@@ -267,26 +267,10 @@ void InputManager::editroute(Route* route)
     editingroute = route;
 }
 
-void InputManager::placesignal()
-{
-    panel.deletereference();
-    resetinput();
-    mode = std::make_unique<SignalBuilder>(*this, game);
-}
-
-void InputManager::placetrack()
-{
-    panel.deletereference();
-    resetinput();
-    mode = std::make_unique<TrackBuilder>(*this, game);
-}
-
 void InputManager::placebuildings()
 {
-    if(inputstate!=placingbuildings){
-        panel.set(new UI::BuildingConstructionPanel(&game->getui()));
-    }
     resetinput();
+    panel.set(new UI::BuildingConstructionPanel(&game->getui()));
     inputstate = placingbuildings;
 }
 
@@ -303,4 +287,10 @@ void InputManager::resetinput()
     inputstate = idle;
     mode->reset();
     mode = std::make_unique<IdleMode>();
+}
+
+void InputManager::setinputmode(std::unique_ptr<InputMode> m)
+{
+    resetinput();
+    mode = std::move(m);
 }
