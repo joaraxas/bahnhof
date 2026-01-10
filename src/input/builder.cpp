@@ -2,7 +2,42 @@
 #include "bahnhof/input/builder.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
+#include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/rollingstock/trainmanager.h"
+#include "bahnhof/rollingstock/train.h"
+#include "bahnhof/track/track.h"
 
+IdleMode::IdleMode(Game& g) :
+    trainmanager(g.getgamestate().gettrainmanager()),
+    buildingmanager(g.getgamestate().getbuildingmanager()),
+    tracksystem(g.getgamestate().gettracksystems())
+{}
+
+void IdleMode::leftclickmap(Vec mappos)
+{
+    if(buildingmanager.leftclick(mappos))
+        return;
+    
+    Train* clickedtrain = trainmanager.gettrainatpos(mappos);
+    if(clickedtrain){
+        selecttrain(clickedtrain);
+        return;
+    }
+    
+    if(Tracks::Input::switchat(tracksystem, mappos)){
+        return;
+    }
+
+    selecttrain(nullptr);
+}
+
+void IdleMode::selecttrain(Train* train)
+{
+    trainmanager.deselectall();
+	if(train){
+		train->select();
+    }
+}
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
     input(owner), 

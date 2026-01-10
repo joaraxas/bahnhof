@@ -16,6 +16,7 @@ namespace Tracks{
 
 class Game;
 class Rendering;
+class TrainManager;
 class InputManager;
 class BuildingManager;
 class BuildingType;
@@ -37,11 +38,17 @@ public:
 class IdleMode : public InputMode
 {
 public:
+    IdleMode(Game& g);
     virtual ~IdleMode() {};
     virtual void render(Rendering*) {};
-    virtual void leftclickmap(Vec mappos) {};
+    virtual void leftclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos) {};
     virtual void reset() {};
+private:
+    void selecttrain(Train* train);
+    TrainManager& trainmanager;
+    BuildingManager& buildingmanager;
+    Tracks::Tracksystem& tracksystem;
 };
 
 class Builder : public InputMode

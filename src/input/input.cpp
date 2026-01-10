@@ -5,19 +5,16 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/panels.h"
-#include "bahnhof/track/track.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
-#include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/rollingstockmanager.h"
-#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 
     game(whatgame),
     textinput(std::make_unique<TextInputManager>(*this)),
-    mode(std::make_unique<IdleMode>())
+    mode(std::make_unique<IdleMode>(*whatgame))
 {}
 
 InputManager::~InputManager() {}
@@ -59,10 +56,10 @@ void InputManager::handle(int ms, int mslogic){
             }
             if(e.button.button == SDL_BUTTON_MIDDLE){
                 resetinput();
-                Tracks::Input::deleteat(tracksystem, mousepos);
+                // Tracks::Input::deleteat(tracksystem, mousepos);
             }
             if(e.button.button == SDL_BUTTON_LEFT){
-                leftclickmap(mousepos);
+                mode->leftclickmap(mousepos);
             }
             break;
         }
@@ -70,7 +67,7 @@ void InputManager::handle(int ms, int mslogic){
         case SDL_MOUSEBUTTONUP:{
             if(e.button.button == SDL_BUTTON_LEFT){
                 ui.leftbuttonup(screenmousepos());
-                leftreleasedmap(mapmousepos());
+                mode->leftreleasedmap(mapmousepos());
             }
             break;
         }
@@ -129,62 +126,17 @@ void InputManager::handle(int ms, int mslogic){
     }
 }
 
-void InputManager::leftclickmap(Vec mousepos)
-{
-    mode->leftclickmap(mousepos);
-    switch (inputstate)
-    {
-    case idle:{
-        Gamestate& gamestate = game->getgamestate();
-        if(gamestate.getbuildingmanager().leftclick(mousepos))
-            break;
-        
-        Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
-        if(clickedtrain){
-            selecttrain(clickedtrain);
-            break;
-        }
-        
-        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-        if(Tracks::Input::switchat(tracksystem, mousepos)){
-            break;
-        }
-
-        selecttrain(nullptr);
-        break;
-    }
-    
-    default:
-        std::cout<<"warning, input state "<<inputstate<<" not covered by InputManager"<<std::endl;
-        break;
-    }
-}
-
 void InputManager::rightclickmap(Vec mousepos)
 {
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
     if(editingroute){
-        Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
-        if(neworder)
-            editingroute->insertorderatselected(neworder);
+        Gamestate& gamestate = game->getgamestate();
+        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
+        // Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
+        // if(neworder)
+        //     editingroute->insertorderatselected(neworder);
     }
     else
         resetinput();
-}
-
-void InputManager::leftreleasedmap(Vec mousepos)
-{
-    mode->leftreleasedmap(mousepos);
-    switch (inputstate)
-    {
-    case idle:
-        break;
-    
-    default:
-        std::cout<<"warning, input state "<<inputstate<<" not covered by InputManager at left mouse release"<<std::endl;
-        break;
-    }
 }
 
 void InputManager::keydown(SDL_Keycode key)
@@ -234,15 +186,6 @@ bool InputManager::isleftmousepressed()
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }
 
-void InputManager::selecttrain(Train* whattrain)
-{
-    Gamestate& gamestate = game->getgamestate();
-	gamestate.gettrainmanager().deselectall();
-	if(whattrain){
-		whattrain->select();
-    }
-}
-
 void InputManager::editroute(Route* route)
 {
     if(route){
@@ -257,7 +200,7 @@ void InputManager::resetinput()
     editingroute = nullptr;
     inputstate = idle;
     mode->reset();
-    mode = std::make_unique<IdleMode>();
+    mode = std::make_unique<IdleMode>(*game);
 }
 
 void InputManager::setinputmode(std::unique_ptr<InputMode> m)

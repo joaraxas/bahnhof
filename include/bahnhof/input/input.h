@@ -54,15 +54,11 @@ public:
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
     void editroute(Route* route);
-    void selectbuildingtoplace(const BuildingType* type);
     void resetinput();
     void setinputmode(std::unique_ptr<InputMode> m);
 private:
-    void leftclickmap(Vec mousepos);
     void rightclickmap(Vec mousepos);
-    void leftreleasedmap(Vec mouspos);
     void keydown(SDL_Keycode key);
-    void selecttrain(Train* train);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
