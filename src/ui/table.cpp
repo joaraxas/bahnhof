@@ -7,6 +7,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/builder.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
@@ -371,9 +372,9 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
+ConstructionTable::ConstructionTable(Host* p, BuildingBuilder& b, UIVec pos, UIVec minsz) : 
     ClickableTable(p, minsz, pos), 
-    input(game->getinputmanager()),
+    builder(b),
     buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
@@ -393,7 +394,7 @@ void ConstructionTable::lineclicked(int index)
 {
     BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
-    input.selectbuildingtoplace(&clickedbuilding);
+    builder.setbuildingtype(&clickedbuilding);
 }
 
 

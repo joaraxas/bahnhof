@@ -69,7 +69,8 @@ void PlaceTrack::leftclick(UIVec mousepos)
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placebuildings();
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<BuildingBuilder>(input, game));
 }
 
 void ManageRoutes::leftclick(UIVec mousepos)

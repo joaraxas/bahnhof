@@ -7,6 +7,7 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/ui/ownership.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -18,6 +19,10 @@ class Rendering;
 class InputManager;
 class BuildingManager;
 class BuildingType;
+
+namespace UI{
+    class BuildingConstructionPanel;
+}
 
 class InputMode
 {
@@ -95,7 +100,7 @@ private:
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& i, Game* g) : Builder(i, g), buildingmanager(g->getgamestate().getbuildingmanager()) {};
+    BuildingBuilder(InputManager& i, Game* g);
     void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType* b);
@@ -104,5 +109,6 @@ private:
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;
+    UI::Ownership panel;
     BuildingManager& buildingmanager;
 };

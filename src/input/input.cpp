@@ -17,7 +17,6 @@
 InputManager::InputManager(Game* whatgame) : 
     game(whatgame),
     textinput(std::make_unique<TextInputManager>(*this)),
-    builder(std::make_unique<BuildingBuilder>(*this, game)),
     mode(std::make_unique<IdleMode>())
 {}
 
@@ -135,10 +134,6 @@ void InputManager::leftclickmap(Vec mousepos)
     mode->leftclickmap(mousepos);
     switch (inputstate)
     {
-    case placingbuildings:
-        builder->leftclickmap(mousepos);
-        break;
-   
     case idle:{
         Gamestate& gamestate = game->getgamestate();
         if(gamestate.getbuildingmanager().leftclick(mousepos))
@@ -160,7 +155,7 @@ void InputManager::leftclickmap(Vec mousepos)
     }
     
     default:
-        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager";
+        std::cout<<"warning, input state "<<inputstate<<" not covered by InputManager"<<std::endl;
         break;
     }
 }
@@ -183,15 +178,11 @@ void InputManager::leftreleasedmap(Vec mousepos)
     mode->leftreleasedmap(mousepos);
     switch (inputstate)
     {
-    case placingbuildings:
-        builder->leftreleasedmap(mousepos);
-        break;
-    
     case idle:
         break;
     
     default:
-        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager at left mouse release";
+        std::cout<<"warning, input state "<<inputstate<<" not covered by InputManager at left mouse release"<<std::endl;
         break;
     }
 }
@@ -212,12 +203,6 @@ void InputManager::keydown(SDL_Keycode key)
 void InputManager::render(Rendering* r)
 {
     mode->render(r);
-    switch (inputstate)
-    {
-    case placingbuildings:
-        builder->render(r);
-        break;
-    }
     if(editingroute)
         editingroute->render(r);
 }
@@ -267,22 +252,8 @@ void InputManager::editroute(Route* route)
     editingroute = route;
 }
 
-void InputManager::placebuildings()
-{
-    resetinput();
-    panel.set(new UI::BuildingConstructionPanel(&game->getui()));
-    inputstate = placingbuildings;
-}
-
-void InputManager::selectbuildingtoplace(const BuildingType* type)
-{
-    builder->setbuildingtype(type);
-    inputstate = placingbuildings;
-}
-
 void InputManager::resetinput()
 {
-    builder->reset();
     editingroute = nullptr;
     inputstate = idle;
     mode->reset();

@@ -54,7 +54,6 @@ public:
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
     void editroute(Route* route);
-    void placebuildings();
     void selectbuildingtoplace(const BuildingType* type);
     void resetinput();
     void setinputmode(std::unique_ptr<InputMode> m);
@@ -66,7 +65,6 @@ private:
     void selecttrain(Train* train);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
-    std::unique_ptr<BuildingBuilder> builder;
     std::unique_ptr<InputMode> mode;
     InputState inputstate = idle;
     const Uint8* keys;

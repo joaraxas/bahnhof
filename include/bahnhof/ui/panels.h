@@ -12,6 +12,7 @@ class Route;
 class TrainManager;
 class Train;
 class Building;
+class BuildingBuilder;
 class WagonFactory;
 
 namespace UI{
@@ -80,10 +81,9 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui);
-    void erase() override;
+    BuildingConstructionPanel(InterfaceManager* newui, BuildingBuilder& b);
 private:
-    InputManager& input;
+    BuildingBuilder& builder;
 };
 
 class BuildingPanel : public Panel

@@ -177,23 +177,17 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	placeautomatically();
 }
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
-	Panel(newui), input(game->getinputmanager())
+BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui, BuildingBuilder& b) :
+	Panel(newui), builder(b)
 {
 	setlayout(
 	create<VBox>(
 		create<Close>(),
-		create<ConstructionTable>()
+		create<ConstructionTable>(builder)
 	)
 	);
 	applylayout();
 	placeautomatically();
-}
-
-void BuildingConstructionPanel::erase()
-{
-	input.resetinput();
-	Panel::erase();
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 

@@ -11,6 +11,7 @@ class InterfaceManager;
 class Route;
 class RouteManager;
 class BuildingType;
+class BuildingBuilder;
 class WagonFactory;
 
 namespace UI{
@@ -141,10 +142,10 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, UIVec pos={0,0}, UIVec minsz={200,100});
+    ConstructionTable(Host* p, BuildingBuilder& b, UIVec pos={0,0}, UIVec minsz={200,100});
 private:
     void lineclicked(int index);
-    InputManager& input;
+    BuildingBuilder& builder;
     const std::vector<BuildingType>& buildingtypes;
 };
 
