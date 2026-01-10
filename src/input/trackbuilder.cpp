@@ -62,8 +62,11 @@ void TrackBuilder::render(Rendering* r)
     }
     else
         tooltip = "click track startpoint";
-    // TODO: Instead of using getlogicalscale(), we could have a logical pixels type or pass this to the uirenderer
-    r->rendertext(tooltip, screenpoint.x+50*getlogicalscale(), screenpoint.y, {0, 0, 0}, false, false);
+
+    SDL_Rect textrect(screenpoint.x+50, screenpoint.y, 200, 20);
+    auto uirect = uirendering.screentoui(textrect);
+    uirendering.rendertext(r, tooltip, uirect, UI::MapOverlay);
+
     Tracks::Input::discardsection(section);
 }
 

@@ -8,6 +8,7 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/ui/ownership.h"
+#include "bahnhof/ui/ui.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -60,6 +61,7 @@ public:
     virtual void leftreleasedmap(Vec mappos) {};
 private:
     InputManager& input;
+    UIRendering& uirendering;
     BuildingManager& buildingmanager;
     Tracks::Tracksystem& tracksystem;
 };
@@ -103,7 +105,8 @@ private:
 class TrackBuilder : public Builder
 {
 public:
-    TrackBuilder(InputManager& i, Game* g) : Builder(i, g) {};
+    TrackBuilder(InputManager& i, Game* g) : 
+        Builder(i, g), uirendering(g->getui().getuirendering()) {};
     void render(Rendering*);
     void reset();
 private:
@@ -112,6 +115,7 @@ private:
     bool islayingtrack();
     Tracks::Tracksection planconstruction(Vec pos);
     bool buildingfromstartpoint();
+    UIRendering& uirendering;
     Vec trackstartpoint{0,0};
     nodeid selectednode = 0;
     State selectedstate;
