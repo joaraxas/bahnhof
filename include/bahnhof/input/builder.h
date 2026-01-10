@@ -39,7 +39,6 @@ class IdleMode : public InputMode
 {
 public:
     IdleMode(Game& g);
-    virtual ~IdleMode() {};
     virtual void render(Rendering*) {};
     virtual void leftclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos) {};
@@ -47,6 +46,19 @@ public:
 private:
     void selecttrain(Train* train);
     TrainManager& trainmanager;
+    BuildingManager& buildingmanager;
+    Tracks::Tracksystem& tracksystem;
+};
+
+class DeleteMode : public InputMode
+{
+public:
+    DeleteMode(Game& g);
+    virtual void render(Rendering*) {};
+    virtual void leftclickmap(Vec mappos);
+    virtual void leftreleasedmap(Vec mappos) {};
+    virtual void reset() {};
+private:
     BuildingManager& buildingmanager;
     Tracks::Tracksystem& tracksystem;
 };

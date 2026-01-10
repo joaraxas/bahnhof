@@ -65,6 +65,14 @@ public:
     void leftclick(UIVec mousepos);
 };
 
+class Bulldoze : public TextButton
+{
+public:
+    Bulldoze(Host* newpanel) : 
+        TextButton(newpanel, "Bulldoze") {};
+    void leftclick(UIVec mousepos);
+};
+
 class ManageRoutes : public TextButton
 {
 public:

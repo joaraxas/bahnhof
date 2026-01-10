@@ -67,6 +67,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<PlaceTrack>(),
 			create<PlaceSignal>(),
 			create<PlaceBuildings>(),
+			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
 			create<IncreaseUIScale>(),

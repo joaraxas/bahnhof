@@ -39,6 +39,18 @@ void IdleMode::selecttrain(Train* train)
     }
 }
 
+
+DeleteMode::DeleteMode(Game& g) :
+    buildingmanager(g.getgamestate().getbuildingmanager()),
+    tracksystem(g.getgamestate().gettracksystems())
+{}
+
+void DeleteMode::leftclickmap(Vec mappos)
+{
+    Tracks::Input::deleteat(tracksystem, mappos);
+}
+
+
 Builder::Builder(InputManager& owner, Game* newgame) : 
     input(owner), 
     game(newgame), 

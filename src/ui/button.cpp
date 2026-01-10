@@ -73,6 +73,12 @@ void PlaceBuildings::leftclick(UIVec mousepos)
     input.setinputmode(std::make_unique<BuildingBuilder>(input, game));
 }
 
+void Bulldoze::leftclick(UIVec mousepos)
+{
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<DeleteMode>(*game));
+}
+
 void ManageRoutes::leftclick(UIVec mousepos)
 {
     game->getgamestate().getrouting().createlistpanel();

@@ -54,10 +54,6 @@ void InputManager::handle(int ms, int mslogic){
             if(e.button.button == SDL_BUTTON_RIGHT){
                 rightclickmap(mousepos);
             }
-            if(e.button.button == SDL_BUTTON_MIDDLE){
-                resetinput();
-                // Tracks::Input::deleteat(tracksystem, mousepos);
-            }
             if(e.button.button == SDL_BUTTON_LEFT){
                 mode->leftclickmap(mousepos);
             }
