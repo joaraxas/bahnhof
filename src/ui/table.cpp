@@ -309,7 +309,7 @@ void RouteTable::lineclicked(int index)
 {
     ids = routing.getrouteids();
     if(index<ids.size()){
-	    input.editroute(routing.getroute(ids[index]));
+        input.setinputmode(std::make_unique<RouteMode>(*game, *routing.getroute(ids[index])));
     }
     else if(index==ids.size())
         routing.addroute();

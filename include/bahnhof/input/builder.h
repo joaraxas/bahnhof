@@ -69,11 +69,19 @@ private:
 class RouteMode : public InputMode
 {
 public:
-    RouteMode(Game& g);
+    RouteMode(Game& g, Route& route);
+    void render(Rendering*);
+    void leftclickmap(Vec mappos);
+    void rightclickmap(Vec mappos);
+    void leftreleasedmap(Vec mappos) {};
+    void editroute(Route& route);
 private:
     InputManager& input;
     RouteManager& routemanager;
-    Route* route;
+    Tracks::Tracksystem& tracksystem;
+    InterfaceManager& ui;
+    Route* editingroute;
+    UI::Ownership routepanel;
 };
 
 class Builder : public InputMode

@@ -120,7 +120,7 @@ RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
 
 void RoutePanel::erase()
 {
-    input.editroute(nullptr);
+    // input.resetinput();
 	Panel::erase();
 }
 

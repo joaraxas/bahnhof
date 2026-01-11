@@ -6,6 +6,9 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/routing/routing.h"
+#include "bahnhof/ui/panels.h"
+
 
 IdleMode::IdleMode(Game& g) :
     trainmanager(g.getgamestate().gettrainmanager()),
@@ -63,6 +66,39 @@ void DeleteMode::render(Rendering* r)
     SDL_Rect textrect(mousepos.x+50, mousepos.y, 200, 20);
     auto uirect = uirendering.screentoui(textrect);
     uirendering.rendertext(r, "Bulldozing", uirect, UI::MapOverlay);
+}
+
+
+RouteMode::RouteMode(Game& g, Route& route) :
+    input(g.getinputmanager()),
+    routemanager(g.getgamestate().getrouting()),
+    tracksystem(g.getgamestate().gettracksystems()),
+    ui(g.getui())
+{
+    editroute(route);
+}
+
+void RouteMode::render(Rendering* r)
+{
+    editingroute->render(r);
+}
+
+void RouteMode::leftclickmap(Vec mappos)
+{
+    Order* neworder = Tracks::Input::generateorderat(tracksystem, mappos);
+    if(neworder)
+        editingroute->insertorderatselected(neworder);
+}
+
+void RouteMode::rightclickmap(Vec mappos)
+{
+
+}
+
+void RouteMode::editroute(Route& route)
+{
+  	routepanel.set(new UI::RoutePanel(&ui, &route));
+    editingroute = &route;
 }
 
 

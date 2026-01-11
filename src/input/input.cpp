@@ -5,7 +5,6 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/panels.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/rollingstockmanager.h"
@@ -27,10 +26,7 @@ TextInputManager& InputManager::gettextinputmanager()
 void InputManager::handle(int ms, int mslogic){
 	SDL_Event e;
     Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    RouteManager& routing = gamestate.getrouting();
     TrainManager& trainmanager = gamestate.gettrainmanager();
-    SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
     InterfaceManager& ui = game->getui();
 
@@ -52,7 +48,7 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             Vec mousepos = mapmousepos();
             if(e.button.button == SDL_BUTTON_RIGHT){
-                rightclickmap(mousepos);
+                mode->rightclickmap(mousepos);
             }
             if(e.button.button == SDL_BUTTON_LEFT){
                 mode->leftclickmap(mousepos);
@@ -122,19 +118,6 @@ void InputManager::handle(int ms, int mslogic){
     }
 }
 
-void InputManager::rightclickmap(Vec mousepos)
-{
-    if(editingroute){
-        Gamestate& gamestate = game->getgamestate();
-        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-        // Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
-        // if(neworder)
-        //     editingroute->insertorderatselected(neworder);
-    }
-    else
-        mode->rightclickmap(mousepos);
-}
-
 void InputManager::keydown(SDL_Keycode key)
 {
     switch (key)
@@ -151,8 +134,6 @@ void InputManager::keydown(SDL_Keycode key)
 void InputManager::render(Rendering* r)
 {
     mode->render(r);
-    if(editingroute)
-        editingroute->render(r);
 }
 
 Vec InputManager::mapmousepos()
@@ -182,24 +163,12 @@ bool InputManager::isleftmousepressed()
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }
 
-void InputManager::editroute(Route* route)
-{
-    if(route){
-    	panel.set(new UI::RoutePanel(&game->getui(), route));
-        inputstate = idle;
-    }
-    editingroute = route;
-}
-
 void InputManager::resetinput()
 {
-    editingroute = nullptr;
-    inputstate = idle;
     mode = std::make_unique<IdleMode>(*game);
 }
 
 void InputManager::setinputmode(std::unique_ptr<InputMode> m)
 {
-    resetinput();
     mode = std::move(m);
 }

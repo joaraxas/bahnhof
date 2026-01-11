@@ -53,17 +53,13 @@ public:
     Vec mapmousepos();
     bool iskeypressed(const int scancode);
     bool isleftmousepressed();
-    void editroute(Route* route);
     void resetinput();
     void setinputmode(std::unique_ptr<InputMode> m);
 private:
-    void rightclickmap(Vec mousepos);
     void keydown(SDL_Keycode key);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
     InputState inputstate = idle;
     const Uint8* keys;
-    Route* editingroute = nullptr;
-    UI::Ownership panel;
 };
