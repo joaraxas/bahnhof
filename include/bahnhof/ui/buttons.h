@@ -164,7 +164,7 @@ class AddOrder : public TextButton
 {
 public:
     AddOrder(Host* newpanel, Route* whatroute, std::string text) : 
-        TextButton(newpanel, text, 120),
+        TextButton(newpanel, text, 150),
         route(whatroute) {}
 protected:
     Route* route;
