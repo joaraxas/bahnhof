@@ -28,13 +28,6 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-enum InputState {
-    idle,
-    placingsignals,
-    placingtracks,
-    placingbuildings
-};
-
 class TextInputManager;
 class InputMode;
 class TrackBuilder;
@@ -60,6 +53,5 @@ private:
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
-    InputState inputstate = idle;
     const Uint8* keys;
 };
