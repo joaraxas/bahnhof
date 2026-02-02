@@ -39,13 +39,13 @@ class InputManager
 public:
     InputManager(Game* whatgame);
     ~InputManager();
-    TextInputManager& gettextinputmanager();
+    TextInputManager& gettextinputmanager() const;
     void handle(int ms, int mslogic);
-    void render(Rendering*);
-    Vec screenmousepos();
-    Vec mapmousepos();
-    bool iskeypressed(const int scancode);
-    bool isleftmousepressed();
+    void render(Rendering*) const;
+    Vec screenmousepos() const;
+    Vec mapmousepos() const;
+    bool iskeypressed(const int scancode) const;
+    bool isleftmousepressed() const;
     void resetinput();
     void setinputmode(std::unique_ptr<InputMode> m);
 private:
@@ -53,5 +53,4 @@ private:
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
-    const Uint8* keys;
 };

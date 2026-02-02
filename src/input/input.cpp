@@ -18,7 +18,7 @@ InputManager::InputManager(Game* whatgame) :
 
 InputManager::~InputManager() {}
 
-TextInputManager& InputManager::gettextinputmanager()
+TextInputManager& InputManager::gettextinputmanager() const
 {
     return *textinput;
 };
@@ -131,18 +131,18 @@ void InputManager::keydown(SDL_Keycode key)
     }
 }
 
-void InputManager::render(Rendering* r)
+void InputManager::render(Rendering* r) const
 {
     mode->render(r);
 }
 
-Vec InputManager::mapmousepos()
+Vec InputManager::mapmousepos() const
 {
     Vec mousepos = screenmousepos();
     return game->getcamera().mapcoord(mousepos);
 }
 
-Vec InputManager::screenmousepos()
+Vec InputManager::screenmousepos() const
 {
     // use this function instead of SDL_GetMouseState to get mouse position in useful logical pixels
     int currentmousex, currentmousey;
@@ -152,13 +152,13 @@ Vec InputManager::screenmousepos()
     return Vec(int(logicalmousex), int(logicalmousey));
 }
 
-bool InputManager::iskeypressed(const int scancode)
+bool InputManager::iskeypressed(const int scancode) const
 {
-	keys = SDL_GetKeyboardState(nullptr);
+	const Uint8* keys = SDL_GetKeyboardState(nullptr);
     return keys[scancode];
 }
 
-bool InputManager::isleftmousepressed()
+bool InputManager::isleftmousepressed() const
 {
     return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }
