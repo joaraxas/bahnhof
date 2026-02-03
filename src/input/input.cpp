@@ -1,6 +1,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/textinput.h"
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/inputmode.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
@@ -67,7 +68,7 @@ void InputManager::handle(int ms, int mslogic){
         case SDL_KEYDOWN:{
             if(textinput->handle(e))
                 break;
-            keydown(e.key.keysym.sym);
+            onkeydown(e.key.keysym.sym);
             break;
         }
 
@@ -118,15 +119,12 @@ void InputManager::handle(int ms, int mslogic){
     }
 }
 
-void InputManager::keydown(SDL_Keycode key)
+void InputManager::onkeydown(SDL_Keycode key)
 {
     switch (key)
     {
     case SDLK_n:
         nicetracks = !nicetracks;
-        break;
-    
-    default:
         break;
     }
 }

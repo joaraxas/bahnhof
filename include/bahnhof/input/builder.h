@@ -1,14 +1,11 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
 #include "math.h"
-#include "bahnhof/common/gamestate.h"
+#include "bahnhof/input/inputmode.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
-#include "bahnhof/ui/ownership.h"
 #include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/ownership.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -17,72 +14,9 @@ namespace Tracks{
 
 class Game;
 class Rendering;
-class TrainManager;
 class InputManager;
 class BuildingManager;
 class BuildingType;
-
-namespace UI{
-    class BuildingConstructionPanel;
-}
-
-class InputMode
-{
-public:
-    virtual ~InputMode() {};
-    virtual void render(Rendering*) = 0;
-    virtual void leftclickmap(Vec mappos) = 0;
-    virtual void rightclickmap(Vec mappos) = 0;
-    virtual void leftreleasedmap(Vec mappos) = 0;
-};
-
-class IdleMode : public InputMode
-{
-public:
-    IdleMode(Game& g);
-    virtual void render(Rendering*) {};
-    virtual void leftclickmap(Vec mappos);
-    virtual void rightclickmap(Vec mappos) {};
-    virtual void leftreleasedmap(Vec mappos) {};
-private:
-    void selecttrain(Train* train);
-    TrainManager& trainmanager;
-    BuildingManager& buildingmanager;
-    Tracks::Tracksystem& tracksystem;
-};
-
-class DeleteMode : public InputMode
-{
-public:
-    DeleteMode(Game& g);
-    virtual void render(Rendering*);
-    virtual void leftclickmap(Vec mappos);
-    virtual void rightclickmap(Vec mappos);
-    virtual void leftreleasedmap(Vec mappos) {};
-private:
-    InputManager& input;
-    UIRendering& uirendering;
-    BuildingManager& buildingmanager;
-    Tracks::Tracksystem& tracksystem;
-};
-
-class RouteMode : public InputMode
-{
-public:
-    RouteMode(Game& g, Route& route);
-    void render(Rendering*);
-    void leftclickmap(Vec mappos);
-    void rightclickmap(Vec mappos);
-    void leftreleasedmap(Vec mappos) {};
-    void editroute(Route& route);
-private:
-    InputManager& input;
-    RouteManager& routemanager;
-    Tracks::Tracksystem& tracksystem;
-    InterfaceManager& ui;
-    Route* editingroute;
-    UI::Ownership routepanel;
-};
 
 class Builder : public InputMode
 {

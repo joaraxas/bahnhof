@@ -49,7 +49,7 @@ public:
     void resetinput();
     void setinputmode(std::unique_ptr<InputMode> m);
 private:
-    void keydown(SDL_Keycode key);
+    void onkeydown(SDL_Keycode key);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
