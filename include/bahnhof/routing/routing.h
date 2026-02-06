@@ -13,7 +13,7 @@ class Route
 {
 public:
     Route(Tracks::Tracksystem* tracks, std::string routename);
-    Order* getorder(int orderid);
+    Order* getorder(int orderid) const;
     int nextorder(int orderid);
     int previousorder(int orderid);
     int appendorder(Order* order);
@@ -24,7 +24,7 @@ public:
     void removeordersupto(int orderid);
     void removeorders(int orderindexfrom, int orderindexto);
     void render(Rendering* r);
-    int getindex(int orderid);
+    int getindex(int orderid) const;
     std::vector<std::string> getorderdescriptions();
     std::vector<int> getorderids();
     std::vector<int> getordernumberstorender();
