@@ -52,7 +52,7 @@ public:
     virtual void leftreleasedmap(Vec mappos) {};
 private:
     InputManager& input;
-    UIRendering& uirendering;
+    InterfaceManager& ui;
     BuildingManager& buildingmanager;
     Tracks::Tracksystem& tracksystem;
 };

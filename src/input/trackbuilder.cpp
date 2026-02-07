@@ -43,7 +43,6 @@ void TrackBuilder::render(Rendering* r)
     if(!canbuild())
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
-    Vec screenpoint = game->getcamera().screencoord(anchorpoint);
     std::string tooltip;
     if(islayingtrack()){
         if(!nicetracks)
@@ -63,9 +62,7 @@ void TrackBuilder::render(Rendering* r)
     else
         tooltip = "click track startpoint";
 
-    SDL_Rect textrect(screenpoint.x+50, screenpoint.y, 200, 20);
-    auto uirect = uirendering.screentoui(textrect);
-    uirendering.rendertext(r, tooltip, uirect, UI::MapOverlay);
+    ui.settooltip(tooltip);
 
     Tracks::Input::discardsection(section);
 }

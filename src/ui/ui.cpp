@@ -2,11 +2,13 @@
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/common/gamestate.h"
 
 using namespace UI;
 
 InterfaceManager::InterfaceManager(Game* newgame) : 
-    game(newgame), uirendering(*this), movingwindowoffset{0,0}
+    game(newgame), uirendering(*this), movingwindowoffset{0,0}, 
+    tooltip(game->getinputmanager(), uirendering)
 {
     new UI::MainPanel(this);
 }
@@ -39,6 +41,8 @@ void InterfaceManager::render(Rendering* r)
 
     if(dropdown)
         dropdown->render(r);
+    
+    tooltip.render(r);
 }
 
 UI::Host* InterfaceManager::getpanelat(UIVec uipos)
@@ -216,4 +220,9 @@ void InterfaceManager::handlewindowsizechange()
     for(auto& panel : panels){
         panel->conformtorect(view);
     }
+}
+
+void InterfaceManager::settooltip(std::string tip)
+{
+    tooltip.set(tip);
 }

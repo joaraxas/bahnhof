@@ -48,7 +48,7 @@ class TrackBuilder : public Builder
 {
 public:
     TrackBuilder(InputManager& i, Game* g) : 
-        Builder(i, g), uirendering(g->getui().getuirendering()) {};
+        Builder(i, g), ui(g->getui()) {};
     void render(Rendering*);
     void reset();
 private:
@@ -57,7 +57,7 @@ private:
     bool islayingtrack();
     Tracks::Tracksection planconstruction(Vec pos);
     bool buildingfromstartpoint();
-    UIRendering& uirendering;
+    InterfaceManager& ui;
     Vec trackstartpoint{0,0};
     nodeid selectednode = 0;
     State selectedstate;

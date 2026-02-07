@@ -45,7 +45,7 @@ void IdleMode::selecttrain(Train* train)
 
 DeleteMode::DeleteMode(Game& g) :
     input(g.getinputmanager()),
-    uirendering(g.getui().getuirendering()),
+    ui(g.getui()),
     buildingmanager(g.getgamestate().getbuildingmanager()),
     tracksystem(g.getgamestate().gettracksystems())
 {}
@@ -62,10 +62,7 @@ void DeleteMode::rightclickmap(Vec mappos)
 
 void DeleteMode::render(Rendering* r)
 {
-    Vec mousepos = input.screenmousepos();
-    SDL_Rect textrect(mousepos.x+50, mousepos.y, 200, 20);
-    auto uirect = uirendering.screentoui(textrect);
-    uirendering.rendertext(r, "Bulldozing", uirect, UI::MapOverlay);
+    ui.settooltip("Bulldozing");
 }
 
 
@@ -81,6 +78,7 @@ RouteMode::RouteMode(Game& g, Route& route) :
 void RouteMode::render(Rendering* r)
 {
     editingroute->render(r);
+    ui.settooltip("Editing route");
 }
 
 void RouteMode::leftclickmap(Vec mappos)
