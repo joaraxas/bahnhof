@@ -78,7 +78,6 @@ class BuildingBuilder : public Builder
 {
 public:
     BuildingBuilder(InputManager& i, Game* g);
-    void rightclickmap(Vec mappos);
     void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType* b);
@@ -87,6 +86,5 @@ private:
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
     const BuildingType* building = nullptr;
-    UI::Ownership panel;
     BuildingManager& buildingmanager;
 };

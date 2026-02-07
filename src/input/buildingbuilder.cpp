@@ -7,26 +7,11 @@
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
-#include "bahnhof/ui/panels.h"
 
 BuildingBuilder::BuildingBuilder(InputManager& i, Game* g) : 
     Builder(i, g), 
     buildingmanager(g->getgamestate().getbuildingmanager()) 
-{
-    panel.set(new UI::BuildingConstructionPanel(&g->getui(), *this));
-}
-
-void BuildingBuilder::rightclickmap(Vec mappos)
-{
-    if(!building){
-        Builder::rightclickmap(mappos);
-        return;
-    }
-    Builder::reset();
-    building = nullptr;
-    angle = Angle::zero;
-    cost = 0;
-}
+{}
 
 void BuildingBuilder::render(Rendering* r)
 {
@@ -62,7 +47,6 @@ void BuildingBuilder::reset()
     building = nullptr;
     angle = Angle::zero;
     cost = 0;
-    panel.deletereference();
 }
 
 void BuildingBuilder::setbuildingtype(const BuildingType* type)

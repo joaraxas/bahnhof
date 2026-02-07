@@ -372,9 +372,8 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, BuildingBuilder& b, UIVec pos, UIVec minsz) : 
+ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
     ClickableTable(p, minsz, pos), 
-    builder(b),
     buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
@@ -392,9 +391,11 @@ ConstructionTable::ConstructionTable(Host* p, BuildingBuilder& b, UIVec pos, UIV
 
 void ConstructionTable::lineclicked(int index)
 {
-    BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
-    builder.setbuildingtype(&clickedbuilding);
+    auto& input = game->getinputmanager();
+    auto builder = std::make_unique<BuildingBuilder>(input, game);
+    builder->setbuildingtype(&clickedbuilding);
+    input.setinputmode(std::move(builder));
 }
 
 

@@ -9,6 +9,7 @@
 #include "bahnhof/input/builder.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildingmanager.h"
 
 namespace UI{
 
@@ -69,8 +70,7 @@ void PlaceTrack::leftclick(UIVec mousepos)
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    auto& input = game->getinputmanager();
-    input.setinputmode(std::make_unique<BuildingBuilder>(input, game));
+    game->getgamestate().getbuildingmanager().createconstructionpanel();
 }
 
 void Bulldoze::leftclick(UIVec mousepos)

@@ -1,4 +1,5 @@
 #pragma once
+#include "bahnhof/ui/ownership.h"
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 
@@ -22,9 +23,11 @@ public:
     void addbuilding(std::unique_ptr<Building> b);
     bool checkcollision(const Shape& shape);
     bool checkcollision(const Tracks::Tracksection& shape);
+    void createconstructionpanel();
 private:
     Game* game;
     std::map<BuildingID, BuildingType> types;
     std::vector<BuildingType> availabletypes;
     std::vector<std::unique_ptr<Building>> buildings;
+    UI::Ownership panel;
 };

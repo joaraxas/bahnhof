@@ -81,9 +81,7 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui, BuildingBuilder& b);
-private:
-    BuildingBuilder& builder;
+    BuildingConstructionPanel(InterfaceManager* newui);
 };
 
 class BuildingPanel : public Panel
