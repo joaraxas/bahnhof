@@ -54,7 +54,7 @@ class RoutePanel : public Panel
 {
 public:
     RoutePanel(InterfaceManager* newui, Route* editroute);
-    void erase();
+    void close();
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
 private:

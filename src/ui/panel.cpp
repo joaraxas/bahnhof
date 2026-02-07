@@ -118,10 +118,10 @@ RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
 	conformtorect(ui->getuirendering().getuiview());
 }
 
-void RoutePanel::erase()
+void RoutePanel::close()
 {
-    // input.resetinput();
-	Panel::erase();
+    input.resetinput();
+	Panel::close();
 }
 
 void RoutePanel::conformtorect(UIRect confrect)

@@ -53,7 +53,7 @@ void TextButton::render(Rendering* r)
 
 void Close::leftclick(UIVec mousepos)
 {
-    panel->erase();
+    panel->close();
 }
 
 void PlaceSignal::leftclick(UIVec mousepos)
