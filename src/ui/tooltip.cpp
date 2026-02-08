@@ -9,15 +9,22 @@ Tooltip::Tooltip(InputManager& i, UIRendering& u)
 
 void Tooltip::set(std::string tip)
 {
-    tips += tip + '\n';
+    if(!tips.empty())
+        tips += '\n';
+    tips += tip;
 }
 
 void Tooltip::render(Rendering* r)
 {
-    Vec mousepos = input.screenmousepos();
-    SDL_Rect textrect(mousepos.x+50, mousepos.y, 200, 180);
-    auto uirect = uirendering.screentoui(textrect);
-    uirendering.rendertext(r, tips, uirect, UI::MapOverlay);
+    if(tips.empty()) return;
+    constexpr UIVec margin{2,1};
+    UIVec mousepos = uirendering.screentoui(input.screenmousepos());
+    UIRect uirect{mousepos.x+20, mousepos.y, 100, 180};
+    auto rect = uirendering.gettextsize(tips, uirect, margin.x, margin.y);
+    uirendering.renderrectangle(r, rect, UI::TooltipBackground, true);
+    uirendering.renderrectangle(r, rect, UI::TooltipBorder, false);
+    uirendering.rendertext(
+        r, tips, uirect, UI::InvertedInfo, false, margin.x, margin.y);
 
     tips.clear();
 }

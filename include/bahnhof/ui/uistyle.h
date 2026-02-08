@@ -12,6 +12,8 @@ enum TextStyle{
     MapOverlay,
     PanelBackground,
     PanelBorder,
+    TooltipBackground,
+    TooltipBorder,
 };
 
 }

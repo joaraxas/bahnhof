@@ -83,6 +83,12 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
     case UI::PanelBorder:
         color = {0,0,0,127};
         break;
+    case UI::TooltipBackground:
+        color = {0,0,0,63};
+        break;
+    case UI::TooltipBorder:
+        color = {0,0,0,255};
+        break;
     default:
         std::cout<<"Warning: UI style "<<style<<" not supported in InterfaceManager::rendertext"<<std::endl;
         break;
