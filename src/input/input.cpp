@@ -1,14 +1,11 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/textinput.h"
-#include "bahnhof/input/builder.h"
 #include "bahnhof/input/inputmode.h"
+#include "bahnhof/input/idlemode.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
-#include "bahnhof/ui/panels.h"
 #include "bahnhof/rollingstock/trainmanager.h"
-#include "bahnhof/rollingstock/rollingstock.h"
-#include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 

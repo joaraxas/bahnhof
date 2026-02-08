@@ -13,6 +13,7 @@ namespace Tracks{
 class Game;
 class Rendering;
 class InputManager;
+class InterfaceManager;
 class BuildingManager;
 class BuildingType;
 
@@ -45,8 +46,7 @@ private:
 class TrackBuilder : public Builder
 {
 public:
-    TrackBuilder(InputManager& i, Game* g) : 
-        Builder(i, g), ui(g->getui()) {};
+    TrackBuilder(InputManager& i, Game* g);
     void render(Rendering*);
     void reset();
 private:

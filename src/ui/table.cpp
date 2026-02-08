@@ -8,6 +8,7 @@
 #include "bahnhof/common/timing.h"
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/inputmodes.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"

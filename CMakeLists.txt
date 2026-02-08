@@ -28,6 +28,7 @@ add_executable(bahnhof
     src/game/resources.cpp
     src/input/input.cpp
     src/input/textinput.cpp
+    src/input/inputmodes.cpp
     src/input/builder.cpp
     src/input/trackbuilder.cpp
     src/input/signalbuilder.cpp

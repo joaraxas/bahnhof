@@ -4,7 +4,10 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/ui/ui.h"
 
+TrackBuilder::TrackBuilder(InputManager& i, Game* g) : 
+        Builder(i, g), ui(g->getui()) {};
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
