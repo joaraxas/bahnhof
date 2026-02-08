@@ -69,6 +69,6 @@ bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
 
 void BuildingManager::createconstructionpanel()
 {
-	if(!panel.exists())
-    	panel.set(new UI::BuildingConstructionPanel(&game->getui()));
+	if(!constructionpanel.exists())
+    	constructionpanel.set(new UI::BuildingConstructionPanel(&game->getui()));
 }

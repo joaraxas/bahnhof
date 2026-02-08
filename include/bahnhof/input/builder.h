@@ -4,8 +4,6 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
-#include "bahnhof/ui/ui.h"
-#include "bahnhof/ui/ownership.h"
 
 namespace Tracks{
     class Tracksystem;

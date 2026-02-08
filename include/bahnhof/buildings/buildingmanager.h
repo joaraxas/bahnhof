@@ -29,5 +29,5 @@ private:
     std::map<BuildingID, BuildingType> types;
     std::vector<BuildingType> availabletypes;
     std::vector<std::unique_ptr<Building>> buildings;
-    UI::Ownership panel;
+    UI::Ownership constructionpanel;
 };
