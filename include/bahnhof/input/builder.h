@@ -1,12 +1,11 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
 #include "math.h"
-#include "bahnhof/common/gamestate.h"
+#include "bahnhof/input/inputmode.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/ui/ui.h"
+#include "bahnhof/ui/ownership.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -19,16 +18,17 @@ class InputManager;
 class BuildingManager;
 class BuildingType;
 
-class Builder
+class Builder : public InputMode
 {
 public:
     Builder(InputManager& owner, Game* newgame);
     virtual ~Builder() {};
     virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
+    virtual void rightclickmap(Vec mappos);
     virtual void leftreleasedmap(Vec mappos);
-    virtual void reset();
 protected:
+    virtual void reset();
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
@@ -47,7 +47,8 @@ private:
 class TrackBuilder : public Builder
 {
 public:
-    TrackBuilder(InputManager& i, Game* g) : Builder(i, g) {};
+    TrackBuilder(InputManager& i, Game* g) : 
+        Builder(i, g), ui(g->getui()) {};
     void render(Rendering*);
     void reset();
 private:
@@ -56,6 +57,7 @@ private:
     bool islayingtrack();
     Tracks::Tracksection planconstruction(Vec pos);
     bool buildingfromstartpoint();
+    InterfaceManager& ui;
     Vec trackstartpoint{0,0};
     nodeid selectednode = 0;
     State selectedstate;
@@ -75,7 +77,7 @@ private:
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& i, Game* g) : Builder(i, g), buildingmanager(g->getgamestate().getbuildingmanager()) {};
+    BuildingBuilder(InputManager& i, Game* g);
     void render(Rendering*);
     void reset();
     void setbuildingtype(const BuildingType* b);

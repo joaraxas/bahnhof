@@ -67,6 +67,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<PlaceTrack>(),
 			create<PlaceSignal>(),
 			create<PlaceBuildings>(),
+			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
 			create<IncreaseUIScale>(),
@@ -117,10 +118,10 @@ RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
 	conformtorect(ui->getuirendering().getuiview());
 }
 
-void RoutePanel::erase()
+void RoutePanel::close()
 {
-    input.editroute(nullptr);
-	Panel::erase();
+    input.resetinput();
+	Panel::close();
 }
 
 void RoutePanel::conformtorect(UIRect confrect)
@@ -178,7 +179,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 }
 
 BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
-	Panel(newui), input(game->getinputmanager())
+	Panel(newui)
 {
 	setlayout(
 	create<VBox>(
@@ -188,12 +189,6 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
 	);
 	applylayout();
 	placeautomatically();
-}
-
-void BuildingConstructionPanel::erase()
-{
-	input.resetinput();
-	Panel::erase();
 }
 
 BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 

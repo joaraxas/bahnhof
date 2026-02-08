@@ -9,7 +9,7 @@ Route::Route(Tracks::Tracksystem* tracksystem, std::string routename)
 	tracks = tracksystem;
 }
 
-int Route::getindex(int orderid)
+int Route::getindex(int orderid) const
 {
 	auto it = find(orderids.begin(), orderids.end(), orderid) - orderids.begin();
 	if(it<orderids.size()){
@@ -18,7 +18,7 @@ int Route::getindex(int orderid)
 		return -1;}
 }
 
-Order* Route::getorder(int orderid)
+Order* Route::getorder(int orderid) const
 {
 	int orderindex = getindex(orderid);
 	if(orderindex>=0)

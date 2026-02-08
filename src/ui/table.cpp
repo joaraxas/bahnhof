@@ -7,6 +7,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/timing.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/builder.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
@@ -308,7 +309,7 @@ void RouteTable::lineclicked(int index)
 {
     ids = routing.getrouteids();
     if(index<ids.size()){
-	    input.editroute(routing.getroute(ids[index]));
+        input.setinputmode(std::make_unique<RouteMode>(*game, *routing.getroute(ids[index])));
     }
     else if(index==ids.size())
         routing.addroute();
@@ -373,7 +374,6 @@ void TrainOrderTable::lineclicked(int index)
 
 ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
     ClickableTable(p, minsz, pos), 
-    input(game->getinputmanager()),
     buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
 {
     for(int i=0; i<buildingtypes.size(); i++){
@@ -391,9 +391,11 @@ ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) :
 
 void ConstructionTable::lineclicked(int index)
 {
-    BuildingManager& buildings = game->getgamestate().getbuildingmanager();
     const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
-    input.selectbuildingtoplace(&clickedbuilding);
+    auto& input = game->getinputmanager();
+    auto builder = std::make_unique<BuildingBuilder>(input, game);
+    builder->setbuildingtype(&clickedbuilding);
+    input.setinputmode(std::move(builder));
 }
 
 

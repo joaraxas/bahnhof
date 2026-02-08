@@ -8,6 +8,10 @@
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
 
+BuildingBuilder::BuildingBuilder(InputManager& i, Game* g) : 
+    Builder(i, g), 
+    buildingmanager(g->getgamestate().getbuildingmanager()) 
+{}
 
 void BuildingBuilder::render(Rendering* r)
 {

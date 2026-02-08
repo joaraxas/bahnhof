@@ -16,7 +16,8 @@ class Dropdown;
 
 }
 
-class UIRendering{
+class UIRendering
+{
     using UIRect = UI::UIRect;
     using UIVec = UI::UIVec;
     using Coord = UI::Coord;
@@ -77,7 +78,22 @@ private:
     InterfaceManager& ui;
 };
 
-class InterfaceManager{
+class InputManager;
+
+class Tooltip
+{
+public:
+    Tooltip(InputManager& i, UIRendering& u);
+    void render(Rendering*);
+    void set(std::string tip);
+private:
+    std::string tips;
+    InputManager& input;
+    UIRendering& uirendering;
+};
+
+class InterfaceManager
+{
 public:
     InterfaceManager(Game*);
     ~InterfaceManager();
@@ -95,6 +111,7 @@ public:
     UI::UIVec findfreespace(const UI::UIVec size);
     void setdropdown(UI::Dropdown*);
     void handlewindowsizechange();
+    void settooltip(std::string tip);
 
     Game& getgame();
     UIRendering& getuirendering() {return uirendering;};
@@ -109,4 +126,5 @@ private:
     UI::UIVec placepanelspos={200,50};
     Game* game;
     UIRendering uirendering;
+    Tooltip tooltip;
 };

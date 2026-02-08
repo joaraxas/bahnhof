@@ -12,6 +12,7 @@ class Route;
 class TrainManager;
 class Train;
 class Building;
+class BuildingBuilder;
 class WagonFactory;
 
 namespace UI{
@@ -53,7 +54,7 @@ class RoutePanel : public Panel
 {
 public:
     RoutePanel(InterfaceManager* newui, Route* editroute);
-    void erase();
+    void close();
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
 private:
@@ -81,9 +82,6 @@ class BuildingConstructionPanel : public Panel
 {
 public:
     BuildingConstructionPanel(InterfaceManager* newui);
-    void erase() override;
-private:
-    InputManager& input;
 };
 
 class BuildingPanel : public Panel

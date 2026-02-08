@@ -199,16 +199,15 @@ bool switchat(Tracksystem& tracks, Vec pos)
 
 Order* generateorderat(const Tracksystem& tracks, Vec pos)
 {
-	Order* neworder = nullptr;
 	trackid clickedtrack=0; signalid clickedsignal=0; switchid clickedswitch=0;
 	State clickedstate = whatdidiclick(tracks, pos, &clickedtrack, nullptr, &clickedsignal, &clickedswitch);
-	if(clickedtrack)
-		neworder = new Gotostate(clickedstate);
 	if(clickedsignal)
-		neworder = new Setsignal(clickedsignal, tracks.getsignal(clickedsignal)->getcolorforordergeneration());
+		return new Setsignal(clickedsignal, tracks.getsignal(clickedsignal)->getcolorforordergeneration());
 	if(clickedswitch)
-		neworder = new Setswitch(clickedswitch, tracks.getswitch(clickedswitch)->getstateforordergeneration());
-	return neworder;
+		return new Setswitch(clickedswitch, tracks.getswitch(clickedswitch)->getstateforordergeneration());
+	if(clickedtrack)
+		return new Gotostate(clickedstate);
+	return nullptr;
 }
 
 void deleteat(Tracksystem& tracks, Vec pos)
