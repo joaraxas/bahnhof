@@ -8,19 +8,19 @@
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
 
-BuildingBuilder::BuildingBuilder(InputManager& i, Game* g) : 
+BuildingBuilder::BuildingBuilder(InputManager& i, Game* g, const BuildingType& b) : 
     Builder(i, g), 
-    buildingmanager(g->getgamestate().getbuildingmanager()) 
-{}
+    buildingmanager(g->getgamestate().getbuildingmanager()),
+    building(b)
+{
+    cost = building.cost;
+}
 
 void BuildingBuilder::render(Rendering* r)
 {
     Builder::render(r);
-    if(!building){
-        return;
-    }
     
-    if(building->id==wagonfactory){
+    if(building.id==wagonfactory){
         Angle newangle = angle;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         TracksDisplayMode mode = TracksDisplayMode::planned;
@@ -32,7 +32,7 @@ void BuildingBuilder::render(Rendering* r)
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     SDL_Color color;
     if(canbuild()){
-        color = building->color;
+        color = building.color;
         color.a = 127;
     }
     else{
@@ -44,31 +44,15 @@ void BuildingBuilder::render(Rendering* r)
 void BuildingBuilder::reset()
 {
     Builder::reset();
-    building = nullptr;
     angle = Angle::zero;
-    cost = 0;
-}
-
-void BuildingBuilder::setbuildingtype(const BuildingType* type)
-{
-    building = type;
-    cost = 0;
-    if(building)
-        cost = building->cost;
-    else // This should not happen but could be a way of resetting
-        reset();
 }
 
 bool BuildingBuilder::canfit()
 {
-    if(!building){
-        return false;
-    }
-
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
-    if(building->id == wagonfactory){
+    if(building.id == wagonfactory){
         Angle newangle = angle;
         Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
         if(buildingmanager.checkcollision(section)){
@@ -82,12 +66,8 @@ bool BuildingBuilder::canfit()
 
 void BuildingBuilder::build()
 {
-    if(!building){
-        return;
-    }
-
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
-    switch(building->id)
+    switch(building.id)
     {
     case brewery:
         buildingmanager.addbuilding(std::make_unique<Brewery>(game, std::move(shape)));
@@ -114,18 +94,14 @@ void BuildingBuilder::build()
         break;
     }
     default:
-        std::cout<<"error: building id "<<building->id<<" is not covered by BuildingBuilder::build!";
+        std::cout<<"error: building id "<<building.id<<" is not covered by BuildingBuilder::build!";
         break;
     }
 }
 
 std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
 {
-    if(!building){
-        return nullptr;
-    }
-
-    switch (building->id)
+    switch (building.id)
     {
     case wagonfactory:{
         Angle newangle = angle;
@@ -134,22 +110,22 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
         if(neareststate)
             return std::make_unique<RotatedRectangle>(
                 Tracks::getpos(tracksystem, neareststate) + buildingmidpoint, 
-                building->size.x, 
-                building->size.y, 
+                building.size.x, 
+                building.size.y, 
                 newangle
             );
         else
             return std::make_unique<RotatedRectangle>(
                 pos + buildingmidpoint, 
-                building->size.x, 
-                building->size.y, 
+                building.size.x, 
+                building.size.y, 
                 newangle
             );
     }
     default:{
         if(angle==Angle::zero)
-            return std::make_unique<Rectangle>(pos, building->size);
-        return std::make_unique<RotatedRectangle>(pos, building->size.x, building->size.y, angle);
+            return std::make_unique<Rectangle>(pos, building.size);
+        return std::make_unique<RotatedRectangle>(pos, building.size.x, building.size.y, angle);
     }
     }
 }

@@ -75,14 +75,13 @@ private:
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& i, Game* g);
+    BuildingBuilder(InputManager& i, Game* g, const BuildingType& b);
     void render(Rendering*);
     void reset();
-    void setbuildingtype(const BuildingType* b);
 private:
     bool canfit();
     void build();
     std::unique_ptr<Shape> getplacementat(Vec pos);
-    const BuildingType* building = nullptr;
+    const BuildingType& building;
     BuildingManager& buildingmanager;
 };
