@@ -85,7 +85,7 @@ class Tooltip
 public:
     Tooltip(InputManager& i, UIRendering& u);
     void render(Rendering*);
-    void set(std::string tip);
+    void add(std::string tip);
 private:
     std::string tips;
     InputManager& input;
@@ -111,7 +111,7 @@ public:
     UI::UIVec findfreespace(const UI::UIVec size);
     void setdropdown(UI::Dropdown*);
     void handlewindowsizechange();
-    void settooltip(std::string tip);
+    void addtooltip(std::string tip);
 
     Game& getgame();
     UIRendering& getuirendering() {return uirendering;};

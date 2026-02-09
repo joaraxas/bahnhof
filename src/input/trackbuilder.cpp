@@ -47,23 +47,23 @@ void TrackBuilder::render(Rendering* r)
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
     if(islayingtrack()){
-        ui.settooltip(std::to_string(int(cost))+" Fr");
+        ui.addtooltip(std::to_string(int(cost))+" Fr");
         if(!nicetracks){
-            ui.settooltip("minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section)));
-            ui.settooltip(std::to_string(section.tracks.size())+" tracks");
+            ui.addtooltip("minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section)));
+            ui.addtooltip(std::to_string(section.tracks.size())+" tracks");
         }
         else{
             if(isinf(Tracks::Input::getminradiusofsection(section))){
-                ui.settooltip("radius many m");
+                ui.addtooltip("radius many m");
             }
             else
-                ui.settooltip("radius "+std::to_string(
+                ui.addtooltip("radius "+std::to_string(
                     int(round(Tracks::Input::getminradiusofsection(section)
                     *150/1000)))+" m");
         }
     }
     else
-        ui.settooltip("Click track startpoint");
+        ui.addtooltip("Click track startpoint");
 
 
     Tracks::Input::discardsection(section);

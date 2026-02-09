@@ -7,7 +7,7 @@ using namespace UI;
 Tooltip::Tooltip(InputManager& i, UIRendering& u)
     : input(i), uirendering(u) {}
 
-void Tooltip::set(std::string tip)
+void Tooltip::add(std::string tip)
 {
     if(!tips.empty())
         tips += '\n';

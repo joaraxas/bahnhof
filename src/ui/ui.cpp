@@ -222,7 +222,7 @@ void InterfaceManager::handlewindowsizechange()
     }
 }
 
-void InterfaceManager::settooltip(std::string tip)
+void InterfaceManager::addtooltip(std::string tip)
 {
-    tooltip.set(tip);
+    tooltip.add(tip);
 }

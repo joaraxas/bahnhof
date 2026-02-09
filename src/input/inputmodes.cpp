@@ -61,7 +61,7 @@ void DeleteMode::rightclickmap(Vec mappos)
 
 void DeleteMode::render(Rendering* r)
 {
-    ui.settooltip("Bulldozing");
+    ui.addtooltip("Bulldozing");
 }
 
 
@@ -77,7 +77,7 @@ RouteMode::RouteMode(Game& g, Route& route) :
 void RouteMode::render(Rendering* r)
 {
     editingroute->render(r);
-    ui.settooltip("Editing route");
+    ui.addtooltip("Editing route");
 }
 
 void RouteMode::leftclickmap(Vec mappos)
