@@ -99,7 +99,7 @@ void BuildingBuilder::build()
     }
 }
 
-std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos)
+std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos) const
 {
     switch (building.id)
     {

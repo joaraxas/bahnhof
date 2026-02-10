@@ -65,7 +65,6 @@ void TrackBuilder::render(Rendering* r)
     else
         ui.addtooltip("Click track startpoint");
 
-
     Tracks::Input::discardsection(section);
 }
 

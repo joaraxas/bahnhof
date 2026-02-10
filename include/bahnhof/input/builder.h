@@ -81,7 +81,7 @@ public:
 private:
     bool canfit();
     void build();
-    std::unique_ptr<Shape> getplacementat(Vec pos);
+    std::unique_ptr<Shape> getplacementat(Vec pos) const;
     const BuildingType& building;
     BuildingManager& buildingmanager;
 };
