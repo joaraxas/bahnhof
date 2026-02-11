@@ -49,7 +49,8 @@ void TrackBuilder::render(Rendering* r)
     if(islayingtrack()){
         ui.addtooltip(std::to_string(int(cost))+" Fr");
         if(!nicetracks){
-            ui.addtooltip("minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section)));
+            ui.addtooltip(std::format("minradius: {:.0f} px",
+                Tracks::Input::getminradiusofsection(section)));
             ui.addtooltip(std::to_string(section.tracks.size())+" tracks");
         }
         else{
@@ -57,9 +58,8 @@ void TrackBuilder::render(Rendering* r)
                 ui.addtooltip("radius many m");
             }
             else
-                ui.addtooltip("radius "+std::to_string(
-                    int(round(Tracks::Input::getminradiusofsection(section)
-                    *150/1000)))+" m");
+                ui.addtooltip(std::format("radius {:.0f} m",
+                    pixelstometers(Tracks::Input::getminradiusofsection(section))));
         }
     }
     else
