@@ -325,7 +325,7 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 	}
 	if(!nicetracks){
 		Vec midpoint = getpos(0.5);
-		std::string radiustext = std::to_string(int(round(radius*150*0.001))) + " m";
+		std::string radiustext = std::to_string(int(round(pixelstometers(radius)))) + " m";
 		if(std::isinf(radius))
 			radiustext = std::to_string(radius);
 		r->rendertext(radiustext, midpoint.x, midpoint.y, {255,255,255,255});

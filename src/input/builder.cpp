@@ -25,6 +25,11 @@ void Builder::leftclickmap(Vec mappos)
     droppedanchor = true;
 }
 
+void Builder::rightclickmap(Vec mappos)
+{
+    input.resetinput();
+}
+
 void Builder::leftreleasedmap(Vec mappos)
 {
     if(droppedanchor){

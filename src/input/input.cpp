@@ -1,30 +1,22 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/textinput.h"
-#include "bahnhof/input/builder.h"
+#include "bahnhof/input/inputmode.h"
+#include "bahnhof/input/idlemode.h"
 #include "bahnhof/common/camera.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
-#include "bahnhof/ui/panels.h"
-#include "bahnhof/track/track.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/trainmanager.h"
-#include "bahnhof/rollingstock/train.h"
-#include "bahnhof/rollingstock/rollingstock.h"
-#include "bahnhof/rollingstock/rollingstockmanager.h"
-#include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
 InputManager::InputManager(Game* whatgame) : 
-        game(whatgame),
-        textinput(std::make_unique<TextInputManager>(*this)),
-        trackbuilder(std::make_unique<TrackBuilder>(*this, game)),
-        signalbuilder(std::make_unique<SignalBuilder>(*this, game)),
-        builder(std::make_unique<BuildingBuilder>(*this, game))
+    game(whatgame),
+    textinput(std::make_unique<TextInputManager>(*this)),
+    mode(std::make_unique<IdleMode>(*whatgame))
 {}
 
 InputManager::~InputManager() {}
 
-TextInputManager& InputManager::gettextinputmanager()
+TextInputManager& InputManager::gettextinputmanager() const
 {
     return *textinput;
 };
@@ -32,10 +24,7 @@ TextInputManager& InputManager::gettextinputmanager()
 void InputManager::handle(int ms, int mslogic){
 	SDL_Event e;
     Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    RouteManager& routing = gamestate.getrouting();
     TrainManager& trainmanager = gamestate.gettrainmanager();
-    SpriteManager& allsprites = game->getsprites();
     Camera& cam = game->getcamera();
     InterfaceManager& ui = game->getui();
 
@@ -57,14 +46,10 @@ void InputManager::handle(int ms, int mslogic){
                 break;
             Vec mousepos = mapmousepos();
             if(e.button.button == SDL_BUTTON_RIGHT){
-                rightclickmap(mousepos);
-            }
-            if(e.button.button == SDL_BUTTON_MIDDLE){
-                resetinput();
-                Tracks::Input::deleteat(tracksystem, mousepos);
+                mode->rightclickmap(mousepos);
             }
             if(e.button.button == SDL_BUTTON_LEFT){
-                leftclickmap(mousepos);
+                mode->leftclickmap(mousepos);
             }
             break;
         }
@@ -72,7 +57,7 @@ void InputManager::handle(int ms, int mslogic){
         case SDL_MOUSEBUTTONUP:{
             if(e.button.button == SDL_BUTTON_LEFT){
                 ui.leftbuttonup(screenmousepos());
-                leftreleasedmap(mapmousepos());
+                mode->leftreleasedmap(mapmousepos());
             }
             break;
         }
@@ -80,7 +65,7 @@ void InputManager::handle(int ms, int mslogic){
         case SDL_KEYDOWN:{
             if(textinput->handle(e))
                 break;
-            keydown(e.key.keysym.sym);
+            onkeydown(e.key.keysym.sym);
             break;
         }
 
@@ -131,130 +116,49 @@ void InputManager::handle(int ms, int mslogic){
     }
 }
 
-void InputManager::leftclickmap(Vec mousepos)
+void InputManager::onkeydown(SDL_Keycode key)
 {
-    switch (inputstate)
-    {
-    case placingsignals:
-        signalbuilder->leftclickmap(mousepos);
-        break;
-    
-    case placingtracks:
-        trackbuilder->leftclickmap(mousepos);
-        break;
-    
-    case placingbuildings:
-        builder->leftclickmap(mousepos);
-        break;
-   
-    case idle:{
-        Gamestate& gamestate = game->getgamestate();
-        if(gamestate.getbuildingmanager().leftclick(mousepos))
-            break;
-        
-        Train* clickedtrain = gamestate.gettrainmanager().gettrainatpos(mousepos);
-        if(clickedtrain){
-            selecttrain(clickedtrain);
-            break;
-        }
-        
-        Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-        if(Tracks::Input::switchat(tracksystem, mousepos)){
-            break;
-        }
-
-        selecttrain(nullptr);
-        break;
-    }
-    
-    default:
-        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager";
-        break;
-    }
-}
-
-void InputManager::rightclickmap(Vec mousepos)
-{
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    if(editingroute){
-        Order* neworder = Tracks::Input::generateorderat(tracksystem, mousepos);
-        if(neworder)
-            editingroute->insertorderatselected(neworder);
-    }
-    else
-        resetinput();
-}
-
-void InputManager::leftreleasedmap(Vec mousepos)
-{
-    switch (inputstate)
-    {
-    case placingsignals:
-        signalbuilder->leftreleasedmap(mousepos);
-        break;
-    
-    case placingtracks:
-        trackbuilder->leftreleasedmap(mousepos);
-        break;
-    
-    case placingbuildings:
-        builder->leftreleasedmap(mousepos);
-        break;
-    
-    case idle:
-        break;
-    
-    default:
-        std::cout<<"warning, input state "<<inputstate<<"not covered by InputManager at left mouse release";
-        break;
-    }
-}
-
-void InputManager::keydown(SDL_Keycode key)
-{
-    Gamestate& gamestate = game->getgamestate();
-    Tracks::Tracksystem& tracksystem = gamestate.gettracksystems();
-    TrainManager& trainmanager = gamestate.gettrainmanager();
-    RollingStockManager& rollingstock = gamestate.getrollingstockmanager();
     switch (key)
     {
     case SDLK_n:
         nicetracks = !nicetracks;
         break;
-    
-    default:
-        break;
     }
 }
 
-void InputManager::render(Rendering* r)
+void InputManager::render(Rendering* r) const
 {
-    switch (inputstate)
-    {
-    case placingtracks:
-        trackbuilder->render(r);
-        break;
-
-    case placingsignals:
-        signalbuilder->render(r);
-        break;
-
-    case placingbuildings:
-        builder->render(r);
-        break;
-    }
-    if(editingroute)
-        editingroute->render(r);
+    mode->render(r);
 }
 
-Vec InputManager::mapmousepos()
+Vec InputManager::mapmousepos() const
 {
     Vec mousepos = screenmousepos();
     return game->getcamera().mapcoord(mousepos);
 }
 
-Vec InputManager::screenmousepos()
+bool InputManager::iskeypressed(const int scancode) const
+{
+	const Uint8* keys = SDL_GetKeyboardState(nullptr);
+    return keys[scancode];
+}
+
+bool InputManager::isleftmousepressed() const
+{
+    return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
+}
+
+void InputManager::resetinput()
+{
+    mode = std::make_unique<IdleMode>(*game);
+}
+
+void InputManager::setinputmode(std::unique_ptr<InputMode> m)
+{
+    mode = std::move(m);
+}
+
+Vec screenmousepos()
 {
     // use this function instead of SDL_GetMouseState to get mouse position in useful logical pixels
     int currentmousex, currentmousey;
@@ -262,71 +166,4 @@ Vec InputManager::screenmousepos()
 	SDL_GetMouseState(&currentmousex, &currentmousey);
     SDL_RenderWindowToLogical(renderer, currentmousex, currentmousey, &logicalmousex, &logicalmousey);
     return Vec(int(logicalmousex), int(logicalmousey));
-}
-
-bool InputManager::iskeypressed(const int scancode)
-{
-	keys = SDL_GetKeyboardState(nullptr);
-    return keys[scancode];
-}
-
-bool InputManager::isleftmousepressed()
-{
-    return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
-}
-
-void InputManager::selecttrain(Train* whattrain)
-{
-    Gamestate& gamestate = game->getgamestate();
-	gamestate.gettrainmanager().deselectall();
-	if(whattrain){
-		whattrain->select();
-    }
-}
-
-void InputManager::editroute(Route* route)
-{
-    if(route){
-    	panel.set(new UI::RoutePanel(&game->getui(), route));
-        inputstate = idle;
-    }
-    editingroute = route;
-}
-
-void InputManager::placesignal()
-{
-    panel.deletereference();
-    resetinput();
-    inputstate = placingsignals;
-}
-
-void InputManager::placetrack()
-{
-    panel.deletereference();
-    resetinput();
-    inputstate = placingtracks;
-}
-
-void InputManager::placebuildings()
-{
-    if(inputstate!=placingbuildings){
-        panel.set(new UI::BuildingConstructionPanel(&game->getui()));
-    }
-    resetinput();
-    inputstate = placingbuildings;
-}
-
-void InputManager::selectbuildingtoplace(const BuildingType* type)
-{
-    builder->setbuildingtype(type);
-    inputstate = placingbuildings;
-}
-
-void InputManager::resetinput()
-{
-    trackbuilder->reset();
-    signalbuilder->reset();
-    builder->reset();
-    editingroute = nullptr;
-    inputstate = idle;
 }

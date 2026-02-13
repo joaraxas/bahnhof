@@ -4,7 +4,10 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/ui/ui.h"
 
+TrackBuilder::TrackBuilder(InputManager& i, Game* g) : 
+        Builder(i, g), ui(g->getui()) {};
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
@@ -43,27 +46,25 @@ void TrackBuilder::render(Rendering* r)
     if(!canbuild())
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
-    Vec screenpoint = game->getcamera().screencoord(anchorpoint);
-    std::string tooltip;
     if(islayingtrack()){
-        if(!nicetracks)
-            tooltip = std::to_string(int(cost))+" Fr\n"+
-            "minradius: "+std::to_string(Tracks::Input::getminradiusofsection(section))+"\n"+
-            std::to_string(section.tracks.size())+" tracks";
+        ui.addtooltip(std::to_string(int(cost))+" Fr");
+        if(!nicetracks){
+            ui.addtooltip(std::format("minradius: {:.0f} px",
+                Tracks::Input::getminradiusofsection(section)));
+            ui.addtooltip(std::to_string(section.tracks.size())+" tracks");
+        }
         else{
             if(isinf(Tracks::Input::getminradiusofsection(section))){
-                tooltip = std::to_string(int(cost))+" Fr\n"+
-                "radius many m";
+                ui.addtooltip("radius many m");
             }
             else
-                tooltip = std::to_string(int(cost))+" Fr\n"+
-                "radius "+std::to_string(int(round(Tracks::Input::getminradiusofsection(section)*150/1000)))+" m";
+                ui.addtooltip(std::format("radius {:.0f} m",
+                    pixelstometers(Tracks::Input::getminradiusofsection(section))));
         }
     }
     else
-        tooltip = "click track startpoint";
-    // TODO: Instead of using getlogicalscale(), we could have a logical pixels type or pass this to the uirenderer
-    r->rendertext(tooltip, screenpoint.x+50*getlogicalscale(), screenpoint.y, {0, 0, 0}, false, false);
+        ui.addtooltip("Click track startpoint");
+
     Tracks::Input::discardsection(section);
 }
 

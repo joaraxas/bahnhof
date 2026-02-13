@@ -3,6 +3,7 @@
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/track/track.h"
+#include "bahnhof/ui/panels.h"
 
 
 BuildingManager::BuildingManager(Game* g) : game(g)
@@ -64,4 +65,10 @@ bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
         }
     }
 	return false;
+}
+
+void BuildingManager::createconstructionpanel()
+{
+	if(!constructionpanel.exists())
+    	constructionpanel.set(new UI::BuildingConstructionPanel(&game->getui()));
 }

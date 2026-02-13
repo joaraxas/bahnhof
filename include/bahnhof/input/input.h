@@ -28,14 +28,8 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-enum InputState {
-    idle,
-    placingsignals,
-    placingtracks,
-    placingbuildings
-};
-
 class TextInputManager;
+class InputMode;
 class TrackBuilder;
 class SignalBuilder;
 class BuildingBuilder;
@@ -45,32 +39,19 @@ class InputManager
 public:
     InputManager(Game* whatgame);
     ~InputManager();
-    TextInputManager& gettextinputmanager();
+    TextInputManager& gettextinputmanager() const;
     void handle(int ms, int mslogic);
-    void render(Rendering*);
-    Vec screenmousepos();
-    Vec mapmousepos();
-    bool iskeypressed(const int scancode);
-    bool isleftmousepressed();
-    void editroute(Route* route);
-    void placesignal();
-    void placetrack();
-    void placebuildings();
-    void selectbuildingtoplace(const BuildingType* type);
+    void render(Rendering*) const;
+    Vec mapmousepos() const;
+    bool iskeypressed(const int scancode) const;
+    bool isleftmousepressed() const;
     void resetinput();
+    void setinputmode(std::unique_ptr<InputMode> m);
 private:
-    void leftclickmap(Vec mousepos);
-    void rightclickmap(Vec mousepos);
-    void leftreleasedmap(Vec mouspos);
-    void keydown(SDL_Keycode key);
-    void selecttrain(Train* train);
+    void onkeydown(SDL_Keycode key);
     Game* game;
     std::unique_ptr<TextInputManager> textinput;
-    std::unique_ptr<TrackBuilder> trackbuilder;
-    std::unique_ptr<SignalBuilder> signalbuilder;
-    std::unique_ptr<BuildingBuilder> builder;
-    InputState inputstate = idle;
-    const Uint8* keys;
-    Route* editingroute = nullptr;
-    UI::Ownership panel;
+    std::unique_ptr<InputMode> mode;
 };
+
+Vec screenmousepos();

@@ -65,6 +65,14 @@ public:
     void leftclick(UIVec mousepos);
 };
 
+class Bulldoze : public TextButton
+{
+public:
+    Bulldoze(Host* newpanel) : 
+        TextButton(newpanel, "Bulldoze") {};
+    void leftclick(UIVec mousepos);
+};
+
 class ManageRoutes : public TextButton
 {
 public:
@@ -156,7 +164,7 @@ class AddOrder : public TextButton
 {
 public:
     AddOrder(Host* newpanel, Route* whatroute, std::string text) : 
-        TextButton(newpanel, text, 120),
+        TextButton(newpanel, text, 150),
         route(whatroute) {}
 protected:
     Route* route;

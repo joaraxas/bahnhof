@@ -90,22 +90,73 @@ SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
 	return tex;	
 }
 
-std::pair<int,int> textsize(std::string text, int maxwidth)
+std::pair<int, int> textsize(const std::string& text, int maxwidth)
 {
-	SDL_Surface* surf = nullptr;
-	surf = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), {0, 0, 0, 0}, maxwidth);
-	if(!surf){
-		std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
-		return {0,0};	
-	}
-	int w = surf->w;
-	int h = surf->h;
-	SDL_FreeSurface(surf);
-	return {w, h};
+    if (text.empty() || maxwidth < 0) {
+        return {0, 0};
+    }
+	if(maxwidth == 0)
+		maxwidth = std::numeric_limits<int>::max();
+
+    const int line_skip = TTF_FontLineSkip(font);
+
+    int max_line_w = 0;
+    int total_h = 0;
+
+    const char* start = text.c_str();
+    const char* end   = start + text.size();
+    const char* p     = start;
+
+    while (p < end) {
+        const char* line_end = p;
+        while (line_end < end && *line_end != '\n') {
+            ++line_end;
+        }
+
+        const std::string line(p, line_end - p);
+
+        const char* lp = line.c_str();
+        const char* lend = lp + line.size();
+
+		int extent = 0;
+		int count  = 0;
+		if (TTF_MeasureUTF8(font, lp, maxwidth, &extent, &count) != 0) {
+			break;
+		}
+		if (count <= 0 && !line.empty()) {
+			break;
+		}
+
+		if(count < line.size()){
+			// If the line wraps, render to get correct line breaks
+			SDL_Surface* surf = nullptr;
+			surf = TTF_RenderUTF8_Blended_Wrapped(font, start, {0, 0, 0, 0}, maxwidth);
+			if(!surf){
+				std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
+				return {0,0};	
+			}
+			int w = surf->w;
+			int h = surf->h;
+			SDL_FreeSurface(surf);
+			return {w, h};
+		}
+
+		max_line_w = std::max(max_line_w, extent);
+		total_h += line_skip;
+
+		// Skip the newline
+        p = line_end;
+        if (p < end && *p == '\n') {
+            ++p;
+        }
+    }
+
+    return {max_line_w, total_h};
 }
 
 void close()
 {
+	TTF_CloseFont(font);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();

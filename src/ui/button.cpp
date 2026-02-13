@@ -6,8 +6,11 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
+#include "bahnhof/input/inputmodes.h"
+#include "bahnhof/input/builder.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
+#include "bahnhof/buildings/buildingmanager.h"
 
 namespace UI{
 
@@ -51,22 +54,30 @@ void TextButton::render(Rendering* r)
 
 void Close::leftclick(UIVec mousepos)
 {
-    panel->erase();
+    panel->close();
 }
 
 void PlaceSignal::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placesignal();
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<SignalBuilder>(input, game));
 }
 
 void PlaceTrack::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placetrack();
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<TrackBuilder>(input, game));
 }
 
 void PlaceBuildings::leftclick(UIVec mousepos)
 {
-    game->getinputmanager().placebuildings();
+    game->getgamestate().getbuildingmanager().createconstructionpanel();
+}
+
+void Bulldoze::leftclick(UIVec mousepos)
+{
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<DeleteMode>(*game));
 }
 
 void ManageRoutes::leftclick(UIVec mousepos)

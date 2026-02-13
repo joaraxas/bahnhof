@@ -83,6 +83,12 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
     case UI::PanelBorder:
         color = {0,0,0,127};
         break;
+    case UI::TooltipBackground:
+        color = {0,0,0,63};
+        break;
+    case UI::TooltipBorder:
+        color = {0,0,0,255};
+        break;
     default:
         std::cout<<"Warning: UI style "<<style<<" not supported in InterfaceManager::rendertext"<<std::endl;
         break;
@@ -127,7 +133,7 @@ UIRect UIRendering::rendertext(
 UIRect UIRendering::gettextsize(
     std::string text, UIRect maxrect, Coord margin_x, Coord margin_y)
 {
-    Coord maxtextuiwidth = maxrect.w - 2*margin_x;
+    Coord maxtextuiwidth = std::max(maxrect.w - 2*margin_x, Coord{0});
     auto textsz = textsize(text, maxtextuiwidth*uiscale);
     Coord textuiwidth = textsz.first/uiscale;
     Coord textuiheight = textsz.second/uiscale;
