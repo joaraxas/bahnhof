@@ -133,7 +133,7 @@ UIRect UIRendering::rendertext(
 UIRect UIRendering::gettextsize(
     std::string text, UIRect maxrect, Coord margin_x, Coord margin_y)
 {
-    Coord maxtextuiwidth = maxrect.w - 2*margin_x;
+    Coord maxtextuiwidth = std::max(maxrect.w - 2*margin_x, Coord{0});
     auto textsz = textsize(text, maxtextuiwidth*uiscale);
     Coord textuiwidth = textsz.first/uiscale;
     Coord textuiheight = textsz.second/uiscale;

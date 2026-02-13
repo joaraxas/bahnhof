@@ -73,7 +73,6 @@ SDL_Rect Rendering::rendertext(std::string text, int x, int y, SDL_Color color, 
 
 SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color color, bool ported, bool zoomed, int maxwidth)
 {
-	SDL_Rect rect = {x, y, 0, 0};
 	if(!text.empty()){
 		TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_CENTER);
 		SDL_Texture* tex = loadtext(text, color, maxwidth);
@@ -84,7 +83,7 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 		SDL_DestroyTexture(tex);
 		TTF_SetFontWrappedAlign(font, TTF_WRAPPED_ALIGN_LEFT);
 	}
-	return rect;
+	return {x, y, 0, 0};
 }
 
 void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
