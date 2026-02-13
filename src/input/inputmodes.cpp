@@ -77,7 +77,15 @@ RouteMode::RouteMode(Game& g, Route& route) :
 void RouteMode::render(Rendering* r)
 {
     editingroute->render(r);
-    ui.addtooltip("Editing route");
+    Order* neworder = Tracks::Input::generateorderat(
+            tracksystem, input.mapmousepos());
+    if(neworder){
+        ui.addtooltip("Add order:");
+        ui.addtooltip(neworder->description);
+        delete neworder;
+    }
+    else
+        ui.addtooltip("Editing route");
 }
 
 void RouteMode::leftclickmap(Vec mappos)

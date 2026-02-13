@@ -39,7 +39,8 @@ void Gotostate::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 Gotostate::~Gotostate()
 {
-	tracks->references.removetrackorderreference(this);
+	if(tracks)
+		tracks->references.removetrackorderreference(this);
 }
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
@@ -69,7 +70,8 @@ void Setsignal::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 Setsignal::~Setsignal()
 {
-	tracks->references.removesignalorderreference(this);
+	if(tracks)
+		tracks->references.removesignalorderreference(this);
 }
 
 Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
@@ -107,7 +109,8 @@ void Setswitch::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
 
 Setswitch::~Setswitch()
 {
-	tracks->references.removeswitchorderreference(this);
+	if(tracks)
+		tracks->references.removeswitchorderreference(this);
 }
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
