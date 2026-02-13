@@ -8,7 +8,7 @@ using namespace UI;
 
 InterfaceManager::InterfaceManager(Game* newgame) : 
     game(newgame), uirendering(*this), movingwindowoffset{0,0}, 
-    tooltip(game->getinputmanager(), uirendering)
+    tooltip(uirendering)
 {
     new UI::MainPanel(this);
 }

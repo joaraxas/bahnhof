@@ -137,16 +137,6 @@ Vec InputManager::mapmousepos() const
     return game->getcamera().mapcoord(mousepos);
 }
 
-Vec InputManager::screenmousepos() const
-{
-    // use this function instead of SDL_GetMouseState to get mouse position in useful logical pixels
-    int currentmousex, currentmousey;
-    float logicalmousex, logicalmousey;
-	SDL_GetMouseState(&currentmousex, &currentmousey);
-    SDL_RenderWindowToLogical(renderer, currentmousex, currentmousey, &logicalmousex, &logicalmousey);
-    return Vec(int(logicalmousex), int(logicalmousey));
-}
-
 bool InputManager::iskeypressed(const int scancode) const
 {
 	const Uint8* keys = SDL_GetKeyboardState(nullptr);
@@ -166,4 +156,14 @@ void InputManager::resetinput()
 void InputManager::setinputmode(std::unique_ptr<InputMode> m)
 {
     mode = std::move(m);
+}
+
+Vec screenmousepos()
+{
+    // use this function instead of SDL_GetMouseState to get mouse position in useful logical pixels
+    int currentmousex, currentmousey;
+    float logicalmousex, logicalmousey;
+	SDL_GetMouseState(&currentmousex, &currentmousey);
+    SDL_RenderWindowToLogical(renderer, currentmousex, currentmousey, &logicalmousex, &logicalmousey);
+    return Vec(int(logicalmousex), int(logicalmousey));
 }

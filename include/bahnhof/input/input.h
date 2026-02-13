@@ -42,7 +42,6 @@ public:
     TextInputManager& gettextinputmanager() const;
     void handle(int ms, int mslogic);
     void render(Rendering*) const;
-    Vec screenmousepos() const;
     Vec mapmousepos() const;
     bool iskeypressed(const int scancode) const;
     bool isleftmousepressed() const;
@@ -54,3 +53,5 @@ private:
     std::unique_ptr<TextInputManager> textinput;
     std::unique_ptr<InputMode> mode;
 };
+
+Vec screenmousepos();

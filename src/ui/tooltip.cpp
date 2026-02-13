@@ -4,8 +4,8 @@
 
 using namespace UI;
 
-Tooltip::Tooltip(InputManager& i, UIRendering& u)
-    : input(i), uirendering(u) {}
+Tooltip::Tooltip(UIRendering& u)
+    : uirendering(u) {}
 
 void Tooltip::add(std::string tip)
 {
@@ -18,7 +18,7 @@ void Tooltip::render(Rendering* r)
 {
     if(tips.empty()) return;
     constexpr UIVec margin{3,2};
-    UIVec mousepos = uirendering.screentoui(input.screenmousepos());
+    UIVec mousepos = uirendering.screentoui(screenmousepos());
     UIRect uirect{mousepos.x+20, mousepos.y, 200, 180};
     auto rect = uirendering.gettextsize(tips, uirect, margin.x, margin.y);
     uirendering.renderrectangle(r, rect, UI::TooltipBackground, true);

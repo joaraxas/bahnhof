@@ -83,12 +83,11 @@ class InputManager;
 class Tooltip
 {
 public:
-    Tooltip(InputManager& i, UIRendering& u);
+    Tooltip(UIRendering& u);
     void render(Rendering*);
     void add(std::string tip);
 private:
     std::string tips;
-    InputManager& input;
     UIRendering& uirendering;
 };
 
