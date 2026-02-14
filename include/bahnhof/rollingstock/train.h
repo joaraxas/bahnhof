@@ -22,8 +22,6 @@ public:
     void update(int ms);
     void checkcollision(int ms, Train* train);
     void render(Rendering* r);
-    bool perform(int ms);
-    void proceed();
     bool cangas();
     void gas(int ms);
     bool brake(int ms);
@@ -33,22 +31,25 @@ public:
     State forwardstate();
     State backwardstate();
     bool split(int where, Route* assignedroute=nullptr);
-    void couple(Train& train, bool ismyback, bool ishisback);
     TrainInfo getinfo();
     void select();
     void deselect();
     bool isselected() {return selected;};
-    Tracks::Tracksystem* tracksystem;
+    bool hasnowagons() {return wagons.empty();}
     float speed;
     bool gasisforward = true;
-    std::vector<Wagon*> wagons;
     Route* route = nullptr;
     int orderid = 0;
     bool go = false;
     bool wantstocouple = false;
     std::string name = "no name";
 private:
+    bool perform(int ms);
+    void proceed();
     bool checkifreachedstate(State goalstate, int ms);
+    void couple(Train& train, bool ismyback, bool ishisback);
+    std::vector<Wagon*> wagons;
+    Tracks::Tracksystem* tracksystem;
     UI::Ownership panel;
     bool selected = false;
     Sprite light;

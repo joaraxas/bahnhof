@@ -28,7 +28,7 @@ void TrainManager::update(int ms)
 				trains[iTrain]->checkcollision(ms, trains[jTrain].get());
 
 	for(int iTrain=trains.size()-1; iTrain>=0; iTrain--)
-		if(trains[iTrain]->wagons.size() == 0)
+		if(trains[iTrain]->hasnowagons())
 			trains.erase(trains.begin()+iTrain);
 
 	for(int iTrain=0; iTrain<trains.size(); iTrain++)
