@@ -24,9 +24,6 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	light.setspritesheet(game->getsprites(), sprites::light);
 }
 
-Train::~Train()
-{}
-
 void Train::getinput(InputManager* input, int ms)
 {
 	if(selected){

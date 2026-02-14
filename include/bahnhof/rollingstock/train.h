@@ -17,7 +17,6 @@ class Train
 {
 public:
     Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons);
-    ~Train();
     void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
