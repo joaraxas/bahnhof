@@ -23,7 +23,7 @@ void Order::invalidate()
 
 Gotostate::Gotostate(State whichstate, bool mustpass)
 {
-	order = gotostate;
+	order = ordertype::gotostate;
 	state = whichstate;
 	pass = mustpass;
 	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
@@ -45,7 +45,7 @@ Gotostate::~Gotostate()
 
 Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
 {
-	order = o_setsignal;
+	order = ordertype::setsignal;
     signal = whichsignal;
     redgreenflip = redgreenorflip;
 	if(redgreenflip==0)
@@ -76,7 +76,7 @@ Setsignal::~Setsignal()
 
 Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
 {
-	order = o_setswitch;
+	order = ordertype::setswitch;
     _switch = whichswitch;
 	switchstate = whichswitchstate;
 	flip = false;
@@ -115,7 +115,7 @@ Setswitch::~Setswitch()
 
 Decouple::Decouple(int keephowmany, Route* givewhatroute)
 {
-	order = decouple;
+	order = ordertype::decouple;
 	where = keephowmany;
 	route = givewhatroute;
 	description = "Decouple";
@@ -127,19 +127,19 @@ Decouple::Decouple(int keephowmany, Route* givewhatroute)
 
 Turn::Turn()
 {
-	order = turn;
+	order = ordertype::turn;
 	description = "Switch travel direction";
 }
 
 Couple::Couple()
 {
-	order = o_couple;
+	order = ordertype::couple;
 	description = "Prepare for coupling";
 }
 
 Loadresource::Loadresource()
 {
-	order = loadresource;
+	order = ordertype::loadresource;
 	resource = none;
 	anyresource = true;
 	loading = true;
@@ -149,7 +149,7 @@ Loadresource::Loadresource()
 
 Wipe::Wipe()
 {
-	order = wipe;
+	order = ordertype::wipe;
 	description = "Wipe all previous orders";
 }
 

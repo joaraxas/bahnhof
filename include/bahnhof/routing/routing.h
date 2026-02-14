@@ -55,10 +55,11 @@ private:
     UI::Ownership routelistpanel;
 };
 
-enum ordertype
+enum class ordertype
 {
-    gotostate, o_setsignal, o_setswitch, o_couple, decouple, turn, loadresource, wipe
+    gotostate, setsignal, setswitch, couple, decouple, turn, loadresource, wipe
 };
+
 struct Order
 {
     virtual ~Order() {};//std::cout<<"del order"<<std::endl;};

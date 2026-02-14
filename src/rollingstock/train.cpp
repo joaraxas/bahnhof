@@ -85,7 +85,7 @@ bool Train::perform(int ms)
 	}
 	else{
 	switch(order->order){
-		case gotostate:{
+		case ordertype::gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
 			done = checkifreachedstate(specification->state, ms);
 			if(!done){
@@ -96,32 +96,32 @@ bool Train::perform(int ms)
 			break;}
 		//case 1:
 		//	done = checkifleftstate(state); break;
-		case o_setsignal:{
+		case ordertype::setsignal:{
 			Setsignal* specification = dynamic_cast<Setsignal*>(order);
 			setsignal(*tracksystem, specification->signal, specification->redgreenflip);
 			done = true;
 			break;}
-		case o_setswitch:{
+		case ordertype::setswitch:{
 			Setswitch* specification = dynamic_cast<Setswitch*>(order);
 			setswitch(*tracksystem, specification->_switch, specification->switchstate); 
 			done = true;
 			break;}
-		case o_couple:{
+		case ordertype::couple:{
 			wantstocouple = true;
 			done = true;
 			break;}
-		case decouple:{
+		case ordertype::decouple:{
 			Decouple* specification = dynamic_cast<Decouple*>(order);
 			done = split(specification->where, specification->route);
 			if(!done)
 				brake(ms);
 			break;}
-		case turn:{
+		case ordertype::turn:{
 			done = shiftdirection();
 			if(!done)
 				brake(ms);
 			break;}
-		case loadresource:{
+		case ordertype::loadresource:{
 			Loadresource* specification = dynamic_cast<Loadresource*>(order);
 			if(specification->anyresource){
 				bool doneloading = true; bool doneunloading = true;
@@ -134,7 +134,7 @@ bool Train::perform(int ms)
 					brake(ms);
 			}
 			break;}
-		case wipe:{
+		case ordertype::wipe:{
 			route->removeordersupto(orderid);
 			done = true;
 			break;}

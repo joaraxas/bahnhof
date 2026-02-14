@@ -131,7 +131,7 @@ std::vector<int> Route::getordernumberstorender()
 	std::vector<int> renderordernrs;
 	int renderordernr = 0;
 	for(int iOrder=0; iOrder<orderids.size(); iOrder++){
-		if(orders[iOrder]->order==gotostate)
+		if(orders[iOrder]->order==ordertype::gotostate)
 			renderordernr++;
 		if(renderordernr==0)
 			renderordernr = 1;
