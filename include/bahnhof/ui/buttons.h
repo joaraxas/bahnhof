@@ -17,6 +17,8 @@ public:
     virtual ~Button() {};
     void mousehover(UIVec pos, int ms);
     virtual void render(Rendering*);
+protected:
+    bool clickable = true;
 private:
     bool highlighted = false;
 };
@@ -128,6 +130,7 @@ class GasTrain : public TextButton
 public:
     GasTrain(Host* newpanel) : 
         TextButton(newpanel, "Gas") {};
+    void render(Rendering* r) override;
     void leftpressed(UIVec mousepos, int mslogic);
 };
 

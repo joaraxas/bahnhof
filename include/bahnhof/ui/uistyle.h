@@ -9,6 +9,7 @@ enum TextStyle{
     Highlighted,
     InvertedInfo,
     InvertedHighlighted,
+    Inaccessible,
     MapOverlay,
     PanelBackground,
     PanelBorder,

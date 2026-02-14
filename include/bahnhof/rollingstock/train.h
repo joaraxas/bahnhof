@@ -24,7 +24,8 @@ public:
     void render(Rendering* r);
     bool perform(int ms);
     void proceed();
-    bool gas(int ms);
+    bool cangas();
+    void gas(int ms);
     bool brake(int ms);
     bool shiftdirection();
     bool loadall();

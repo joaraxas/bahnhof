@@ -232,7 +232,15 @@ bool Train::checkifreachedstate(State goalstate, int ms)
 		return false;
 }
 
-bool Train::gas(int ms)
+bool Train::cangas()
+{
+	for(auto w : wagons)
+		if(w->getpower() > 0)
+			return true;
+	return false;
+}
+
+void Train::gas(int ms)
 {
 	float Ptot = 0;
 	for(auto w : wagons)
@@ -246,7 +254,6 @@ bool Train::gas(int ms)
 	// if(!gasisforward && !wagons.back()->hasdriver)
 	// 	speed = -fmin(50, -speed);
 	// */
-	return true;
 }
 
 bool Train::brake(int ms)

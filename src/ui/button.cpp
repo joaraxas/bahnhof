@@ -27,6 +27,8 @@ void Button::render(Rendering* r)
     TextStyle style = UI::Info;
     if(highlighted)
         style = UI::InvertedHighlighted;
+    if(!clickable)
+        style = UI::Inaccessible;
     ui->getuirendering().renderrectangle(r, getglobalrect(), style, true);
     highlighted = false;
 }
@@ -132,6 +134,16 @@ void GoTrain::update(int ms)
         text = "Stop train";
     else
         text = "Start route";
+}
+
+void GasTrain::render(Rendering* r)
+{
+    Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
+    if(train.cangas())
+        clickable = true;
+    else
+        clickable = false;
+    TextButton::render(r);
 }
 
 void GasTrain::leftpressed(UIVec mousepos, int mslogic)
