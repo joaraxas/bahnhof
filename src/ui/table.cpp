@@ -14,6 +14,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/wagontypes.h"
+#include "bahnhof/economy/company.h"
 
 namespace UI{
 
@@ -420,6 +421,18 @@ void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
     factory.orderwagon(*clickedwagon);
+}
+
+
+void CompanyInfoTable::update(int ms)
+{
+    lines.clear();
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        std::format("Market cap {0:.1f} Fr", company.getvalue())));
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        std::format("Share price {0:.2f} Fr", company.getshareprice())));
 }
 
 } //end namespace UI

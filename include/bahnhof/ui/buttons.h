@@ -91,6 +91,14 @@ public:
     void leftclick(UIVec mousepos);
 };
 
+class ManageCompany : public TextButton
+{
+public:
+    ManageCompany(Host* newpanel) : 
+        TextButton(newpanel, "Manage company") {};
+    void leftclick(UIVec mousepos);
+};
+
 class IncreaseUIScale : public TextButton
 {
 public:

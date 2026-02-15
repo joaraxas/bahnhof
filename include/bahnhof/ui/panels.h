@@ -14,6 +14,7 @@ class Train;
 class Building;
 class BuildingBuilder;
 class WagonFactory;
+class Company;
 
 namespace UI{
 
@@ -100,6 +101,14 @@ public:
     ~FactoryPanel();
 private:
     WagonFactory* factory;
+};
+
+class CompanyPanel : public Panel
+{
+public:
+    CompanyPanel(InterfaceManager* newui, Company& com);
+private:
+    Company& company;
 };
 
 }

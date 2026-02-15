@@ -13,6 +13,7 @@ class RouteManager;
 class BuildingType;
 class BuildingBuilder;
 class WagonFactory;
+class Company;
 
 namespace UI{
 
@@ -156,6 +157,16 @@ private:
     void lineclicked(int index);
     InputManager& input;
     WagonFactory& factory;
+};
+
+class CompanyInfoTable : public Table
+{
+public:
+    CompanyInfoTable(Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
+        Table(p, minsz, pos), company(c) {};
+    void update(int ms);
+private:
+    Company& company;
 };
 
 }

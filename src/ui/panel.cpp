@@ -11,6 +11,7 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/economy/company.h"
 
 namespace UI{
 	
@@ -70,6 +71,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
+			create<ManageCompany>(),
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),
@@ -229,5 +231,21 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 
 FactoryPanel::~FactoryPanel()
 {}
+
+CompanyPanel::CompanyPanel(InterfaceManager* newui, 
+						   Company& com) : 
+		Panel(newui),
+		company(com)
+{
+	setlayout(
+	create<VBox>(
+		create<EditableText>(company.getname()),
+		create<CompanyInfoTable>(company),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
 
 } // namespace UI

@@ -50,6 +50,8 @@ private:
     bool quit;
 };
 
+class Company;
+
 class Gamestate
 {
 public:
@@ -63,6 +65,7 @@ public:
     TrainManager& gettrainmanager() {if(!trainmanager) std::cout<<"no trainmanager"<<std::endl; return *trainmanager;};
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
+    Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return companies.front();};
     int time = 0;
     float money = 10;
     int revenue = 0;
@@ -73,6 +76,7 @@ private:
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
+    std::vector<Company> companies;
     //Map* map;
 };
 

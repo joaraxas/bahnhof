@@ -12,6 +12,7 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/geometry.h"
+#include "bahnhof/economy/company.h"
 
 
 Gamestate::Gamestate(Game* whatgame)
@@ -24,6 +25,7 @@ Gamestate::Gamestate(Game* whatgame)
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
+	companies.push_back(Company());
 }
 
 Gamestate::~Gamestate()

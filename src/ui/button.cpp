@@ -11,6 +11,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/economy/company.h"
 
 namespace UI{
 
@@ -90,6 +91,11 @@ void ManageRoutes::leftclick(UIVec mousepos)
 void ManageTrains::leftclick(UIVec mousepos)
 {
     game->getgamestate().gettrainmanager().createlistpanel();
+}
+
+void ManageCompany::leftclick(UIVec mousepos)
+{
+    game->getgamestate().getmycompany().createmainpanel(ui);
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)
