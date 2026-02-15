@@ -6,16 +6,16 @@ TimeManager::TimeManager(){
     logspeedfactor = 0;
 	ms = 0;
 	mslogic = ms*speed();
-	starttime = SDL_GetTicks();
-	lasttime = SDL_GetTicks();
+	starttime = SDL_GetTicks64();
+	lasttime = SDL_GetTicks64();
 }
 
 void TimeManager::tick(){
-    ms = SDL_GetTicks() - lasttime;
+    ms = SDL_GetTicks64() - lasttime;
     mslogic = speed()*ms;
-    lasttime = SDL_GetTicks();
+    lasttime = SDL_GetTicks64();
     float windowlen = 30.;
-    fps = fps*(windowlen-1)/windowlen + 1000./ms*1./windowlen;
+    fps = fps*(windowlen-1)/windowlen + 1000./std::max(ms,1)*1./windowlen;
 }
     
 int TimeManager::getms(){
