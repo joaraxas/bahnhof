@@ -79,18 +79,16 @@ void Track::disconnectfromnodes()
 
 Vec Track::getpos(float nodedist, float transverseoffset)
 {
-	Vec currentpos;
 	Vec previousoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(0), previousnode->getpos());
 	if(std::isinf(radius)){
 		Vec nextoffsetpos = globalcoords(Localvec(0,transverseoffset), getorientation(1), nextnode->getpos());
-		currentpos = previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
+		return previousoffsetpos + (nextoffsetpos-previousoffsetpos)*nodedist;
 	}
 	else{
 		Localvec localpos((radius-transverseoffset)*sin(nodedist*phi),
 						  (radius-transverseoffset)*(1-cos(nodedist*phi)));
-		currentpos = globalcoords(localpos, getorientation(0), previousoffsetpos);	
+		return globalcoords(localpos, getorientation(0), previousoffsetpos);
 	}
-	return currentpos;
 }
 
 State Track::getcloseststate(Vec pos)
@@ -285,9 +283,8 @@ void Track::render(Rendering* r, TracksDisplayMode mode)
 		for(int iSleeper = 0; iSleeper < nSleepers; iSleeper++){
 			float nodedist = float(iSleeper+0.5)/float(nSleepers);
 			Vec drawposl = getpos(nodedist, sleeperdrawwidth/2);
-			Vec drawposr = getpos(nodedist, -sleeperdrawwidth/2);{
-				r->renderline(drawposl, drawposr);
-			}
+			Vec drawposr = getpos(nodedist, -sleeperdrawwidth/2);
+			r->renderline(drawposl, drawposr);
 		}
 	}
 	//// rails ////
