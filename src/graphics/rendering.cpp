@@ -89,8 +89,8 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
 {
 	if(originiscenter){
-		centerx = int(rect->w)*0.5;
-		centery = int(rect->h)*0.5;
+		centerx = int(rect->w*0.5);
+		centery = int(rect->h*0.5);
 	}
 	Vec pos(rect->x+centerx, rect->y+centery);
 	if(zoomed){
@@ -101,12 +101,13 @@ void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrec
 	}
 	if(ported){
 		Vec screenpos = cam->screencoord(pos);
-		rect->x = screenpos.x-centerx; rect->y = screenpos.y-centery;
+		rect->x = screenpos.x-centerx;
+		rect->y = screenpos.y-centery;
 	}
 	if(originiscenter)
 		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), NULL, SDL_FLIP_NONE);
 	else{
-		SDL_Point center = {centerx, centery};
+		SDL_Point center{centerx, centery};
 		SDL_RenderCopyEx(renderer, tex, srcrect, rect, -angle.getdegrees(), &center, SDL_FLIP_NONE);
 	}
 }
@@ -117,8 +118,8 @@ void Rendering::renderline(Vec pos1, Vec pos2, bool ported)
 		pos1 = cam->screencoord(pos1);
 		pos2 = cam->screencoord(pos2);
 	}
-	//if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
-	//	(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
+	// if((pos1.x>0 && pos1.x<SCREEN_WIDTH && pos1.y>0 && pos1.y<SCREEN_HEIGHT) || 
+	// 	(pos2.x>0 && pos2.x<SCREEN_WIDTH && pos2.y>0 && pos2.y<SCREEN_HEIGHT))
 		SDL_RenderDrawLine(renderer, pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
