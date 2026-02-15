@@ -11,12 +11,15 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/ui/panels.h"
+#include "bahnhof/economy/company.h"
 
 
-Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) : 
+Building::Building(
+		Game* g, BuildingID id, std::unique_ptr<Shape> s, Company* c) : 
 	shape(std::move(s)),
 	game(g),
-	type(g->getgamestate().getbuildingmanager().gettypefromid(id))
+	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
+	company(c)
 {
 	color = type.color;
 	if(type.spritename){
@@ -63,11 +66,19 @@ bool Building::leftclick(Vec pos)
 	}
 }
 
+std::string Building::getownername()
+{
+	if(!company)
+		return "Private owner";
+	return company->getname();
+}
 
-Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s, 
-					std::set<resourcetype> need, 
-					std::set<resourcetype> production) :
-					Building(whatgame, id, std::move(s))
+
+Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
+			Company* c, 
+			std::set<resourcetype> need, 
+			std::set<resourcetype> production) :
+			Building(whatgame, id, std::move(s), c)
 {
 	storage = getstorageatpoint(shape->mid());
 	// if(!storage)
@@ -100,15 +111,16 @@ void Industry::trigger()
 					storage->loadstorage(product, got);
 			}
 			else{
-				game->getgamestate().money+=got;
+				// TODO: company should depend on who delivered the goods
+				game->getgamestate().getmycompany().getaccount().earn(got);
 			}
 		}
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
-		RollingStockManager& r) : 
-	Building(g, wagonfactory, std::move(s)), 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, Company* c, 
+		State st, RollingStockManager& r) : 
+	Building(g, wagonfactory, std::move(s), c), 
 	state(st),
 	rollingstock(r)
 {
@@ -149,18 +161,20 @@ const std::vector<WagonType*> WagonFactory::getavailabletypes()
 
 void WagonFactory::orderwagon(const WagonType& type)
 {
-	if(type.cost<=game->getgamestate().money){
+	if(!company) return;
+	if(company->getaccount().canafford(type.cost)){
 		if(productionqueue.empty())
 			timeleft = 3500;
 		productionqueue.push_back(&type);
-		game->getgamestate().money -= type.cost;
+		company->getaccount().pay(type.cost);
 	}
 }
 
 void WagonFactory::removefromqueue(int wagonid)
 {
 	if(wagonid>=0 && wagonid<productionqueue.size()){
-		game->getgamestate().money+=productionqueue[wagonid]->cost;
+		if(company)
+			company->getaccount().earn(productionqueue[wagonid]->cost);
 		productionqueue.erase(productionqueue.begin() + wagonid);
 		if(wagonid==0) timeleft = 3500;
 	}
@@ -171,16 +185,20 @@ const std::deque<const WagonType*>& WagonFactory::getqueue()
 	return productionqueue;
 }
 
-Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
+Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, Company* c) : 
+	Industry(game, brewery, std::move(s), c, {hops, barley}, {beer})
 {
 	name = "Augustator";
 }
 
-Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, hopsfield, std::move(s), {}, {hops})
+Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, Company* c) : 
+	Industry(game, hopsfield, std::move(s), c, {}, {hops})
 {}
 
-Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, barleyfield, std::move(s), {}, {barley})
+Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, Company* c) : 
+	Industry(game, barleyfield, std::move(s), c, {}, {barley})
 {}
 
-City::City(Game* game, std::unique_ptr<Shape> s) : Industry(game, city, std::move(s), {beer}, {})
+City::City(Game* game, std::unique_ptr<Shape> s, Company* c) : 
+	Industry(game, city, std::move(s), c, {beer}, {})
 {}

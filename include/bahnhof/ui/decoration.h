@@ -14,8 +14,10 @@ namespace UI{
 class Text : public Element
 {
 public:
-    Text(Host* p, std::string t, UIRect r);
+    Text(Host* p, std::string t, UIRect r={0, 0, 50, 20});
     void render(Rendering*);
+    bool resizable_x() const override {return true;};
+    UIRect place(UIRect r);
     std::string text;
     SDL_Color color = {0,0,0,255};
     bool centered = true;

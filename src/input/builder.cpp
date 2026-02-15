@@ -2,12 +2,14 @@
 #include "bahnhof/input/builder.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/camera.h"
+#include "bahnhof/economy/company.h"
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
     input(owner), 
     game(newgame), 
-    tracksystem(game->getgamestate().gettracksystems())
+    tracksystem(game->getgamestate().gettracksystems()),
+    account(game->getgamestate().getmycompany().getaccount())
 {}
 
 void Builder::render(Rendering* r)
@@ -36,7 +38,7 @@ void Builder::leftreleasedmap(Vec mappos)
         updateangle(mappos);
         if(canbuild()){
             build();
-            game->getgamestate().money-=cost;
+            account.pay(cost);
         }
         Builder::reset();
     }
@@ -51,7 +53,7 @@ void Builder::reset()
 
 bool Builder::canbuild()
 {
-    if(game->getgamestate().money<cost)
+    if(!account.canafford(cost))
         return false;
     if(!canfit())
         return false;

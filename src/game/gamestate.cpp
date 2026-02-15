@@ -18,14 +18,13 @@
 Gamestate::Gamestate(Game* whatgame)
 {
 	game = whatgame;
-	money = 600;
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());
 	rollingstockmanager = std::make_unique<RollingStockManager>(game);
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	companies.push_back(Company());
+	companies.push_back(Company("BLS AG"));
 }
 
 Gamestate::~Gamestate()
@@ -34,13 +33,13 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	int lastmoney = money;
+	int lastmoney = getmycompany().getaccount().getvalue();
 
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);
 	buildingmanager->update(ms);
 
-	revenue += money-lastmoney;
+	revenue += getmycompany().getaccount().getvalue()-lastmoney;
 
 	time += ms;
 }

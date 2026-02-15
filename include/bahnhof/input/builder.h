@@ -16,6 +16,7 @@ class InputManager;
 class InterfaceManager;
 class BuildingManager;
 class BuildingType;
+class Account;
 
 class Builder : public InputMode
 {
@@ -41,6 +42,7 @@ protected:
 private:
     void updateangle(Vec pos);
     InputManager& input;
+    Account& account;
 };
 
 class TrackBuilder : public Builder

@@ -240,7 +240,7 @@ void MainInfoTable::update(int ms)
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.money)) + " Fr"));
+    lines.emplace_back(new TableLine(panel, this, std::to_string(gamestate.getmycompany().getaccount().getvalue()) + " Fr"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     int income = int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60));
     lines.emplace_back(new TableLine(panel, this, std::to_string(income) + " Fr/h"));

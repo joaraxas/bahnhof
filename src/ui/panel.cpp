@@ -203,7 +203,8 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 			create<HBox>(
 				create<Close>(),
 				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
-			)
+			),
+			create<Text>(building->getownername())
 		)
 	);
 	applylayout();

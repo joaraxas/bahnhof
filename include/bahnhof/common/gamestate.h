@@ -67,7 +67,6 @@ public:
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return companies.front();};
     int time = 0;
-    float money = 10;
     int revenue = 0;
 private:
     Game* game;

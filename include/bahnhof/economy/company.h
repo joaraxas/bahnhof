@@ -29,7 +29,9 @@ private:
 class Company
 {
 public:
-    Company() : account(600), shareprice(account.getvalue()/shares) {};
+    Company(std::string n) : 
+        name(n), account(500), 
+        shareprice(account.getvalue()/shares) {};
     std::string& getname() {return name;}
     Account& getaccount() {return account;}
     float getvalue() {return shares*shareprice;}

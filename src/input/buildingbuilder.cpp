@@ -7,6 +7,7 @@
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/economy/company.h"
 
 BuildingBuilder::BuildingBuilder(InputManager& i, Game* g, const BuildingType& b) : 
     Builder(i, g), 
@@ -67,19 +68,20 @@ bool BuildingBuilder::canfit()
 void BuildingBuilder::build()
 {
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    Company* company = &game->getgamestate().getmycompany();
     switch(building.id)
     {
     case brewery:
-        buildingmanager.addbuilding(std::make_unique<Brewery>(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Brewery>(game, std::move(shape), company));
         break;
     case hopsfield:
-        buildingmanager.addbuilding(std::make_unique<Hopsfield>(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Hopsfield>(game, std::move(shape), company));
         break;
     case barleyfield:
-        buildingmanager.addbuilding(std::make_unique<Barleyfield>(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<Barleyfield>(game, std::move(shape), company));
         break;
     case city:
-        buildingmanager.addbuilding(std::make_unique<City>(game, std::move(shape)));
+        buildingmanager.addbuilding(std::make_unique<City>(game, std::move(shape), company));
         break;
     case wagonfactory:{
         RollingStockManager& r = game->getgamestate().getrollingstockmanager();
@@ -90,7 +92,7 @@ void BuildingBuilder::build()
         if(!Tracks::getorientation(tracksystem, midpointstate).isbetween(newangle-Angle(1), newangle+Angle(1)))
             midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack;
         midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 500));
-        buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), midpointstate, r));
+        buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), company, midpointstate, r));
         break;
     }
     default:
