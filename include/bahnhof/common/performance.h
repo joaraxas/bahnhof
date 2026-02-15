@@ -17,6 +17,8 @@ class Timer{
     std::string operationname;
     clock::time_point t;
     bool used{false};
+    microseconds total{0};
+    long long n=0;
 public:
     Timer(std::string s) : t{clock::now()}, operationname{s} {restart();}
     ~Timer() {
@@ -31,6 +33,13 @@ public:
     void measure() {
         auto time = since();
         std::cout<<operationname<<": "<<'\t'<<fmt(time)<<std::endl;
+        used = true;
+    }
+    void measureavg() {
+        auto time = since();
+        if(n>0)
+            total += time;
+        std::cout<<operationname<<": "<<'\t'<<fmt(total/++n)<<std::endl;
         used = true;
     }
 };
