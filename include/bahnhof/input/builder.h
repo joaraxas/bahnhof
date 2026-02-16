@@ -42,7 +42,7 @@ protected:
 private:
     void updateangle(Vec pos);
     InputManager& input;
-    Account& account;
+    Account& myaccount;
 };
 
 class TrackBuilder : public Builder

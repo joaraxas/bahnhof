@@ -9,7 +9,7 @@ Builder::Builder(InputManager& owner, Game* newgame) :
     input(owner), 
     game(newgame), 
     tracksystem(game->getgamestate().gettracksystems()),
-    account(game->getgamestate().getmycompany().getaccount())
+    myaccount(game->getgamestate().getmycompany().getaccount())
 {}
 
 void Builder::render(Rendering* r)
@@ -38,7 +38,7 @@ void Builder::leftreleasedmap(Vec mappos)
         updateangle(mappos);
         if(canbuild()){
             build();
-            account.pay(cost);
+            myaccount.pay(cost);
         }
         Builder::reset();
     }
@@ -53,7 +53,7 @@ void Builder::reset()
 
 bool Builder::canbuild()
 {
-    if(!account.canafford(cost))
+    if(!myaccount.canafford(cost))
         return false;
     if(!canfit())
         return false;

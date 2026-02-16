@@ -5,6 +5,7 @@
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/rollingstock/wagontypes.h"
+#include "bahnhof/economy/company.h"
 
 class Storage;
 class Game;
@@ -25,6 +26,7 @@ public:
     bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
     std::string getownername();
+    Account& getaccount() {return account;};
     std::string name;
     const BuildingType& type;
 protected:
@@ -37,6 +39,8 @@ protected:
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;
+private:
+    Account account{0};
 };
 
 class Industry : public Building
