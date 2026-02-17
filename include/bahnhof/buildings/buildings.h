@@ -5,7 +5,7 @@
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/rollingstock/wagontypes.h"
-#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/account.h"
 
 class Storage;
 class Game;
