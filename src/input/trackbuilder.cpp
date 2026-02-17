@@ -41,13 +41,13 @@ void TrackBuilder::render(Rendering* r)
 {
     Builder::render(r);
     Tracks::Tracksection section = planconstruction(anchorpoint);
-    cost = ceil(Tracks::Input::getcostoftracks(section));
+    cost = Tracks::Input::getcostoftracks(section);
     TracksDisplayMode mode = TracksDisplayMode::planned;
     if(!canbuild())
         mode = TracksDisplayMode::impossible;
     Tracks::render(section, r, mode);
     if(islayingtrack()){
-        ui.addtooltip(std::to_string(int(cost))+" Fr");
+        ui.addtooltip(std::string(cost));
         if(!nicetracks){
             ui.addtooltip(std::format("minradius: {:.0f} px",
                 Tracks::Input::getminradiusofsection(section)));

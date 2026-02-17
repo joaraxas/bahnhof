@@ -4,6 +4,7 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/economy/money.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -32,7 +33,7 @@ protected:
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
-    float cost;
+    Money cost;
     Vec anchorpoint{0,0};
     bool droppedanchor = false;
     Angle angle;

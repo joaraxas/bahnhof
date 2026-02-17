@@ -71,7 +71,7 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(
     Table* t, 
     sprites::name iconname, 
     std::string name, 
-    float cost
+    Money cost
     ) : TableLine(p, t, name), price(cost)
 {
     SpriteManager& sprites = game->getsprites();
@@ -91,7 +91,7 @@ void PurchaseOptionTableLine::render(
     const UIVec uiiconsize = icon.getuisize(uiren);
     const Coord rowoffset = ymargin;
     const Coord textpadding = 3;
-    const Coord pricerowwidth = 50;
+    const Coord pricerowwidth = 70;
     const Coord iconwidth = uiiconsize.x + 2*textpadding;
     const Coord namerowwidth = getlocalrect().w - iconwidth - pricerowwidth;
 
@@ -108,7 +108,7 @@ void PurchaseOptionTableLine::render(
     pricerect.y = namerect.y;
     pricerect = uiren.rendertext(
         r, 
-        std::to_string(price)+" Fr", 
+        std::string(price), 
         pricerect, 
         style, 
         false, 

@@ -2,6 +2,7 @@
 #include "bahnhof/ui/element.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/ui/uistyle.h"
+#include "bahnhof/economy/money.h"
 
 class Game;
 class Gamestate;
@@ -39,11 +40,11 @@ private:
 class PurchaseOptionTableLine : public TableLine
 {
 public:
-    PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, float cost);
+    PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, Money cost);
     void render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin);
 private:
     Icon icon;
-    int price;
+    Money price;
 };
 
 
