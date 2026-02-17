@@ -429,10 +429,10 @@ void CompanyInfoTable::update(int ms)
     lines.clear();
     lines.emplace_back(
         new TableLine(panel, this, 
-        std::format("Market cap {0:.1f} Fr", company.getvalue())));
+        "Market cap " + std::string(company.getvalue())));
     lines.emplace_back(
         new TableLine(panel, this, 
-        std::format("Share price {0:.2f} Fr", company.getshareprice())));
+        "Share price " + std::string(company.getshareprice())));
 }
 
 } //end namespace UI

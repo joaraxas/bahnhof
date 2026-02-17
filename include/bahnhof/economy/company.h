@@ -16,8 +16,8 @@ public:
         shareprice(account.getvalue()/shares) {};
     std::string& getname() {return name;}
     Account& getaccount() {return account;}
-    float getvalue() {return shares*shareprice;}
-    float getshareprice() {return shareprice;}
+    Money getvalue() {return shares*shareprice;}
+    Money getshareprice() {return shareprice;}
     void createmainpanel(InterfaceManager* ui) {
         if(!mainpanel.exists())
     	    mainpanel.set(new UI::CompanyPanel(ui, *this));
@@ -27,6 +27,6 @@ private:
     std::string name;
     Account account;
     int shares{100};
-    float shareprice;
+    Money shareprice;
     UI::Ownership mainpanel;
 };
