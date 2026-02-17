@@ -33,7 +33,7 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	int lastmoney = getmycompany().getaccount().getvalue();
+	Money lastmoney = getmycompany().getaccount().getvalue();
 
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);

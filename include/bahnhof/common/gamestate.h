@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
+#include "bahnhof/economy/account.h"
 
 class Route;
 class Wagon;
@@ -67,7 +68,7 @@ public:
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return companies.front();};
     int time = 0;
-    int revenue = 0;
+    Money revenue;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
