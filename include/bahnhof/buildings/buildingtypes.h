@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/common/math.h"
 #include "bahnhof/graphics/spritenames.h"
+#include "bahnhof/economy/money.h"
 
 enum BuildingID
 {
@@ -19,5 +20,5 @@ struct BuildingType
     SDL_Color color;
     sprites::name spritename;
     sprites::name iconname;
-    float cost;
+    Money cost;
 };

@@ -1,10 +1,8 @@
 #pragma once
-#include<SDL.h>
-#include<SDL_image.h>
-#include<SDL_ttf.h>
 #include "bahnhof/common/math.h"
 #include "bahnhof/graphics/spritenames.h"
 #include "bahnhof/resources/resources.h"
+#include "bahnhof/economy/money.h"
 
 enum class WagonID
 {
@@ -27,7 +25,7 @@ struct WagonType
     std::string name;
     sprites::name iconname;
     sprites::name spritename;
-    float cost = 0;
+    Money cost;
     enginetype engine;
     std::unordered_set<resourcetype> storableresources;
     int storagecapacity;
