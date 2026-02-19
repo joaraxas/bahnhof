@@ -77,15 +77,4 @@ private:
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
     std::vector<Company> companies;
-    //Map* map;
-};
-
-class Background
-{
-
-};
-
-class Map
-{
-    Background* background;
 };
