@@ -3,36 +3,11 @@
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/ui/panels.h"
 #include "account.h"
+#include "stake.h"
 
 class Game;
 class Rendering;
 class InterfaceManager;
-
-class Stake
-{
-public:
-    Stake(int howmany) : amount(howmany) {};
-    bool buyfrom(Stake& from, int howmany) {
-        if(from.company!=company) return false;
-        if(from.amount>=howmany){
-            from.amount -= howmany;
-            amount += howmany;
-            return true;
-        }
-        return false;
-    }
-    int getamount() {return amount;}
-    bool setcompany(Company& c) {
-        if(!company){
-            company = &c;
-            return true;
-        }
-        return false;
-    }
-private:
-    int amount;
-    Company* company;
-};
 
 class Company
 {

@@ -2,7 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/economy/account.h"
-#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/stake.h"
 
 class Route;
 class Wagon;
