@@ -26,7 +26,8 @@ Gamestate::Gamestate(Game* whatgame)
 	trainmanager->inittrain(State(1,0.8,1));
 	mystakes.push_back(Stake(100));
 	companies.push_back(Company("BLS AG"));
-	companies.front().emission(mystakes.front());
+	if(!companies.front().emission(mystakes.front()))
+		throw "couldn't emit shares";
 }
 
 Gamestate::~Gamestate()

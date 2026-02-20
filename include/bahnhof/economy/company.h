@@ -25,23 +25,26 @@ public:
         if(!mainpanel.exists())
     	    mainpanel.set(new UI::CompanyPanel(ui, *this));
     }
-    void addstake(Stake& stake) {
-        stakes.push_back(&stake);
-        stake.setcompany(*this);
+    bool addstake(Stake& stake) {
+        if(!stake.setcompany(*this)) return false;
+        stakes.insert(&stake);
+        return true;
     }
-    void emission(Stake& stake) {
-        addstake(stake);
+    bool emission(Stake& stake) {
+        if(!addstake(stake))
+            return false;
         Money investment = stake.getamount() * getshareprice();
         shares += stake.getamount();
         valuation += investment;
         account.earn(investment);
+        return true;
     }
 private:
     std::vector<Company> daughters;
     std::string name;
     Account account{0};
     uint16_t shares{0};
-    std::vector<Stake*> stakes;
+    std::set<Stake*> stakes;
     Money valuation{0};
     UI::Ownership mainpanel;
 };

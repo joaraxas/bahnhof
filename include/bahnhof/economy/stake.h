@@ -27,6 +27,6 @@ public:
         return false;
     }
 private:
-    int amount;
-    Company* company;
+    uint16_t amount;
+    Company* company = nullptr;
 };
