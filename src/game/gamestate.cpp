@@ -24,7 +24,9 @@ Gamestate::Gamestate(Game* whatgame)
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
+	mystakes.push_back(Stake(100));
 	companies.push_back(Company("BLS AG"));
+	companies.front().emission(mystakes.front());
 }
 
 Gamestate::~Gamestate()

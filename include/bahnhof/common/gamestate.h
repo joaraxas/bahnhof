@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/economy/account.h"
+#include "bahnhof/economy/company.h"
 
 class Route;
 class Wagon;
@@ -69,6 +70,7 @@ public:
     Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return companies.front();};
     int time = 0;
     Money revenue;
+    std::vector<Stake> mystakes;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
