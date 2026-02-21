@@ -62,6 +62,7 @@ add_executable(bahnhof
     src/rollingstock/rollingstockmanager.cpp
     src/buildings/buildings.cpp
     src/buildings/buildingmanager.cpp
+    src/economy/economy.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)

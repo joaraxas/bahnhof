@@ -4,6 +4,7 @@
 #include "bahnhof/ui/panels.h"
 #include "account.h"
 #include "stake.h"
+#include "owner.h"
 
 class Game;
 class Rendering;
@@ -15,7 +16,7 @@ public:
     Company(std::string n) : 
         name(n) {};
     const std::string& getname() const {return name;}
-    Account& getaccount() {return account;}
+    Account& getaccount() {return owner.getaccount();}
     Money getvalue() const {return valuation;}
     Money getshareprice() const {
         if(shares == 0) return 5;
@@ -25,32 +26,13 @@ public:
         if(!mainpanel.exists())
     	    mainpanel.set(new UI::CompanyPanel(ui, *this, name));
     }
-    bool emission(Stake& stake, Money investment, Account& buyer) {
-        uint16_t emittedshares = std::lround(
-            std::floor(investment/getshareprice()));
-        if(emittedshares==0)
-            return false;
-        Money purchaseamount = emittedshares * getshareprice();
-        if(!buyer.canafford(purchaseamount))
-            return false;
-        if(!addstake(stake))
-            return false;
-        if(!buyer.pay(purchaseamount, &account))
-            return false;
-        stake.addamount(emittedshares);
-        valuation += emittedshares * getshareprice();
-        shares += emittedshares;
-        return true;
-    }
+    bool emission(Money investment, Owner& buyer);
+    bool addstake(Stake& stake);
+    bool removestake(Stake& stake);
 private:
-    bool addstake(Stake& stake) {
-        if(!stake.setcompany(*this)) return false;
-        stakesincompany.insert(&stake);
-        return true;
-    }
     std::vector<Company> daughters;
     std::string name;
-    Account account{0};
+    Owner owner;
     uint16_t shares{0};
     std::set<Stake*> stakesincompany;
     Money valuation{0};

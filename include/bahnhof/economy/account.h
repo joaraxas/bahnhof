@@ -11,7 +11,7 @@ private:
 class Account
 {
 public:
-    Account(Money cash) : money(cash) {};
+    Account(Money cash) : money(cash) {}
     Money getvalue() const {return money;}
     bool canafford(Money amount) const {return money>=amount;}
     bool pay(Money amount, Account* receiver=nullptr){

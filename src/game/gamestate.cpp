@@ -16,7 +16,7 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	personalaccount(500)
+	me(500)
 {
 	game = whatgame;
 	inittracks();
@@ -25,9 +25,8 @@ Gamestate::Gamestate(Game* whatgame) :
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	mystakes.push_back(Stake{});
 	companies.push_back(Company{"BLS AG"});
-	if(!companies.front().emission(mystakes.front(), 500, personalaccount))
+	if(!companies.front().emission(400, me))
 		throw "couldn't emit shares";
 }
 
