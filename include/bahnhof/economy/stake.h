@@ -8,7 +8,7 @@ class Company;
 class Stake
 {
 public:
-    Stake(int howmany) : amount(howmany) {};
+    Stake() : amount(0) {};
     bool buyfrom(Stake& from, int howmany) {
         if(from.company!=company) return false;
         if(from.amount>=howmany){
@@ -18,7 +18,8 @@ public:
         }
         return false;
     }
-    int getamount() {return amount;}
+    uint16_t getamount() const {return amount;}
+    uint16_t addamount(uint16_t howmany) {return amount+=howmany;}
     bool setcompany(Company& c) {
         if(!company){
             company = &c;

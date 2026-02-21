@@ -71,6 +71,7 @@ public:
     int time = 0;
     Money revenue;
     std::vector<Stake> mystakes;
+    Account personalaccount;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;

@@ -106,7 +106,7 @@ private:
 class CompanyPanel : public Panel
 {
 public:
-    CompanyPanel(InterfaceManager* newui, Company& com);
+    CompanyPanel(InterfaceManager* newui, Company& com, std::string& companyname);
 private:
     Company& company;
 };
