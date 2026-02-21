@@ -17,5 +17,5 @@ public:
 private:
     Stake* getstakeforcompany(Company& company);
     Account account;
-    std::map<Company*, Stake> stakes;
+    std::map<Company*, Stake*> stakes;
 };

@@ -4,20 +4,6 @@
 #include "bahnhof/economy/owner.h"
 #include "bahnhof/economy/money.h"
 
-Stake::~Stake() {
-    if(company){
-        company->removestake(*this);
-    }
-}
-
-bool Stake::setcompany(Company& c) {
-    if(!company){
-        company = &c;
-        c.addstake(*this);
-        return true;
-    }
-    return false;
-}
 
 bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
     if(amount<=0)
@@ -34,17 +20,15 @@ bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
 bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
     if(fromstake.getamount()<amount)
         return false;
-    Company* company = fromstake.getcompany();
-    if(!company)
-        return false;
-    Money purchaseamount = amount * fromstake.getcompany()->getshareprice();
+    Company& company = fromstake.getcompany();
+    Money purchaseamount = amount * fromstake.getcompany().getshareprice();
     if(!account.canafford(purchaseamount))
         return false;
     account.pay(purchaseamount, &intoaccount);
-    Stake* mystake = getstakeforcompany(*company);
+    Stake* mystake = getstakeforcompany(company);
     if(!mystake){
-        stakes.emplace(company, Stake(*company));
-        mystake = &stakes[company];
+        stakes.emplace(&company, company.registernewstake(*this));
+        mystake = stakes.at(&company);
     }
     mystake->buyfrom(fromstake, amount);
     return true;
@@ -52,7 +36,7 @@ bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
 
 Stake* Owner::getstakeforcompany(Company& company) {
     if(stakes.contains(&company))
-        return &stakes.at(&company);
+        return stakes.at(&company);
     return nullptr;
 }
 
@@ -64,23 +48,12 @@ bool Company::emission(Money investment, Owner& buyer) {
     Stake newshares(*this, emittedshares);
     if(!buyer.buy(newshares, getaccount(), emittedshares))
         return false;
+    valuation += getshareprice() * emittedshares;
+    shares += emittedshares;
     return true;
 }
 
-bool Company::addstake(Stake& stake) {
-    if(stake.getcompany() != this)
-        return false;
-    stakesincompany.insert(&stake);
-    valuation += stake.getamount() * getshareprice();
-    shares += stake.getamount();
-    return true;
-}
-
-bool Company::removestake(Stake& stake) {
-    if(stake.getcompany() != this)
-        return false;
-    stakesincompany.erase(&stake);
-    valuation -= stake.getamount() * getshareprice();
-    shares -= stake.getamount();
-    return true;
+Stake* Company::registernewstake(Owner& who) {
+    auto result = stakesincompany.emplace(&who, Stake(*this));
+    return &result.first->second;
 }

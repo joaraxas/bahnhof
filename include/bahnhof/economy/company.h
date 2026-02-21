@@ -27,14 +27,12 @@ public:
     	    mainpanel.set(new UI::CompanyPanel(ui, *this, name));
     }
     bool emission(Money investment, Owner& buyer);
-    bool addstake(Stake& stake);
-    bool removestake(Stake& stake);
+    Stake* registernewstake(Owner& who);
 private:
-    std::vector<Company> daughters;
     std::string name;
     Owner owner;
     uint16_t shares{0};
-    std::set<Stake*> stakesincompany;
+    std::map<Owner*,Stake> stakesincompany;
     Money valuation{0};
     UI::Ownership mainpanel;
 };

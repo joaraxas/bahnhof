@@ -8,11 +8,8 @@ class Company;
 class Stake
 {
 public:
-    Stake() : amount(0) {}
-    Stake(Company& c) : amount(0) {setcompany(c);}
-    Stake(Company& c, uint16_t a) : amount(a) {setcompany(c);}
-    ~Stake();
-    bool operator<(const Stake& other) {return company<other.company;}
+    Stake(Company& c) : amount(0), company(&c) {}
+    Stake(Company& c, uint16_t a) : amount(a), company(&c) {}
     bool buyfrom(Stake& from, int howmany) {
         if(from.company!=company) return false;
         if(from.amount>=howmany){
@@ -23,10 +20,9 @@ public:
         return false;
     }
     uint16_t getamount() const {return amount;}
-    uint16_t addamount(uint16_t howmany) {return amount+=howmany;}
-    bool setcompany(Company& c);
-    Company* getcompany() const {return company;}
+    Company& getcompany() const {return *company;}
 private:
+    uint16_t addamount(uint16_t howmany) {return amount+=howmany;}
     uint16_t amount;
-    Company* company = nullptr;
+    Company* company;
 };
