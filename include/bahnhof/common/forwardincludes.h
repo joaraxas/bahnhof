@@ -11,6 +11,7 @@
 #include<vector>
 #include<map>
 #include<unordered_set>
+#include<deque>
 
 #include<SDL.h>
 #include<SDL_image.h>

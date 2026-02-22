@@ -78,5 +78,6 @@ target_link_libraries(bahnhof ${SDL2_LIBRARY}
                              ${SDL2_TTF_LIBRARIES})
 
 set_target_properties(bahnhof PROPERTIES CXX_STANDARD 20)
+set_target_properties(bahnhof PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_options(bahnhof PRIVATE -w)
