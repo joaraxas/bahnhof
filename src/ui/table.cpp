@@ -437,6 +437,32 @@ void CompanyInfoTable::update(int ms)
 }
 
 
+OwnersTable::OwnersTable(
+    Host* p, Company& c, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), company(c) 
+{}
+
+void OwnersTable::update(int ms)
+{
+    lines.clear();
+    for(auto [owner, stake] : company.getowners()){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            owner->getname() + ": " + std::to_string(stake.getamount())
+            + " shares"));
+    }
+}
+
+void OwnersTable::lineclicked(int index)
+{
+    // const Company& clickedcompany = owner.
+    // // buildingtypes.at(index);
+    // auto& input = game->getinputmanager();
+    // input.setinputmode(
+    //     std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
+}
+
+
 InvestmentsTable::InvestmentsTable(
     Host* p, Owner& o, UIVec pos, UIVec minsz): 
         ClickableTable(p, minsz, pos), owner(o) 

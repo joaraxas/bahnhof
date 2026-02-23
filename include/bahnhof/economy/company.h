@@ -26,7 +26,8 @@ public:
     Stake* const getstakeforowner(Owner& who);
     Stake& registernewstake(Owner& who);
     bool removeemptystake(Owner& who);
-    Owner& getinvestments() {return owner;}
+    Owner& getcompanysinvestments() {return owner;} // might remove
+    const std::map<Owner*,Stake>& getowners() {return stakesincompany;}
 private:
     std::string& getnameforedit() {return owner.getnameforedit();}
     Owner owner;

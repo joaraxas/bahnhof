@@ -29,7 +29,7 @@ Gamestate::Gamestate(Game* whatgame) :
 	if(!companies.back().emission(200, me))
 		throw "couldn't emit shares";
 	companies.push_back(Company{"SBB AG"});
-	if(!companies.back().emission(200, companies.front().getinvestments()))
+	if(!companies.back().emission(200, companies.front().getcompanysinvestments()))
 		throw "couldn't emit shares";
 }
 

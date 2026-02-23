@@ -171,6 +171,17 @@ private:
     Company& company;
 };
 
+class OwnersTable : public ClickableTable
+{
+public:
+    OwnersTable(
+        Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    Company& company;
+};
+
 class InvestmentsTable : public ClickableTable
 {
 public:

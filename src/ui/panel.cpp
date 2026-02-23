@@ -245,7 +245,14 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 		create<EditableText>(companyname),
 		create<HBox>(
 			create<CompanyInfoTable>(company),
-			create<InvestmentsTable>(investments)
+			create<VBox>(
+				create<Text>("Major owners"),
+				create<OwnersTable>(company)
+			),
+			create<VBox>(
+				create<Text>("Company interests"),
+				create<InvestmentsTable>(investments)
+			)
 		),
 		create<Close>()
 	)
