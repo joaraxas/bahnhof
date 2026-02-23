@@ -190,6 +190,7 @@ public:
     void update(int ms);
 private:
     void lineclicked(int index);
+    std::vector<Company*> companies;
     Owner& owner;
 };
 

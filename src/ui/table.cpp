@@ -470,6 +470,7 @@ InvestmentsTable::InvestmentsTable(
 
 void InvestmentsTable::update(int ms)
 {
+    companies.clear();
     lines.clear();
     for(auto company : owner.getcompanies()){
         const Stake* const stake = company->getstakeforowner(owner);
@@ -478,16 +479,14 @@ void InvestmentsTable::update(int ms)
             new TableLine(panel, this, 
             company->getname() + ": " + std::to_string(stake->getamount())
             + " shares"));
+        companies.push_back(company);
     }
 }
 
 void InvestmentsTable::lineclicked(int index)
 {
-    // const Company& clickedcompany = owner.
-    // // buildingtypes.at(index);
-    // auto& input = game->getinputmanager();
-    // input.setinputmode(
-    //     std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
+    Company* clickedcompany = companies[index];
+    clickedcompany->createmainpanel(ui);
 }
 
 } //end namespace UI
