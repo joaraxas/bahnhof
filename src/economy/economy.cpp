@@ -3,6 +3,7 @@
 #include "bahnhof/economy/stake.h"
 #include "bahnhof/economy/owner.h"
 #include "bahnhof/economy/money.h"
+#include "bahnhof/ui/panels.h"
 
 
 bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
@@ -41,6 +42,12 @@ Stake* Owner::getstakeforcompany(Company& company) {
     if(stakes.contains(&company))
         return stakes.at(&company);
     return nullptr;
+}
+
+
+void Company::createmainpanel(InterfaceManager* ui) {
+    if(!mainpanel.exists())
+        mainpanel.set(new UI::CompanyPanel(ui, *this, getname()));
 }
 
 bool Company::emission(Money investment, Owner& buyer) {

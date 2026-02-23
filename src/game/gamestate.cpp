@@ -16,7 +16,7 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	me(500)
+	me("Sir Charles Darwin", 500)
 {
 	game = whatgame;
 	inittracks();

@@ -1,7 +1,5 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
-#include "bahnhof/ui/ownership.h"
-#include "bahnhof/ui/panels.h"
 
 class Company;
 
