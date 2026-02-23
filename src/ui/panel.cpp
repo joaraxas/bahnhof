@@ -261,4 +261,24 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
+
+InvestorPanel::InvestorPanel(InterfaceManager* newui, Owner& inv) :
+	Panel(newui), investor(inv)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>(investor.getname()),
+		create<HBox>(
+			create<VBox>(
+				create<Text>("Interests"),
+				create<InvestmentsTable>(investor)
+			)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
 } // namespace UI

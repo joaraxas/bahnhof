@@ -35,6 +35,12 @@ void Ownership::resetreference()
 	host = nullptr;
 }
 
+void Ownership::movetofront()
+{
+	if(host)
+		host->getui().movepaneltofront(host);
+}
+
 
 Host::Host(InterfaceManager* newui)
 {

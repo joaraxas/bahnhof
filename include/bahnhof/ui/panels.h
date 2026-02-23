@@ -115,4 +115,12 @@ private:
     Company& company;
 };
 
+class InvestorPanel : public Panel
+{
+public:
+    InvestorPanel(InterfaceManager* newui, Owner& inv);
+private:
+    Owner& investor;
+};
+
 }

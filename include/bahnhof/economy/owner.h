@@ -6,6 +6,7 @@
 #include "stake.h"
 
 class Company;
+class InterfaceManager;
 
 class Owner
 {
@@ -15,6 +16,7 @@ public:
         name(n), account(startamount) {}
     bool buy(Owner& from, Company& company, uint16_t amount);
     bool buy(Stake& fromstake, Account& intoaccount, uint16_t amount);
+    void createpanel(InterfaceManager* ui);
     Account& getaccount() {return account;}
     std::string& getnameforedit() {return name;}
     const std::string& getname() const {return name;}
@@ -23,4 +25,5 @@ private:
     Account account;
     std::string name;
     std::set<Company*> companies;
+    UI::Ownership panel;
 };

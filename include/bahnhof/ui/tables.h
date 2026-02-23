@@ -179,6 +179,7 @@ public:
     void update(int ms);
 private:
     void lineclicked(int index);
+    std::vector<Owner*> investors;
     Company& company;
 };
 
@@ -186,12 +187,12 @@ class InvestmentsTable : public ClickableTable
 {
 public:
     InvestmentsTable(
-        Host* p, Owner& o, UIVec pos={0,0}, UIVec minsz={180,80});
+        Host* p, Owner& inv, UIVec pos={0,0}, UIVec minsz={180,80});
     void update(int ms);
 private:
     void lineclicked(int index);
     std::vector<Company*> companies;
-    Owner& owner;
+    Owner& investor;
 };
 
 }

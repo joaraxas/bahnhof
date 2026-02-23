@@ -445,36 +445,35 @@ OwnersTable::OwnersTable(
 void OwnersTable::update(int ms)
 {
     lines.clear();
+    investors.clear();
     for(auto [owner, stake] : company.getowners()){
         lines.emplace_back(
             new TableLine(panel, this, 
             owner->getname() + ": " + std::to_string(stake.getamount())
             + " shares"));
+        investors.push_back(owner);
     }
 }
 
 void OwnersTable::lineclicked(int index)
 {
-    // const Company& clickedcompany = owner.
-    // // buildingtypes.at(index);
-    // auto& input = game->getinputmanager();
-    // input.setinputmode(
-    //     std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
+    Owner* clickedinvestor = investors[index];
+    clickedinvestor->createpanel(ui);
 }
 
 
 InvestmentsTable::InvestmentsTable(
-    Host* p, Owner& o, UIVec pos, UIVec minsz): 
-        ClickableTable(p, minsz, pos), owner(o) 
+    Host* p, Owner& inv, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), investor(inv) 
 {}
 
 void InvestmentsTable::update(int ms)
 {
     companies.clear();
     lines.clear();
-    for(auto company : owner.getcompanies()){
-        const Stake* const stake = company->getstakeforowner(owner);
-        if(!stake) break;
+    for(auto company : investor.getcompanies()){
+        const Stake* const stake = company->getstakeforowner(investor);
+        if(!stake) continue;
         lines.emplace_back(
             new TableLine(panel, this, 
             company->getname() + ": " + std::to_string(stake->getamount())

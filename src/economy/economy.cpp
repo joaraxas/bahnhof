@@ -38,6 +38,15 @@ bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
     return true;
 }
 
+void Owner::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::InvestorPanel(ui, *this)
+        );
+    else
+        panel.movetofront();
+}
+
 
 void Company::createmainpanel(InterfaceManager* ui) {
     if(!mainpanel.exists())
@@ -45,6 +54,8 @@ void Company::createmainpanel(InterfaceManager* ui) {
             new UI::CompanyPanel(ui, *this, getnameforedit(),
                 owner)
         );
+    else
+        mainpanel.movetofront();
 }
 
 bool Company::emission(Money investment, Owner& buyer) {
