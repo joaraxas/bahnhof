@@ -13,8 +13,11 @@ bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
         return false;
     if(!buy(*hisstake, from.account, amount))
         return false;
-    if(hisstake->getamount() == 0)
+    if(hisstake->getamount() == 0){
+        company.removeemptystake(*this);
         from.stakes.erase(&company);
+    }
+    return true;
 }
 
 bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
@@ -56,4 +59,13 @@ bool Company::emission(Money investment, Owner& buyer) {
 Stake* Company::registernewstake(Owner& who) {
     auto result = stakesincompany.emplace(&who, Stake(*this));
     return &result.first->second;
+}
+
+bool Company::removeemptystake(Owner& who) {
+    if(!stakesincompany.contains(&who))
+        return true;
+    if(stakesincompany.at(&who).getamount()!=0)
+        return false;
+    stakesincompany.erase(&who);
+    return true;
 }

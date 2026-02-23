@@ -28,6 +28,7 @@ public:
     }
     bool emission(Money investment, Owner& buyer);
     Stake* registernewstake(Owner& who);
+    bool removeemptystake(Owner& who);
 private:
     std::string name;
     Owner owner;
