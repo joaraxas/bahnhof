@@ -26,7 +26,10 @@ Gamestate::Gamestate(Game* whatgame) :
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
 	companies.push_back(Company{"BLS AG"});
-	if(!companies.front().emission(400, me))
+	if(!companies.back().emission(200, me))
+		throw "couldn't emit shares";
+	companies.push_back(Company{"SBB AG"});
+	if(!companies.back().emission(200, companies.front().getinvestments()))
 		throw "couldn't emit shares";
 }
 

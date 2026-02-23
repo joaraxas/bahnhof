@@ -9,14 +9,14 @@
 bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
     if(amount<=0)
         return false;
-    Stake* hisstake{from.getstakeforcompany(company)};
+    Stake* const hisstake{company.getstakeforowner(from)};
     if(!hisstake)
         return false;
     if(!buy(*hisstake, from.account, amount))
         return false;
     if(hisstake->getamount() == 0){
         company.removeemptystake(*this);
-        from.stakes.erase(&company);
+        from.companies.erase(&company);
     }
     return true;
 }
@@ -29,25 +29,22 @@ bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
     if(!account.canafford(purchaseamount))
         return false;
     account.pay(purchaseamount, &intoaccount);
-    Stake* mystake = getstakeforcompany(company);
+    Stake* mystake = company.getstakeforowner(*this);
     if(!mystake){
-        stakes.emplace(&company, company.registernewstake(*this));
-        mystake = stakes.at(&company);
+        companies.emplace(&company);
+        mystake = &company.registernewstake(*this);
     }
     mystake->buyfrom(fromstake, amount);
     return true;
 }
 
-Stake* Owner::getstakeforcompany(Company& company) {
-    if(stakes.contains(&company))
-        return stakes.at(&company);
-    return nullptr;
-}
-
 
 void Company::createmainpanel(InterfaceManager* ui) {
     if(!mainpanel.exists())
-        mainpanel.set(new UI::CompanyPanel(ui, *this, getname()));
+        mainpanel.set(
+            new UI::CompanyPanel(ui, *this, getnameforedit(),
+                owner)
+        );
 }
 
 bool Company::emission(Money investment, Owner& buyer) {
@@ -63,9 +60,15 @@ bool Company::emission(Money investment, Owner& buyer) {
     return true;
 }
 
-Stake* Company::registernewstake(Owner& who) {
+Stake* const Company::getstakeforowner(Owner& who) {
+    if(!stakesincompany.contains(&who))
+        return nullptr;
+    return &stakesincompany.at(&who);
+}
+
+Stake& Company::registernewstake(Owner& who) {
     auto result = stakesincompany.emplace(&who, Stake(*this));
-    return &result.first->second;
+    return result.first->second;
 }
 
 bool Company::removeemptystake(Owner& who) {

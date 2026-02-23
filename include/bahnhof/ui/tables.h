@@ -14,6 +14,7 @@ class BuildingType;
 class BuildingBuilder;
 class WagonFactory;
 class Company;
+class Owner;
 
 namespace UI{
 
@@ -162,11 +163,23 @@ private:
 class CompanyInfoTable : public Table
 {
 public:
-    CompanyInfoTable(Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
-        Table(p, minsz, pos), company(c) {};
+    CompanyInfoTable(
+        Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
+            Table(p, minsz, pos), company(c) {};
     void update(int ms);
 private:
     Company& company;
+};
+
+class InvestmentsTable : public ClickableTable
+{
+public:
+    InvestmentsTable(
+        Host* p, Owner& o, UIVec pos={0,0}, UIVec minsz={180,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    Owner& owner;
 };
 
 }

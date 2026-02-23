@@ -25,7 +25,7 @@ public:
     bool checkcollisionwithpoint(Vec pos);
     bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
-    std::string getownername();
+    std::string getownername() const;
     Account& getaccount() {return account;};
     std::string name;
     const BuildingType& type;

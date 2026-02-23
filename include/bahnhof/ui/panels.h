@@ -15,6 +15,7 @@ class Building;
 class BuildingBuilder;
 class WagonFactory;
 class Company;
+class Owner;
 
 namespace UI{
 
@@ -106,7 +107,10 @@ private:
 class CompanyPanel : public Panel
 {
 public:
-    CompanyPanel(InterfaceManager* newui, Company& com, std::string& companyname);
+    CompanyPanel(InterfaceManager* newui, 
+        Company& com, 
+        std::string& companyname,
+        Owner& investments);
 private:
     Company& company;
 };

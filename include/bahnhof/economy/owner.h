@@ -1,5 +1,6 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/ownership.h"
 #include "money.h"
 #include "account.h"
 #include "stake.h"
@@ -15,10 +16,11 @@ public:
     bool buy(Owner& from, Company& company, uint16_t amount);
     bool buy(Stake& fromstake, Account& intoaccount, uint16_t amount);
     Account& getaccount() {return account;}
-    std::string& getname() {return name;}
+    std::string& getnameforedit() {return name;}
+    const std::string& getname() const {return name;}
+    const std::set<Company*>& getcompanies() {return companies;}
 private:
-    Stake* getstakeforcompany(Company& company);
     Account account;
     std::string name;
-    std::map<Company*, Stake*> stakes;
+    std::set<Company*> companies;
 };

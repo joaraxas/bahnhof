@@ -14,7 +14,7 @@ class Company
 public:
     Company(std::string name) : 
         owner(name) {};
-    std::string& getname() {return owner.getname();}
+    const std::string& getname() const {return owner.getname();}
     Account& getaccount() {return owner.getaccount();}
     Money getvalue() const {return valuation;}
     Money getshareprice() const {
@@ -23,9 +23,12 @@ public:
     }
     void createmainpanel(InterfaceManager* ui);
     bool emission(Money investment, Owner& buyer);
-    Stake* registernewstake(Owner& who);
+    Stake* const getstakeforowner(Owner& who);
+    Stake& registernewstake(Owner& who);
     bool removeemptystake(Owner& who);
+    Owner& getinvestments() {return owner;}
 private:
+    std::string& getnameforedit() {return owner.getnameforedit();}
     Owner owner;
     uint16_t shares{0};
     std::map<Owner*,Stake> stakesincompany;

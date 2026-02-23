@@ -15,6 +15,7 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/wagontypes.h"
 #include "bahnhof/economy/company.h"
+#include "bahnhof/economy/owner.h"
 
 namespace UI{
 
@@ -433,6 +434,34 @@ void CompanyInfoTable::update(int ms)
     lines.emplace_back(
         new TableLine(panel, this, 
         "Share price " + std::string(company.getshareprice())));
+}
+
+
+InvestmentsTable::InvestmentsTable(
+    Host* p, Owner& o, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), owner(o) 
+{}
+
+void InvestmentsTable::update(int ms)
+{
+    lines.clear();
+    for(auto company : owner.getcompanies()){
+        const Stake* const stake = company->getstakeforowner(owner);
+        if(!stake) break;
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            company->getname() + ": " + std::to_string(stake->getamount())
+            + " shares"));
+    }
+}
+
+void InvestmentsTable::lineclicked(int index)
+{
+    // const Company& clickedcompany = owner.
+    // // buildingtypes.at(index);
+    // auto& input = game->getinputmanager();
+    // input.setinputmode(
+    //     std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
 }
 
 } //end namespace UI

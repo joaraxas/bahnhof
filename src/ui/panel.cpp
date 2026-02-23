@@ -235,14 +235,18 @@ FactoryPanel::~FactoryPanel()
 
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Company& com,
-						   std::string& companyname) : 
+						   std::string& companyname,
+						   Owner& investments) : 
 		Panel(newui),
 		company(com)
 {
 	setlayout(
 	create<VBox>(
 		create<EditableText>(companyname),
-		create<CompanyInfoTable>(company),
+		create<HBox>(
+			create<CompanyInfoTable>(company),
+			create<InvestmentsTable>(investments)
+		),
 		create<Close>()
 	)
 	);

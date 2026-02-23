@@ -66,7 +66,7 @@ bool Building::leftclick(Vec pos)
 	}
 }
 
-std::string Building::getownername()
+std::string Building::getownername() const
 {
 	if(!company)
 		return "Private owner";
