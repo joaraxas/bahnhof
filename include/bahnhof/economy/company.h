@@ -21,6 +21,7 @@ public:
         if(shares == 0) return 5;
         return valuation/shares;
     }
+    uint16_t getnumshares() const {return shares;}
     void createmainpanel(InterfaceManager* ui);
     bool emission(Money investment, Owner& buyer);
     Stake* const getstakeforowner(Owner& who);

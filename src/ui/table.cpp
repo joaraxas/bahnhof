@@ -449,8 +449,9 @@ void OwnersTable::update(int ms)
     for(auto [owner, stake] : company.getowners()){
         lines.emplace_back(
             new TableLine(panel, this, 
-            owner->getname() + ": " + std::to_string(stake.getamount())
-            + " shares"));
+            owner->getname() + ": " + 
+            std::to_string(stake.getamount())+ " shares " + 
+            std::format("{0:.1f} %", 100.0*stake.getamount() / company.getnumshares())));
         investors.push_back(owner);
     }
 }
