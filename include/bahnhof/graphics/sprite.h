@@ -51,7 +51,7 @@ private:
 class Sprite
 {
 public:
-    void setspritesheet(SpriteManager& s, sprites::name name);
+    virtual void setspritesheet(SpriteManager& s, sprites::name name);
     bool hasspritesheet() {return spritesheet!=nullptr;};
     void updateframe(int ms);
     virtual void render(Rendering* r, Vec pos);
