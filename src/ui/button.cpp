@@ -95,7 +95,7 @@ void ManageTrains::leftclick(UIVec mousepos)
 
 void ManageCompany::leftclick(UIVec mousepos)
 {
-    game->getgamestate().getmycompany().createmainpanel(ui);
+    game->getgamestate().getmycompany().createpanel(ui);
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)

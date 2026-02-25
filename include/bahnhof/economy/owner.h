@@ -4,6 +4,7 @@
 #include "money.h"
 #include "account.h"
 #include "stake.h"
+#include "entity.h"
 
 class Company;
 class InterfaceManager;
@@ -11,19 +12,30 @@ class InterfaceManager;
 class Owner
 {
 public:
-    Owner(std::string n) : Owner(n, 0) {}
-    Owner(std::string n, Money startamount) : 
-        name(n), account(startamount) {}
+    Owner(Entity& e, Account& a) : entity{e}, account{a} {}
     bool buy(Owner& from, Company& company, uint16_t amount);
     bool buy(Stake& fromstake, Account& intoaccount, uint16_t amount);
-    void createpanel(InterfaceManager* ui);
     Account& getaccount() {return account;}
-    std::string& getnameforedit() {return name;}
-    const std::string& getname() const {return name;}
     const std::set<Company*>& getcompanies() {return companies;}
+    Entity& getentity() {return entity;}
 private:
-    Account account;
-    std::string name;
+    Entity& entity;
+    Account& account;
     std::set<Company*> companies;
+};
+
+class Person : Entity
+{
+public:
+    Person(std::string n) : Person(n, 0) {}
+    Person(std::string n, Money startamount) : 
+        name{n}, account{startamount}, owner{*this, account} {}
+    const std::string& getname() const override {return name;}
+    void createpanel(InterfaceManager* ui);
+    Owner& getinvestments() {return owner;} // might remove
+private:
+    std::string name;
+    Account account;
+    Owner owner;
     UI::Ownership panel;
 };

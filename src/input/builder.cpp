@@ -9,7 +9,7 @@ Builder::Builder(InputManager& owner, Game* newgame) :
     input(owner), 
     game(newgame), 
     tracksystem(game->getgamestate().gettracksystems()),
-    myaccount(game->getgamestate().getmycompany().getaccount())
+    myaccount(game->getgamestate().getmycompany().getcompanysaccount())
 {}
 
 void Builder::render(Rendering* r)

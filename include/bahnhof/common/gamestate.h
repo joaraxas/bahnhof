@@ -52,7 +52,7 @@ private:
     bool quit;
 };
 
-class Company;
+class NewCompany;
 
 class Gamestate
 {
@@ -67,10 +67,10 @@ public:
     TrainManager& gettrainmanager() {if(!trainmanager) std::cout<<"no trainmanager"<<std::endl; return *trainmanager;};
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
-    Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return companies.front();};
+    NewCompany& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
     int time = 0;
     Money revenue;
-    Owner me;
+    Person me;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
@@ -78,5 +78,5 @@ private:
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
-    std::vector<Company> companies;
+    std::vector<std::unique_ptr<NewCompany>> companies;
 };

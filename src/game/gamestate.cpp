@@ -26,13 +26,13 @@ Gamestate::Gamestate(Game* whatgame) :
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
 	companies.reserve(10);
-	companies.push_back(Company{"BLS AG"});
-	if(!companies.back().emission(400, me))
+	companies.emplace_back(new NewCompany{"BLS AG"});
+	if(!companies.back()->getcompanysshares().emission(400, me.getinvestments()))
 		throw "couldn't emit BLS shares";
-	companies.push_back(Company{"SBB AG"});
-	if(!companies.back().emission(200, companies.front().getcompanysinvestments()))
+	companies.emplace_back(new NewCompany{"SBB AG"});
+	if(!companies.back()->getcompanysshares().emission(200, companies.front()->getcompanysinvestments()))
 		throw "couldn't emit SBB shares";
-	me.buy(companies.front().getcompanysinvestments(), companies.back(), 10);
+	me.getinvestments().buy(companies.front()->getcompanysinvestments(), companies.back()->getcompanysshares(), 10);
 }
 
 Gamestate::~Gamestate()
@@ -41,13 +41,13 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	Money lastmoney = getmycompany().getaccount().getvalue();
+	Money lastmoney = getmycompany().getcompanysaccount().getvalue();
 
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);
 	buildingmanager->update(ms);
 
-	revenue += getmycompany().getaccount().getvalue()-lastmoney;
+	revenue += getmycompany().getcompanysaccount().getvalue()-lastmoney;
 
 	time += ms;
 }

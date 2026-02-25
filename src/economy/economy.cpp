@@ -38,33 +38,13 @@ bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
     return true;
 }
 
-void Owner::createpanel(InterfaceManager* ui) {
-    if(!panel.exists())
-        panel.set(
-            new UI::InvestorPanel(ui, *this)
-        );
-    else
-        panel.movetofront();
-}
-
-
-void Company::createmainpanel(InterfaceManager* ui) {
-    if(!mainpanel.exists())
-        mainpanel.set(
-            new UI::CompanyPanel(ui, *this, getnameforedit(),
-                owner)
-        );
-    else
-        mainpanel.movetofront();
-}
-
 bool Company::emission(Money investment, Owner& buyer) {
     uint16_t emittedshares = std::lround(
         std::floor(investment/getshareprice()));
     if(emittedshares==0)
         return false;
     Stake newshares(*this, emittedshares);
-    if(!buyer.buy(newshares, getaccount(), emittedshares))
+    if(!buyer.buy(newshares, account, emittedshares))
         return false;
     valuation += getshareprice() * emittedshares;
     shares += emittedshares;
@@ -89,4 +69,24 @@ bool Company::removeemptystake(Owner& who) {
         return false;
     stakesincompany.erase(&who);
     return true;
+}
+
+void Person::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::InvestorPanel(ui, owner, name)
+        );
+    else
+        panel.movetofront();
+}
+
+
+void NewCompany::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::CompanyPanel(ui, shares, getnameforedit(),
+                owner)
+        );
+    else
+        panel.movetofront();
 }

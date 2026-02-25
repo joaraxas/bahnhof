@@ -241,7 +241,7 @@ void MainInfoTable::update(int ms)
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::string(gamestate.getmycompany().getaccount().getvalue())));
+    lines.emplace_back(new TableLine(panel, this, std::string(gamestate.getmycompany().getcompanysaccount().getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     Money income = gamestate.revenue/float(gamestate.time*0.001/60/60);
     lines.emplace_back(new TableLine(panel, this, std::string(income) + "/h"));
@@ -449,7 +449,7 @@ void OwnersTable::update(int ms)
     for(auto [owner, stake] : company.getowners()){
         lines.emplace_back(
             new TableLine(panel, this, 
-            owner->getname() + ": " + 
+            owner->getentity().getname() + ": " + 
             std::to_string(stake.getamount())+ " shares " + 
             std::format("{0:.1f} %", 100.0*stake.getamount() / company.getnumshares())));
         investors.push_back(owner);
@@ -459,7 +459,7 @@ void OwnersTable::update(int ms)
 void OwnersTable::lineclicked(int index)
 {
     Owner* clickedinvestor = investors[index];
-    clickedinvestor->createpanel(ui);
+    clickedinvestor->getentity().createpanel(ui);
 }
 
 
@@ -477,7 +477,8 @@ void InvestmentsTable::update(int ms)
         if(!stake) continue;
         lines.emplace_back(
             new TableLine(panel, this, 
-            company->getname() + ": " + std::to_string(stake->getamount())
+            company->getentity().getname() + 
+            ": " + std::to_string(stake->getamount())
             + " shares"));
         companies.push_back(company);
     }
@@ -486,7 +487,7 @@ void InvestmentsTable::update(int ms)
 void InvestmentsTable::lineclicked(int index)
 {
     Company* clickedcompany = companies[index];
-    clickedcompany->createmainpanel(ui);
+    clickedcompany->getentity().createpanel(ui);
 }
 
 } //end namespace UI

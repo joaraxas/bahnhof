@@ -262,12 +262,12 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 }
 
 
-InvestorPanel::InvestorPanel(InterfaceManager* newui, Owner& inv) :
+InvestorPanel::InvestorPanel(InterfaceManager* newui, Owner& inv, std::string name) :
 	Panel(newui), investor(inv)
 {
 	setlayout(
 	create<VBox>(
-		create<Text>(investor.getname()),
+		create<Text>(name),
 		create<HBox>(
 			create<VBox>(
 				create<Text>("Interests"),

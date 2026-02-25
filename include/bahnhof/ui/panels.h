@@ -118,7 +118,7 @@ private:
 class InvestorPanel : public Panel
 {
 public:
-    InvestorPanel(InterfaceManager* newui, Owner& inv);
+    InvestorPanel(InterfaceManager* newui, Owner& inv, std::string name);
 private:
     Owner& investor;
 };
