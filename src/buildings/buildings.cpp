@@ -15,7 +15,7 @@
 
 
 Building::Building(
-		Game* g, BuildingID id, std::unique_ptr<Shape> s, NewCompany* c) : 
+		Game* g, BuildingID id, std::unique_ptr<Shape> s, Company* c) : 
 	shape(std::move(s)),
 	game(g),
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
@@ -75,7 +75,7 @@ std::string Building::getownername() const
 
 
 Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
-			NewCompany* c, 
+			Company* c, 
 			std::set<resourcetype> need, 
 			std::set<resourcetype> production) :
 			Building(whatgame, id, std::move(s), c)
@@ -118,7 +118,7 @@ void Industry::trigger()
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, NewCompany* c, 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, Company* c, 
 		State st, RollingStockManager& r) : 
 	Building(g, wagonfactory, std::move(s), c), 
 	state(st),
@@ -185,20 +185,20 @@ const std::deque<const WagonType*>& WagonFactory::getqueue()
 	return productionqueue;
 }
 
-Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, NewCompany* c) : 
+Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, Company* c) : 
 	Industry(game, brewery, std::move(s), c, {hops, barley}, {beer})
 {
 	name = "Augustator";
 }
 
-Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, NewCompany* c) : 
+Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, Company* c) : 
 	Industry(game, hopsfield, std::move(s), c, {}, {hops})
 {}
 
-Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, NewCompany* c) : 
+Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, Company* c) : 
 	Industry(game, barleyfield, std::move(s), c, {}, {barley})
 {}
 
-City::City(Game* game, std::unique_ptr<Shape> s, NewCompany* c) : 
+City::City(Game* game, std::unique_ptr<Shape> s, Company* c) : 
 	Industry(game, city, std::move(s), c, {beer}, {})
 {}

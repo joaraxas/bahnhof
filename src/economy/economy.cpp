@@ -79,7 +79,7 @@ void Person::createpanel(InterfaceManager* ui) {
 }
 
 
-void NewCompany::createpanel(InterfaceManager* ui) {
+void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
             new UI::CompanyPanel(ui, stock, getnameforedit(),

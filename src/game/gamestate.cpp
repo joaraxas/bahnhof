@@ -25,10 +25,10 @@ Gamestate::Gamestate(Game* whatgame) :
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	companies.emplace_back(new NewCompany{"BLS AG"});
+	companies.emplace_back(new Company{"BLS AG"});
 	if(!companies.back()->getcompanysshares().emission(400, me.getinvestments()))
 		throw "couldn't emit BLS shares";
-	companies.emplace_back(new NewCompany{"SBB AG"});
+	companies.emplace_back(new Company{"SBB AG"});
 	if(!companies.back()->getcompanysshares().emission(200, companies.front()->getcompanysinvestments()))
 		throw "couldn't emit SBB shares";
 	me.getinvestments().buy(companies.front()->getcompanysinvestments(), companies.back()->getcompanysshares(), 10);

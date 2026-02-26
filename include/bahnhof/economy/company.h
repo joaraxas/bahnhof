@@ -8,17 +8,17 @@
 
 class InterfaceManager;
 
-class NewCompany : Entity
+class Company : Entity
 {
 public:
-    NewCompany(std::string n) : NewCompany(n, 0) {}
-    NewCompany(std::string n, Money startamount) : 
+    Company(std::string n) : Company(n, 0) {}
+    Company(std::string n, Money startamount) : 
         name{n}, 
         account{startamount}, 
         portfolio{*this, account}, 
         stock{*this, account} 
     {}
-    ~NewCompany() {}
+    ~Company() {}
     // bool emission(Money investment, NewCompany& buyer);
     const std::string& getname() const override {return name;}
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove

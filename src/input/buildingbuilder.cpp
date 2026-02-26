@@ -68,7 +68,7 @@ bool BuildingBuilder::canfit()
 void BuildingBuilder::build()
 {
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
-    NewCompany* company = &game->getgamestate().getmycompany();
+    Company* company = &game->getgamestate().getmycompany();
     switch(building.id)
     {
     case brewery:
