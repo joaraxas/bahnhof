@@ -14,8 +14,8 @@ class Train;
 class Building;
 class BuildingBuilder;
 class WagonFactory;
-class Company;
-class Owner;
+class Stock;
+class Portfolio;
 
 namespace UI{
 
@@ -108,19 +108,19 @@ class CompanyPanel : public Panel
 {
 public:
     CompanyPanel(InterfaceManager* newui, 
-        Company& com, 
+        Stock& stock, 
         std::string& companyname,
-        Owner& investments);
+        Portfolio& investments);
 private:
-    Company& company;
+    Stock& stock;
 };
 
 class InvestorPanel : public Panel
 {
 public:
-    InvestorPanel(InterfaceManager* newui, Owner& inv, std::string name);
+    InvestorPanel(InterfaceManager* newui, Portfolio& p, std::string name);
 private:
-    Owner& investor;
+    Portfolio& portfolio;
 };
 
 }

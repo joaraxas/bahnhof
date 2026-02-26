@@ -6,75 +6,75 @@
 #include "bahnhof/ui/panels.h"
 
 
-bool Owner::buy(Owner& from, Company& company, uint16_t amount) {
+bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
     if(amount<=0)
         return false;
-    Stake* const hisstake{company.getstakeforowner(from)};
+    Stake* const hisstake{stock.getstakeforportfolio(fromportfolio)};
     if(!hisstake)
         return false;
-    if(!buy(*hisstake, from.account, amount))
+    if(!buy(*hisstake, fromportfolio.account, amount))
         return false;
     if(hisstake->getamount() == 0){
-        company.removeemptystake(*this);
-        from.companies.erase(&company);
+        stock.removeemptystake(fromportfolio);
+        fromportfolio.stocks.erase(&stock);
     }
     return true;
 }
 
-bool Owner::buy(Stake& fromstake, Account& intoaccount, uint16_t amount) {
+bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
     if(fromstake.getamount()<amount)
         return false;
-    Company& company = fromstake.getcompany();
-    Money purchaseamount = amount * fromstake.getcompany().getshareprice();
+    Stock& company = fromstake.getstock();
+    Money purchaseamount = amount * fromstake.getstock().getshareprice();
     if(!account.canafford(purchaseamount))
         return false;
-    account.pay(purchaseamount, &intoaccount);
-    Stake* mystake = company.getstakeforowner(*this);
+    account.pay(purchaseamount, &payableaccount);
+    Stake* mystake = company.getstakeforportfolio(*this);
     if(!mystake){
-        companies.emplace(&company);
+        stocks.emplace(&company);
         mystake = &company.registernewstake(*this);
     }
     mystake->buyfrom(fromstake, amount);
     return true;
 }
 
-bool Company::emission(Money investment, Owner& buyer) {
+bool Stock::emission(Money investment, Portfolio& buyer) {
     uint16_t emittedshares = std::lround(
         std::floor(investment/getshareprice()));
     if(emittedshares==0)
         return false;
-    Stake newshares(*this, emittedshares);
-    if(!buyer.buy(newshares, account, emittedshares))
+    Stake tempstake(*this, emittedshares);
+    if(!buyer.buy(tempstake, account, emittedshares))
         return false;
     valuation += getshareprice() * emittedshares;
     shares += emittedshares;
     return true;
 }
 
-Stake* const Company::getstakeforowner(Owner& who) {
-    if(!stakesincompany.contains(&who))
+Stake* const Stock::getstakeforportfolio(Portfolio& who) {
+    if(!stakes.contains(&who))
         return nullptr;
-    return &stakesincompany.at(&who);
+    return &stakes.at(&who);
 }
 
-Stake& Company::registernewstake(Owner& who) {
-    auto result = stakesincompany.emplace(&who, Stake(*this));
+Stake& Stock::registernewstake(Portfolio& who) {
+    auto result = stakes.emplace(&who, Stake(*this));
     return result.first->second;
 }
 
-bool Company::removeemptystake(Owner& who) {
-    if(!stakesincompany.contains(&who))
+bool Stock::removeemptystake(Portfolio& who) {
+    if(!stakes.contains(&who))
         return true;
-    if(stakesincompany.at(&who).getamount()!=0)
+    if(stakes.at(&who).getamount()!=0)
         return false;
-    stakesincompany.erase(&who);
+    stakes.erase(&who);
     return true;
 }
 
 void Person::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::InvestorPanel(ui, owner, name)
+            new UI::InvestorPanel(ui, portfolio, name)
         );
     else
         panel.movetofront();

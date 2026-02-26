@@ -6,22 +6,22 @@
 #include "stake.h"
 #include "entity.h"
 
-class Company;
+class Stock;
 class InterfaceManager;
 
-class Owner
+class Portfolio
 {
 public:
-    Owner(Entity& e, Account& a) : entity{e}, account{a} {}
-    bool buy(Owner& from, Company& company, uint16_t amount);
-    bool buy(Stake& fromstake, Account& intoaccount, uint16_t amount);
+    Portfolio(Entity& e, Account& a) : entity{e}, account{a} {}
+    bool buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount);
+    bool buy(Stake& fromstake, Account& payableaccount, uint16_t amount);
     Account& getaccount() {return account;}
-    const std::set<Company*>& getcompanies() {return companies;}
+    const std::set<Stock*>& getstocks() {return stocks;}
     Entity& getentity() {return entity;}
 private:
     Entity& entity;
     Account& account;
-    std::set<Company*> companies;
+    std::set<Stock*> stocks;
 };
 
 class Person : Entity
@@ -29,13 +29,13 @@ class Person : Entity
 public:
     Person(std::string n) : Person(n, 0) {}
     Person(std::string n, Money startamount) : 
-        name{n}, account{startamount}, owner{*this, account} {}
+        name{n}, account{startamount}, portfolio{*this, account} {}
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
-    Owner& getinvestments() {return owner;} // might remove
+    Portfolio& getinvestments() {return portfolio;} // might remove
 private:
     std::string name;
     Account account;
-    Owner owner;
+    Portfolio portfolio;
     UI::Ownership panel;
 };

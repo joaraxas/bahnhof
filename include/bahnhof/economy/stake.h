@@ -1,15 +1,15 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 
-class Company;
+class Stock;
 
 class Stake
 {
 public:
-    Stake(Company& c) : amount(0), company(&c) {}
-    Stake(Company& c, uint16_t a) : amount(a), company(&c) {}
+    Stake(Stock& c) : amount(0), stock(&c) {}
+    Stake(Stock& c, uint16_t a) : amount(a), stock(&c) {}
     bool buyfrom(Stake& from, int howmany) {
-        if(from.company!=company) return false;
+        if(from.stock!=stock) return false;
         if(from.amount>=howmany){
             from.amount -= howmany;
             amount += howmany;
@@ -18,9 +18,9 @@ public:
         return false;
     }
     uint16_t getamount() const {return amount;}
-    Company& getcompany() const {return *company;}
+    Stock& getstock() const {return *stock;}
 private:
     uint16_t addamount(uint16_t howmany) {return amount+=howmany;}
     uint16_t amount;
-    Company* company;
+    Stock* stock;
 };

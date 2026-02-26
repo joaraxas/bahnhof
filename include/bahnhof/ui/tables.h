@@ -13,8 +13,8 @@ class RouteManager;
 class BuildingType;
 class BuildingBuilder;
 class WagonFactory;
-class Company;
-class Owner;
+class Stock;
+class Portfolio;
 
 namespace UI{
 
@@ -164,35 +164,35 @@ class CompanyInfoTable : public Table
 {
 public:
     CompanyInfoTable(
-        Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
+        Host* p, Stock& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
             Table(p, minsz, pos), company(c) {};
     void update(int ms);
 private:
-    Company& company;
+    Stock& company;
 };
 
 class OwnersTable : public ClickableTable
 {
 public:
     OwnersTable(
-        Host* p, Company& c, UIVec pos={0,0}, UIVec minsz={180,80});
+        Host* p, Stock& s, UIVec pos={0,0}, UIVec minsz={180,80});
     void update(int ms);
 private:
     void lineclicked(int index);
-    std::vector<Owner*> investors;
-    Company& company;
+    std::vector<Portfolio*> investors;
+    Stock& stock;
 };
 
 class InvestmentsTable : public ClickableTable
 {
 public:
     InvestmentsTable(
-        Host* p, Owner& inv, UIVec pos={0,0}, UIVec minsz={180,80});
+        Host* p, Portfolio& port, UIVec pos={0,0}, UIVec minsz={180,80});
     void update(int ms);
 private:
     void lineclicked(int index);
-    std::vector<Company*> companies;
-    Owner& investor;
+    std::vector<Stock*> stocks;
+    Portfolio& portfolio;
 };
 
 }

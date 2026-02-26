@@ -438,56 +438,56 @@ void CompanyInfoTable::update(int ms)
 
 
 OwnersTable::OwnersTable(
-    Host* p, Company& c, UIVec pos, UIVec minsz): 
-        ClickableTable(p, minsz, pos), company(c) 
+    Host* p, Stock& s, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), stock(s) 
 {}
 
 void OwnersTable::update(int ms)
 {
     lines.clear();
     investors.clear();
-    for(auto [owner, stake] : company.getowners()){
+    for(auto [portfolio, stake] : stock.getstakes()){
         lines.emplace_back(
             new TableLine(panel, this, 
-            owner->getentity().getname() + ": " + 
+            portfolio->getentity().getname() + ": " + 
             std::to_string(stake.getamount())+ " shares " + 
-            std::format("{0:.1f} %", 100.0*stake.getamount() / company.getnumshares())));
-        investors.push_back(owner);
+            std::format("{0:.1f} %", 100.0*stake.getamount() / stock.getnumshares())));
+        investors.push_back(portfolio);
     }
 }
 
 void OwnersTable::lineclicked(int index)
 {
-    Owner* clickedinvestor = investors[index];
+    Portfolio* clickedinvestor = investors[index];
     clickedinvestor->getentity().createpanel(ui);
 }
 
 
 InvestmentsTable::InvestmentsTable(
-    Host* p, Owner& inv, UIVec pos, UIVec minsz): 
-        ClickableTable(p, minsz, pos), investor(inv) 
+    Host* p, Portfolio& port, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), portfolio(port) 
 {}
 
 void InvestmentsTable::update(int ms)
 {
-    companies.clear();
+    stocks.clear();
     lines.clear();
-    for(auto company : investor.getcompanies()){
-        const Stake* const stake = company->getstakeforowner(investor);
+    for(auto stock : portfolio.getstocks()){
+        const Stake* const stake = stock->getstakeforportfolio(portfolio);
         if(!stake) continue;
         lines.emplace_back(
             new TableLine(panel, this, 
-            company->getentity().getname() + 
+            stock->getentity().getname() + 
             ": " + std::to_string(stake->getamount())
             + " shares"));
-        companies.push_back(company);
+        stocks.push_back(stock);
     }
 }
 
 void InvestmentsTable::lineclicked(int index)
 {
-    Company* clickedcompany = companies[index];
-    clickedcompany->getentity().createpanel(ui);
+    Stock* clickedstock = stocks[index];
+    clickedstock->getentity().createpanel(ui);
 }
 
 } //end namespace UI

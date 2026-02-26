@@ -234,24 +234,24 @@ FactoryPanel::~FactoryPanel()
 {}
 
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
-						   Company& com,
+						   Stock& s,
 						   std::string& companyname,
-						   Owner& investments) : 
+						   Portfolio& portfolio) : 
 		Panel(newui),
-		company(com)
+		stock(s)
 {
 	setlayout(
 	create<VBox>(
 		create<EditableText>(companyname),
 		create<HBox>(
-			create<CompanyInfoTable>(company),
+			create<CompanyInfoTable>(stock),
 			create<VBox>(
 				create<Text>("Major owners"),
-				create<OwnersTable>(company)
+				create<OwnersTable>(stock)
 			),
 			create<VBox>(
 				create<Text>("Company interests"),
-				create<InvestmentsTable>(investments)
+				create<InvestmentsTable>(portfolio)
 			)
 		),
 		create<Close>()
@@ -262,8 +262,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 }
 
 
-InvestorPanel::InvestorPanel(InterfaceManager* newui, Owner& inv, std::string name) :
-	Panel(newui), investor(inv)
+InvestorPanel::InvestorPanel(InterfaceManager* newui, Portfolio& p, std::string name) :
+	Panel(newui), portfolio(p)
 {
 	setlayout(
 	create<VBox>(
@@ -271,7 +271,7 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui, Owner& inv, std::string na
 		create<HBox>(
 			create<VBox>(
 				create<Text>("Interests"),
-				create<InvestmentsTable>(investor)
+				create<InvestmentsTable>(portfolio)
 			)
 		),
 		create<Close>()
