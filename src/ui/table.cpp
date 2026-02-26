@@ -15,7 +15,7 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/wagontypes.h"
 #include "bahnhof/economy/company.h"
-#include "bahnhof/economy/owner.h"
+#include "bahnhof/economy/portfolio.h"
 
 namespace UI{
 

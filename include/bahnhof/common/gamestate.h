@@ -1,8 +1,7 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
-#include "bahnhof/economy/account.h"
-#include "bahnhof/economy/owner.h"
+#include "bahnhof/economy/person.h"
 
 class Route;
 class Wagon;

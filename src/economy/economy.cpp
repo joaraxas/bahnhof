@@ -1,8 +1,6 @@
 #include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/economy/person.h"
 #include "bahnhof/economy/company.h"
-#include "bahnhof/economy/stake.h"
-#include "bahnhof/economy/owner.h"
-#include "bahnhof/economy/money.h"
 #include "bahnhof/ui/panels.h"
 
 
@@ -84,8 +82,8 @@ void Person::createpanel(InterfaceManager* ui) {
 void NewCompany::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::CompanyPanel(ui, shares, getnameforedit(),
-                owner)
+            new UI::CompanyPanel(ui, stock, getnameforedit(),
+                portfolio)
         );
     else
         panel.movetofront();
