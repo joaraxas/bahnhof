@@ -160,7 +160,7 @@ private:
     WagonFactory& factory;
 };
 
-class CompanyInfoTable : public Table
+class CompanyInfoTable : public Table // TODO: Either change to StockInfoTable or pass &Company
 {
 public:
     CompanyInfoTable(

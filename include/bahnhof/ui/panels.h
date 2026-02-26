@@ -110,7 +110,7 @@ public:
     CompanyPanel(InterfaceManager* newui, 
         Stock& stock, 
         std::string& companyname,
-        Portfolio& investments);
+        Portfolio& portfolio);
 private:
     Stock& stock;
 };

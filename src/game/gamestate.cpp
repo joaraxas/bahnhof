@@ -25,7 +25,6 @@ Gamestate::Gamestate(Game* whatgame) :
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	companies.reserve(10);
 	companies.emplace_back(new NewCompany{"BLS AG"});
 	if(!companies.back()->getcompanysshares().emission(400, me.getinvestments()))
 		throw "couldn't emit BLS shares";
@@ -41,7 +40,7 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	Money lastmoney = getmycompany().getcompanysaccount().getvalue();
+	Money lastmoney = getmycompany().getcompanysaccount().getvalue(); // TODO: Move to company or account
 
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);

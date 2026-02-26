@@ -22,15 +22,15 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
 bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
     if(fromstake.getamount()<amount)
         return false;
-    Stock& company = fromstake.getstock();
+    Stock& stock = fromstake.getstock();
     Money purchaseamount = amount * fromstake.getstock().getshareprice();
     if(!account.canafford(purchaseamount))
         return false;
     account.pay(purchaseamount, &payableaccount);
-    Stake* mystake = company.getstakeforportfolio(*this);
+    Stake* mystake = stock.getstakeforportfolio(*this);
     if(!mystake){
-        stocks.emplace(&company);
-        mystake = &company.registernewstake(*this);
+        stocks.emplace(&stock);
+        mystake = &stock.registernewstake(*this);
     }
     mystake->buyfrom(fromstake, amount);
     return true;
