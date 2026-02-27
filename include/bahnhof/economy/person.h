@@ -14,7 +14,10 @@ class Person : Entity
 public:
     Person(std::string n) : Person(n, 0) {}
     Person(std::string n, Money startamount) : 
-        name{n}, account{startamount}, portfolio{*this, account} {}
+        name{n}, 
+        account{startamount}, 
+        portfolio{*this, account} 
+    {}
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
     Portfolio& getinvestments() {return portfolio;} // might remove
