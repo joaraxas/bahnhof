@@ -19,7 +19,7 @@ void UIRendering::rendertexture(
     bool ported, 
     bool originiscenter, 
     int centerx, 
-    int centery)
+    int centery) const
 {
     SDL_Rect screenrect = uitoscreen(rect);
     r->rendertexture(
@@ -57,7 +57,7 @@ void UIRendering::renderline(
     r->renderline(uitoscreen(start), uitoscreen(end), false);
 }
 
-SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style)
+SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style) const
 {
     SDL_Color color;
     switch (style)
@@ -149,7 +149,7 @@ UIRect UIRendering::gettextsize(
 }
 
 std::string UIRendering::croptexttowidth(
-    const std::string& text, Coord maxwidth, Coord margin_x)
+    const std::string& text, Coord maxwidth, Coord margin_x) const
 {
     maxwidth -= 2*margin_x;
     int maxwidthint = round(maxwidth*uiscale);
@@ -165,7 +165,7 @@ std::string UIRendering::croptexttowidth(
     return text.substr(0, ncharactersfitting);
 }
 
-float UIRendering::getuiscale()
+float UIRendering::getuiscale() const
 {
     return uiscale;
 }
@@ -191,7 +191,7 @@ void UIRendering::setuiscale(float newscale)
     }
 }
 
-SDL_Rect UIRendering::uitoscreen(UIRect uirect)
+SDL_Rect UIRendering::uitoscreen(UIRect uirect) const
 {
     float scale = getuiscale();
     // Computing the height and width as a difference ensures that (y+h)-y=h also for the
@@ -205,7 +205,7 @@ SDL_Rect UIRendering::uitoscreen(UIRect uirect)
     return screenrect;
 }
 
-UIRect UIRendering::screentoui(SDL_Rect screenrect)
+UIRect UIRendering::screentoui(SDL_Rect screenrect) const
 {
     float scale = getuiscale();
     // Computing the height and width as a difference should ensures that (y+h)-y=h also 
@@ -219,21 +219,21 @@ UIRect UIRendering::screentoui(SDL_Rect screenrect)
     return uirect;
 }
 
-Vec UIRendering::uitoscreen(UIVec uipos)
+Vec UIRendering::uitoscreen(UIVec uipos) const
 {
     float scale = getuiscale();
     Vec pos(uipos.x*scale, uipos.y*scale);
     return pos;
 }
 
-UIVec UIRendering::screentoui(Vec pos)
+UIVec UIRendering::screentoui(Vec pos) const
 {
     float scale = getuiscale();
     UIVec uipos(pos.x/scale, pos.y/scale);
     return uipos;
 }
 
-UIRect UIRendering::getuiview()
+UIRect UIRendering::getuiview() const
 {
     UIVec size = screentoui(getviewsize());
     return {0,0,size.x,size.y};

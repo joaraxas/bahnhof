@@ -86,7 +86,7 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 	return {x, y, 0, 0};
 }
 
-void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
+void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery) const
 {
 	if(originiscenter){
 		centerx = int(rect->w*0.5);

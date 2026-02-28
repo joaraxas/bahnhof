@@ -15,19 +15,17 @@ public:
     void render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle imageangle=Angle::zero, 
                 int imageindex=0, int imagetype=0, float imagescale=1, Uint8 imagealpha=255, 
                 Uint8 red=255, Uint8 green=255, Uint8 blue=255);
-    int getimagenumber();
-    int getimagetypes();
+    int getimagenumber() const;
+    int getimagetypes() const;
     void setoriginx(int);
     void setoriginy(int);
-    Vec getsize();
-    sprites::name getname();
+    Vec getsize() const;
+    sprites::name getname() const;
 private:
     sprites::name name;
     int w;
     int h;
     SDL_Texture* tex;
-    SDL_Rect srcrect;
-    SDL_Rect rect;
     int imagenumber;
     int imagetypes;
     int origin_x;
@@ -52,11 +50,11 @@ class Sprite
 {
 public:
     virtual void setspritesheet(SpriteManager& s, sprites::name name);
-    bool hasspritesheet() {return spritesheet!=nullptr;};
+    bool hasspritesheet() const {return spritesheet!=nullptr;};
     void updateframe(int ms);
     virtual void render(Rendering* r, Vec pos);
-    Vec getsize();
-    sprites::name getname();
+    Vec getsize() const;
+    sprites::name getname() const;
     Angle imageangle{0};
     float imagespeed = 0;
     float imageindex = 0;
@@ -80,5 +78,5 @@ public:
     void setspritesheet(SpriteManager& s, sprites::name name);
     void render(Rendering* r, Vec pos);
     void render(Rendering* r, UI::UIRect rect);
-    UI::UIVec getuisize(UIRendering& uiren);
+    UI::UIVec getuisize(UIRendering& uiren) const;
 };

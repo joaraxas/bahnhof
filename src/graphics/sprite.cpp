@@ -29,13 +29,13 @@ void Sprite::render(Rendering* r, Vec pos)
 		std::cout<<"Error: sprite tried rendering nonexisting spritesheet, did you forget to call setsprite?"<<std::endl;
 }
 
-Vec Sprite::getsize()
+Vec Sprite::getsize() const
 {
 	Vec sheetsize = spritesheet->getsize()*imagescale;
 	return Vec(sheetsize.x/imagetypes, sheetsize.y/imagenumber);
 }
 
-sprites::name Sprite::getname()
+sprites::name Sprite::getname() const
 {	
 	sprites::name sheetname = spritesheet->getname();
 	if(sheetname == sprites::name::none)
@@ -67,7 +67,7 @@ void Icon::render(Rendering* r, UI::UIRect rect)
 	render(r, uiren.uitoscreen(centerpos));
 }
 
-UI::UIVec Icon::getuisize(UIRendering& uiren)
+UI::UIVec Icon::getuisize(UIRendering& uiren) const
 {
 	Vec sheetsize = Sprite::getsize();
 	return uiren.screentoui(sheetsize);
