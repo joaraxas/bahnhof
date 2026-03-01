@@ -84,7 +84,7 @@ bool Stock::removeemptystake(Portfolio& who) {
 void Person::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::Economy::InvestorPanel(ui, *this)
+            new UI::Economy::InvestorPanel(ui, name, portfolio, account)
         );
     else
         panel.movetofront();

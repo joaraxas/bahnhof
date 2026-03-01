@@ -267,17 +267,18 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 }
 
 
-InvestorPanel::InvestorPanel(InterfaceManager* newui, Person& p) :
-	Panel(newui), person(p)
+InvestorPanel::InvestorPanel(InterfaceManager* newui,
+	const std::string& name, Portfolio& p, Account& account) :
+	Panel(newui), portfolio(p)
 {
 	setlayout(
 	create<VBox>(
-		create<Text>(person.getname()),
+		create<Text>(name),
 		create<HBox>(
-			create<AccountInfoTable>(person.getaccount()),
+			create<AccountInfoTable>(account),
 			create<VBox>(
 				create<Text>("Interests"),
-				create<InvestmentsTable>(person.getinvestments())
+				create<InvestmentsTable>(portfolio)
 			)
 		),
 		create<Close>()
