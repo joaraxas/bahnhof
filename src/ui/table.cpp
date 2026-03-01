@@ -430,10 +430,13 @@ void CompanyInfoTable::update(int ms)
     lines.clear();
     lines.emplace_back(
         new TableLine(panel, this, 
-        "Market cap " + std::string(company.getvalue())));
+        "Market cap " + std::string(stock.getvaluation())));
     lines.emplace_back(
         new TableLine(panel, this, 
-        "Share price " + std::string(company.getshareprice())));
+        "Share price " + std::string(stock.getshareprice())));
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        "Cash " + std::string(account.getvalue())));
 }
 
 

@@ -12,7 +12,7 @@ class Stock
 public:
     Stock(Entity& e, Account& a) : entity{e}, account{a} {}
     bool issue(Money investment, Portfolio& buyer);
-    Money getvalue() const {return valuation;}
+    Money getvaluation() const {return valuation;}
     Money getshareprice() const {
         if(shares == 0) return 5;
         return valuation/shares;

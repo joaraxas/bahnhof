@@ -239,7 +239,8 @@ namespace Economy
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Stock& s,
 						   std::string& companyname,
-						   Portfolio& portfolio) : 
+						   Portfolio& portfolio,
+						   Account& account) : 
 		Panel(newui),
 		stock(s)
 {
@@ -247,7 +248,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 	create<VBox>(
 		create<EditableText>(companyname),
 		create<HBox>(
-			create<CompanyInfoTable>(stock),
+			create<CompanyInfoTable>(stock, account),
 			create<VBox>(
 				create<Text>("Major owners"),
 				create<OwnersTable>(stock)

@@ -17,6 +17,7 @@ class WagonFactory;
 class Stock;
 class Portfolio;
 class Person;
+class Account;
 
 namespace UI{
 
@@ -114,7 +115,8 @@ public:
     CompanyPanel(InterfaceManager* newui, 
         Stock& stock, 
         std::string& companyname,
-        Portfolio& portfolio);
+        Portfolio& portfolio,
+        Account& account);
 private:
     Stock& stock;
 };

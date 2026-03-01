@@ -94,7 +94,7 @@ void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
             new UI::Economy::CompanyPanel(ui, stock, getnameforedit(),
-                portfolio)
+                portfolio, account)
         );
     else
         panel.movetofront();
