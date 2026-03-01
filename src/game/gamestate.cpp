@@ -16,7 +16,8 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	me("Sir Charles Darwin", 501)
+	me("Sir Charles Darwin", 501),
+	thepublic()
 {
 	game = whatgame;
 	inittracks();
@@ -34,6 +35,7 @@ Gamestate::Gamestate(Game* whatgame) :
 	if(!sbb->getcompanysshares().issue(50, 
 		bls->getcompanysinvestments()))
 		throw "couldn't emit SBB shares";
+	sbb->getcompanysshares().issue(500, thepublic.getinvestments());
 	me.getinvestments().buy(bls->getcompanysinvestments(), sbb->getcompanysshares(), 5);
 }
 

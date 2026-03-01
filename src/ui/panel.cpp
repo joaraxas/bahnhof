@@ -288,6 +288,24 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
+ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
+	const std::string& name, Portfolio& p) :
+	Panel(newui), portfolio(p)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>(name),
+		create<VBox>(
+			create<Text>("Interests"),
+			create<InvestmentsTable>(portfolio)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
 } // end namespace Economy
 
 } // namespace UI

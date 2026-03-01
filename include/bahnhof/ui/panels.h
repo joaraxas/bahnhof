@@ -129,6 +129,15 @@ private:
     Portfolio& portfolio;
 };
 
+class ThePublicPanel : public Panel
+{
+public:
+    ThePublicPanel(InterfaceManager* newui, 
+        const std::string& n, Portfolio& p);
+private:
+    Portfolio& portfolio;
+};
+
 } // end namespace Economy
 
 } // end namespace UI

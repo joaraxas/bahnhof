@@ -220,7 +220,7 @@ namespace Economy
 
 void PublicOffering::leftclick(UIVec mousepos)
 {
-    stock.issue(100, game->getgamestate().me.getinvestments());
+    stock.issue(100, game->getgamestate().thepublic.getinvestments());
 }
 
 } // end namespace Economy

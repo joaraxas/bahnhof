@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/economy/person.h"
+#include "bahnhof/economy/thepublic.h"
 
 class Route;
 class Wagon;
@@ -70,6 +71,7 @@ public:
     int time = 0;
     Money revenue;
     Person me;
+    ThePublic thepublic;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
