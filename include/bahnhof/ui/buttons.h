@@ -7,6 +7,7 @@ class Gamestate;
 class Rendering;
 class Route;
 class InterfaceManager;
+class Stock;
 
 namespace UI{
 
@@ -221,5 +222,21 @@ public:
     void leftclick(UIVec mousepos);
 };
 
-} //namespace Routing
-} //namespace UI
+} // end namespace Routing
+
+namespace Economy
+{
+
+class PublicOffering : public TextButton
+{
+public:
+    PublicOffering(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Seasoned equity offering"), stock{s} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+} // end namespace Economy
+
+} // end namespace UI

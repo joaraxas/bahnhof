@@ -19,7 +19,6 @@ public:
         stock{*this, account} 
     {}
     ~Company() {}
-    // bool emission(Money investment, NewCompany& buyer);
     const std::string& getname() const override {return name;}
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove
     Stock& getcompanysshares() {return stock;} // might remove

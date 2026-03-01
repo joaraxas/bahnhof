@@ -16,6 +16,7 @@ class BuildingBuilder;
 class WagonFactory;
 class Stock;
 class Portfolio;
+class Person;
 
 namespace UI{
 
@@ -104,6 +105,9 @@ private:
     WagonFactory* factory;
 };
 
+namespace Economy
+{
+
 class CompanyPanel : public Panel
 {
 public:
@@ -118,9 +122,11 @@ private:
 class InvestorPanel : public Panel
 {
 public:
-    InvestorPanel(InterfaceManager* newui, Portfolio& p, std::string name);
+    InvestorPanel(InterfaceManager* newui, Person& p);
 private:
-    Portfolio& portfolio;
+    Person& person;
 };
 
-}
+} // end namespace Economy
+
+} // end namespace UI

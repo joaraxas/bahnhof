@@ -15,6 +15,7 @@ class BuildingBuilder;
 class WagonFactory;
 class Stock;
 class Portfolio;
+class Account;
 
 namespace UI{
 
@@ -164,7 +165,7 @@ class CompanyInfoTable : public Table // TODO: Either change to StockInfoTable o
 {
 public:
     CompanyInfoTable(
-        Host* p, Stock& c, UIVec pos={0,0}, UIVec minsz={180,80}): 
+        Host* p, Stock& c, UIVec pos={0,0}, UIVec minsz={180,40}): 
             Table(p, minsz, pos), company(c) {};
     void update(int ms);
 private:
@@ -181,6 +182,17 @@ private:
     void lineclicked(int index);
     std::vector<Portfolio*> investors;
     Stock& stock;
+};
+
+class AccountInfoTable : public Table
+{
+public:
+    AccountInfoTable(
+        Host* p, Account& a, UIVec pos={0,0}, UIVec minsz={100,40}): 
+            Table(p, minsz, pos), account(a) {};
+    void update(int ms);
+private:
+    Account& account;
 };
 
 class InvestmentsTable : public ClickableTable

@@ -21,6 +21,7 @@ public:
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
     Portfolio& getinvestments() {return portfolio;} // might remove
+    Account& getaccount() {return account;} // might remove
 private:
     std::string name;
     Account account;

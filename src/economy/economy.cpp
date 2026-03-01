@@ -5,11 +5,15 @@
 
 
 bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
-    if(amount<=0)
+    if(amount<=0){
+        std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
         return false;
+    }
     Stake* const hisstake{stock.getstakeforportfolio(fromportfolio)};
-    if(!hisstake)
+    if(!hisstake){
+        std::cout<<"failed to buy shares from non-owner"<<std::endl;
         return false;
+    }
     if(!buy(*hisstake, fromportfolio.account, amount))
         return false;
     if(hisstake->getamount() == 0){
@@ -20,12 +24,18 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
 }
 
 bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
-    if(fromstake.getamount()<amount)
+    if(fromstake.getamount()<amount){
+        std::cout<<"failed to buy "<<amount<<" shares, owner has only "<<
+            fromstake.getamount()<<" shares"<<std::endl;
         return false;
+    }
     Stock& stock = fromstake.getstock();
     Money purchaseamount = amount * fromstake.getstock().getshareprice();
-    if(!account.canafford(purchaseamount))
+    if(!account.canafford(purchaseamount)){
+        std::cout<<"failed to buy shares for "<<purchaseamount<<", owner has only "<<
+            account.getvalue()<<std::endl;
         return false;
+    }
     account.pay(purchaseamount, &payableaccount);
     Stake* mystake = stock.getstakeforportfolio(*this);
     if(!mystake){
@@ -36,16 +46,18 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
     return true;
 }
 
-bool Stock::emission(Money investment, Portfolio& buyer) {
-    uint16_t emittedshares = std::lround(
+bool Stock::issue(Money investment, Portfolio& buyer) {
+    uint16_t issuedshares = std::lround(
         std::floor(investment/getshareprice()));
-    if(emittedshares==0)
+    if(issuedshares<=0){
+        std::cout<<"failed to emit "<<issuedshares<<" shares"<<std::endl;
         return false;
-    Stake tempstake(*this, emittedshares);
-    if(!buyer.buy(tempstake, account, emittedshares))
+    }
+    Stake tempstake(*this, issuedshares);
+    if(!buyer.buy(tempstake, account, issuedshares))
         return false;
-    valuation += getshareprice() * emittedshares;
-    shares += emittedshares;
+    valuation += getshareprice() * issuedshares;
+    shares += issuedshares;
     return true;
 }
 
@@ -72,17 +84,16 @@ bool Stock::removeemptystake(Portfolio& who) {
 void Person::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::InvestorPanel(ui, portfolio, name)
+            new UI::Economy::InvestorPanel(ui, *this)
         );
     else
         panel.movetofront();
 }
 
-
 void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::CompanyPanel(ui, stock, getnameforedit(),
+            new UI::Economy::CompanyPanel(ui, stock, getnameforedit(),
                 portfolio)
         );
     else

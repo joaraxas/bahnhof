@@ -215,4 +215,14 @@ void RemoveOrder::leftclick(UIVec mousepos)
 
 } //end namespace Routing
 
+namespace Economy
+{
+
+void PublicOffering::leftclick(UIVec mousepos)
+{
+    stock.issue(100, game->getgamestate().me.getinvestments());
+}
+
+} // end namespace Economy
+
 } //end namespace UI

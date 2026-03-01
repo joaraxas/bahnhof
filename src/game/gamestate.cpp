@@ -16,7 +16,7 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	me("Sir Charles Darwin", 500)
+	me("Sir Charles Darwin", 501)
 {
 	game = whatgame;
 	inittracks();
@@ -25,13 +25,16 @@ Gamestate::Gamestate(Game* whatgame) :
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	companies.emplace_back(new Company{"BLS AG"});
-	if(!companies.back()->getcompanysshares().emission(400, me.getinvestments()))
+	Company* bls = new Company{"BLS AG"};
+	companies.emplace_back(bls);
+	if(!bls->getcompanysshares().issue(100, me.getinvestments()))
 		throw "couldn't emit BLS shares";
-	companies.emplace_back(new Company{"SBB AG"});
-	if(!companies.back()->getcompanysshares().emission(200, companies.front()->getcompanysinvestments()))
+	Company* sbb = new Company{"SBB AG"};
+	companies.emplace_back(sbb);
+	if(!sbb->getcompanysshares().issue(50, 
+		bls->getcompanysinvestments()))
 		throw "couldn't emit SBB shares";
-	me.getinvestments().buy(companies.front()->getcompanysinvestments(), companies.back()->getcompanysshares(), 10);
+	me.getinvestments().buy(bls->getcompanysinvestments(), sbb->getcompanysshares(), 5);
 }
 
 Gamestate::~Gamestate()

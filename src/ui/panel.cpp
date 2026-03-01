@@ -233,6 +233,9 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 FactoryPanel::~FactoryPanel()
 {}
 
+namespace Economy
+{
+
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Stock& s,
 						   std::string& companyname,
@@ -254,6 +257,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<InvestmentsTable>(portfolio)
 			)
 		),
+		create<PublicOffering>(stock),
 		create<Close>()
 	)
 	);
@@ -262,16 +266,17 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 }
 
 
-InvestorPanel::InvestorPanel(InterfaceManager* newui, Portfolio& p, std::string name) :
-	Panel(newui), portfolio(p)
+InvestorPanel::InvestorPanel(InterfaceManager* newui, Person& p) :
+	Panel(newui), person(p)
 {
 	setlayout(
 	create<VBox>(
-		create<Text>(name),
+		create<Text>(person.getname()),
 		create<HBox>(
+			create<AccountInfoTable>(person.getaccount()),
 			create<VBox>(
 				create<Text>("Interests"),
-				create<InvestmentsTable>(portfolio)
+				create<InvestmentsTable>(person.getinvestments())
 			)
 		),
 		create<Close>()
@@ -280,5 +285,7 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui, Portfolio& p, std::string 
 	applylayout();
 	placeautomatically();
 }
+
+} // end namespace Economy
 
 } // namespace UI

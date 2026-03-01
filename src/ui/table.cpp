@@ -462,6 +462,14 @@ void OwnersTable::lineclicked(int index)
     clickedinvestor->getentity().createpanel(ui);
 }
 
+void AccountInfoTable::update(int ms)
+{
+    lines.clear();
+    lines.emplace_back(
+        new TableLine(panel, this, "Cash: "+std::string(account.getvalue()))
+    );
+}
+
 
 InvestmentsTable::InvestmentsTable(
     Host* p, Portfolio& port, UIVec pos, UIVec minsz): 
