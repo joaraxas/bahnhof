@@ -16,6 +16,7 @@ class WagonFactory;
 class Stock;
 class Portfolio;
 class Account;
+class Entity;
 
 namespace UI{
 
@@ -181,7 +182,7 @@ public:
     void update(int ms);
 private:
     void lineclicked(int index);
-    std::vector<Portfolio*> investors;
+    std::vector<Entity*> investors;
     Stock& stock;
 };
 

@@ -449,21 +449,25 @@ void OwnersTable::update(int ms)
 {
     lines.clear();
     investors.clear();
-    for(auto [portfolio, stake] : stock.getstakes()){
+    for(auto [stake, entity] : stock.getsortedowners()){
         lines.emplace_back(
             new TableLine(panel, this, 
-            portfolio->getentity().getname() + ": " + 
-            std::to_string(stake.getamount())+ " shares " + 
-            std::format("{0:.1f} %", 100.0*stake.getamount() / stock.getnumshares())));
-        investors.push_back(portfolio);
+            entity->getname() + ": " + 
+            std::to_string(stake->getamount())+ " shares " + 
+            std::format("{0:.1f} %", 100.0*stake->getamount() / 
+                stock.getnumshares()
+            )
+        ));
+        investors.push_back(entity);
     }
 }
 
 void OwnersTable::lineclicked(int index)
 {
-    Portfolio* clickedinvestor = investors[index];
-    clickedinvestor->getentity().createpanel(ui);
+    Entity* clickedinvestor = investors[index];
+    clickedinvestor->createpanel(ui);
 }
+
 
 void AccountInfoTable::update(int ms)
 {

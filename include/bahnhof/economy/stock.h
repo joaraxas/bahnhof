@@ -21,13 +21,16 @@ public:
     Stake* const getstakeforportfolio(Portfolio& who);
     Stake& registernewstake(Portfolio& who);
     bool removeemptystake(Portfolio& who);
-    const std::map<Portfolio*,Stake>& getstakes() {return stakes;}
+    void updateregistry();
+    const std::vector<std::pair<Stake*, Entity*>>& getsortedowners() 
+        {return sortedowners;}
     Entity& getentity() {return entity;}
 private:
     Entity& entity;
     Account& account;
     uint16_t shares{0};
-    std::map<Portfolio*,Stake> stakes;
+    std::unordered_map<Portfolio*, Stake> stakes;
+    std::vector<std::pair<Stake*, Entity*>> sortedowners;
     Money valuation{0};
 };
 

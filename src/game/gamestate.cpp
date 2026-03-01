@@ -16,7 +16,7 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	me("Sir Charles Darwin", 501),
+	me("Sir Charles Darwin", 500),
 	thepublic()
 {
 	game = whatgame;

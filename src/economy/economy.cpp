@@ -4,6 +4,16 @@
 #include "bahnhof/economy/company.h"
 #include "bahnhof/ui/panels.h"
 
+bool Stake::takefrom(Stake& from, int howmany) {
+    if(from.stock!=stock) return false;
+    if(from.amount>=howmany){
+        from.amount -= howmany;
+        amount += howmany;
+        stock->updateregistry();
+        return true;
+    }
+    return false;
+}
 
 bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
     if(amount<=0){
@@ -43,7 +53,7 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
         stocks.emplace(&stock);
         mystake = &stock.registernewstake(*this);
     }
-    mystake->buyfrom(fromstake, amount);
+    mystake->takefrom(fromstake, amount);
     return true;
 }
 
@@ -69,17 +79,40 @@ Stake* const Stock::getstakeforportfolio(Portfolio& who) {
 }
 
 Stake& Stock::registernewstake(Portfolio& who) {
-    auto result = stakes.emplace(&who, Stake(*this));
-    return result.first->second;
+    auto [p, shit] = stakes.emplace(&who, Stake(*this));
+    Stake& newstake = p->second;
+    sortedowners.emplace_back(&newstake, &who.getentity());
+    return newstake;
 }
 
 bool Stock::removeemptystake(Portfolio& who) {
     if(!stakes.contains(&who))
         return true;
-    if(stakes.at(&who).getamount()!=0)
+    Stake& stake = stakes.at(&who);
+    if(stake.getamount()!=0)
         return false;
+    for(auto p = sortedowners.rbegin(); p!=sortedowners.rend(); p++) {
+        if(p->first == &stake) {
+            sortedowners.erase(std::next(p).base(), sortedowners.end());
+            break;
+        }
+    }
     stakes.erase(&who);
     return true;
+}
+
+bool compareowners(const std::pair<Stake*, Entity*>& a, 
+                     const std::pair<Stake*, Entity*>& b)
+{
+    if(*a.first > *b.first)
+        return true;
+    if(*a.first < *b.first)
+        return false;
+    return a.second->getname() < b.second->getname();
+}
+
+void Stock::updateregistry() {
+    std::sort(sortedowners.begin(), sortedowners.end(), compareowners);
 }
 
 void Person::createpanel(InterfaceManager* ui) {
