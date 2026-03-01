@@ -138,6 +138,13 @@ private:
     Portfolio& portfolio;
 };
 
+class StockmarketPanel : public Panel
+{
+public:
+    StockmarketPanel(InterfaceManager* newui, 
+        const std::vector<Stock*>& s);
+};
+
 } // end namespace Economy
 
 } // end namespace UI

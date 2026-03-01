@@ -8,6 +8,7 @@ class Rendering;
 class Route;
 class InterfaceManager;
 class Stock;
+class Stockmarket;
 
 namespace UI{
 
@@ -255,6 +256,14 @@ public:
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
+};
+
+class VisitStockmarket : public TextButton
+{
+public:
+    VisitStockmarket(Host* newpanel) : 
+        TextButton(newpanel, "Visit stock market", 120) {};
+    void leftclick(UIVec mousepos);
 };
 
 } // end namespace Economy

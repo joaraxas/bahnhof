@@ -252,7 +252,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<CompanyInfoTable>(stock, account),
 				create<Buy>(stock),
 				create<Sell>(stock),
-				create<PublicOffering>(stock)
+				create<PublicOffering>(stock),
+				create<VisitStockmarket>()
 			),
 			create<VBox>(
 				create<Text>("Major owners"),
@@ -302,6 +303,23 @@ ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
 		create<VBox>(
 			create<Text>("Interests"),
 			create<InvestmentsTable>(portfolio)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+StockmarketPanel::StockmarketPanel(InterfaceManager* newui, 
+        const std::vector<Stock*>& stocks) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Stock market"),
+		create<VBox>(
+			create<StocksTable>(stocks)
 		),
 		create<Close>()
 	)

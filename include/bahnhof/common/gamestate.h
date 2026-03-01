@@ -3,6 +3,7 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/economy/person.h"
 #include "bahnhof/economy/thepublic.h"
+#include "bahnhof/economy/stockmarket.h"
 
 class Route;
 class Wagon;
@@ -53,6 +54,7 @@ private:
 };
 
 class Company;
+class Stockmarket;
 
 class Gamestate
 {
@@ -72,6 +74,7 @@ public:
     Money revenue;
     Person me;
     ThePublic thepublic;
+    Stockmarket stockmarket;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;

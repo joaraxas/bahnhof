@@ -5,12 +5,14 @@
 
 class Portfolio;
 class Account;
+class Stockmarket;
 class Entity;
 
 class Stock
 {
 public:
-    Stock(Entity& e, Account& a) : entity{e}, account{a} {}
+    Stock(Entity& e, Account& a, Stockmarket& sm);
+    ~Stock();
     bool issue(Money investment, Portfolio& buyer);
     Money getvaluation() const {return valuation;}
     Money getshareprice() const {
@@ -28,6 +30,7 @@ public:
 private:
     Entity& entity;
     Account& account;
+    Stockmarket& market;
     uint16_t shares{0};
     std::unordered_map<Portfolio*, Stake> stakes;
     std::vector<std::pair<Stake*, Entity*>> sortedowners;

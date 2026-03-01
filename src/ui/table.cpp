@@ -505,4 +505,29 @@ void InvestmentsTable::lineclicked(int index)
     clickedstock->getentity().createpanel(ui);
 }
 
+
+StocksTable::StocksTable(Host* p, const std::vector<Stock*>& s, 
+    UIVec pos, UIVec minsz): 
+        ClickableTable{p, minsz, pos}, stocks{s}
+{}
+
+void StocksTable::update(int ms)
+{
+    lines.clear();
+    for(auto stock : stocks){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            stock->getentity().getname() + 
+            ": " + std::string(stock->getshareprice()) + 
+            ", " + std::string(stock->getvaluation())
+            )
+        );
+    }
+}
+
+void StocksTable::lineclicked(int index)
+{
+    stocks[index]->getentity().createpanel(ui);
+}
+
 } //end namespace UI

@@ -11,12 +11,12 @@ class InterfaceManager;
 class Company : Entity
 {
 public:
-    Company(std::string n) : Company(n, 0) {}
-    Company(std::string n, Money startamount) : 
+    Company(std::string n, Stockmarket& market) : Company(n, market, 0) {}
+    Company(std::string n, Stockmarket& market, Money startamount) : 
         name{n}, 
         account{startamount}, 
         portfolio{*this, account}, 
-        stock{*this, account} 
+        stock{*this, account, market}
     {}
     ~Company() {}
     const std::string& getname() const override {return name;}

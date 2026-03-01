@@ -209,4 +209,16 @@ private:
     Portfolio& portfolio;
 };
 
+class StocksTable : public ClickableTable
+{
+public:
+    StocksTable(
+        Host* p, const std::vector<Stock*>& s, 
+        UIVec pos={0,0}, UIVec minsz={300,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    const std::vector<Stock*>& stocks;
+};
+
 }

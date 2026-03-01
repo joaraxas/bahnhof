@@ -2,6 +2,7 @@
 #include "bahnhof/economy/person.h"
 #include "bahnhof/economy/thepublic.h"
 #include "bahnhof/economy/company.h"
+#include "bahnhof/economy/stockmarket.h"
 #include "bahnhof/ui/panels.h"
 
 bool Stake::takefrom(Stake& from, int howmany) {
@@ -55,6 +56,17 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
     }
     mystake->takefrom(fromstake, amount);
     return true;
+}
+
+Stock::Stock(Entity& e, Account& a, Stockmarket& sm) : 
+        entity{e}, account{a}, market{sm}
+{
+    market.liststock(*this);
+}
+
+Stock::~Stock()
+{
+    market.deliststock(*this);
 }
 
 bool Stock::issue(Money investment, Portfolio& buyer) {
@@ -138,6 +150,15 @@ void Company::createpanel(InterfaceManager* ui) {
         panel.set(
             new UI::Economy::CompanyPanel(ui, stock, getnameforedit(),
                 portfolio, account)
+        );
+    else
+        panel.movetofront();
+}
+
+void Stockmarket::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::Economy::StockmarketPanel(ui, stocks)
         );
     else
         panel.movetofront();

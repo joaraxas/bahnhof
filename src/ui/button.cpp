@@ -239,6 +239,11 @@ void Sell::leftclick(UIVec mousepos)
     );
 }
 
+void VisitStockmarket::leftclick(UIVec mousepos)
+{
+    game->getgamestate().stockmarket.createpanel(ui);
+}
+
 } // end namespace Economy
 
 } //end namespace UI
