@@ -231,7 +231,27 @@ class PublicOffering : public TextButton
 {
 public:
     PublicOffering(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Seasoned equity offering"), stock{s} {};
+        TextButton(newpanel, "Seasoned equity offering", 120), stock{s} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+class Buy : public TextButton
+{
+public:
+    Buy(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Buy"), stock{s} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+class Sell : public TextButton
+{
+public:
+    Sell(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Sell"), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;

@@ -36,7 +36,7 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
 
 bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
     if(fromstake.getamount()<amount){
-        std::cout<<"failed to buy "<<amount<<" shares, owner has only "<<
+        std::cout<<"failed to buy "<<amount<<" shares, buyer has only "<<
             fromstake.getamount()<<" shares"<<std::endl;
         return false;
     }

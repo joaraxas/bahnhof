@@ -166,7 +166,7 @@ class CompanyInfoTable : public Table // TODO: Either change to StockInfoTable o
 {
 public:
     CompanyInfoTable(
-        Host* p, Stock& c, Account& a, UIVec pos={0,0}, UIVec minsz={180,40}): 
+        Host* p, Stock& c, Account& a, UIVec pos={0,0}, UIVec minsz={150,60}): 
             Table(p, minsz, pos), stock(c), account{a} {};
     void update(int ms);
 private:

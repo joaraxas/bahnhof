@@ -223,6 +223,22 @@ void PublicOffering::leftclick(UIVec mousepos)
     stock.issue(100, game->getgamestate().thepublic.getinvestments());
 }
 
+void Buy::leftclick(UIVec mousepos)
+{
+    game->getgamestate().me.getinvestments().buy(
+        game->getgamestate().thepublic.getinvestments(),
+        stock, 5
+    );
+}
+
+void Sell::leftclick(UIVec mousepos)
+{
+    game->getgamestate().thepublic.getinvestments().buy(
+        game->getgamestate().me.getinvestments(),
+        stock, 5
+    );
+}
+
 } // end namespace Economy
 
 } //end namespace UI

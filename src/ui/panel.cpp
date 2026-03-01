@@ -248,18 +248,22 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 	create<VBox>(
 		create<EditableText>(companyname),
 		create<HBox>(
-			create<CompanyInfoTable>(stock, account),
+			create<VBox>(
+				create<CompanyInfoTable>(stock, account),
+				create<Buy>(stock),
+				create<Sell>(stock),
+				create<PublicOffering>(stock)
+			),
 			create<VBox>(
 				create<Text>("Major owners"),
 				create<OwnersTable>(stock)
 			),
 			create<VBox>(
 				create<Text>("Company interests"),
-				create<InvestmentsTable>(portfolio)
+				create<InvestmentsTable>(portfolio),
+				create<Close>()
 			)
-		),
-		create<PublicOffering>(stock),
-		create<Close>()
+		)
 	)
 	);
 	applylayout();
