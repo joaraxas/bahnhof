@@ -5,6 +5,8 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
 #include "bahnhof/economy/money.h"
+#include "bahnhof/economy/account.h"
+#include "bahnhof/economy/control.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -17,6 +19,7 @@ class InputManager;
 class InterfaceManager;
 class BuildingManager;
 class BuildingType;
+class Building;
 class Account;
 
 class Builder : public InputMode
@@ -75,10 +78,13 @@ private:
     Icon icon;
 };
 
+using BuildingOwner = Economy::Control<Building>;
+
 class BuildingBuilder : public Builder
 {
 public:
-    BuildingBuilder(InputManager& i, Game* g, const BuildingType& b);
+    BuildingBuilder(InputManager& i, Game* g, const BuildingType& b, 
+        BuildingOwner& o);
     void render(Rendering*);
     void reset();
 private:
@@ -87,4 +93,5 @@ private:
     std::unique_ptr<Shape> getplacementat(Vec pos) const;
     const BuildingType& building;
     BuildingManager& buildingmanager;
+    BuildingOwner& contractor;
 };

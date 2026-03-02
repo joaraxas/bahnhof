@@ -396,8 +396,9 @@ void ConstructionTable::lineclicked(int index)
 {
     const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
     auto& input = game->getinputmanager();
+    auto& control = game->getgamestate().getmycompany().getcompanysbuildingcontrol();
     input.setinputmode(
-        std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
+        std::make_unique<BuildingBuilder>(input, game, clickedbuilding, control));
 }
 
 

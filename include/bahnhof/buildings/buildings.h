@@ -5,19 +5,21 @@
 #include "bahnhof/resources/resourcetypes.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/rollingstock/wagontypes.h"
-#include "bahnhof/economy/account.h"
+#include "bahnhof/economy/control.h"
 
 class Storage;
 class Game;
 class Shape;
 class Rendering;
 class RollingStockManager;
-class Company;
+class Building;
+
+using BuildingOwner = Economy::Control<Building>;
 
 class Building
 {
 public:
-    Building(Game* g, BuildingID id, std::unique_ptr<Shape> s, Company* c);
+    Building(Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner* c);
     virtual ~Building();
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -26,7 +28,6 @@ public:
     bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
     std::string getownername() const;
-    Account& getaccount() {return account;};
     std::string name;
     const BuildingType& type;
 protected:
@@ -35,12 +36,10 @@ protected:
     Game* game;
     std::unique_ptr<Shape> shape;
     Sprite sprite;
-    Company* company;
+    BuildingOwner* company;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;
-private:
-    Account account{0};
 };
 
 class Industry : public Building
@@ -49,7 +48,7 @@ public:
     Industry(Game* g,
         BuildingID id, 
         std::unique_ptr<Shape> s, 
-        Company* c,
+        BuildingOwner* c,
         std::set<resourcetype> need, 
         std::set<resourcetype> production);
     void trigger();
@@ -62,7 +61,7 @@ private:
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* g, std::unique_ptr<Shape> s, Company* c, State st, 
+    WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c, State st, 
         RollingStockManager& r);
     void trigger();
     bool leftclick(Vec pos);
@@ -81,24 +80,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* g, std::unique_ptr<Shape> s, Company* c=nullptr);
+    Brewery(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* g, std::unique_ptr<Shape> s, Company* c=nullptr);
+    Hopsfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* g, std::unique_ptr<Shape> s, Company* c=nullptr);
+    Barleyfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* g, std::unique_ptr<Shape> s, Company* c=nullptr);
+    City(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
 };
 

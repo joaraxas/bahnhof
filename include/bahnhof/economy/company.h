@@ -5,8 +5,10 @@
 #include "account.h"
 #include "portfolio.h"
 #include "stock.h"
+#include "control.h"
 
 class InterfaceManager;
+class Building;
 
 class Company : Entity
 {
@@ -16,13 +18,16 @@ public:
         name{n}, 
         account{startamount}, 
         portfolio{*this, account}, 
-        stock{*this, account, market}
+        stock{*this, account, market},
+        buildings{*this, account}
     {}
     ~Company() {}
     const std::string& getname() const override {return name;}
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove
     Stock& getcompanysshares() {return stock;} // might remove
     Account& getcompanysaccount() {return account;} // might remove
+    Economy::Control<Building>& getcompanysbuildingcontrol() 
+        {return buildings;} // might remove
     void createpanel(InterfaceManager* ui);
 private:
     std::string& getnameforedit() {return name;}
@@ -30,5 +35,6 @@ private:
     Account account;
     Portfolio portfolio;
     Stock stock;
+    Economy::Control<Building> buildings;
     UI::Ownership panel;
 };
