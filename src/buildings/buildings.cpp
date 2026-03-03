@@ -118,7 +118,8 @@ void Industry::trigger()
 					storage->loadstorage(product, got);
 			}
 			else{
-				// TODO: company should depend on who delivered the goods
+				// TODO: account should depend on who delivered the goods,
+				// or payment should be made when received
 				if(company)
 					company->getaccount().earn(got);
 			}
@@ -167,14 +168,13 @@ const std::vector<WagonType*> WagonFactory::getavailabletypes()
 	return rollingstock.gettypes();
 }
 
-void WagonFactory::orderwagon(const WagonType& type)
+void WagonFactory::orderwagon(const WagonType& type, Account& payer)
 {
-	if(!company) return;
-	if(company->getaccount().canafford(type.cost)){
+	if(payer.canafford(type.cost)){
 		if(productionqueue.empty())
 			timeleft = 3500;
 		productionqueue.push_back(&type);
-		company->getaccount().pay(type.cost);
+		payer.pay(type.cost);
 	}
 }
 

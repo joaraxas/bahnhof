@@ -422,7 +422,7 @@ WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) :
 void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-    factory.orderwagon(*clickedwagon);
+    factory.orderwagon(*clickedwagon, game->getgamestate().getmycompany().getcompanysaccount());
 }
 
 
