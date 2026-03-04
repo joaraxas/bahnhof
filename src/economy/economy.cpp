@@ -91,7 +91,7 @@ Stake* const Stock::getstakeforportfolio(Portfolio& who) {
 }
 
 Stake& Stock::registernewstake(Portfolio& who) {
-    auto [p, shit] = stakes.emplace(&who, Stake(*this));
+    auto [p, dummy] = stakes.emplace(&who, Stake(*this));
     Stake& newstake = p->second;
     sortedowners.emplace_back(&newstake, &who.getentity());
     return newstake;
