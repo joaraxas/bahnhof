@@ -18,6 +18,11 @@ class Stock;
 class Portfolio;
 class Account;
 
+namespace Economy{
+    template<typename T>
+    class Control;
+}
+
 namespace UI{
 
 class Dropdown;
@@ -105,7 +110,7 @@ private:
     WagonFactory* factory;
 };
 
-namespace Economy
+namespace EconomyPanels
 {
 
 class CompanyPanel : public Panel
@@ -115,7 +120,8 @@ public:
         Stock& stock, 
         std::string& companyname,
         Portfolio& portfolio,
-        Account& account);
+        Account& account,
+        Economy::Control<Building>& buildings);
 private:
     Stock& stock;
 };
@@ -143,6 +149,13 @@ class StockmarketPanel : public Panel
 public:
     StockmarketPanel(InterfaceManager* newui, 
         const std::vector<Stock*>& s);
+};
+
+class PossessionsPanel : public Panel
+{
+public:
+    PossessionsPanel(InterfaceManager* newui, 
+        const std::vector<Building*>& s);
 };
 
 } // end namespace Economy

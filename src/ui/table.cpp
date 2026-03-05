@@ -531,4 +531,26 @@ void StocksTable::lineclicked(int index)
     stocks[index]->getentity().createpanel(ui);
 }
 
+PossessionsTable::PossessionsTable(Host* p, const std::vector<Building*>& poss, 
+    UIVec pos, UIVec minsz): 
+        ClickableTable{p, minsz, pos}, possessions{poss}
+{}
+
+void PossessionsTable::update(int ms)
+{
+    lines.clear();
+    for(auto poss : possessions){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+                poss->getname()
+            )
+        );
+    }
+}
+
+void PossessionsTable::lineclicked(int index)
+{
+    possessions[index]->leftclick(Vec{});
+}
+
 } //end namespace UI

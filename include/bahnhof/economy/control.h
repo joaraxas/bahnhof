@@ -1,10 +1,11 @@
 #pragma once
-// #include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
+#include "bahnhof/ui/panels.h"
 
 class Entity;
 class Account;
-// class InterfaceManager;
+class InterfaceManager;
 
 namespace Economy{
 
@@ -17,12 +18,19 @@ public:
     bool delistpossession(T& pos) {return std::erase(possessions, &pos);}
     Account& getaccount() {return account;}
     Entity& getentity() {return entity;}
-    // void createpanel(InterfaceManager* ui);
+    void createpanel(InterfaceManager* ui) {
+        if(!panel.exists())
+            panel.set(
+                new UI::EconomyPanels::PossessionsPanel(ui, possessions)
+            );
+        else
+            panel.movetofront();
+    }
 private:
     Entity& entity;
     Account& account;
     std::vector<T*> possessions;
-    // UI::Ownership panel;
+    UI::Ownership panel;
 };
 
 } // end namespace Economy

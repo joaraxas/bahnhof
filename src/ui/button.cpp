@@ -215,7 +215,7 @@ void RemoveOrder::leftclick(UIVec mousepos)
 
 } //end namespace Routing
 
-namespace Economy
+namespace EconomyPanels
 {
 
 void PublicOffering::leftclick(UIVec mousepos)
@@ -242,6 +242,11 @@ void Sell::leftclick(UIVec mousepos)
 void VisitStockmarket::leftclick(UIVec mousepos)
 {
     game->getgamestate().stockmarket.createpanel(ui);
+}
+
+void ListBuildings::leftclick(UIVec mousepos)
+{
+    list.createpanel(ui);
 }
 
 } // end namespace Economy

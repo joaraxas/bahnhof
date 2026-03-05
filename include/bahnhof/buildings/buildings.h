@@ -28,6 +28,7 @@ public:
     bool checkcollisionwithshape(const Shape&);
     virtual bool leftclick(Vec pos);
     std::string getownername() const;
+    const std::string& getname() const {return name;};
     std::string name;
     const BuildingType& type;
 protected:

@@ -130,7 +130,7 @@ void Stock::updateregistry() {
 void Person::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::Economy::InvestorPanel(ui, name, portfolio, account)
+            new UI::EconomyPanels::InvestorPanel(ui, name, portfolio, account)
         );
     else
         panel.movetofront();
@@ -139,7 +139,7 @@ void Person::createpanel(InterfaceManager* ui) {
 void ThePublic::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::Economy::ThePublicPanel(ui, name, portfolio)
+            new UI::EconomyPanels::ThePublicPanel(ui, name, portfolio)
         );
     else
         panel.movetofront();
@@ -148,8 +148,8 @@ void ThePublic::createpanel(InterfaceManager* ui) {
 void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::Economy::CompanyPanel(ui, stock, getnameforedit(),
-                portfolio, account)
+            new UI::EconomyPanels::CompanyPanel(ui, stock, getnameforedit(),
+                portfolio, account, buildings)
         );
     else
         panel.movetofront();
@@ -158,7 +158,7 @@ void Company::createpanel(InterfaceManager* ui) {
 void Stockmarket::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::Economy::StockmarketPanel(ui, stocks)
+            new UI::EconomyPanels::StockmarketPanel(ui, stocks)
         );
     else
         panel.movetofront();

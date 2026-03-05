@@ -233,14 +233,15 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 FactoryPanel::~FactoryPanel()
 {}
 
-namespace Economy
+namespace EconomyPanels
 {
 
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Stock& s,
 						   std::string& companyname,
 						   Portfolio& portfolio,
-						   Account& account) : 
+						   Account& account,
+						   Economy::Control<Building>& buildings) : 
 		Panel(newui),
 		stock(s)
 {
@@ -262,7 +263,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 			create<VBox>(
 				create<Text>("Company interests"),
 				create<InvestmentsTable>(portfolio),
-				create<Close>()
+				create<Close>(),
+				create<ListBuildings>(buildings)
 			)
 		)
 	)
@@ -320,6 +322,23 @@ StockmarketPanel::StockmarketPanel(InterfaceManager* newui,
 		create<Text>("Stock market"),
 		create<VBox>(
 			create<StocksTable>(stocks)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+PossessionsPanel::PossessionsPanel(InterfaceManager* newui, 
+        const std::vector<Building*>& poss) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Buildings"),
+		create<VBox>(
+			create<PossessionsTable>(poss)
 		),
 		create<Close>()
 	)

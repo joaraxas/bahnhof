@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/element.h"
+#include "bahnhof/economy/company.h"
 
 class Game;
 class Gamestate;
@@ -225,7 +226,7 @@ public:
 
 } // end namespace Routing
 
-namespace Economy
+namespace EconomyPanels
 {
 
 class PublicOffering : public TextButton
@@ -264,6 +265,16 @@ public:
     VisitStockmarket(Host* newpanel) : 
         TextButton(newpanel, "Visit stock market", 120) {};
     void leftclick(UIVec mousepos);
+};
+
+class ListBuildings : public TextButton
+{
+public:
+    ListBuildings(Host* newpanel, Economy::Control<Building>& l) : 
+        TextButton(newpanel, "Show buildings"), list{l} {};
+    void leftclick(UIVec mousepos);
+private:
+    Economy::Control<Building>& list;
 };
 
 } // end namespace Economy

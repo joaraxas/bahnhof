@@ -17,6 +17,7 @@ class Stock;
 class Portfolio;
 class Account;
 class Entity;
+class Building;
 
 namespace UI{
 
@@ -219,6 +220,18 @@ public:
 private:
     void lineclicked(int index);
     const std::vector<Stock*>& stocks;
+};
+
+class PossessionsTable : public ClickableTable
+{
+public:
+    PossessionsTable(
+        Host* p, const std::vector<Building*>& s, 
+        UIVec pos={0,0}, UIVec minsz={200,300});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    const std::vector<Building*>& possessions;
 };
 
 }
