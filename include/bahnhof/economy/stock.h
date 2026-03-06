@@ -3,10 +3,13 @@
 #include "money.h"
 #include "stake.h"
 
+class Entity;
+
+namespace Economy {
+
 class Portfolio;
 class Account;
 class Stockmarket;
-class Entity;
 
 class Stock
 {
@@ -37,3 +40,4 @@ private:
     Money valuation{0};
 };
 
+} // namespace Economy

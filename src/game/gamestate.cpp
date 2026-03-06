@@ -15,10 +15,12 @@
 #include "bahnhof/economy/company.h"
 
 
+
 Gamestate::Gamestate(Game* whatgame) :
 	me("Sir Charles Darwin", 500),
 	thepublic()
 {
+	using Economy::Company;
 	game = whatgame;
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());

@@ -1,6 +1,8 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 
+namespace Economy {
+
 class Stock;
 
 class Stake
@@ -19,3 +21,5 @@ private:
     uint16_t amount;
     Stock* stock;
 };
+
+} // namespace Economy

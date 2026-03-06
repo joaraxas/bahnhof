@@ -20,7 +20,9 @@ class InterfaceManager;
 class BuildingManager;
 class BuildingType;
 class Building;
-class Account;
+namespace Economy{
+    class Account;
+}
 
 class Builder : public InputMode
 {
@@ -46,7 +48,7 @@ protected:
 private:
     void updateangle(Vec pos);
     InputManager& input;
-    Account& myaccount;
+    Economy::Account& myaccount;
 };
 
 class TrackBuilder : public Builder

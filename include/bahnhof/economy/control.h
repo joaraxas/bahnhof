@@ -3,10 +3,11 @@
 #include "bahnhof/ui/ownership.h"
 
 class Entity;
-class Account;
 class InterfaceManager;
 
 namespace Economy{
+
+class Account;
 
 template<typename T>
 class Control

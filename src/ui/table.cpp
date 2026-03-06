@@ -489,7 +489,7 @@ void InvestmentsTable::update(int ms)
     stocks.clear();
     lines.clear();
     for(auto stock : portfolio.getstocks()){
-        const Stake* const stake = stock->getstakeforportfolio(portfolio);
+        const Economy::Stake* const stake = stock->getstakeforportfolio(portfolio);
         if(!stake) continue;
         lines.emplace_back(
             new TableLine(panel, this, 
@@ -502,7 +502,7 @@ void InvestmentsTable::update(int ms)
 
 void InvestmentsTable::lineclicked(int index)
 {
-    Stock* clickedstock = stocks[index];
+    Economy::Stock* clickedstock = stocks[index];
     clickedstock->getentity().createpanel(ui);
 }
 

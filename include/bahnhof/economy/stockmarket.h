@@ -3,6 +3,9 @@
 #include "bahnhof/ui/ownership.h"
 
 class InterfaceManager;
+
+namespace Economy {
+
 class Stock;
 
 class Stockmarket
@@ -15,3 +18,6 @@ private:
     std::vector<Stock*> stocks;
     UI::Ownership panel;
 };
+
+
+} // namespace Economy

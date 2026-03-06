@@ -14,9 +14,11 @@ class Train;
 class Building;
 class BuildingBuilder;
 class WagonFactory;
-class Stock;
-class Portfolio;
-class Account;
+namespace Economy {
+    class Stock;
+    class Portfolio;
+    class Account;
+}
 
 namespace Economy{
     template<typename T>
@@ -117,17 +119,19 @@ class CompanyPanel : public Panel
 {
 public:
     CompanyPanel(InterfaceManager* newui, 
-        Stock& stock, 
+        Economy::Stock& stock, 
         std::string& companyname,
-        Portfolio& portfolio,
-        Account& account,
+        Economy::Portfolio& portfolio,
+        Economy::Account& account,
         Economy::Control<Building>& buildings);
 private:
-    Stock& stock;
+    Economy::Stock& stock;
 };
 
 class InvestorPanel : public Panel
 {
+    using Portfolio = Economy::Portfolio;
+    using Account = Economy::Account;
 public:
     InvestorPanel(InterfaceManager* newui, 
         const std::string& n, Portfolio& p, Account& a);
@@ -137,6 +141,7 @@ private:
 
 class ThePublicPanel : public Panel
 {
+    using Portfolio = Economy::Portfolio;
 public:
     ThePublicPanel(InterfaceManager* newui, 
         const std::string& n, Portfolio& p);
@@ -148,7 +153,7 @@ class StockmarketPanel : public Panel
 {
 public:
     StockmarketPanel(InterfaceManager* newui, 
-        const std::vector<Stock*>& s);
+        const std::vector<Economy::Stock*>& s);
 };
 
 template<typename Possession>

@@ -228,6 +228,7 @@ public:
 
 namespace EconomyPanels
 {
+using Stock = Economy::Stock;
 
 class PublicOffering : public TextButton
 {

@@ -6,6 +6,9 @@
 #include "bahnhof/economy/control.h"
 #include "bahnhof/ui/panels.h"
 
+
+namespace Economy{
+    
 bool Stake::takefrom(Stake& from, int howmany) {
     if(from.stock!=stock) return false;
     if(from.amount>=howmany){
@@ -164,8 +167,6 @@ void Stockmarket::createpanel(InterfaceManager* ui) {
     else
         panel.movetofront();
 }
-
-namespace Economy{
 
 template<>
 void Control<Building>::createpanel(InterfaceManager* ui) {

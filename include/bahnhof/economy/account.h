@@ -2,6 +2,8 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "money.h"
 
+namespace Economy {
+
 class Loan
 {
 private:
@@ -30,3 +32,5 @@ public:
 private:
     Money money;
 };
+
+} // namespace Economy

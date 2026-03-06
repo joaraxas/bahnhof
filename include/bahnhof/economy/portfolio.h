@@ -2,6 +2,9 @@
 #include "bahnhof/common/forwardincludes.h"
 
 class Entity;
+
+namespace Economy {
+    
 class Stock;
 class Stake;
 class Account;
@@ -20,3 +23,5 @@ private:
     Account& account;
     std::set<Stock*> stocks;
 };
+
+} // namespace Economy

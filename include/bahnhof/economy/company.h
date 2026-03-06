@@ -10,6 +10,8 @@
 class InterfaceManager;
 class Building;
 
+namespace Economy{
+
 class Company : Entity
 {
 public:
@@ -26,7 +28,7 @@ public:
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove
     Stock& getcompanysshares() {return stock;} // might remove
     Account& getcompanysaccount() {return account;} // might remove
-    Economy::Control<Building>& getcompanysbuildingcontrol() 
+    Control<Building>& getcompanysbuildingcontrol() 
         {return buildings;} // might remove
     void createpanel(InterfaceManager* ui);
 private:
@@ -35,6 +37,8 @@ private:
     Account account;
     Portfolio portfolio;
     Stock stock;
-    Economy::Control<Building> buildings;
+    Control<Building> buildings;
     UI::Ownership panel;
 };
+
+} // namespace Economy

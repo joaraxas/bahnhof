@@ -24,6 +24,9 @@ class Gamestate;
 namespace Tracks{
     class Tracksystem;
 }
+namespace Economy{
+    class Company;
+}
 
 class Game
 {
@@ -53,9 +56,6 @@ private:
     bool quit;
 };
 
-class Company;
-class Stockmarket;
-
 class Gamestate
 {
 public:
@@ -69,12 +69,12 @@ public:
     TrainManager& gettrainmanager() {if(!trainmanager) std::cout<<"no trainmanager"<<std::endl; return *trainmanager;};
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
-    Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
+    Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
     int time = 0;
     Money revenue;
-    Person me;
-    ThePublic thepublic;
-    Stockmarket stockmarket;
+    Economy::Person me;
+    Economy::ThePublic thepublic;
+    Economy::Stockmarket stockmarket;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
@@ -82,5 +82,5 @@ private:
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
-    std::vector<std::unique_ptr<Company>> companies;
+    std::vector<std::unique_ptr<Economy::Company>> companies;
 };

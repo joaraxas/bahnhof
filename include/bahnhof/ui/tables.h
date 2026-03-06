@@ -12,12 +12,14 @@ class Route;
 class RouteManager;
 class BuildingType;
 class BuildingBuilder;
-class WagonFactory;
-class Stock;
-class Portfolio;
-class Account;
-class Entity;
 class Building;
+class WagonFactory;
+class Entity;
+namespace Economy{
+    class Stock;
+    class Portfolio;
+    class Account;
+}
 
 namespace UI{
 
@@ -165,6 +167,8 @@ private:
 
 class CompanyInfoTable : public Table // TODO: Either change to StockInfoTable or pass &Company
 {
+    using Stock = Economy::Stock;
+    using Account = Economy::Account;
 public:
     CompanyInfoTable(
         Host* p, Stock& c, Account& a, UIVec pos={0,0}, UIVec minsz={150,60}): 
@@ -177,6 +181,7 @@ private:
 
 class OwnersTable : public ClickableTable
 {
+    using Stock = Economy::Stock;
 public:
     OwnersTable(
         Host* p, Stock& s, UIVec pos={0,0}, UIVec minsz={180,80});
@@ -189,6 +194,7 @@ private:
 
 class AccountInfoTable : public Table
 {
+    using Account = Economy::Account;
 public:
     AccountInfoTable(
         Host* p, Account& a, UIVec pos={0,0}, UIVec minsz={100,40}): 
@@ -200,18 +206,20 @@ private:
 
 class InvestmentsTable : public ClickableTable
 {
+    using Portfolio = Economy::Portfolio;
 public:
     InvestmentsTable(
         Host* p, Portfolio& port, UIVec pos={0,0}, UIVec minsz={180,80});
     void update(int ms);
 private:
     void lineclicked(int index);
-    std::vector<Stock*> stocks;
+    std::vector<Economy::Stock*> stocks;
     Portfolio& portfolio;
 };
 
 class StocksTable : public ClickableTable
 {
+    using Stock = Economy::Stock;
 public:
     StocksTable(
         Host* p, const std::vector<Stock*>& s, 

@@ -237,13 +237,14 @@ FactoryPanel::~FactoryPanel()
 
 namespace EconomyPanels
 {
+using namespace Economy;
 
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Stock& s,
 						   std::string& companyname,
 						   Portfolio& portfolio,
 						   Account& account,
-						   Economy::Control<Building>& buildings) : 
+						   Control<Building>& buildings) : 
 		Panel(newui),
 		stock(s)
 {

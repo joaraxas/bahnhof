@@ -169,7 +169,8 @@ const std::vector<WagonType*> WagonFactory::getavailabletypes()
 	return rollingstock.gettypes();
 }
 
-void WagonFactory::orderwagon(const WagonType& type, Account& payer)
+void WagonFactory::orderwagon(
+	const WagonType& type, Economy::Account& payer)
 {
 	if(payer.canafford(type.cost)){
 		if(productionqueue.empty())

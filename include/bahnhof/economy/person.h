@@ -6,8 +6,11 @@
 #include "account.h"
 #include "portfolio.h"
 
-class Stock;
 class InterfaceManager;
+
+namespace Economy {
+
+class Stock;
 
 class Person : Entity
 {
@@ -27,3 +30,5 @@ private:
     Portfolio portfolio;
     UI::Ownership panel;
 };
+
+} // namespace Economy
