@@ -95,7 +95,7 @@ public:
 class BuildingPanel : public Panel
 {
 public:
-    BuildingPanel(InterfaceManager* newui, Building* b);
+    BuildingPanel(InterfaceManager* newui, Building* b, std::string& name);
     ~BuildingPanel();
 private:
     Building* building;
@@ -104,7 +104,7 @@ private:
 class FactoryPanel : public BuildingPanel
 {
 public:
-    FactoryPanel(InterfaceManager* newui, WagonFactory* f);
+    FactoryPanel(InterfaceManager* newui, WagonFactory* f, std::string& name);
     ~FactoryPanel();
 private:
     WagonFactory* factory;

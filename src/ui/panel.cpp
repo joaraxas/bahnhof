@@ -193,13 +193,14 @@ BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
 	placeautomatically();
 }
 
-BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
+BuildingPanel::BuildingPanel(
+	InterfaceManager* newui, Building* b, std::string& name) : 
 		Panel(newui),
 		building(b)
 {
 	setlayout(
 		create<VBox>(
-			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<EditableText>(name, UIRect{0, 0, 250, 20}),
 			create<HBox>(
 				create<Close>(),
 				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
@@ -214,8 +215,9 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 BuildingPanel::~BuildingPanel()
 {}
 
-FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) : 
-		BuildingPanel(newui, f),
+FactoryPanel::FactoryPanel(
+	InterfaceManager* newui, WagonFactory* f, std::string& name) : 
+		BuildingPanel(newui, f, name),
 		factory(f)
 {
 	getlayout()->setpadding({0,0});

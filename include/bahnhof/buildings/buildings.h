@@ -29,9 +29,9 @@ public:
     virtual bool leftclick(Vec pos);
     std::string getownername() const;
     const std::string& getname() const {return name;};
-    std::string name;
     const BuildingType& type;
 protected:
+    std::string name;
     UI::Ownership panel;
     SDL_Color color;
     Game* game;
