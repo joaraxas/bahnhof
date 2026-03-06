@@ -3,6 +3,7 @@
 #include "bahnhof/economy/thepublic.h"
 #include "bahnhof/economy/company.h"
 #include "bahnhof/economy/stockmarket.h"
+#include "bahnhof/economy/control.h"
 #include "bahnhof/ui/panels.h"
 
 bool Stake::takefrom(Stake& from, int howmany) {
@@ -163,3 +164,17 @@ void Stockmarket::createpanel(InterfaceManager* ui) {
     else
         panel.movetofront();
 }
+
+namespace Economy{
+
+template<>
+void Control<Building>::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::PossessionsPanel<Building>(ui, possessions)
+        );
+    else
+        panel.movetofront();
+}
+
+} // namespace Economy

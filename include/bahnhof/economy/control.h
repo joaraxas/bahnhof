@@ -1,7 +1,6 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
-#include "bahnhof/ui/panels.h"
 
 class Entity;
 class Account;
@@ -18,14 +17,7 @@ public:
     bool delistpossession(T& pos) {return std::erase(possessions, &pos);}
     Account& getaccount() {return account;}
     Entity& getentity() {return entity;}
-    void createpanel(InterfaceManager* ui) {
-        if(!panel.exists())
-            panel.set(
-                new UI::EconomyPanels::PossessionsPanel(ui, possessions)
-            );
-        else
-            panel.movetofront();
-    }
+    void createpanel(InterfaceManager* ui); // Specializations defined in .cpp
 private:
     Entity& entity;
     Account& account;

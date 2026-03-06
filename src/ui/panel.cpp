@@ -332,7 +332,8 @@ StockmarketPanel::StockmarketPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
-PossessionsPanel::PossessionsPanel(InterfaceManager* newui, 
+template<>
+PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui, 
         const std::vector<Building*>& poss) :
 	Panel(newui)
 {
@@ -340,7 +341,7 @@ PossessionsPanel::PossessionsPanel(InterfaceManager* newui,
 	create<VBox>(
 		create<Text>("Buildings"),
 		create<VBox>(
-			create<PossessionsTable>(poss)
+			create<PossessionsTable<Building>>(poss)
 		),
 		create<Close>()
 	)
@@ -349,6 +350,6 @@ PossessionsPanel::PossessionsPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
-} // end namespace Economy
+} // end namespace EconomyPanels
 
 } // namespace UI

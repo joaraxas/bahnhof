@@ -222,16 +222,21 @@ private:
     const std::vector<Stock*>& stocks;
 };
 
+template<typename Possession>
 class PossessionsTable : public ClickableTable
 {
 public:
     PossessionsTable(
-        Host* p, const std::vector<Building*>& s, 
-        UIVec pos={0,0}, UIVec minsz={200,300});
+        Host* p, const std::vector<Possession*>& s, 
+        UIVec pos={0,0}, UIVec minsz={200,300}) : 
+            ClickableTable{p, minsz, pos}, possessions{s}
+    {}
     void update(int ms);
 private:
-    void lineclicked(int index);
-    const std::vector<Building*>& possessions;
+    void lineclicked(int index) {
+        possessions[index]->leftclick(Vec{});
+    }
+    const std::vector<Possession*>& possessions;
 };
 
 }

@@ -151,6 +151,7 @@ public:
         const std::vector<Stock*>& s);
 };
 
+template<typename Possession>
 class PossessionsPanel : public Panel
 {
 public:
