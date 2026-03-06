@@ -162,6 +162,7 @@ bool WagonFactory::leftclick(Vec pos)
 	if(!panel.exists()){
 		panel.set(new UI::FactoryPanel(&game->getui(), this, name));
 	}
+	panel.movetofront();
 }
 
 const std::vector<WagonType*> WagonFactory::getavailabletypes()
