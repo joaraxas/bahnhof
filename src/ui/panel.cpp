@@ -206,7 +206,8 @@ BuildingPanel::BuildingPanel(
 				create<Close>(),
 				create<Text>(building.type.name, UIRect{0, 0, 150, 20})
 			),
-			create<Text>(building.getownername())
+			create<Text>(building.getownername()), // TODO: Should update when bought
+			create<Trade>(building)
 		)
 	);
 	applylayout();

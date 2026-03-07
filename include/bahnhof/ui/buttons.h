@@ -280,4 +280,14 @@ private:
 
 } // end namespace Economy
 
+class Trade : public TextButton
+{
+public:
+    Trade(Host* newpanel, Building& b) :
+        TextButton{newpanel, "Buy"}, building{b} {}
+    void leftclick(UIVec mousepos);
+private:
+    Building& building;
+};
+
 } // end namespace UI

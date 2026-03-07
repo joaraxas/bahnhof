@@ -19,7 +19,7 @@ Building::Building(
 	shape(std::move(s)),
 	game(g),
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
-	control(c)
+	control(&c)
 {
 	color = type.color;
 	if(type.spritename){
@@ -27,12 +27,12 @@ Building::Building(
 		sprite.imageangle = shape->getorientation();
 		hassprite = true;
 	}
-	control.listpossession(*this);
+	control->listpossession(*this);
 }
 
 Building::~Building()
 {
-	control.delistpossession(*this);
+	control->delistpossession(*this);
 }
 
 void Building::render(Rendering* r)
@@ -72,7 +72,7 @@ bool Building::leftclick(Vec pos)
 
 std::string Building::getownername() const
 {
-	return control.getentity().getname();
+	return control->getentity().getname();
 }
 
 
@@ -109,7 +109,7 @@ void Industry::trigger()
 			else{
 				// TODO: account should depend on who delivered the goods,
 				// or payment should be made when received
-				control.getaccount().earn(got);
+				control->getaccount().earn(got);
 			}
 		}
 	}
@@ -191,12 +191,18 @@ Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) :
 
 Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, hopsfield, std::move(s), c, {}, {hops})
-{}
+{
+	name = "Hopfentropfen";
+}
 
 Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, barleyfield, std::move(s), c, {}, {barley})
-{}
+{
+	name = "Gerstentraum";
+}
 
 City::City(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, city, std::move(s), c, {beer}, {})
-{}
+{
+	name = "Bern";
+}

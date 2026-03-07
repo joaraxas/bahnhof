@@ -26,4 +26,15 @@ private:
     UI::Ownership panel;
 };
 
+template<typename T>
+inline bool transferpossession(T& pos, Control<T>& to) {
+    auto& owner = pos.getowner();
+    if(&owner == &to) {
+        std::cout<<owner.getentity().getname()<<
+            " tried to buy "<<pos.getname()<<" from himself"<<std::endl;
+        return false;
+    }
+    owner.delistpossession(pos); to.listpossession(pos); pos.setowner(to);
+};
+
 } // end namespace Economy

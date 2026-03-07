@@ -11,6 +11,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/buildings/buildings.h"
 #include "bahnhof/economy/company.h"
 
 namespace UI{
@@ -249,6 +250,11 @@ void ListBuildings::leftclick(UIVec mousepos)
     list.createpanel(ui);
 }
 
-} // end namespace Economy
+} // end namespace EconomyPanels
+
+void Trade::leftclick(UIVec mousepos)
+{
+    transferpossession(building, game->getgamestate().getmycompany().getcompanysbuildingcontrol());
+}
 
 } //end namespace UI
