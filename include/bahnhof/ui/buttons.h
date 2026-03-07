@@ -283,8 +283,7 @@ private:
 class Trade : public TextButton
 {
 public:
-    Trade(Host* newpanel, Building& b) :
-        TextButton{newpanel, "Buy"}, building{b} {}
+    Trade(Host* newpanel, Building& b);
     void leftclick(UIVec mousepos);
 private:
     Building& building;

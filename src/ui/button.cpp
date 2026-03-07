@@ -252,6 +252,9 @@ void ListBuildings::leftclick(UIVec mousepos)
 
 } // end namespace EconomyPanels
 
+Trade::Trade(Host* newpanel, Building& b) :
+        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b} {}
+
 void Trade::leftclick(UIVec mousepos)
 {
     buy(building, game->getgamestate().getmycompany().getcompanysbuildingcontrol(), building.getvalue());
