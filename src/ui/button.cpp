@@ -254,7 +254,7 @@ void ListBuildings::leftclick(UIVec mousepos)
 
 void Trade::leftclick(UIVec mousepos)
 {
-    buy(building, game->getgamestate().getmycompany().getcompanysbuildingcontrol(), 100);
+    buy(building, game->getgamestate().getmycompany().getcompanysbuildingcontrol(), building.getvalue());
 }
 
 } //end namespace UI

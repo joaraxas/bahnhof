@@ -30,6 +30,7 @@ public:
     std::string getownername() const;
     BuildingOwner& getowner() const {return *control;};
     void setowner(BuildingOwner& newowner) {control = &newowner;};
+    Economy::Money getvalue() {return type.cost;};
     const std::string& getname() const {return name;};
     const BuildingType& type;
 protected:
