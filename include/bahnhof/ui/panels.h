@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/host.h"
 #include "bahnhof/ui/ownership.h"
+#include "bahnhof/buildings/buildingtypes.h"
 
 class Game;
 class Gamestate;
@@ -92,7 +93,8 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui, const BuildingManager& bm);
+    BuildingConstructionPanel(InterfaceManager* newui, const BuildingManager& bm,
+        const std::vector<BuildingID>& availabletypes);
 };
 
 class BuildingPanel : public Panel

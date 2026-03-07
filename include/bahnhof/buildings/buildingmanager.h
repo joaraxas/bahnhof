@@ -18,7 +18,6 @@ public:
     void update(int ms);
     void render(Rendering* r);
     bool leftclick(Vec mappos);
-    const std::vector<BuildingID>& getavailabletypes() const {return availabletypes;};
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
     void addbuilding(std::unique_ptr<Building> b);
     bool checkcollision(const Shape& shape);

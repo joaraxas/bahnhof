@@ -181,13 +181,14 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 }
 
 BuildingConstructionPanel::BuildingConstructionPanel(
-	InterfaceManager* newui, const BuildingManager& manager) :
+	InterfaceManager* newui, const BuildingManager& manager,
+    const std::vector<BuildingID>& availabletypes) :
 		Panel(newui)
 {
 	setlayout(
 	create<VBox>(
 		create<Close>(),
-		create<ConstructionTable>(manager)
+		create<ConstructionTable>(manager, availabletypes)
 	)
 	);
 	applylayout();

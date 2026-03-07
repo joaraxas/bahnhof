@@ -151,10 +151,12 @@ class ConstructionTable : public ClickableTable
 {
 public:
     ConstructionTable(Host* p, const BuildingManager& manager, 
+        const std::vector<BuildingID>& availtypes,
         UIVec pos={0,0}, UIVec minsz={200,100});
 private:
     void lineclicked(int index);
     const BuildingManager& buildingmanager;
+    const std::vector<BuildingID>& availabletypes;
 };
 
 class WagonTable : public ClickableTable
