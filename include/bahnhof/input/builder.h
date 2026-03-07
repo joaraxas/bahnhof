@@ -38,7 +38,7 @@ protected:
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
-    Money cost;
+    Economy::Money cost;
     Vec anchorpoint{0,0};
     bool droppedanchor = false;
     Angle angle;

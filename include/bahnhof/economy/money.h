@@ -1,6 +1,8 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 
+namespace Economy {
+
 class Money
 {
 public:
@@ -30,3 +32,5 @@ private:
 
 inline Money operator+(Money lhs, const Money rhs) {return lhs+=rhs;}
 inline Money operator-(Money lhs, const Money rhs) {return lhs-=rhs;}
+
+} // namespace Economy

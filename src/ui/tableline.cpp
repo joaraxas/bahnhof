@@ -71,7 +71,7 @@ PurchaseOptionTableLine::PurchaseOptionTableLine(
     Table* t, 
     sprites::name iconname, 
     std::string name, 
-    Money cost
+    Economy::Money cost
     ) : TableLine(p, t, name), price(cost)
 {
     SpriteManager& sprites = game->getsprites();

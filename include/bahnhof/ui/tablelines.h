@@ -40,11 +40,12 @@ private:
 class PurchaseOptionTableLine : public TableLine
 {
 public:
-    PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, std::string name, Money cost);
+    PurchaseOptionTableLine(Host* p, Table* t, sprites::name iconname, 
+        std::string name, Economy::Money cost);
     void render(Rendering* r, UIRect maxarea, TextStyle style, Coord xmargin, Coord ymargin);
 private:
     Icon icon;
-    Money price;
+    Economy::Money price;
 };
 
 

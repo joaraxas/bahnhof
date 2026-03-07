@@ -48,7 +48,7 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	Money lastmoney = getmycompany().getcompanysaccount().getvalue(); // TODO: Move to company or account
+	Economy::Money lastmoney = getmycompany().getcompanysaccount().getvalue(); // TODO: Move to company or account
 
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);

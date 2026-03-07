@@ -20,5 +20,5 @@ struct BuildingType
     SDL_Color color;
     sprites::name spritename;
     sprites::name iconname;
-    Money cost;
+    Economy::Money cost;
 };
