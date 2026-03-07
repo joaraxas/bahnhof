@@ -5,6 +5,7 @@
 #include "bahnhof/economy/stockmarket.h"
 #include "bahnhof/economy/control.h"
 #include "bahnhof/ui/panels.h"
+#include "bahnhof/buildings/buildings.h"
 
 
 namespace Economy{
@@ -177,5 +178,18 @@ void Control<Building>::createpanel(InterfaceManager* ui) {
     else
         panel.movetofront();
 }
+
+template<>
+bool buy(Building& pos, Control<Building>& buyer, Money price) {
+    auto& owner = pos.getowner();
+    if(&owner == &buyer) {
+        std::cout<<owner.getentity().getname()<<
+            " tried to buy "<<pos.getname()<<" from himself"<<std::endl;
+        return false;
+    }
+    if(!buyer.getaccount().pay(price, &owner.getaccount()))
+        return false;
+    owner.delistpossession(pos); buyer.listpossession(pos); pos.setowner(buyer);
+};
 
 } // namespace Economy

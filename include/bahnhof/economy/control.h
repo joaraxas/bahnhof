@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
+#include "bahnhof/economy/money.h"
 
 class Entity;
 class InterfaceManager;
@@ -27,14 +28,6 @@ private:
 };
 
 template<typename T>
-inline bool transferpossession(T& pos, Control<T>& to) {
-    auto& owner = pos.getowner();
-    if(&owner == &to) {
-        std::cout<<owner.getentity().getname()<<
-            " tried to buy "<<pos.getname()<<" from himself"<<std::endl;
-        return false;
-    }
-    owner.delistpossession(pos); to.listpossession(pos); pos.setowner(to);
-};
+bool buy(T& pos, Control<T>& buyer, Money price);
 
 } // end namespace Economy
