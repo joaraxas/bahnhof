@@ -180,8 +180,8 @@ int TrainCoupler::getwagonidatmousepos(UIVec mousepos)
 void WagonQueue::render(Rendering* r)
 {
     std::vector<WagonInfo> wagoninfos;
-	for(const WagonType* type : factory.getqueue()){
-		WagonInfo info(type->iconname, none, 0);
+	for(WagonOrder order : factory.getqueue()){
+		WagonInfo info(order.type->iconname, none, 0);
 		wagoninfos.push_back(info);
 	}
 	iconrects = rendertrainicons(r, *ui, wagoninfos, getglobalrect());

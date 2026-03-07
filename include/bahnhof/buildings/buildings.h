@@ -37,7 +37,7 @@ protected:
     Game* game;
     std::unique_ptr<Shape> shape;
     Sprite sprite;
-    BuildingOwner* company;
+    BuildingOwner* control;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;
@@ -59,6 +59,12 @@ private:
     std::set<resourcetype> makes;
 };
 
+struct WagonOrder
+{
+    const WagonType* type;
+    Economy::Account* payer;
+};
+
 class WagonFactory : public Building
 {
 public:
@@ -70,9 +76,9 @@ public:
     const std::vector<WagonType*> getavailabletypes();
     void orderwagon(const WagonType& type, Economy::Account& payer);
     void removefromqueue(int wagonid);
-    const std::deque<const WagonType*>& getqueue();
+    const std::deque<WagonOrder>& getqueue();
 private:
-    std::deque<const WagonType*> productionqueue;
+    std::deque<WagonOrder> productionqueue;
     State state;
     RollingStockManager& rollingstock;
     int msleft;

@@ -19,7 +19,7 @@ Building::Building(
 	shape(std::move(s)),
 	game(g),
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
-	company(c)
+	control(c)
 {
 	color = type.color;
 	if(type.spritename){
@@ -27,15 +27,15 @@ Building::Building(
 		sprite.imageangle = shape->getorientation();
 		hassprite = true;
 	}
-	if(company){
-		company->listpossession(*this);
+	if(control){
+		control->listpossession(*this);
 	}
 }
 
 Building::~Building()
 {
-	if(company){
-		company->delistpossession(*this);
+	if(control){
+		control->delistpossession(*this);
 	}
 }
 
@@ -76,9 +76,9 @@ bool Building::leftclick(Vec pos)
 
 std::string Building::getownername() const
 {
-	if(!company)
+	if(!control)
 		return "Private owner";
-	return company->getentity().getname();
+	return control->getentity().getname();
 }
 
 
@@ -89,12 +89,6 @@ Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
 			Building(whatgame, id, std::move(s), c)
 {
 	storage = getstorageatpoint(shape->mid());
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x+w,y));
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x,y+h));
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x+w,y+h));
 	wants = need;
 	makes = production;
 	if(storage){
@@ -121,8 +115,8 @@ void Industry::trigger()
 			else{
 				// TODO: account should depend on who delivered the goods,
 				// or payment should be made when received
-				if(company)
-					company->getaccount().earn(got);
+				if(control)
+					control->getaccount().earn(got);
 			}
 		}
 	}
@@ -142,7 +136,7 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c,
 void WagonFactory::trigger()
 {
 	if(!productionqueue.empty()){
-		const WagonType& type = *productionqueue.front();
+		const WagonType& type = *productionqueue.front().type;
 		productionqueue.pop_front();
 
 		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
@@ -176,7 +170,7 @@ void WagonFactory::orderwagon(
 	if(payer.canafford(type.cost)){
 		if(productionqueue.empty())
 			timeleft = 3500;
-		productionqueue.push_back(&type);
+		productionqueue.push_back(WagonOrder{&type, &payer});
 		payer.pay(type.cost);
 	}
 }
@@ -184,14 +178,14 @@ void WagonFactory::orderwagon(
 void WagonFactory::removefromqueue(int wagonid)
 {
 	if(wagonid>=0 && wagonid<productionqueue.size()){
-		if(company)
-			company->getaccount().earn(productionqueue[wagonid]->cost);
+		Economy::Account* payer = productionqueue[wagonid].payer;
+		payer->earn(productionqueue[wagonid].type->cost);
 		productionqueue.erase(productionqueue.begin() + wagonid);
 		if(wagonid==0) timeleft = 3500;
 	}
 }
 
-const std::deque<const WagonType*>& WagonFactory::getqueue()
+const std::deque<WagonOrder>& WagonFactory::getqueue()
 {
 	return productionqueue;
 }
