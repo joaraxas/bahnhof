@@ -5,8 +5,10 @@
 #include "money.h"
 #include "account.h"
 #include "portfolio.h"
+#include "control.h"
 
 class InterfaceManager;
+class Building;
 
 namespace Economy {
 
@@ -16,17 +18,19 @@ class ThePublic : Entity
 {
 public:
     ThePublic() : 
-        name{"The public"}, 
         account{1e8f}, 
-        portfolio{*this, account} 
+        portfolio{*this, account},
+        buildings{*this, account}
     {}
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
     Portfolio& getinvestments() {return portfolio;} // might remove
+    Control<Building>& getbuildings() {return buildings;} // might remove
 private:
-    std::string name;
+    std::string name{"The public"};
     Account account;
     Portfolio portfolio;
+    Control<Building> buildings;
     UI::Ownership panel;
 };
 

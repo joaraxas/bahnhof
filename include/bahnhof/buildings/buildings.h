@@ -19,7 +19,7 @@ using BuildingOwner = Economy::Control<Building>;
 class Building
 {
 public:
-    Building(Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner* c);
+    Building(Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner& c);
     virtual ~Building();
     virtual void render(Rendering* rendering);
     void update(int ms);
@@ -37,7 +37,7 @@ protected:
     Game* game;
     std::unique_ptr<Shape> shape;
     Sprite sprite;
-    BuildingOwner* control;
+    BuildingOwner& control;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;
@@ -49,7 +49,7 @@ public:
     Industry(Game* g,
         BuildingID id, 
         std::unique_ptr<Shape> s, 
-        BuildingOwner* c,
+        BuildingOwner& c,
         std::set<resourcetype> need, 
         std::set<resourcetype> production);
     void trigger();
@@ -68,7 +68,7 @@ struct WagonOrder
 class WagonFactory : public Building
 {
 public:
-    WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c, State st, 
+    WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c, State st, 
         RollingStockManager& r);
     void trigger();
     bool leftclick(Vec pos);
@@ -87,24 +87,24 @@ private:
 class Brewery : public Industry
 {
 public:
-    Brewery(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
+    Brewery(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c);
 };
 
 class Hopsfield : public Industry
 {
 public:
-    Hopsfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
+    Hopsfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c);
 };
 
 class Barleyfield : public Industry
 {
 public:
-    Barleyfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
+    Barleyfield(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c);
 };
 
 class City : public Industry
 {
 public:
-    City(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c=nullptr);
+    City(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c);
 };
 

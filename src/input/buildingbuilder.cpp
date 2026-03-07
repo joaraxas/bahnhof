@@ -81,25 +81,25 @@ void BuildingBuilder::build()
     case brewery:
         buildingmanager.addbuilding(
             std::make_unique<Brewery>(
-                game, std::move(shape), &contractor)
+                game, std::move(shape), contractor)
         );
         break;
     case hopsfield:
         buildingmanager.addbuilding(
             std::make_unique<Hopsfield>(
-                game, std::move(shape), &contractor)
+                game, std::move(shape), contractor)
         );
         break;
     case barleyfield:
         buildingmanager.addbuilding(
             std::make_unique<Barleyfield>(
-                game, std::move(shape), &contractor)
+                game, std::move(shape), contractor)
         );
         break;
     case city:
         buildingmanager.addbuilding(
             std::make_unique<City>(
-                game, std::move(shape), &contractor)
+                game, std::move(shape), contractor)
         );
         break;
     case wagonfactory:{
@@ -119,7 +119,7 @@ void BuildingBuilder::build()
             Tracks::travel(tracksystem, midpointstate, 500));
         buildingmanager.addbuilding(
             std::make_unique<WagonFactory>(
-                game, std::move(shape), &contractor, midpointstate, r)
+                game, std::move(shape), contractor, midpointstate, r)
         );
         break;
     }

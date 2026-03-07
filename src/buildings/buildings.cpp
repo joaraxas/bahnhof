@@ -15,7 +15,7 @@
 
 
 Building::Building(
-		Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner* c) : 
+		Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	shape(std::move(s)),
 	game(g),
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
@@ -27,16 +27,12 @@ Building::Building(
 		sprite.imageangle = shape->getorientation();
 		hassprite = true;
 	}
-	if(control){
-		control->listpossession(*this);
-	}
+	control.listpossession(*this);
 }
 
 Building::~Building()
 {
-	if(control){
-		control->delistpossession(*this);
-	}
+	control.delistpossession(*this);
 }
 
 void Building::render(Rendering* r)
@@ -76,14 +72,12 @@ bool Building::leftclick(Vec pos)
 
 std::string Building::getownername() const
 {
-	if(!control)
-		return "Private owner";
-	return control->getentity().getname();
+	return control.getentity().getname();
 }
 
 
 Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
-			BuildingOwner* c, 
+			BuildingOwner& c, 
 			std::set<resourcetype> need, 
 			std::set<resourcetype> production) :
 			Building(whatgame, id, std::move(s), c)
@@ -115,14 +109,13 @@ void Industry::trigger()
 			else{
 				// TODO: account should depend on who delivered the goods,
 				// or payment should be made when received
-				if(control)
-					control->getaccount().earn(got);
+				control.getaccount().earn(got);
 			}
 		}
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner* c, 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c, 
 		State st, RollingStockManager& r) : 
 	Building(g, wagonfactory, std::move(s), c), 
 	state(st),
@@ -190,20 +183,20 @@ const std::deque<WagonOrder>& WagonFactory::getqueue()
 	return productionqueue;
 }
 
-Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, BuildingOwner* c) : 
+Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, brewery, std::move(s), c, {hops, barley}, {beer})
 {
 	name = "Augustator";
 }
 
-Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner* c) : 
+Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, hopsfield, std::move(s), c, {}, {hops})
 {}
 
-Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner* c) : 
+Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, barleyfield, std::move(s), c, {}, {barley})
 {}
 
-City::City(Game* game, std::unique_ptr<Shape> s, BuildingOwner* c) : 
+City::City(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	Industry(game, city, std::move(s), c, {beer}, {})
 {}

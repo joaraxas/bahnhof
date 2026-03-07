@@ -143,7 +143,7 @@ void Person::createpanel(InterfaceManager* ui) {
 void ThePublic::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::EconomyPanels::ThePublicPanel(ui, name, portfolio)
+            new UI::EconomyPanels::ThePublicPanel(ui, getname(), portfolio)
         );
     else
         panel.movetofront();
