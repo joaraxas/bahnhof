@@ -65,7 +65,7 @@ bool Building::checkcollisionwithshape(const Shape& othershape)
 bool Building::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::BuildingPanel(&game->getui(), this, name));
+		panel.set(new UI::BuildingPanel(&game->getui(), *this, name));
 	}
 	panel.movetofront();
 }
@@ -147,7 +147,7 @@ void WagonFactory::trigger()
 bool WagonFactory::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::FactoryPanel(&game->getui(), this, name));
+		panel.set(new UI::FactoryPanel(&game->getui(), *this, name));
 	}
 	panel.movetofront();
 }

@@ -196,18 +196,17 @@ BuildingConstructionPanel::BuildingConstructionPanel(
 }
 
 BuildingPanel::BuildingPanel(
-	InterfaceManager* newui, Building* b, std::string& name) : 
-		Panel(newui),
-		building(b)
+	InterfaceManager* newui, Building& building, std::string& name) : 
+		Panel(newui)
 {
 	setlayout(
 		create<VBox>(
 			create<EditableText>(name, UIRect{0, 0, 250, 20}),
 			create<HBox>(
 				create<Close>(),
-				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
+				create<Text>(building.type.name, UIRect{0, 0, 150, 20})
 			),
-			create<Text>(building->getownername())
+			create<Text>(building.getownername())
 		)
 	);
 	applylayout();
@@ -218,16 +217,15 @@ BuildingPanel::~BuildingPanel()
 {}
 
 FactoryPanel::FactoryPanel(
-	InterfaceManager* newui, WagonFactory* f, std::string& name) : 
-		BuildingPanel(newui, f, name),
-		factory(f)
+	InterfaceManager* newui, WagonFactory& factory, std::string& name) : 
+		BuildingPanel(newui, factory, name)
 {
 	getlayout()->setpadding({0,0});
 	Layout* newlayout = create<VBox>();
 	newlayout->addelements({
 		getlayout(),
-		create<WagonTable>(*f),
-		create<WagonQueue>(*f)
+		create<WagonTable>(factory),
+		create<WagonQueue>(factory)
 	});
 	setlayout(newlayout);
 	applylayout();

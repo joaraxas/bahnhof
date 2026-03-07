@@ -100,19 +100,15 @@ public:
 class BuildingPanel : public Panel
 {
 public:
-    BuildingPanel(InterfaceManager* newui, Building* b, std::string& name);
+    BuildingPanel(InterfaceManager* newui, Building& b, std::string& name);
     ~BuildingPanel();
-private:
-    Building* building;
 };
 
 class FactoryPanel : public BuildingPanel
 {
 public:
-    FactoryPanel(InterfaceManager* newui, WagonFactory* f, std::string& name);
+    FactoryPanel(InterfaceManager* newui, WagonFactory& f, std::string& name);
     ~FactoryPanel();
-private:
-    WagonFactory* factory;
 };
 
 namespace EconomyPanels
