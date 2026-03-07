@@ -12,6 +12,7 @@ class Route;
 class TrainManager;
 class Train;
 class Building;
+class BuildingManager;
 class BuildingBuilder;
 class WagonFactory;
 namespace Economy {
@@ -91,7 +92,7 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui);
+    BuildingConstructionPanel(InterfaceManager* newui, const BuildingManager& bm);
 };
 
 class BuildingPanel : public Panel

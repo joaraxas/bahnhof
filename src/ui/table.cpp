@@ -375,12 +375,14 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
-    ClickableTable(p, minsz, pos), 
-    buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
+ConstructionTable::ConstructionTable(Host* p, const BuildingManager& manager, 
+    UIVec pos, UIVec minsz) : 
+        ClickableTable(p, minsz, pos), 
+        buildingmanager(manager)
 {
+    auto buildingtypes = buildingmanager.getavailabletypes();
     for(int i=0; i<buildingtypes.size(); i++){
-        const BuildingType& type = buildingtypes[i];
+        const BuildingType& type = buildingmanager.gettypefromid(buildingtypes[i]);
         lines.emplace_back(
             new PurchaseOptionTableLine(panel, 
                 this,
@@ -394,7 +396,9 @@ ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) :
 
 void ConstructionTable::lineclicked(int index)
 {
-    const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
+    auto buildingtypes = buildingmanager.getavailabletypes();
+    const BuildingType& clickedbuilding = 
+        buildingmanager.gettypefromid(buildingtypes.at(index)); // TODO: Highlight the one currently being built
     auto& input = game->getinputmanager();
     auto& control = game->getgamestate().getmycompany().getcompanysbuildingcontrol();
     input.setinputmode(

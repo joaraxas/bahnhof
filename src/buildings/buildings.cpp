@@ -159,7 +159,7 @@ bool WagonFactory::leftclick(Vec pos)
 	panel.movetofront();
 }
 
-const std::vector<WagonType*> WagonFactory::getavailabletypes()
+const std::vector<WagonType*>& WagonFactory::getavailabletypes() const
 {
 	return rollingstock.gettypes();
 }

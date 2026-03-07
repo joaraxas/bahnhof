@@ -14,8 +14,8 @@ BuildingManager::BuildingManager(Game* g) : game(g)
 	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 200};
 	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(370,185), {127,127,127,255}, sprites::wagonfactory, sprites::icontankloco, 100};
 
-	availabletypes.push_back(types[brewery]);
-	availabletypes.push_back(types[wagonfactory]);
+	availabletypes.push_back(types[brewery].id);
+	availabletypes.push_back(types[wagonfactory].id);
 }
 
 void BuildingManager::update(int ms)
@@ -70,5 +70,5 @@ bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
 void BuildingManager::createconstructionpanel()
 {
 	if(!constructionpanel.exists())
-    	constructionpanel.set(new UI::BuildingConstructionPanel(&game->getui()));
+    	constructionpanel.set(new UI::BuildingConstructionPanel(&game->getui(), *this));
 }

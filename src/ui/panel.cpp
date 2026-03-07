@@ -180,13 +180,14 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	placeautomatically();
 }
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
-	Panel(newui)
+BuildingConstructionPanel::BuildingConstructionPanel(
+	InterfaceManager* newui, const BuildingManager& manager) :
+		Panel(newui)
 {
 	setlayout(
 	create<VBox>(
 		create<Close>(),
-		create<ConstructionTable>()
+		create<ConstructionTable>(manager)
 	)
 	);
 	applylayout();

@@ -73,7 +73,7 @@ public:
     void trigger();
     bool leftclick(Vec pos);
     State& getstate() {return state;};
-    const std::vector<WagonType*> getavailabletypes();
+    const std::vector<WagonType*>& getavailabletypes() const;
     void orderwagon(const WagonType& type, Economy::Account& payer);
     void removefromqueue(int wagonid);
     const std::deque<WagonOrder>& getqueue();
