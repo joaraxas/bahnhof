@@ -34,6 +34,7 @@ public:
     float getcamscale();
     Game& getgame() {return *game;};
 private:
+    void getrendererinfo();
     Game* game;
     Camera* cam;
     SDL_Texture* fieldtex;
