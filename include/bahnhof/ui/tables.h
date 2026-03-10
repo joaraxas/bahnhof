@@ -31,7 +31,7 @@ class Table : public Element
 public:
     Table(Host*, UIVec minsz, UIVec pos={0,0});
     virtual ~Table();
-    bool checkclick(UIVec pos) override;
+    bool checkclick(UIVec pos) final;
     virtual void render(Rendering*) override;
     virtual UIVec getminimumsize() override;
     UIRect place(UIRect r) override;
@@ -48,9 +48,9 @@ class ClickableTable : public Table
 public:
     ClickableTable(Host* h, UIVec minsz, UIVec pos={0,0}) : 
         Table(h, minsz, pos) {};
-    void leftclick(UIVec pos);
-    void scroll(UIVec pos, int distance);
-    virtual void render(Rendering*);
+    void leftclick(UIVec pos) final;
+    void scroll(UIVec pos, int distance) final;
+    virtual void render(Rendering*) override;
 protected:
     virtual void lineclicked(int index) {selectedlineindex = index;};
     int selectedlineindex = -1;
@@ -245,9 +245,7 @@ public:
     {}
     void update(int ms);
 private:
-    void lineclicked(int index) {
-        possessions[index]->leftclick(Vec{});
-    }
+    void lineclicked(int index);
     const std::vector<Possession*>& possessions;
 };
 

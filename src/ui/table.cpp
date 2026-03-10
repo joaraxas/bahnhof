@@ -535,6 +535,17 @@ void StocksTable::lineclicked(int index)
     stocks[index]->getentity().createpanel(ui);
 }
 
+
+template<>
+void PossessionsTable<Building>::lineclicked(int index) {
+    if(possessions.size()>0)
+        possessions[index]->leftclick(Vec{});
+    else{
+        game->getgamestate().getbuildingmanager().
+            createconstructionpanel();
+    }
+}
+
 template<>
 void PossessionsTable<Building>::update(int ms)
 {
@@ -542,6 +553,12 @@ void PossessionsTable<Building>::update(int ms)
     for(auto poss : possessions){
         lines.emplace_back(
             new TableLine(panel, this, poss->getname())
+        );
+    }
+    if(lines.size() == 0){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+                "No buildings owned, click to construct one")
         );
     }
 }
