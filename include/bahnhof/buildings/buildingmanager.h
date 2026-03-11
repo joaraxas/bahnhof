@@ -20,7 +20,7 @@ public:
     bool leftclick(Vec mappos);
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
     void addbuilding(std::unique_ptr<Building> b);
-    bool checkcollision(const Shape& shape);
+    bool checkcollision(const Shape& shape) const;
     bool checkcollision(const Tracks::Tracksection& shape);
     void createconstructionpanel();
 private:

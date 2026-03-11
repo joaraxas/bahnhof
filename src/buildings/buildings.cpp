@@ -52,12 +52,12 @@ void Building::update(int ms)
 	}
 }
 
-bool Building::checkcollisionwithpoint(Vec pos)
+bool Building::checkcollisionwithpoint(Vec pos) const
 {
 	return shape->contains(pos);
 }
 
-bool Building::checkcollisionwithshape(const Shape& othershape)
+bool Building::checkcollisionwithshape(const Shape& othershape) const
 {
 	return shape->intersects(othershape);
 }

@@ -24,8 +24,8 @@ public:
     virtual void render(Rendering* rendering);
     void update(int ms);
     virtual void trigger() {};
-    bool checkcollisionwithpoint(Vec pos);
-    bool checkcollisionwithshape(const Shape&);
+    bool checkcollisionwithpoint(Vec pos) const;
+    bool checkcollisionwithshape(const Shape&) const;
     virtual bool leftclick(Vec pos);
     std::string getownername() const;
     BuildingOwner& getowner() const {return *control;};
