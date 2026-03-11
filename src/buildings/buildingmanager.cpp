@@ -55,7 +55,7 @@ bool BuildingManager::checkcollision(const Shape& shape) const
 	return false;
 }
 
-bool BuildingManager::checkcollision(const Tracks::Tracksection& section)
+bool BuildingManager::checkcollision(const Tracks::Tracksection& section) const
 {
     std::vector<std::unique_ptr<Shape>> trackshapes = 
         Tracks::Input::gettrackcollisionmasks(section);

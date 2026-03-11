@@ -244,7 +244,8 @@ float getminradiusofsection(const Tracksection& section)
 	return minradius;
 }
 
-std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section)
+std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(
+	const Tracksection& section)
 {
 	std::vector<std::unique_ptr<Shape>> shapes;
 	for(auto track : section.tracks)

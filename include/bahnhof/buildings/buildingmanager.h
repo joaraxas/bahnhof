@@ -21,7 +21,7 @@ public:
     const BuildingType& gettypefromid(BuildingID id) const {return types.at(id);};
     void addbuilding(std::unique_ptr<Building> b);
     bool checkcollision(const Shape& shape) const;
-    bool checkcollision(const Tracks::Tracksection& shape);
+    bool checkcollision(const Tracks::Tracksection& shape) const;
     void createconstructionpanel();
 private:
     Game* game;
