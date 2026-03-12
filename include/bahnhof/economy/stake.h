@@ -5,6 +5,7 @@ namespace Economy {
 
 class Stock;
 
+/* Ownership of a number of shares in a stock */
 class Stake
 {
 public:

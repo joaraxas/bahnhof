@@ -11,6 +11,8 @@ class Portfolio;
 class Account;
 class Stockmarket;
 
+/* A shared ownership of this entity, i.e. a collection of shares along 
+with a valuation */
 class Stock
 {
 public:

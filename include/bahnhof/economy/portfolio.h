@@ -9,6 +9,7 @@ class Stock;
 class Stake;
 class Account;
 
+/* A list of stocks where this entity has stakes */
 class Portfolio
 {
 public:

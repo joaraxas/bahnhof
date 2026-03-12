@@ -10,6 +10,7 @@ namespace Economy{
 
 class Account;
 
+/* This class represent a list of all its entity's possessions of type T */
 template<typename T>
 class Control
 {
