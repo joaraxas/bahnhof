@@ -8,7 +8,8 @@ constexpr auto slogans = std::to_array<const char*> ({
     "Excellence delivered",
     "Speed and comfort",
     "Delivering value - every day",
-    "Full steam ahead!"
+    "Full steam ahead!",
+    "On the right track"
 });
 
 namespace Economy{
