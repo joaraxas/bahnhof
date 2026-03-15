@@ -198,7 +198,7 @@ bool buy(Building& pos, Control<Building>& buyer, Money price) {
 void Account::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::EconomyPanels::AccountPanel(ui, *this)
+            new UI::EconomyPanels::AccountPanel(ui, income, expenses)
         );
     else
         panel.movetofront();

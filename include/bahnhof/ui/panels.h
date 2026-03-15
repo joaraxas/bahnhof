@@ -3,6 +3,7 @@
 #include "bahnhof/ui/host.h"
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/economy/payments.h"
 
 class Game;
 class Gamestate;
@@ -166,7 +167,8 @@ public:
 class AccountPanel : public Panel
 {
 public:
-    AccountPanel(InterfaceManager* newui, Economy::Account& a);
+    AccountPanel(InterfaceManager* newui, const Economy::Typelist& income, 
+        const Economy::Typelist& expenses);
 };
 
 } // end namespace Economy

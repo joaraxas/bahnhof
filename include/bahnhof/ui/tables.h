@@ -3,6 +3,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/economy/payments.h"
 
 class Game;
 class Gamestate;
@@ -206,6 +207,18 @@ public:
     void update(int ms);
 private:
     Account& account;
+};
+
+class IncomeTable : public Table
+{
+public:
+    IncomeTable(
+        Host* p, const Economy::Typelist& t, 
+        UIVec pos={0,0}, UIVec minsz={200,80}): 
+            Table(p, minsz, pos), types{t} {};
+    void update(int ms);
+private:
+    const Economy::Typelist& types;
 };
 
 class InvestmentsTable : public ClickableTable

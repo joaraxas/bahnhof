@@ -350,15 +350,20 @@ PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
-AccountPanel::AccountPanel(InterfaceManager* newui, Economy::Account& a) :
-	Panel(newui)
+AccountPanel::AccountPanel(InterfaceManager* newui, const Typelist& income, 
+	const Typelist& expenses) :
+		Panel(newui)
 {
 	setlayout(
 	create<VBox>(
 		create<Text>("Accounts"),
 		create<HBox>(
-			create<AccountInfoTable>(a),
-			create<AccountInfoTable>(a)
+			create<VBox>(
+				create<Text>("Income"),
+				create<IncomeTable>(income),
+				create<Text>("Expenses"),
+				create<IncomeTable>(expenses)
+			)
 		),
 		create<Close>()
 	)

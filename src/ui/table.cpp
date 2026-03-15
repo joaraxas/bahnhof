@@ -483,6 +483,19 @@ void AccountInfoTable::update(int ms)
 }
 
 
+void IncomeTable::update(int ms)
+{
+    lines.clear();
+    for(const auto& type : types){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+                getbudgetpostname(type.first) + ": " + 
+                std::string(type.second))
+        );
+    }
+}
+
+
 InvestmentsTable::InvestmentsTable(
     Host* p, Portfolio& port, UIVec pos, UIVec minsz): 
         ClickableTable(p, minsz, pos), portfolio(port) 
