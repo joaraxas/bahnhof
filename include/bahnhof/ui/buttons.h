@@ -278,6 +278,16 @@ private:
     Economy::Control<Building>& list;
 };
 
+class ShowAccounts : public TextButton
+{
+public:
+    ShowAccounts(Host* newpanel, Economy::Account& a) : 
+        TextButton(newpanel, "Accounting"), account{a} {};
+    void leftclick(UIVec mousepos);
+private:
+    Economy::Account& account;
+};
+
 } // end namespace Economy
 
 class Trade : public TextButton

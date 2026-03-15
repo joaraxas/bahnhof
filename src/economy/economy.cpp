@@ -195,4 +195,13 @@ bool buy(Building& pos, Control<Building>& buyer, Money price) {
     return true;
 };
 
+void Account::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::AccountPanel(ui, *this)
+        );
+    else
+        panel.movetofront();
+}
+
 } // namespace Economy

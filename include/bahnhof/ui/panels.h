@@ -163,6 +163,12 @@ public:
         const std::vector<Building*>& s);
 };
 
+class AccountPanel : public Panel
+{
+public:
+    AccountPanel(InterfaceManager* newui, Economy::Account& a);
+};
+
 } // end namespace Economy
 
 } // end namespace UI

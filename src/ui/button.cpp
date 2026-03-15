@@ -250,6 +250,11 @@ void ListBuildings::leftclick(UIVec mousepos)
     list.createpanel(ui);
 }
 
+void ShowAccounts::leftclick(UIVec mousepos)
+{
+    account.createpanel(ui);
+}
+
 } // end namespace EconomyPanels
 
 Trade::Trade(Host* newpanel, Building& b) :

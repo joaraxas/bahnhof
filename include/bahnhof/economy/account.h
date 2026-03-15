@@ -1,6 +1,9 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/ui/ownership.h"
 #include "money.h"
+
+class InterfaceManager;
 
 namespace Economy {
 
@@ -57,10 +60,12 @@ public:
         money+=amount;
         income[type] += amount;
     }
+    void createpanel(InterfaceManager* ui);
 private:
     Money money;
     std::map<PaymentType, Money> income;
     std::map<PaymentType, Money> expenses;
+    UI::Ownership panel;
 };
 
 } // namespace Economy

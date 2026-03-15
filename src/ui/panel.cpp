@@ -262,13 +262,14 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 			),
 			create<VBox>(
 				create<Text>("Major owners"),
-				create<OwnersTable>(stock)
+				create<OwnersTable>(stock),
+				create<ShowAccounts>(account)
 			),
 			create<VBox>(
 				create<Text>("Company interests"),
 				create<InvestmentsTable>(portfolio),
-				create<Close>(),
-				create<ListBuildings>(buildings)
+				create<ListBuildings>(buildings),
+				create<Close>()
 			)
 		)
 	)
@@ -286,7 +287,10 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui,
 	create<VBox>(
 		create<Text>(name),
 		create<HBox>(
-			create<AccountInfoTable>(account),
+			create<VBox>(
+				create<AccountInfoTable>(account),
+				create<ShowAccounts>(account)
+			),
 			create<VBox>(
 				create<Text>("Interests"),
 				create<InvestmentsTable>(portfolio)
@@ -306,10 +310,8 @@ ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
 	setlayout(
 	create<VBox>(
 		create<Text>(name),
-		create<VBox>(
-			create<Text>("Interests"),
-			create<InvestmentsTable>(portfolio)
-		),
+		create<Text>("Interests"),
+		create<InvestmentsTable>(portfolio),
 		create<Close>()
 	)
 	);
@@ -324,9 +326,7 @@ StockmarketPanel::StockmarketPanel(InterfaceManager* newui,
 	setlayout(
 	create<VBox>(
 		create<Text>("Stock market"),
-		create<VBox>(
-			create<StocksTable>(stocks)
-		),
+		create<StocksTable>(stocks),
 		create<Close>()
 	)
 	);
@@ -342,8 +342,23 @@ PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui,
 	setlayout(
 	create<VBox>(
 		create<Text>("Buildings"),
-		create<VBox>(
-			create<PossessionsTable<Building>>(poss)
+		create<PossessionsTable<Building>>(poss),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+AccountPanel::AccountPanel(InterfaceManager* newui, Economy::Account& a) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Accounts"),
+		create<HBox>(
+			create<AccountInfoTable>(a),
+			create<AccountInfoTable>(a)
 		),
 		create<Close>()
 	)
