@@ -74,6 +74,15 @@ Stock::~Stock()
     market.deliststock(*this);
 }
 
+void Stock::update(int ms)
+{
+    // valuation += randfloat(0.02) - 0.01;
+    Money currentprofit = account.getprofit();
+    Money newprofit = currentprofit - lastprofit;
+    valuation += newprofit * 5;
+    lastprofit = currentprofit;
+}
+
 bool Stock::issue(Money investment, Portfolio& buyer) {
     uint16_t issuedshares = std::lround(
         std::floor(investment/getshareprice()));
@@ -158,6 +167,16 @@ void Company::createpanel(InterfaceManager* ui) {
         );
     else
         panel.movetofront();
+}
+
+
+void Stockmarket::update(int ms) {
+    timesincelastupdate_ms += ms;
+    if(timesincelastupdate_ms > 1000){
+        timesincelastupdate_ms -= 1000;
+        for(Stock* stock: stocks) 
+            stock->update(ms);
+    }
 }
 
 void Stockmarket::createpanel(InterfaceManager* ui) {

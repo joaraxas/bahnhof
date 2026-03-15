@@ -55,6 +55,7 @@ void Gamestate::update(int ms)
 	buildingmanager->update(ms);
 
 	revenue += getmycompany().getcompanysaccount().getvalue()-lastmoney;
+	stockmarket.update(ms);
 
 	time += ms;
 }

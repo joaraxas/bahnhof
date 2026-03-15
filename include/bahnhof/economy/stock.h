@@ -18,6 +18,7 @@ class Stock
 public:
     Stock(Entity& e, Account& a, Stockmarket& sm);
     ~Stock();
+    void update(int ms);
     bool issue(Money investment, Portfolio& buyer);
     Money getvaluation() const {return valuation;}
     Money getshareprice() const {
@@ -40,6 +41,7 @@ private:
     std::unordered_map<Portfolio*, Stake> stakes;
     std::vector<std::pair<Stake*, Entity*>> sortedowners;
     Money valuation{0};
+    Money lastprofit{0};
 };
 
 } // namespace Economy

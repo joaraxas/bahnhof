@@ -13,9 +13,9 @@ enum class PaymentType {
     ticketfare
 };
 
-inline std::string getbudgetpostname(PaymentType transaction)
+constexpr std::string getbudgetpostname(PaymentType type)
 {
-    switch (transaction)
+    switch (type)
     {
     case PaymentType::stocks:
         return "Stock investments";
@@ -27,6 +27,17 @@ inline std::string getbudgetpostname(PaymentType transaction)
         return "Ticket sales";
     default:
         return "Unknown";
+    }
+}
+
+constexpr bool isrecurring(PaymentType type)
+{
+    switch (type)
+    {
+    case PaymentType::ticketfare:
+        return true;
+    default:
+        return false;
     }
 }
 

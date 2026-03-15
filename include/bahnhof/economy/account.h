@@ -19,6 +19,7 @@ class Account
 public:
     Account(Money cash) : money(cash) {}
     Money getvalue() const {return money;}
+    Money getprofit() const {return profit;}
     bool canafford(Money amount) const {return money>=amount;}
     bool pay(Money amount, PaymentType type, Account* receiver=nullptr){
         if(!canafford(amount)) return false;
@@ -29,6 +30,10 @@ public:
             receiver->income[type] += amount;
         }
         expenses[type] += amount;
+        if(isrecurring(type)){
+            profit -= amount;
+            receiver->profit += amount;
+        }
         return true;
     }
     void earn(Money amount, PaymentType type){
@@ -36,12 +41,15 @@ public:
         // from nowhere
         money+=amount;
         income[type] += amount;
+        if(isrecurring(type))
+            profit += amount;
     }
     void createpanel(InterfaceManager* ui);
 private:
     Money money;
     std::map<PaymentType, Money> income;
     std::map<PaymentType, Money> expenses;
+    Money profit;
     UI::Ownership panel;
 };
 
