@@ -69,3 +69,4 @@ float truncate(float dir, float denominator);
 float anglediff(float a, float b, float wraparound);
 int randint(int maxinclusive);
 float randfloat(float maxexclusive);
+double randnorm(double std=1.f, double mean=0.f);

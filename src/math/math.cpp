@@ -156,3 +156,12 @@ float randfloat(float maxexclusive)
 	return dist(engine);
 }
 
+double randnorm(double std, double mean)
+{
+	using namespace std;
+	random_device rd{};
+	static default_random_engine engine{rd()};
+	normal_distribution<double> dist{mean, std};
+	return dist(engine);
+}
+

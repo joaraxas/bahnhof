@@ -41,9 +41,9 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
 }
 
 bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
-    if(fromstake.getamount()<amount){
-        std::cout<<"failed to buy "<<amount<<" shares, buyer has only "<<
-            fromstake.getamount()<<" shares"<<std::endl;
+    amount = std::min(amount, fromstake.getamount());
+    if(amount<=0) {
+        std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
         return false;
     }
     Stock& stock = fromstake.getstock();
@@ -76,7 +76,8 @@ Stock::~Stock()
 
 void Stock::update(int ms)
 {
-    // valuation += randfloat(0.02) - 0.01;
+    constexpr double stdpersec = 0.05/60.0;
+    valuation *= randnorm(stdpersec*0.001*ms, 1.0);
     Money currentprofit = account.getprofit();
     Money newprofit = currentprofit - lastprofit;
     valuation += newprofit * 5;
@@ -175,7 +176,7 @@ void Stockmarket::update(int ms) {
     if(timesincelastupdate_ms > 1000){
         timesincelastupdate_ms -= 1000;
         for(Stock* stock: stocks) 
-            stock->update(ms);
+            stock->update(1000);
     }
 }
 
