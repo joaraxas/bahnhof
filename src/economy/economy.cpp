@@ -53,7 +53,7 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
             account.getvalue()<<std::endl;
         return false;
     }
-    account.pay(purchaseamount, &payableaccount);
+    account.pay(purchaseamount, PaymentType::stocks, &payableaccount);
     Stake* mystake = stock.getstakeforportfolio(*this);
     if(!mystake){
         stocks.emplace(&stock);
@@ -187,7 +187,7 @@ bool buy(Building& pos, Control<Building>& buyer, Money price) {
             " tried to buy "<<pos.getname()<<" from himself"<<std::endl;
         return false;
     }
-    if(!buyer.getaccount().pay(price, &owner.getaccount()))
+    if(!buyer.getaccount().pay(price, PaymentType::buildings, &owner.getaccount()))
         return false;
     owner.delistpossession(pos); 
     buyer.listpossession(pos); 

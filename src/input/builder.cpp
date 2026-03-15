@@ -38,7 +38,7 @@ void Builder::leftreleasedmap(Vec mappos)
         updateangle(mappos);
         if(canbuild()){
             build();
-            myaccount.pay(cost);
+            myaccount.pay(cost, Economy::PaymentType::buildings);
         }
         Builder::reset();
     }

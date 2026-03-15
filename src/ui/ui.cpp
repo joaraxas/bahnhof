@@ -18,14 +18,14 @@ InterfaceManager::~InterfaceManager() {}
 void InterfaceManager::update(int ms)
 {
     cleanup();
-
+    
     if(dropdown){
         dropdown->update(ms);
     }
     
     for(auto& panel : panels)
         panel->update(ms);
-        
+    
     cleanup();
 }
 

@@ -95,6 +95,7 @@ Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
 
 void Industry::trigger()
 {
+	using namespace Economy;
 	if(storage){
 		int got = 0;
 		for(auto want: wants)
@@ -109,7 +110,7 @@ void Industry::trigger()
 			else{
 				// TODO: account should depend on who delivered the goods,
 				// or payment should be made when received
-				control->getaccount().earn(got);
+				control->getaccount().earn(got, PaymentType::ticketfare);
 			}
 		}
 	}
@@ -160,19 +161,21 @@ const std::vector<WagonType*>& WagonFactory::getavailabletypes() const
 void WagonFactory::orderwagon(
 	const WagonType& type, Economy::Account& payer)
 {
+	using namespace Economy;
 	if(payer.canafford(type.cost)){
 		if(productionqueue.empty())
 			timeleft = 3500;
 		productionqueue.push_back(WagonOrder{&type, &payer});
-		payer.pay(type.cost);
+		payer.pay(type.cost, PaymentType::rollingstock);
 	}
 }
 
 void WagonFactory::removefromqueue(int wagonid)
 {
+	using namespace Economy;
 	if(wagonid>=0 && wagonid<productionqueue.size()){
 		Economy::Account* payer = productionqueue[wagonid].payer;
-		payer->earn(productionqueue[wagonid].type->cost);
+		payer->earn(productionqueue[wagonid].type->cost, PaymentType::rollingstock);
 		productionqueue.erase(productionqueue.begin() + wagonid);
 		if(wagonid==0) timeleft = 3500;
 	}
