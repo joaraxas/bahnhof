@@ -253,11 +253,31 @@ void ListBuildings::leftclick(UIVec mousepos)
 } // end namespace EconomyPanels
 
 Trade::Trade(Host* newpanel, Building& b) :
-        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b} {}
+        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
+{
+    BuildingOwner* playerownership = &game->getgamestate().getmycompany().getcompanysbuildingcontrol();
+    updatetext(&building.getowner() == playerownership);
+}
 
 void Trade::leftclick(UIVec mousepos)
 {
-    buy(building, game->getgamestate().getmycompany().getcompanysbuildingcontrol(), building.getvalue());
+    bool wasplayerowned = true;
+    BuildingOwner* buyer = &game->getgamestate().thepublic.getbuildings();
+    BuildingOwner* playerownership = &game->getgamestate().getmycompany().getcompanysbuildingcontrol();
+    if(&building.getowner() != playerownership){
+        buyer = playerownership;
+        wasplayerowned = false;
+    }
+    if(!buy(building, *buyer, building.getvalue())) return;
+    updatetext(!wasplayerowned);
+}
+
+void Trade::updatetext(bool isplayerowned)
+{
+    if(isplayerowned)
+        text = "Sell\n(" + std::string(building.getvalue()) + ")";
+    else
+        text = "Buy\n(" + std::string(building.getvalue()) + ")";
 }
 
 } //end namespace UI

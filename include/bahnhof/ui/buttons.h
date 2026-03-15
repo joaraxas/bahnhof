@@ -286,6 +286,7 @@ public:
     Trade(Host* newpanel, Building& b);
     void leftclick(UIVec mousepos);
 private:
+    void updatetext(bool isplayerowned);
     Building& building;
 };
 

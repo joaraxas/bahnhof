@@ -189,7 +189,10 @@ bool buy(Building& pos, Control<Building>& buyer, Money price) {
     }
     if(!buyer.getaccount().pay(price, &owner.getaccount()))
         return false;
-    owner.delistpossession(pos); buyer.listpossession(pos); pos.setowner(buyer);
+    owner.delistpossession(pos); 
+    buyer.listpossession(pos); 
+    pos.setowner(buyer);
+    return true;
 };
 
 } // namespace Economy
