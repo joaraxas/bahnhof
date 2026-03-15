@@ -21,6 +21,16 @@ void Text::render(Rendering* r)
         r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
+
+BuildingOwnerText::BuildingOwnerText(Host* p, Building& b, UIRect r) : 
+    Text{p, b.getowner().getentity().getname(), r}, building{b} 
+{}
+
+void BuildingOwnerText::update(int ms) 
+{
+    text = building.getowner().getentity().getname();
+}
+
 UIRect Text::place(UIRect r)
 {
     Element::place(r);

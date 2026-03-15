@@ -206,7 +206,7 @@ BuildingPanel::BuildingPanel(
 				create<Close>(),
 				create<Text>(building.type.name, UIRect{0, 0, 150, 20})
 			),
-			create<Text>(building.getownername()), // TODO: Should update when bought
+			create<BuildingOwnerText>(building),
 			create<Trade>(building)
 		)
 	);

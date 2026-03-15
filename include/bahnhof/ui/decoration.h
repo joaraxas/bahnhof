@@ -8,6 +8,7 @@ class Train;
 struct TrainInfo;
 struct WagonInfo;
 class WagonFactory;
+class Building;
 
 namespace UI{
 
@@ -24,6 +25,15 @@ public:
     TextStyle style = Info;
     static constexpr Coord margin_x = 2;
     static constexpr Coord margin_y = 1;
+};
+
+class BuildingOwnerText : public Text
+{
+public:
+    BuildingOwnerText(Host* p, Building& b, UIRect r={0, 0, 50, 20});
+    void update(int ms) override;
+private:
+    Building& building;
 };
 
 class EditableText : public Text
