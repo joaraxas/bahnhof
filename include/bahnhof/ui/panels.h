@@ -121,6 +121,7 @@ public:
     CompanyPanel(InterfaceManager* newui, 
         Economy::Stock& stock, 
         std::string& companyname,
+        std::string& slogan,
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings);

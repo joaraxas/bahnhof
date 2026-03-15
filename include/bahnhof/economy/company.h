@@ -12,18 +12,20 @@ class Building;
 
 namespace Economy{
 
+std::string generateslogan();
+
 class Company : Entity
 {
 public:
     Company(std::string n, Stockmarket& market) : Company(n, market, 0) {}
     Company(std::string n, Stockmarket& market, Money startamount) : 
         name{n}, 
+        slogan{generateslogan()},
         account{startamount}, 
         portfolio{*this, account}, 
         stock{*this, account, market},
         buildings{*this, account}
     {}
-    ~Company() {}
     const std::string& getname() const override {return name;}
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove
     Stock& getcompanysshares() {return stock;} // might remove
@@ -32,8 +34,8 @@ public:
         {return buildings;} // might remove
     void createpanel(InterfaceManager* ui);
 private:
-    std::string& getnameforedit() {return name;}
     std::string name;
+    std::string slogan;
     Account account;
     Portfolio portfolio;
     Stock stock;

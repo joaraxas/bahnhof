@@ -243,6 +243,7 @@ using namespace Economy;
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
 						   Stock& s,
 						   std::string& companyname,
+						   std::string& slogan,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings) : 
@@ -252,6 +253,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 	setlayout(
 	create<VBox>(
 		create<EditableText>(companyname),
+		create<EditableText>(slogan),
 		create<HBox>(
 			create<VBox>(
 				create<CompanyInfoTable>(stock, account),

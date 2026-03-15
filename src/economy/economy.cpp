@@ -163,8 +163,8 @@ void ThePublic::createpanel(InterfaceManager* ui) {
 void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
-            new UI::EconomyPanels::CompanyPanel(ui, stock, getnameforedit(),
-                portfolio, account, buildings)
+            new UI::EconomyPanels::CompanyPanel(ui, stock, name,
+                slogan, portfolio, account, buildings)
         );
     else
         panel.movetofront();
