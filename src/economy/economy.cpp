@@ -86,17 +86,18 @@ void Stock::update(int ms)
 
 bool Stock::issue(Money investment, Portfolio& buyer) {
     constexpr double devaluation = 0.95;
+    Money oldvaluation = valuation;
     valuation *= devaluation;
     uint16_t issuedshares = std::lround(
         std::floor(investment/getshareprice()));
     if(issuedshares<=0){
         std::cout<<"failed to emit "<<issuedshares<<" shares"<<std::endl;
-        valuation /= devaluation;
+        valuation = oldvaluation;
         return false;
     }
     Stake tempstake(*this, issuedshares);
     if(!buyer.buy(tempstake, account, issuedshares)){
-        valuation /= devaluation;
+        valuation = oldvaluation;
         return false;
     }
     valuation += getshareprice() * issuedshares;
