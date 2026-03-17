@@ -243,8 +243,6 @@ void MainInfoTable::update(int ms)
     lines.clear();
     lines.emplace_back(new TableLine(panel, this, std::string(gamestate.getmycompany().getcompanysaccount().getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
-    Economy::Money income = gamestate.revenue/float(gamestate.time*0.001/60/60);
-    lines.emplace_back(new TableLine(panel, this, std::string(income) + "/h"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }

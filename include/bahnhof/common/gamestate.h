@@ -71,7 +71,6 @@ public:
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
     int time = 0;
-    Economy::Money revenue;
     Economy::Person me;
     Economy::ThePublic thepublic;
     Economy::Stockmarket stockmarket;
