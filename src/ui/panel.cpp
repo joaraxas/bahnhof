@@ -137,10 +137,12 @@ void RoutePanel::conformtorect(UIRect confrect)
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-	setlayout(create<VBox>(
-		create<Close>(),
-		create<TrainTable>()
-	));
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<TrainTable>()
+		)
+	);
 	applylayout();
 	placeautomatically();
 }
@@ -180,6 +182,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	placeautomatically();
 }
 
+
 BuildingConstructionPanel::BuildingConstructionPanel(
 	InterfaceManager* newui, const BuildingManager& manager,
     const std::vector<BuildingID>& availabletypes) :
@@ -194,6 +197,7 @@ BuildingConstructionPanel::BuildingConstructionPanel(
 	applylayout();
 	placeautomatically();
 }
+
 
 BuildingPanel::BuildingPanel(
 	InterfaceManager* newui, Building& building, std::string& name) : 
@@ -216,6 +220,7 @@ BuildingPanel::BuildingPanel(
 
 BuildingPanel::~BuildingPanel()
 {}
+
 
 FactoryPanel::FactoryPanel(
 	InterfaceManager* newui, WagonFactory& factory, std::string& name) : 
@@ -305,6 +310,7 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
+
 ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
 	const std::string& name, Portfolio& p) :
 	Panel(newui), portfolio(p)
@@ -321,6 +327,7 @@ ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
 	placeautomatically();
 }
 
+
 StockmarketPanel::StockmarketPanel(InterfaceManager* newui, 
         const std::vector<Stock*>& stocks) :
 	Panel(newui)
@@ -335,6 +342,7 @@ StockmarketPanel::StockmarketPanel(InterfaceManager* newui,
 	applylayout();
 	placeautomatically();
 }
+
 
 template<>
 PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui, 
@@ -351,6 +359,7 @@ PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui,
 	applylayout();
 	placeautomatically();
 }
+
 
 AccountPanel::AccountPanel(InterfaceManager* newui, const Typelist& income, 
 	const Typelist& expenses) :
