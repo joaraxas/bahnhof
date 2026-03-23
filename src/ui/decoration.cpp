@@ -21,6 +21,14 @@ void Text::render(Rendering* r)
         r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
 
+UIRect Text::place(UIRect r)
+{
+    Element::place(r);
+    rect.w = std::max(r.w-2*getpadding().x, Coord{20});
+    rect.h = std::max(r.h-2*getpadding().y, Coord{14});
+    return rect;
+}
+
 
 BuildingOwnerText::BuildingOwnerText(Host* p, Building& b, UIRect r) : 
     Text{p, b.getowner().getentity().getname(), r}, building{b} 
@@ -31,13 +39,6 @@ void BuildingOwnerText::update(int ms)
     text = building.getowner().getentity().getname();
 }
 
-UIRect Text::place(UIRect r)
-{
-    Element::place(r);
-    rect.w = std::max(r.w-2*getpadding().x, Coord{20});
-    rect.h = std::max(r.h-2*getpadding().y, Coord{14});
-    return rect;
-}
 
 EditableText::EditableText(Host* p, std::string& t, UIRect r) : 
         Text(p, t, r), 
