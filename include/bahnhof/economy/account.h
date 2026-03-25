@@ -8,12 +8,6 @@ class InterfaceManager;
 
 namespace Economy {
 
-class Loan
-{
-private:
-    Money amount;
-};
-
 class Account
 {
 public:
