@@ -10,15 +10,15 @@
 
 InputManager::InputManager(Game* whatgame) : 
     game(whatgame),
-    textinput(std::make_unique<TextInputManager>(*this)),
+    textinput(*this),
     mode(std::make_unique<IdleMode>(*whatgame))
 {}
 
 InputManager::~InputManager() {}
 
-TextInputManager& InputManager::gettextinputmanager() const
+TextInputManager& InputManager::gettextinputmanager()
 {
-    return *textinput;
+    return textinput;
 };
 
 void InputManager::handle(int ms, int mslogic){
@@ -39,8 +39,8 @@ void InputManager::handle(int ms, int mslogic){
         }
         
         case SDL_MOUSEBUTTONDOWN:{
-            if(textinput->iswriting()){
-                textinput->endtextinput();
+            if(textinput.iswriting()){
+                textinput.endtextinput();
             }
             if(ui.click(screenmousepos(), e.button.button))
                 break;
@@ -63,14 +63,14 @@ void InputManager::handle(int ms, int mslogic){
         }
 
         case SDL_KEYDOWN:{
-            if(textinput->handle(e))
+            if(textinput.handle(e))
                 break;
             onkeydown(e.key.keysym.sym);
             break;
         }
 
         case SDL_TEXTINPUT:{
-            textinput->handle(e);
+            textinput.handle(e);
             break;
         }
 
@@ -102,7 +102,7 @@ void InputManager::handle(int ms, int mslogic){
     if(isleftmousepressed())
         ui.leftpressed(screenmousepos(), mslogic);
 
-    if(!textinput->iswriting()){
+    if(!textinput.iswriting()){
         if(iskeypressed(leftpanbutton))
             cam.pan(Vec(-ms, 0));
         if(iskeypressed(rightpanbutton))
