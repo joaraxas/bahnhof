@@ -10,7 +10,7 @@ namespace Economy{
 
 class Account;
 
-/* This class represent a list of all its entity's possessions of type T */
+/* This class represents a list of all its entity's possessions of type T */
 template<typename T>
 class Control
 {
@@ -29,6 +29,6 @@ private:
 };
 
 template<typename T>
-bool buy(T& pos, Control<T>& buyer, Money price);
+bool buy(T& possession, Control<T>& buyer, Money price);
 
 } // end namespace Economy

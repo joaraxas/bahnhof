@@ -206,18 +206,18 @@ void Control<Building>::createpanel(InterfaceManager* ui) {
 }
 
 template<>
-bool buy(Building& pos, Control<Building>& buyer, Money price) {
-    auto& owner = pos.getowner();
+bool buy(Building& building, Control<Building>& buyer, Money price) {
+    auto& owner = building.getowner();
     if(&owner == &buyer) {
         std::cout<<owner.getentity().getname()<<
-            " tried to buy "<<pos.getname()<<" from himself"<<std::endl;
+            " tried to buy "<<building.getname()<<" from himself"<<std::endl;
         return false;
     }
     if(!buyer.getaccount().pay(price, PaymentType::buildings, &owner.getaccount()))
         return false;
-    owner.delistpossession(pos); 
-    buyer.listpossession(pos); 
-    pos.setowner(buyer);
+    owner.delistpossession(building); 
+    buyer.listpossession(building); 
+    building.setowner(buyer);
     return true;
 };
 
