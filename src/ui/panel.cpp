@@ -101,8 +101,8 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui) :
 }
 
 
-RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
-	Panel(newui), input(game->getinputmanager()), route(editroute)
+RoutePanel::RoutePanel(InterfaceManager* newui, Route* route) :
+	Panel(newui), input(game->getinputmanager())
 {
 	setlayout(
 		create<VBox>(
@@ -246,14 +246,13 @@ namespace EconomyPanels
 using namespace Economy;
 
 CompanyPanel::CompanyPanel(InterfaceManager* newui, 
-						   Stock& s,
+						   Stock& stock,
 						   std::string& companyname,
 						   std::string& slogan,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings) : 
-		Panel(newui),
-		stock(s)
+		Panel(newui)
 {
 	setlayout(
 	create<VBox>(
@@ -287,8 +286,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 
 
 InvestorPanel::InvestorPanel(InterfaceManager* newui,
-	const std::string& name, Portfolio& p, Account& account) :
-	Panel(newui), portfolio(p)
+	const std::string& name, Portfolio& portfolio, Account& account) :
+	Panel(newui)
 {
 	setlayout(
 	create<VBox>(
@@ -312,8 +311,8 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui,
 
 
 ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
-	const std::string& name, Portfolio& p) :
-	Panel(newui), portfolio(p)
+	const std::string& name, Portfolio& portfolio) :
+	Panel(newui)
 {
 	setlayout(
 	create<VBox>(

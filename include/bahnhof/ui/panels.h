@@ -71,7 +71,6 @@ public:
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
 private:
-    Route* route;
     InputManager& input;
 };
 
@@ -125,8 +124,6 @@ public:
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings);
-private:
-    Economy::Stock& stock;
 };
 
 class InvestorPanel : public Panel
@@ -136,8 +133,6 @@ class InvestorPanel : public Panel
 public:
     InvestorPanel(InterfaceManager* newui, 
         const std::string& n, Portfolio& p, Account& a);
-private:
-    Portfolio& portfolio;
 };
 
 class ThePublicPanel : public Panel
@@ -146,8 +141,6 @@ class ThePublicPanel : public Panel
 public:
     ThePublicPanel(InterfaceManager* newui, 
         const std::string& n, Portfolio& p);
-private:
-    Portfolio& portfolio;
 };
 
 class StockmarketPanel : public Panel
