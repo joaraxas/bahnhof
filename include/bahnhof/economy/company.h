@@ -17,13 +17,14 @@ std::string generateslogan();
 class Company : Entity
 {
 public:
-    Company(std::string n, Stockmarket& market) : Company(n, market, 0) {}
-    Company(std::string n, Stockmarket& market, Money startamount) : 
+    Company(std::string n, Stockmarket& market, Money startamount=0, 
+            bool controlled=false) : 
+        playercontrol(controlled),
         name{n}, 
         slogan{generateslogan()},
         account{startamount}, 
-        portfolio{*this, account}, 
-        stock{*this, account, market},
+        portfolio{*this, account, playercontrol}, 
+        stock{*this, account, market, playercontrol},
         buildings{*this, account}
     {}
     const std::string& getname() const override {return name;}
@@ -34,6 +35,7 @@ public:
         {return buildings;} // might remove
     void createpanel(InterfaceManager* ui);
 private:
+    PlayerControl playercontrol;
     std::string name;
     std::string slogan;
     Account account;

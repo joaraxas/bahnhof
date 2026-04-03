@@ -17,7 +17,7 @@
 
 
 Gamestate::Gamestate(Game* whatgame) :
-	me("Sir Charles Darwin", 500),
+	me("Sir Charles Darwin", 500, true),
 	thepublic()
 {
 	using Economy::Company;

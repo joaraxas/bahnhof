@@ -235,6 +235,17 @@ class PublicOffering : public TextButton
 public:
     PublicOffering(Host* newpanel, Stock& s) : 
         TextButton(newpanel, "Seasoned equity offering", 120), stock{s} {};
+    virtual void update(int ms) override;
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+class TakeOver : public TextButton
+{
+public:
+    TakeOver(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Attempt takeover", 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;

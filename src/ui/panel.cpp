@@ -263,6 +263,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<CompanyInfoTable>(stock, account),
 				create<Buy>(stock),
 				create<Sell>(stock),
+				create<TakeOver>(stock),
 				create<PublicOffering>(stock),
 				create<VisitStockmarket>()
 			),

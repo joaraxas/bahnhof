@@ -15,16 +15,17 @@ class Stock;
 class Person : Entity
 {
 public:
-    Person(std::string n) : Person(n, 0) {}
-    Person(std::string n, Money startamount) : 
+    Person(std::string n, Money startamount=0, bool controlled=false) : 
+        playercontrol{controlled},
         name{n}, 
         account{startamount}, 
-        portfolio{*this, account} 
+        portfolio{*this, account, playercontrol} 
     {}
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
     Portfolio& getinvestments() {return portfolio;} // might remove
 private:
+    PlayerControl playercontrol;
     std::string name;
     Account account;
     Portfolio portfolio;

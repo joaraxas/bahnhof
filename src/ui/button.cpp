@@ -219,10 +219,31 @@ void RemoveOrder::leftclick(UIVec mousepos)
 namespace EconomyPanels
 {
 
+void PublicOffering::update(int ms)
+{
+    // if(ui.getplayer().hasauthority(stock)){
+    if(stock.isplayercontrolled()){
+        clickable = true;
+    }
+    else{
+        clickable = false;
+    }
+}
+
 void PublicOffering::leftclick(UIVec mousepos)
 {
-    stock.issue(100, game->getgamestate().thepublic.getinvestments());
+    if(stock.isplayercontrolled())
+        stock.issue(100, game->getgamestate().thepublic.getinvestments());
 }
+
+
+void TakeOver::leftclick(UIVec mousepos)
+{
+    if(!stock.isplayercontrolled()){
+        stock.attempttakeover();
+    }
+}
+
 
 void Buy::leftclick(UIVec mousepos)
 {

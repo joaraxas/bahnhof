@@ -63,8 +63,13 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
     return true;
 }
 
-Stock::Stock(Entity& e, Account& a, Stockmarket& sm) : 
-        entity{e}, account{a}, market{sm}
+bool Portfolio::isplayercontrolled()
+{
+    return playercontrol.is;
+}
+
+Stock::Stock(Entity& e, Account& a, Stockmarket& sm, PlayerControl& c) :
+        playercontrol{c}, entity{e}, account{a}, market{sm}
 {
     market.liststock(*this);
 }
@@ -146,6 +151,27 @@ bool compareowners(const std::pair<Stake*, Entity*>& a,
 
 void Stock::updateregistry() {
     std::sort(sortedowners.begin(), sortedowners.end(), compareowners);
+}
+
+bool Stock::isplayercontrolled() {
+    return playercontrol.is;
+}
+
+bool Stock::attempttakeover() {
+    uint16_t votesfor{0};
+    for(auto& [portfolio, stake] : stakes){
+        if(portfolio->isplayercontrolled()){
+            std::cout<<stake.getamount()<<" votes for"<<std::endl;
+            votesfor+=stake.getamount();
+        }
+    }
+    if(votesfor>shares*0.5){
+        playercontrol.is = true;
+        std::cout<<"success!"<<std::endl;
+    }
+    else{
+        std::cout<<"failure"<<std::endl;
+    }
 }
 
 void Person::createpanel(InterfaceManager* ui) {
