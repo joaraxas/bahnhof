@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/element.h"
 #include "bahnhof/ui/uistyle.h"
+#include "bahnhof/economy/entity.h"
 
 class Rendering;
 class Train;
@@ -48,7 +49,6 @@ public:
                 originalrect.h+getpadding().y*2};
     };
     UIRect place(UIRect r);
-    bool resizable_x() const override {return true;};
     void updatesource();
     void startwriting();
     void stopwriting();
@@ -58,9 +58,9 @@ public:
     void movecursorright();
 private:
     void updatewritingarea();
-    std::string& textreference; // TODO: This is currently safe but will 
-                                // break if the referred string is destroyed 
-                                // without removing the panel with the editable text
+    std::string& textreference; // TODO: This is currently safe but will break 
+                                // if the referred string is destroyed without 
+                                // removing the panel with the editable text
     std::string fallbacktext;
     std::string shortenedtext;
     bool beingedited;
@@ -68,10 +68,22 @@ private:
     UIRect originalrect;
 };
 
+class EditableTextWithAccessControl : public EditableText
+{
+public:
+    EditableTextWithAccessControl(Host* p, std::string& t, 
+        const Economy::PlayerControl& c, UIRect r={0, 0, 50, 20});
+    void leftclick(UIVec mousepos);
+    void render(Rendering*);
+private:
+    const Economy::PlayerControl& playercontrol;
+};
+
 class TrainCoupler : public Element
 {
 public:
-    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : Element(p), train(t) {rect = maxarea;};
+    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : 
+        Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
     void mousehover(UIVec pos, int ms);
     void leftclick(UIVec mousepos);

@@ -20,7 +20,7 @@ public:
     ThePublic() : 
         account{1e8f}, 
         portfolio{*this, account, playercontrol},
-        buildings{*this, account}
+        buildings{*this, account, playercontrol}
     {}
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);

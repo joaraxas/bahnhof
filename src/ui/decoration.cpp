@@ -145,6 +145,23 @@ void EditableText::updatewritingarea(){
 }
 
 
+EditableTextWithAccessControl::EditableTextWithAccessControl(
+    Host* p, std::string& t, const Economy::PlayerControl& c, 
+    UIRect r) : 
+        EditableText(p, t, r), playercontrol(c) {}
+
+void EditableTextWithAccessControl::leftclick(UIVec mousepos){
+    if(playercontrol.is)
+        EditableText::leftclick(mousepos);
+}
+
+void EditableTextWithAccessControl::render(Rendering* r){
+    if(playercontrol.is)
+        EditableText::render(r);
+    else
+        Text::render(r);
+}
+
 void TrainCoupler::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();

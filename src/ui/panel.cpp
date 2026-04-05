@@ -205,7 +205,9 @@ BuildingPanel::BuildingPanel(
 {
 	setlayout(
 		create<VBox>(
-			create<EditableText>(name, UIRect{0, 0, 250, 20}),
+			create<EditableTextWithAccessControl>(name, 
+				building.getowner().getplayercontrol(),
+				UIRect{0, 0, 250, 20}),
 			create<HBox>(
 				create<Close>(),
 				create<Text>(building.type.name, UIRect{0, 0, 150, 20})
@@ -257,8 +259,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 {
 	setlayout(
 	create<VBox>(
-		create<EditableText>(companyname),
-		create<EditableText>(slogan),
+		create<EditableTextWithAccessControl>(companyname, playercontrol),
+		create<EditableTextWithAccessControl>(slogan, playercontrol),
 		create<HBox>(
 			create<VBox>(
 				create<CompanyInfoTable>(stock, account),
