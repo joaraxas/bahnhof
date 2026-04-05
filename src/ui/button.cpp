@@ -222,7 +222,7 @@ namespace EconomyPanels
 void PublicOffering::update(int ms)
 {
     // if(ui.getplayer().hasauthority(stock)){
-    if(stock.isplayercontrolled()){
+    if(playercontrol.is){
         clickable = true;
     }
     else{
@@ -232,15 +232,17 @@ void PublicOffering::update(int ms)
 
 void PublicOffering::leftclick(UIVec mousepos)
 {
-    if(stock.isplayercontrolled())
+    if(playercontrol.is)
         stock.issue(100, game->getgamestate().thepublic.getinvestments());
 }
 
 
 void TakeOver::leftclick(UIVec mousepos)
 {
-    if(!stock.isplayercontrolled()){
-        stock.attempttakeover();
+    if(playercontrol.is) return;
+    bool succeeded = stock.attempttakeover();
+    if(succeeded) {
+        playercontrol.is = true;
     }
 }
 

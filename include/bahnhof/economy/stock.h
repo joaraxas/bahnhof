@@ -17,7 +17,7 @@ with a valuation */
 class Stock
 {
 public:
-    Stock(Entity& e, Account& a, Stockmarket& sm, PlayerControl& c);
+    Stock(Entity& e, Account& a, Stockmarket& sm);
     ~Stock();
     void update(int ms);
     bool issue(Money investment, Portfolio& buyer);
@@ -34,10 +34,8 @@ public:
     const std::vector<std::pair<Stake*, Entity*>>& getsortedowners() 
         {return sortedowners;}
     Entity& getentity() {return entity;}
-    bool isplayercontrolled();
     bool attempttakeover();
 private:
-    PlayerControl& playercontrol;
     Entity& entity;
     Account& account;
     Stockmarket& market;

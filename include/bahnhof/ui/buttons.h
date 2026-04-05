@@ -8,8 +8,6 @@ class Gamestate;
 class Rendering;
 class Route;
 class InterfaceManager;
-class Stock;
-class Stockmarket;
 
 namespace UI{
 
@@ -229,26 +227,31 @@ public:
 namespace EconomyPanels
 {
 using Stock = Economy::Stock;
+using PlayerControl = Economy::PlayerControl;
 
 class PublicOffering : public TextButton
 {
 public:
-    PublicOffering(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Seasoned equity offering", 120), stock{s} {};
+    PublicOffering(Host* newpanel, Stock& s, PlayerControl& c) : 
+        TextButton(newpanel, "Seasoned equity offering", 120), 
+        stock{s}, playercontrol{c} {};
     virtual void update(int ms) override;
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
+    PlayerControl& playercontrol;
 };
 
 class TakeOver : public TextButton
 {
 public:
-    TakeOver(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Attempt takeover", 120), stock{s} {};
+    TakeOver(Host* newpanel, Stock& s, PlayerControl& c) : 
+        TextButton(newpanel, "Attempt takeover", 120), stock{s}, 
+        playercontrol{c} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
+    PlayerControl& playercontrol;
 };
 
 class Buy : public TextButton

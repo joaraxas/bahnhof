@@ -251,7 +251,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 						   std::string& slogan,
 						   Portfolio& portfolio,
 						   Account& account,
-						   Control<Building>& buildings) : 
+						   Control<Building>& buildings,
+						   PlayerControl& playercontrol) : 
 		Panel(newui)
 {
 	setlayout(
@@ -263,8 +264,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<CompanyInfoTable>(stock, account),
 				create<Buy>(stock),
 				create<Sell>(stock),
-				create<TakeOver>(stock),
-				create<PublicOffering>(stock),
+				create<TakeOver>(stock, playercontrol),
+				create<PublicOffering>(stock, playercontrol),
 				create<VisitStockmarket>()
 			),
 			create<VBox>(

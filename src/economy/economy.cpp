@@ -68,8 +68,8 @@ bool Portfolio::isplayercontrolled()
     return playercontrol.is;
 }
 
-Stock::Stock(Entity& e, Account& a, Stockmarket& sm, PlayerControl& c) :
-        playercontrol{c}, entity{e}, account{a}, market{sm}
+Stock::Stock(Entity& e, Account& a, Stockmarket& sm) :
+        entity{e}, account{a}, market{sm}
 {
     market.liststock(*this);
 }
@@ -120,6 +120,7 @@ Stake& Stock::registernewstake(Portfolio& who) {
     auto [p, dummy] = stakes.emplace(&who, Stake(*this));
     Stake& newstake = p->second;
     sortedowners.emplace_back(&newstake, &who.getentity());
+    // no need to sort because the stake is empty.
     return newstake;
 }
 
@@ -153,10 +154,6 @@ void Stock::updateregistry() {
     std::sort(sortedowners.begin(), sortedowners.end(), compareowners);
 }
 
-bool Stock::isplayercontrolled() {
-    return playercontrol.is;
-}
-
 bool Stock::attempttakeover() {
     uint16_t votesfor{0};
     for(auto& [portfolio, stake] : stakes){
@@ -166,12 +163,11 @@ bool Stock::attempttakeover() {
         }
     }
     if(votesfor>shares*0.5){
-        playercontrol.is = true;
         std::cout<<"success!"<<std::endl;
+        return true;
     }
-    else{
-        std::cout<<"failure"<<std::endl;
-    }
+    std::cout<<"failure"<<std::endl;
+    return false;
 }
 
 void Person::createpanel(InterfaceManager* ui) {
@@ -196,7 +192,7 @@ void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
             new UI::EconomyPanels::CompanyPanel(ui, stock, name,
-                slogan, portfolio, account, buildings)
+                slogan, portfolio, account, buildings, playercontrol)
         );
     else
         panel.movetofront();

@@ -24,7 +24,7 @@ public:
         slogan{generateslogan()},
         account{startamount}, 
         portfolio{*this, account, playercontrol}, 
-        stock{*this, account, market, playercontrol},
+        stock{*this, account, market},
         buildings{*this, account}
     {}
     const std::string& getname() const override {return name;}

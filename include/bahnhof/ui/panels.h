@@ -21,6 +21,7 @@ namespace Economy {
     class Stock;
     class Portfolio;
     class Account;
+    class PlayerControl;
 }
 
 namespace Economy{
@@ -123,7 +124,8 @@ public:
         std::string& slogan,
         Economy::Portfolio& portfolio,
         Economy::Account& account,
-        Economy::Control<Building>& buildings);
+        Economy::Control<Building>& buildings, 
+        Economy::PlayerControl& playercontrol);
 };
 
 class InvestorPanel : public Panel
