@@ -146,17 +146,17 @@ void EditableText::updatewritingarea(){
 
 
 EditableTextWithAccessControl::EditableTextWithAccessControl(
-    Host* p, std::string& t, const Economy::PlayerControl& c, 
+    Host* p, std::string& t, const Economy::ControllerPointerBase& c, 
     UIRect r) : 
         EditableText(p, t, r), playercontrol(c) {}
 
 void EditableTextWithAccessControl::leftclick(UIVec mousepos){
-    if(playercontrol.is)
+    if(playercontrol.getcontrol().is)
         EditableText::leftclick(mousepos);
 }
 
 void EditableTextWithAccessControl::render(Rendering* r){
-    if(playercontrol.is)
+    if(playercontrol.getcontrol().is)
         EditableText::render(r);
     else
         Text::render(r);

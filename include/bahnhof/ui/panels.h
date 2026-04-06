@@ -4,6 +4,7 @@
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/economy/payments.h"
+#include "bahnhof/economy/control.h"
 
 class Game;
 class Gamestate;
@@ -28,6 +29,8 @@ namespace Economy{
     template<typename T>
     class Control;
 }
+
+using BuildingOwner = Economy::Control<Building>;
 
 namespace UI{
 
@@ -101,14 +104,16 @@ public:
 class BuildingPanel : public Panel
 {
 public:
-    BuildingPanel(InterfaceManager* newui, Building& b, std::string& name);
+    BuildingPanel(InterfaceManager* newui, Building& b, std::string& name,
+	    Economy::ControllerPointer<BuildingOwner>& cp);
     ~BuildingPanel();
 };
 
 class FactoryPanel : public BuildingPanel
 {
 public:
-    FactoryPanel(InterfaceManager* newui, WagonFactory& f, std::string& name);
+    FactoryPanel(InterfaceManager* newui, WagonFactory& f, std::string& name,
+	    Economy::ControllerPointer<BuildingOwner>& cp);
     ~FactoryPanel();
 };
 
@@ -125,7 +130,9 @@ public:
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings, 
-        Economy::PlayerControl& playercontrol);
+        Economy::ControllerPointerDirect c);
+private:
+    Economy::ControllerPointerDirect playercontrol;
 };
 
 class InvestorPanel : public Panel

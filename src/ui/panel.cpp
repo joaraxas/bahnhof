@@ -200,13 +200,14 @@ BuildingConstructionPanel::BuildingConstructionPanel(
 
 
 BuildingPanel::BuildingPanel(
-	InterfaceManager* newui, Building& building, std::string& name) : 
+	InterfaceManager* newui, Building& building, std::string& name,
+	Economy::ControllerPointer<BuildingOwner>& cp) : 
 		Panel(newui)
 {
 	setlayout(
 		create<VBox>(
 			create<EditableTextWithAccessControl>(name, 
-				building.getowner().getplayercontrol(),
+				cp,
 				UIRect{0, 0, 250, 20}),
 			create<HBox>(
 				create<Close>(),
@@ -225,8 +226,9 @@ BuildingPanel::~BuildingPanel()
 
 
 FactoryPanel::FactoryPanel(
-	InterfaceManager* newui, WagonFactory& factory, std::string& name) : 
-		BuildingPanel(newui, factory, name)
+	InterfaceManager* newui, WagonFactory& factory, std::string& name,
+	Economy::ControllerPointer<BuildingOwner>& cp) : 
+		BuildingPanel(newui, factory, name, cp)
 {
 	getlayout()->setpadding({0,0});
 	Layout* newlayout = create<VBox>();
@@ -254,8 +256,9 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings,
-						   PlayerControl& playercontrol) : 
-		Panel(newui)
+						   ControllerPointerDirect c) : 
+		Panel(newui),
+		playercontrol{c}
 {
 	setlayout(
 	create<VBox>(
@@ -266,8 +269,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<CompanyInfoTable>(stock, account),
 				create<Buy>(stock),
 				create<Sell>(stock),
-				create<TakeOver>(stock, playercontrol),
-				create<PublicOffering>(stock, playercontrol),
+				create<TakeOver>(stock, playercontrol.getcontrol()),
+				create<PublicOffering>(stock, playercontrol.getcontrol()),
 				create<VisitStockmarket>()
 			),
 			create<VBox>(

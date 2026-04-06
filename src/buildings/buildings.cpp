@@ -19,7 +19,7 @@ Building::Building(
 	shape(std::move(s)),
 	game(g),
 	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
-	control(&c)
+	control(c)
 {
 	color = type.color;
 	if(type.spritename){
@@ -27,12 +27,12 @@ Building::Building(
 		sprite.imageangle = shape->getorientation();
 		hassprite = true;
 	}
-	control->listpossession(*this);
+	control.getowner().listpossession(*this);
 }
 
 Building::~Building()
 {
-	control->delistpossession(*this);
+	control.getowner().delistpossession(*this);
 }
 
 void Building::render(Rendering* r)
@@ -65,14 +65,14 @@ bool Building::checkcollisionwithshape(const Shape& othershape) const
 bool Building::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::BuildingPanel(&game->getui(), *this, name));
+		panel.set(new UI::BuildingPanel(&game->getui(), *this, name, control));
 	}
 	panel.movetofront();
 }
 
 std::string Building::getownername() const
 {
-	return control->getentity().getname();
+	return control.getowner().getentity().getname();
 }
 
 
@@ -110,7 +110,7 @@ void Industry::trigger()
 			else{
 				// TODO: account should depend on who delivered the goods,
 				// or payment should be made when received
-				control->getaccount().earn(got, PaymentType::ticketfare);
+				control.getowner().getaccount().earn(got, PaymentType::ticketfare);
 			}
 		}
 	}
@@ -148,7 +148,7 @@ void WagonFactory::trigger()
 bool WagonFactory::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::FactoryPanel(&game->getui(), *this, name));
+		panel.set(new UI::FactoryPanel(&game->getui(), *this, name, control));
 	}
 	panel.movetofront();
 }

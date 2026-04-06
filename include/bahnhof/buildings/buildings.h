@@ -28,8 +28,8 @@ public:
     bool checkcollisionwithshape(const Shape&) const;
     virtual bool leftclick(Vec pos);
     std::string getownername() const;
-    BuildingOwner& getowner() const {return *control;};
-    void setowner(BuildingOwner& newowner) {control = &newowner;};
+    BuildingOwner& getowner() const {return control.getowner();};
+    void setowner(BuildingOwner& newowner) {control.setowner(newowner);};
     Economy::Money getvalue() {return type.cost;};
     const std::string& getname() const {return name;};
     const BuildingType& type;
@@ -40,7 +40,7 @@ protected:
     Game* game;
     std::unique_ptr<Shape> shape;
     Sprite sprite;
-    BuildingOwner* control;
+    Economy::ControllerPointer<BuildingOwner> control;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;

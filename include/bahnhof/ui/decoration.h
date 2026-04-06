@@ -3,6 +3,7 @@
 #include "bahnhof/ui/element.h"
 #include "bahnhof/ui/uistyle.h"
 #include "bahnhof/economy/entity.h"
+#include "bahnhof/economy/control.h"
 
 class Rendering;
 class Train;
@@ -72,11 +73,11 @@ class EditableTextWithAccessControl : public EditableText
 {
 public:
     EditableTextWithAccessControl(Host* p, std::string& t, 
-        const Economy::PlayerControl& c, UIRect r={0, 0, 50, 20});
+        const Economy::ControllerPointerBase& c, UIRect r={0, 0, 50, 20});
     void leftclick(UIVec mousepos);
     void render(Rendering*);
 private:
-    const Economy::PlayerControl& playercontrol;
+    const Economy::ControllerPointerBase& playercontrol;
 };
 
 class TrainCoupler : public Element

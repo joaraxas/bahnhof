@@ -35,4 +35,30 @@ private:
 template<typename T>
 bool buy(T& possession, Control<T>& buyer, Money price);
 
+
+class ControllerPointerBase
+{
+public:
+    virtual PlayerControl& getcontrol() const = 0;
+};
+
+class ControllerPointerDirect : public ControllerPointerBase
+{
+    PlayerControl& control;
+public:
+    ControllerPointerDirect(PlayerControl& c) : control{c} {}
+    PlayerControl& getcontrol() const override {return control;}
+};
+
+template<typename T>
+class ControllerPointer : public ControllerPointerBase
+{
+    T* control;
+public:
+    ControllerPointer(T& owner) : control{&owner} {}
+    PlayerControl& getcontrol() const override {return control->getplayercontrol();}
+    T& getowner() const {return *control;}
+    void setowner(T& newowner) {control = &newowner;}
+};
+
 } // end namespace Economy

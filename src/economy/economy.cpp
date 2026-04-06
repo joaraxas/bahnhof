@@ -192,7 +192,8 @@ void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
             new UI::EconomyPanels::CompanyPanel(ui, stock, name,
-                slogan, portfolio, account, buildings, playercontrol)
+                slogan, portfolio, account, buildings, 
+                ControllerPointerDirect(playercontrol))
         );
     else
         panel.movetofront();
