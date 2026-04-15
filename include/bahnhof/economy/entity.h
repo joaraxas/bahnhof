@@ -10,9 +10,3 @@ public:
     virtual const std::string& getname() const = 0;
     virtual void createpanel(InterfaceManager* ui) = 0;
 };
-
-namespace Economy{
-struct PlayerControl{
-    bool is{false};
-};
-}

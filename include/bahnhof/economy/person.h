@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
 #include "entity.h"
+#include "playercontrol.h"
 #include "money.h"
 #include "account.h"
 #include "portfolio.h"

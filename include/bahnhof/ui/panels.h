@@ -22,7 +22,6 @@ namespace Economy {
     class Stock;
     class Portfolio;
     class Account;
-    class PlayerControl;
 }
 
 namespace Economy{
