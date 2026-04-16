@@ -80,13 +80,12 @@ private:
     Icon icon;
 };
 
-using BuildingOwner = Economy::Control<Building>;
 
 class BuildingBuilder : public Builder
 {
+    using BuildingOwner = Economy::Control<Building>;
 public:
-    BuildingBuilder(InputManager& i, Game* g, const BuildingType& b, 
-        BuildingOwner& o);
+    BuildingBuilder(InputManager& i, Game* g, const BuildingType& b);
     void render(Rendering*);
     void reset();
 private:
@@ -95,5 +94,4 @@ private:
     std::unique_ptr<Shape> getplacementat(Vec pos) const;
     const BuildingType& building;
     BuildingManager& buildingmanager;
-    BuildingOwner& contractor;
 };

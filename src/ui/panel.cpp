@@ -72,6 +72,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
 			create<ManageCompany>(),
+			create<SwitchControl>(),
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),

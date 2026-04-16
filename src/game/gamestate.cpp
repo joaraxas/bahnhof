@@ -40,6 +40,18 @@ Gamestate::Gamestate(Game* whatgame) :
 	sbb->getcompanysshares().issue(500, thepublic.getinvestments());
 	me.getinvestments().buy(bls->getcompanysinvestments(), sbb->getcompanysshares(), 5);
 	companies.emplace_back(new Company{"Appenzeller Bahnen AG", stockmarket});
+	Economy::ControlMode mycontrol;
+	mycontrol.identifier = me.getname();
+	mycontrol.account = &me.getinvestments().getaccount();
+	mycontrol.portfolio = &me.getinvestments();
+	controlmodes.push_back(mycontrol);
+	Economy::ControlMode blscontrol;
+	blscontrol.identifier = bls->getname();
+	blscontrol.account = &bls->getcompanysaccount();
+	blscontrol.portfolio = &bls->getcompanysinvestments();
+	blscontrol.buildings = &bls->getcompanysbuildingcontrol();
+	controlmodes.push_back(blscontrol);
+	controlmode = mycontrol;
 }
 
 Gamestate::~Gamestate()

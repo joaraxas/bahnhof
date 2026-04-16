@@ -9,6 +9,10 @@ class Rendering;
 class Route;
 class InterfaceManager;
 
+namespace Economy{
+    class ControlMode;
+}
+
 namespace UI{
 
 class Button : public Element
@@ -98,6 +102,16 @@ public:
     ManageCompany(Host* newpanel) : 
         TextButton(newpanel, "Manage company") {};
     void leftclick(UIVec mousepos);
+};
+
+class SwitchControl : public TextButton
+{
+public:
+    SwitchControl(Host* newpanel) : 
+        TextButton(newpanel, "Switch control to some long name")
+        {};
+    void leftclick(UIVec mousepos);
+    void update(int ms);
 };
 
 class IncreaseUIScale : public TextButton
@@ -309,6 +323,7 @@ class Trade : public TextButton
 public:
     Trade(Host* newpanel, Building& b);
     void leftclick(UIVec mousepos);
+    void mousehover(UIVec pos, int ms);
 private:
     void updatetext(bool isplayerowned);
     Building& building;

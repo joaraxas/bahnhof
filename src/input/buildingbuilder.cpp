@@ -9,12 +9,10 @@
 #include "bahnhof/buildings/buildingmanager.h"
 
 BuildingBuilder::BuildingBuilder(InputManager& i,
-                                 Game* g, const BuildingType& b,
-                                 BuildingOwner& o) : 
+                                 Game* g, const BuildingType& b) : 
     Builder(i, g), 
     buildingmanager(g->getgamestate().getbuildingmanager()),
-    building(b),
-    contractor{o}
+    building(b)
 {
     cost = building.cost;
 }
@@ -55,6 +53,9 @@ void BuildingBuilder::reset()
 
 bool BuildingBuilder::canfit()
 {
+    BuildingOwner* contractor = game->getgamestate().controlmode.buildings;
+    if(!contractor)
+        return false; // not about "fitting" but needs to be checked here.
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
@@ -75,31 +76,33 @@ bool BuildingBuilder::canfit()
 
 void BuildingBuilder::build()
 {
+    BuildingOwner* contractor = game->getgamestate().controlmode.buildings;
+    if(!contractor) return;
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building.id)
     {
     case brewery:
         buildingmanager.addbuilding(
             std::make_unique<Brewery>(
-                game, std::move(shape), contractor)
+                game, std::move(shape), *contractor)
         );
         break;
     case hopsfield:
         buildingmanager.addbuilding(
             std::make_unique<Hopsfield>(
-                game, std::move(shape), contractor)
+                game, std::move(shape), *contractor)
         );
         break;
     case barleyfield:
         buildingmanager.addbuilding(
             std::make_unique<Barleyfield>(
-                game, std::move(shape), contractor)
+                game, std::move(shape), *contractor)
         );
         break;
     case city:
         buildingmanager.addbuilding(
             std::make_unique<City>(
-                game, std::move(shape), contractor)
+                game, std::move(shape), *contractor)
         );
         break;
     case wagonfactory:{
@@ -119,7 +122,7 @@ void BuildingBuilder::build()
             Tracks::travel(tracksystem, midpointstate, 500));
         buildingmanager.addbuilding(
             std::make_unique<WagonFactory>(
-                game, std::move(shape), contractor, midpointstate, r)
+                game, std::move(shape), *contractor, midpointstate, r)
         );
         break;
     }

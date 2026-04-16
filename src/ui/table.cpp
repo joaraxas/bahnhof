@@ -232,6 +232,28 @@ void RouteDropdown::lineclicked(int index)
         dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
+void ControlDropdown::update(int ms)
+{
+	lines.clear();
+    auto modes = game->getgamestate().getavailablecontrolmodes();
+    if(modes.size()==0){
+        lines.emplace_back(new TableLine(panel, this, "You have no say in anything"));
+    }
+    else
+        for(int iMode = 0; iMode<modes.size(); iMode++){
+            std::string name = modes[iMode].identifier;
+            lines.emplace_back(new TableLine(panel, this, name));
+        }
+}
+
+void ControlDropdown::lineclicked(int index)
+{
+    auto modes = game->getgamestate().getavailablecontrolmodes();
+    if(index<modes.size()){
+        game->getgamestate().controlmode = modes[index];
+    }
+}
+
 MainInfoTable::MainInfoTable(Host* newpanel, UIVec pos, UIVec minsz) : 
     Table(newpanel, minsz, pos) 
 {}
@@ -241,7 +263,7 @@ void MainInfoTable::update(int ms)
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::string(gamestate.getmycompany().getcompanysaccount().getvalue())));
+    lines.emplace_back(new TableLine(panel, this, std::string(gamestate.controlmode.account->getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
@@ -398,9 +420,8 @@ void ConstructionTable::lineclicked(int index)
     const BuildingType& clickedbuilding = 
         buildingmanager.gettypefromid(availabletypes.at(index)); // TODO: Highlight the one currently being built
     auto& input = game->getinputmanager();
-    auto& control = game->getgamestate().getmycompany().getcompanysbuildingcontrol();
     input.setinputmode(
-        std::make_unique<BuildingBuilder>(input, game, clickedbuilding, control));
+        std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
 }
 
 
@@ -424,7 +445,7 @@ WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) :
 void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-    factory.orderwagon(*clickedwagon, game->getgamestate().getmycompany().getcompanysaccount());
+    factory.orderwagon(*clickedwagon, *game->getgamestate().controlmode.account);
 }
 
 

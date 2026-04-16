@@ -6,10 +6,10 @@
 
 
 Builder::Builder(InputManager& owner, Game* newgame) : 
-    input(owner), 
-    game(newgame), 
+    input(owner),
+    game(newgame),
     tracksystem(game->getgamestate().gettracksystems()),
-    myaccount(game->getgamestate().getmycompany().getcompanysaccount())
+    myaccount(*game->getgamestate().controlmode.account)
 {}
 
 void Builder::render(Rendering* r)
@@ -53,6 +53,7 @@ void Builder::reset()
 
 bool Builder::canbuild()
 {
+    myaccount = *game->getgamestate().controlmode.account;
     if(!myaccount.canafford(cost))
         return false;
     if(!canfit())

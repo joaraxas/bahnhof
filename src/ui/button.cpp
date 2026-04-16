@@ -99,6 +99,19 @@ void ManageCompany::leftclick(UIVec mousepos)
     game->getgamestate().getmycompany().createpanel(ui);
 }
 
+void SwitchControl::leftclick(UIVec mousepos)
+{
+    UIRect panelrect = panel->getglobalrect();
+    UIVec dropdownpos = {mousepos.x-panelrect.x, 
+                        mousepos.y-panelrect.y};
+    new ControlDropdown(panel, dropdownpos);
+}
+
+void SwitchControl::update(int ms)
+{
+    text = game->getgamestate().controlmode.identifier;
+}
+
 void IncreaseUIScale::leftclick(UIVec mousepos)
 {
     ui->getuirendering().increaseuiscale();
@@ -249,7 +262,7 @@ void TakeOver::leftclick(UIVec mousepos)
 
 void Buy::leftclick(UIVec mousepos)
 {
-    game->getgamestate().me.getinvestments().buy(
+    game->getgamestate().controlmode.portfolio->buy(
         game->getgamestate().thepublic.getinvestments(),
         stock, 5
     );
@@ -258,7 +271,7 @@ void Buy::leftclick(UIVec mousepos)
 void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().thepublic.getinvestments().buy(
-        game->getgamestate().me.getinvestments(),
+        *game->getgamestate().controlmode.portfolio,
         stock, 5
     );
 }
@@ -283,15 +296,29 @@ void ShowAccounts::leftclick(UIVec mousepos)
 Trade::Trade(Host* newpanel, Building& b) :
         TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
 {
-    BuildingOwner* playerownership = &game->getgamestate().getmycompany().getcompanysbuildingcontrol();
+    BuildingOwner* playerownership = game->getgamestate().controlmode.buildings;
     updatetext(&building.getowner() == playerownership);
+    if(playerownership==nullptr){ // can't own buildings
+        clickable = false;
+    }
+}
+
+void Trade::mousehover(UIVec pos, int ms)
+{
+    if(!game->getgamestate().controlmode.buildings){
+        ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
+    }
 }
 
 void Trade::leftclick(UIVec mousepos)
 {
+    BuildingOwner* playerownership = game->getgamestate().controlmode.buildings;
+    if(!playerownership){
+        clickable = false;
+        return;
+    }
     bool wasplayerowned = true;
     BuildingOwner* buyer = &game->getgamestate().thepublic.getbuildings();
-    BuildingOwner* playerownership = &game->getgamestate().getmycompany().getcompanysbuildingcontrol();
     if(&building.getowner() != playerownership){
         buyer = playerownership;
         wasplayerowned = false;

@@ -21,6 +21,7 @@ namespace Economy{
     class Stock;
     class Portfolio;
     class Account;
+    class ControlMode;
 }
 
 namespace UI{
@@ -79,6 +80,16 @@ private:
 	RouteManager& routing;
     std::vector<std::string> names;
     std::vector<int> ids;
+};
+
+class ControlDropdown : public Dropdown
+{
+public:
+    ControlDropdown(Host* p, UIVec pos, UIVec minsz={150,100}) : 
+        Dropdown(p, pos, minsz) {}
+    void update(int ms);
+private:
+    void lineclicked(int index);
 };
 
 class MainInfoTable : public Table

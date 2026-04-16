@@ -4,6 +4,7 @@
 #include "bahnhof/economy/person.h"
 #include "bahnhof/economy/thepublic.h"
 #include "bahnhof/economy/stockmarket.h"
+#include "bahnhof/input/controlmode.h"
 
 class Route;
 class Wagon;
@@ -70,10 +71,12 @@ public:
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
+    std::vector<Economy::ControlMode>& getavailablecontrolmodes() {return controlmodes;};
     int time = 0;
     Economy::Person me;
     Economy::ThePublic thepublic;
     Economy::Stockmarket stockmarket;
+    Economy::ControlMode controlmode;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
@@ -82,4 +85,5 @@ private:
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
     std::vector<std::unique_ptr<Economy::Company>> companies;
+    std::vector<Economy::ControlMode> controlmodes;
 };
