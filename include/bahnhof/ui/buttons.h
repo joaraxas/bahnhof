@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/element.h"
 #include "bahnhof/economy/company.h"
+#include "bahnhof/input/controlmode.h"
 
 class Game;
 class Gamestate;
@@ -242,6 +243,7 @@ namespace EconomyPanels
 {
 using Stock = Economy::Stock;
 using PlayerControl = Economy::PlayerControl;
+using ControlMode = Economy::ControlMode;
 
 class PublicOffering : public TextButton
 {
@@ -259,13 +261,14 @@ private:
 class TakeOver : public TextButton
 {
 public:
-    TakeOver(Host* newpanel, Stock& s, PlayerControl& c) : 
+    TakeOver(Host* newpanel, Stock& s, PlayerControl& c, ControlMode mode) : 
         TextButton(newpanel, "Attempt takeover", 120), stock{s}, 
-        playercontrol{c} {};
+        playercontrol{c}, controlmode{mode} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
     PlayerControl& playercontrol;
+    ControlMode controlmode;
 };
 
 class Buy : public TextButton

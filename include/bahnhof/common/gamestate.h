@@ -72,6 +72,7 @@ public:
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
     std::vector<Economy::ControlMode>& getavailablecontrolmodes() {return controlmodes;};
+    void addcontrolmode(Economy::ControlMode mode) {controlmodes.push_back(mode);};
     int time = 0;
     Economy::Person me;
     Economy::ThePublic thepublic;

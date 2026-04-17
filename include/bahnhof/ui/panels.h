@@ -22,6 +22,7 @@ namespace Economy {
     class Stock;
     class Portfolio;
     class Account;
+    class ControlMode;
 }
 
 namespace Economy{
@@ -129,7 +130,8 @@ public:
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings, 
-        Economy::ControllerPointerDirect c);
+        Economy::ControllerPointerDirect c,
+        Economy::ControlMode mode);
 private:
     Economy::ControllerPointerDirect playercontrol;
 };

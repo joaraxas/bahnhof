@@ -257,7 +257,8 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings,
-						   ControllerPointerDirect c) : 
+						   ControllerPointerDirect c,
+						   ControlMode mode) : 
 		Panel(newui),
 		playercontrol{c}
 {
@@ -270,7 +271,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<CompanyInfoTable>(stock, account),
 				create<Buy>(stock),
 				create<Sell>(stock),
-				create<TakeOver>(stock, playercontrol.getcontrol()),
+				create<TakeOver>(stock, playercontrol.getcontrol(), mode),
 				create<PublicOffering>(stock, playercontrol.getcontrol()),
 				create<VisitStockmarket>()
 			),

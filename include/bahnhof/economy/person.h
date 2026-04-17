@@ -12,6 +12,7 @@ class InterfaceManager;
 namespace Economy {
 
 class Stock;
+class ControlMode;
 
 class Person : Entity
 {
@@ -25,6 +26,7 @@ public:
     const std::string& getname() const override {return name;}
     void createpanel(InterfaceManager* ui);
     Portfolio& getinvestments() {return portfolio;} // might remove
+    ControlMode generatecontrolmode();
 private:
     PlayerControl playercontrol;
     std::string name;

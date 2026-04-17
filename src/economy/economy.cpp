@@ -4,6 +4,7 @@
 #include "bahnhof/economy/company.h"
 #include "bahnhof/economy/stockmarket.h"
 #include "bahnhof/economy/control.h"
+#include "bahnhof/input/controlmode.h"
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/buildings/buildings.h"
 
@@ -179,6 +180,16 @@ void Person::createpanel(InterfaceManager* ui) {
         panel.movetofront();
 }
 
+ControlMode Person::generatecontrolmode()
+{
+    ControlMode mode;
+    mode.identifier = getname();
+    mode.account = &account;
+    mode.portfolio = &portfolio;
+    mode.buildings = nullptr;
+    return mode;
+}
+
 void ThePublic::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
@@ -193,10 +204,21 @@ void Company::createpanel(InterfaceManager* ui) {
         panel.set(
             new UI::EconomyPanels::CompanyPanel(ui, stock, name,
                 slogan, portfolio, account, buildings, 
-                ControllerPointerDirect(playercontrol))
+                ControllerPointerDirect(playercontrol),
+                generatecontrolmode())
         );
     else
         panel.movetofront();
+}
+
+ControlMode Company::generatecontrolmode()
+{
+    ControlMode mode;
+    mode.identifier = getname();
+    mode.account = &account;
+    mode.portfolio = &portfolio;
+    mode.buildings = &buildings;
+    return mode;
 }
 
 

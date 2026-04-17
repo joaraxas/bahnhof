@@ -234,7 +234,6 @@ namespace EconomyPanels
 
 void PublicOffering::update(int ms)
 {
-    // if(ui.getplayer().hasauthority(stock)){
     if(playercontrol.is){
         clickable = true;
     }
@@ -256,6 +255,7 @@ void TakeOver::leftclick(UIVec mousepos)
     bool succeeded = stock.attempttakeover();
     if(succeeded) {
         playercontrol.is = true;
+        game->getgamestate().addcontrolmode(controlmode);
     }
 }
 

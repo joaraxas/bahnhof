@@ -10,7 +10,6 @@ namespace Economy {
 class Portfolio;
 class Account;
 class Stockmarket;
-class PlayerControl;
 
 /* A shared ownership of this entity, i.e. a collection of shares along 
 with a valuation */

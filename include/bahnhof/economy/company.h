@@ -13,6 +13,8 @@ class Building;
 
 namespace Economy{
 
+class ControlMode;
+
 std::string generateslogan();
 
 class Company : Entity
@@ -31,10 +33,8 @@ public:
     const std::string& getname() const override {return name;}
     Portfolio& getcompanysinvestments() {return portfolio;} // might remove
     Stock& getcompanysshares() {return stock;} // might remove
-    Account& getcompanysaccount() {return account;} // might remove
-    Control<Building>& getcompanysbuildingcontrol() 
-        {return buildings;} // might remove
     void createpanel(InterfaceManager* ui);
+    ControlMode generatecontrolmode();
 private:
     PlayerControl playercontrol;
     std::string name;
