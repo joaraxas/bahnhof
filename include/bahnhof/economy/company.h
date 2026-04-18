@@ -23,10 +23,10 @@ public:
     Company(std::string n, Stockmarket& market, Money startamount=0, 
             bool controlled=false) : 
         playercontrol(controlled),
-        name{n}, 
+        name{n},
         slogan{generateslogan()},
-        account{startamount}, 
-        portfolio{*this, account, playercontrol}, 
+        account{startamount},
+        portfolio{*this, account, playercontrol},
         stock{*this, account, market},
         buildings{*this, account, playercontrol}
     {}

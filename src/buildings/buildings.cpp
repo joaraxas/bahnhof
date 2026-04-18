@@ -11,7 +11,9 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/ui/panels.h"
+#include "bahnhof/economy/account.h"
 #include "bahnhof/economy/control.h"
+#include "bahnhof/economy/entity.h"
 
 
 Building::Building(

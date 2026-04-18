@@ -63,6 +63,7 @@ add_executable(bahnhof
     src/buildings/buildings.cpp
     src/buildings/buildingmanager.cpp
     src/economy/economy.cpp
+    src/economy/economymanager.cpp
     src/economy/slogans.cpp
 )
 

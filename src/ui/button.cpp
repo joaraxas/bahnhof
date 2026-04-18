@@ -13,6 +13,7 @@
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/economy/company.h"
+#include "bahnhof/economy/economymanager.h"
 
 namespace UI{
 
@@ -96,7 +97,7 @@ void ManageTrains::leftclick(UIVec mousepos)
 
 void ManageCompany::leftclick(UIVec mousepos)
 {
-    game->getgamestate().getmycompany().createpanel(ui);
+    game->getgamestate().geteconomymanager().getmycompany().createpanel(ui);
 }
 
 void SwitchControl::leftclick(UIVec mousepos)
@@ -245,7 +246,7 @@ void PublicOffering::update(int ms)
 void PublicOffering::leftclick(UIVec mousepos)
 {
     if(playercontrol.is)
-        stock.issue(100, game->getgamestate().thepublic.getinvestments());
+        stock.issue(100, game->getgamestate().geteconomymanager().thepublic.getinvestments());
 }
 
 
@@ -263,14 +264,14 @@ void TakeOver::leftclick(UIVec mousepos)
 void Buy::leftclick(UIVec mousepos)
 {
     game->getgamestate().controlmode.portfolio->buy(
-        game->getgamestate().thepublic.getinvestments(),
+        game->getgamestate().geteconomymanager().thepublic.getinvestments(),
         stock, 5
     );
 }
 
 void Sell::leftclick(UIVec mousepos)
 {
-    game->getgamestate().thepublic.getinvestments().buy(
+    game->getgamestate().geteconomymanager().thepublic.getinvestments().buy(
         *game->getgamestate().controlmode.portfolio,
         stock, 5
     );
@@ -278,7 +279,7 @@ void Sell::leftclick(UIVec mousepos)
 
 void VisitStockmarket::leftclick(UIVec mousepos)
 {
-    game->getgamestate().stockmarket.createpanel(ui);
+    game->getgamestate().geteconomymanager().stockmarket.createpanel(ui);
 }
 
 void ListBuildings::leftclick(UIVec mousepos)
@@ -318,7 +319,8 @@ void Trade::leftclick(UIVec mousepos)
         return;
     }
     bool wasplayerowned = true;
-    BuildingOwner* buyer = &game->getgamestate().thepublic.getbuildings();
+    BuildingOwner* buyer = &game->getgamestate().geteconomymanager().
+        thepublic.getbuildings();
     if(&building.getowner() != playerownership){
         buyer = playerownership;
         wasplayerowned = false;

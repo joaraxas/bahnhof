@@ -13,14 +13,12 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/geometry.h"
 #include "bahnhof/economy/company.h"
+#include "bahnhof/economy/economymanager.h"
 
 
 
-Gamestate::Gamestate(Game* whatgame) :
-	me("Sir Charles Darwin", 500, true),
-	thepublic()
+Gamestate::Gamestate(Game* whatgame)
 {
-	using Economy::Company;
 	game = whatgame;
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());
@@ -28,19 +26,8 @@ Gamestate::Gamestate(Game* whatgame) :
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
-	Company* bls = new Company{"BLS AG", stockmarket};
-	companies.emplace_back(bls);
-	if(!bls->getcompanysshares().issue(100, me.getinvestments()))
-		throw "couldn't emit BLS shares";
-	Company* sbb = new Company{"SBB AG", stockmarket};
-	companies.emplace_back(sbb);
-	if(!sbb->getcompanysshares().issue(50, 
-		bls->getcompanysinvestments()))
-		throw "couldn't emit SBB shares";
-	sbb->getcompanysshares().issue(500, thepublic.getinvestments());
-	me.getinvestments().buy(bls->getcompanysinvestments(), sbb->getcompanysshares(), 5);
-	companies.emplace_back(new Company{"Appenzeller Bahnen AG", stockmarket});
-	Economy::ControlMode mycontrol = me.generatecontrolmode();
+	economymanager = std::make_unique<EconomyManager>(game);
+	Economy::ControlMode mycontrol = economymanager->me.generatecontrolmode();
 	controlmodes.push_back(mycontrol);
 	controlmode = mycontrol;
 }
@@ -55,13 +42,12 @@ void Gamestate::update(int ms)
 	trainmanager->update(ms);
 	buildingmanager->update(ms);
 
-	stockmarket.update(ms);
-
 	time += ms;
 }
 
 void Gamestate::randommap()
 {
+	auto& publicbuildings = economymanager->thepublic.getbuildings();
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,50);
 		Vec size = buildingmanager->gettypefromid(brewery).size;
@@ -71,7 +57,7 @@ void Gamestate::randommap()
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
 		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Brewery>(
-			game, std::make_unique<Rectangle>(newpos, size.x, size.y), thepublic.getbuildings()));
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -82,7 +68,7 @@ void Gamestate::randommap()
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
 		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Hopsfield>(
-			game, std::make_unique<Rectangle>(newpos, size.x, size.y), thepublic.getbuildings()));
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
 		Vec newpos = randpos(200,200);
@@ -93,7 +79,7 @@ void Gamestate::randommap()
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
 		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Barleyfield>(
-			game, std::make_unique<Rectangle>(newpos, size.x, size.y), thepublic.getbuildings()));
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,150);
@@ -104,7 +90,7 @@ void Gamestate::randommap()
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
 		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<City>(
-			game, std::make_unique<Rectangle>(newpos, size.x, size.y), thepublic.getbuildings()));
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 }
 

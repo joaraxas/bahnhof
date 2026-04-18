@@ -1,9 +1,6 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
-#include "bahnhof/economy/person.h"
-#include "bahnhof/economy/thepublic.h"
-#include "bahnhof/economy/stockmarket.h"
 #include "bahnhof/input/controlmode.h"
 
 class Route;
@@ -25,9 +22,7 @@ class Gamestate;
 namespace Tracks{
     class Tracksystem;
 }
-namespace Economy{
-    class Company;
-}
+class EconomyManager;
 
 class Game
 {
@@ -70,13 +65,10 @@ public:
     TrainManager& gettrainmanager() {if(!trainmanager) std::cout<<"no trainmanager"<<std::endl; return *trainmanager;};
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
-    Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
+    EconomyManager& geteconomymanager() {if(!economymanager) std::cout<<"no economymanager"<<std::endl; return *economymanager;};
     std::vector<Economy::ControlMode>& getavailablecontrolmodes() {return controlmodes;};
     void addcontrolmode(Economy::ControlMode mode) {controlmodes.push_back(mode);};
     int time = 0;
-    Economy::Person me;
-    Economy::ThePublic thepublic;
-    Economy::Stockmarket stockmarket;
     Economy::ControlMode controlmode;
 private:
     Game* game;
@@ -85,6 +77,6 @@ private:
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
-    std::vector<std::unique_ptr<Economy::Company>> companies;
+    std::unique_ptr<EconomyManager> economymanager;
     std::vector<Economy::ControlMode> controlmodes;
 };

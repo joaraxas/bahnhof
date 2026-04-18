@@ -7,6 +7,7 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
+#include "bahnhof/economy/playercontrol.h"
 
 namespace UI{
 
