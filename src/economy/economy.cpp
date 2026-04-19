@@ -183,7 +183,7 @@ void Person::createpanel(InterfaceManager* ui) {
 ControlMode Person::generatecontrolmode()
 {
     ControlMode mode;
-    mode.identifier = getname();
+    mode.entity = this;
     mode.account = &account;
     mode.portfolio = &portfolio;
     mode.buildings = nullptr;
@@ -214,7 +214,7 @@ void Company::createpanel(InterfaceManager* ui) {
 ControlMode Company::generatecontrolmode()
 {
     ControlMode mode;
-    mode.identifier = getname();
+    mode.entity = this;
     mode.account = &account;
     mode.portfolio = &portfolio;
     mode.buildings = &buildings;

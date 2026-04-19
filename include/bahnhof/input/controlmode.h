@@ -10,7 +10,7 @@ class Portfolio;
 
 struct ControlMode
 {
-    std::string identifier;
+    Entity* entity = nullptr;
     Account* account = nullptr;
     Portfolio* portfolio = nullptr;
     Control<Building>* buildings = nullptr;

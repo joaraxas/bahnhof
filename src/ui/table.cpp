@@ -241,7 +241,7 @@ void ControlDropdown::update(int ms)
     }
     else
         for(int iMode = 0; iMode<modes.size(); iMode++){
-            std::string name = modes[iMode].identifier;
+            std::string name = modes[iMode].entity->getname();
             lines.emplace_back(new TableLine(panel, this, name));
         }
 }

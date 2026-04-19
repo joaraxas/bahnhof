@@ -110,7 +110,8 @@ void SwitchControl::leftclick(UIVec mousepos)
 
 void SwitchControl::update(int ms)
 {
-    text = game->getgamestate().controlmode.identifier;
+    auto entity = game->getgamestate().controlmode.entity;
+    text = entity->getname();
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)
