@@ -309,7 +309,9 @@ void Trade::mousehover(UIVec pos, int ms)
 {
     if(!game->getgamestate().controlmode.buildings){
         ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
+        return;
     }
+    TextButton::mousehover(pos, ms);
 }
 
 void Trade::leftclick(UIVec mousepos)
