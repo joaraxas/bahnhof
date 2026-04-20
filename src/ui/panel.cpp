@@ -71,6 +71,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
+			create<EconomyPanels::VisitStockmarket>(80),
 			create<ManageEntity>(),
 			create<SwitchControl>(),
 			create<IncreaseUIScale>(),

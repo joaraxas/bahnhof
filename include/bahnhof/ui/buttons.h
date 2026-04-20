@@ -294,8 +294,8 @@ private:
 class VisitStockmarket : public TextButton
 {
 public:
-    VisitStockmarket(Host* newpanel) : 
-        TextButton(newpanel, "Visit stock market", 120) {};
+    VisitStockmarket(Host* newpanel, UI::Coord w=120) : 
+        TextButton(newpanel, "Visit stock market", w) {};
     void leftclick(UIVec mousepos);
 };
 
