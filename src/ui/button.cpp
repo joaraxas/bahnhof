@@ -95,9 +95,15 @@ void ManageTrains::leftclick(UIVec mousepos)
     game->getgamestate().gettrainmanager().createlistpanel();
 }
 
-void ManageCompany::leftclick(UIVec mousepos)
+void ManageEntity::leftclick(UIVec mousepos)
 {
-    game->getgamestate().geteconomymanager().getmycompany().createpanel(ui);
+    game->getgamestate().controlmode.entity->createpanel(ui);
+}
+
+void ManageEntity::update(int ms)
+{
+    auto entity = game->getgamestate().controlmode.entity;
+    text = entity->getname();
 }
 
 void SwitchControl::leftclick(UIVec mousepos)
@@ -106,12 +112,6 @@ void SwitchControl::leftclick(UIVec mousepos)
     UIVec dropdownpos = {mousepos.x-panelrect.x, 
                         mousepos.y-panelrect.y};
     new ControlDropdown(panel, dropdownpos);
-}
-
-void SwitchControl::update(int ms)
-{
-    auto entity = game->getgamestate().controlmode.entity;
-    text = entity->getname();
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)

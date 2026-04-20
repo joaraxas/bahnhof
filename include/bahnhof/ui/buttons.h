@@ -97,22 +97,22 @@ public:
     void leftclick(UIVec mousepos);
 };
 
-class ManageCompany : public TextButton
+class ManageEntity : public TextButton
 {
 public:
-    ManageCompany(Host* newpanel) : 
+    ManageEntity(Host* newpanel) : 
         TextButton(newpanel, "Manage company") {};
     void leftclick(UIVec mousepos);
+    void update(int ms);
 };
 
 class SwitchControl : public TextButton
 {
 public:
     SwitchControl(Host* newpanel) : 
-        TextButton(newpanel, "Switch control to some long name")
+        TextButton(newpanel, "Switch use")
         {};
     void leftclick(UIVec mousepos);
-    void update(int ms);
 };
 
 class IncreaseUIScale : public TextButton
