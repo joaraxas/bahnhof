@@ -41,6 +41,7 @@ void Gamestate::update(int ms)
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);
 	buildingmanager->update(ms);
+	economymanager->update(ms);
 
 	time += ms;
 }
