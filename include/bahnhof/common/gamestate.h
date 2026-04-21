@@ -1,7 +1,6 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/track/state.h"
-#include "bahnhof/input/controlmode.h"
 
 class Route;
 class Wagon;
@@ -12,6 +11,7 @@ class Rendering;
 class SpriteManager;
 class ResourceManager;
 class InputManager;
+class ControlManager;
 class RouteManager;
 class TrainManager;
 class TimeManager;
@@ -23,6 +23,9 @@ namespace Tracks{
     class Tracksystem;
 }
 class EconomyManager;
+namespace Economy{
+    class ControlMode;
+}
 
 class Game
 {
@@ -40,6 +43,8 @@ public:
     ResourceManager& getresources() {if(!resources) std::cout<<"no resources"<<std::endl; return *resources;};
     Gamestate& getgamestate() {if(!gamestate) std::cout<<"no gamestate"<<std::endl; return *gamestate;};
     InputManager& getinputmanager() {if(!input) std::cout<<"no input"<<std::endl; return *input;};
+    ControlManager& getcontrolmanager() {if(!controlmanager) std::cout<<"no controlmanager"<<std::endl; return *controlmanager;};
+    const Economy::ControlMode* const getcontrolmode();
 private:
     std::unique_ptr<TimeManager> timer;
     std::unique_ptr<Camera> cam;
@@ -49,6 +54,7 @@ private:
     std::unique_ptr<ResourceManager> resources;
     std::unique_ptr<Gamestate> gamestate;
     std::unique_ptr<InputManager> input;
+    std::unique_ptr<ControlManager> controlmanager;
     bool quit;
 };
 
@@ -66,10 +72,7 @@ public:
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
     EconomyManager& geteconomymanager() {if(!economymanager) std::cout<<"no economymanager"<<std::endl; return *economymanager;};
-    std::vector<Economy::ControlMode>& getavailablecontrolmodes() {return controlmodes;};
-    void addcontrolmode(Economy::ControlMode mode) {controlmodes.push_back(mode);};
     int time = 0;
-    Economy::ControlMode controlmode;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
@@ -78,5 +81,4 @@ private:
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
     std::unique_ptr<EconomyManager> economymanager;
-    std::vector<Economy::ControlMode> controlmodes;
 };

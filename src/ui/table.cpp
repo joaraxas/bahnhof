@@ -9,6 +9,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/builder.h"
 #include "bahnhof/input/inputmodes.h"
+#include "bahnhof/input/controlmanager.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
@@ -235,7 +236,7 @@ void RouteDropdown::lineclicked(int index)
 void ControlDropdown::update(int ms)
 {
 	lines.clear();
-    auto modes = game->getgamestate().getavailablecontrolmodes();
+    auto modes = game->getcontrolmanager().getavailablecontrolmodes();
     if(modes.size()==0){
         lines.emplace_back(new TableLine(panel, this, "You have no say in anything"));
     }
@@ -248,10 +249,7 @@ void ControlDropdown::update(int ms)
 
 void ControlDropdown::lineclicked(int index)
 {
-    auto modes = game->getgamestate().getavailablecontrolmodes();
-    if(index<modes.size()){
-        game->getgamestate().controlmode = modes[index];
-    }
+    game->getcontrolmanager().switchcontrolto(index);
 }
 
 MainInfoTable::MainInfoTable(Host* newpanel, UIVec pos, UIVec minsz) : 
@@ -262,8 +260,9 @@ void MainInfoTable::update(int ms)
 {
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
+    auto controlmode = ui->getgame().getcontrolmode();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::string(gamestate.controlmode.account->getvalue())));
+    lines.emplace_back(new TableLine(panel, this, std::string(controlmode->account->getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
@@ -445,7 +444,7 @@ WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) :
 void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-    factory.orderwagon(*clickedwagon, *game->getgamestate().controlmode.account);
+    factory.orderwagon(*clickedwagon, *game->getcontrolmode()->account);
 }
 
 

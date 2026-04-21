@@ -1,4 +1,5 @@
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/controlmode.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/geometry.h"
 #include "bahnhof/common/gamestate.h"
@@ -53,7 +54,7 @@ void BuildingBuilder::reset()
 
 bool BuildingBuilder::canfit()
 {
-    BuildingOwner* contractor = game->getgamestate().controlmode.buildings;
+    BuildingOwner* contractor = game->getcontrolmode()->buildings;
     if(!contractor)
         return false; // not about "fitting" but needs to be checked here.
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
@@ -76,7 +77,7 @@ bool BuildingBuilder::canfit()
 
 void BuildingBuilder::build()
 {
-    BuildingOwner* contractor = game->getgamestate().controlmode.buildings;
+    BuildingOwner* contractor = game->getcontrolmode()->buildings;
     if(!contractor) return;
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building.id)

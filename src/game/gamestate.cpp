@@ -27,9 +27,6 @@ Gamestate::Gamestate(Game* whatgame)
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
 	economymanager = std::make_unique<EconomyManager>(game);
-	Economy::ControlMode mycontrol = economymanager->me.generatecontrolmode();
-	controlmodes.push_back(mycontrol);
-	controlmode = mycontrol;
 }
 
 Gamestate::~Gamestate()

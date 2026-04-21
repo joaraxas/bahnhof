@@ -8,6 +8,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/inputmodes.h"
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/controlmanager.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildingmanager.h"
@@ -97,12 +98,12 @@ void ManageTrains::leftclick(UIVec mousepos)
 
 void ManageEntity::leftclick(UIVec mousepos)
 {
-    game->getgamestate().controlmode.entity->createpanel(ui);
+    game->getcontrolmode()->entity->createpanel(ui);
 }
 
 void ManageEntity::update(int ms)
 {
-    auto entity = game->getgamestate().controlmode.entity;
+    auto entity = game->getcontrolmode()->entity;
     text = entity->getname();
 }
 
@@ -257,14 +258,14 @@ void TakeOver::leftclick(UIVec mousepos)
     bool succeeded = stock.attempttakeover();
     if(succeeded) {
         playercontrol.is = true;
-        game->getgamestate().addcontrolmode(controlmode);
+        game->getcontrolmanager().addcontrolmode(controlmode);
     }
 }
 
 
 void Buy::leftclick(UIVec mousepos)
 {
-    game->getgamestate().controlmode.portfolio->buy(
+    game->getcontrolmode()->portfolio->buy(
         game->getgamestate().geteconomymanager().thepublic.getinvestments(),
         stock, 5
     );
@@ -273,7 +274,7 @@ void Buy::leftclick(UIVec mousepos)
 void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().thepublic.getinvestments().buy(
-        *game->getgamestate().controlmode.portfolio,
+        *game->getcontrolmode()->portfolio,
         stock, 5
     );
 }
@@ -298,7 +299,7 @@ void ShowAccounts::leftclick(UIVec mousepos)
 Trade::Trade(Host* newpanel, Building& b) :
         TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
 {
-    BuildingOwner* playerownership = game->getgamestate().controlmode.buildings;
+    BuildingOwner* playerownership = game->getcontrolmode()->buildings;
     updatetext(&building.getowner() == playerownership);
     if(playerownership==nullptr){ // can't own buildings
         clickable = false;
@@ -307,7 +308,7 @@ Trade::Trade(Host* newpanel, Building& b) :
 
 void Trade::mousehover(UIVec pos, int ms)
 {
-    if(!game->getgamestate().controlmode.buildings){
+    if(!game->getcontrolmode()->buildings){
         ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
         return;
     }
@@ -316,7 +317,7 @@ void Trade::mousehover(UIVec pos, int ms)
 
 void Trade::leftclick(UIVec mousepos)
 {
-    BuildingOwner* playerownership = game->getgamestate().controlmode.buildings;
+    BuildingOwner* playerownership = game->getcontrolmode()->buildings;
     if(!playerownership){
         clickable = false;
         return;

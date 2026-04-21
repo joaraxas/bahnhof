@@ -8,7 +8,7 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/ui/ui.h"
-
+#include "bahnhof/input/controlmanager.h"
 
 Game::Game()
 {
@@ -21,6 +21,7 @@ Game::Game()
 	resources = std::make_unique<ResourceManager>(this);
 	gamestate = std::make_unique<Gamestate>(this);
 	input = std::make_unique<InputManager>(this);
+	controlmanager = std::make_unique<ControlManager>(this);
 	quit = false;
 }
 
@@ -42,4 +43,9 @@ void Game::play()
 void Game::exit()
 {
 	quit = true;
+}
+
+const Economy::ControlMode* const Game::getcontrolmode() 
+{
+	return getcontrolmanager().getcontrolmode();
 }
