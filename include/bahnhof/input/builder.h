@@ -27,7 +27,7 @@ namespace Economy{
 class Builder : public InputMode
 {
 public:
-    Builder(InputManager& owner, Game* newgame);
+    Builder(InputManager& inp, Game* newgame);
     virtual ~Builder() {};
     virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
@@ -48,7 +48,6 @@ protected:
 private:
     void updateangle(Vec pos);
     InputManager& input;
-    Economy::Account& myaccount;
 };
 
 class TrackBuilder : public Builder

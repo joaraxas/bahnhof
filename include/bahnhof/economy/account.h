@@ -12,6 +12,8 @@ class Account
 {
 public:
     Account(Money cash) : money(cash) {}
+    Account(const Account& a) = delete;
+    Account& operator=(const Account& a) = delete;
     Money getvalue() const {return money;}
     Money getprofit() const {return profit;}
     bool canafford(Money amount) const {return money>=amount;}

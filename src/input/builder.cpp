@@ -5,11 +5,10 @@
 #include "bahnhof/economy/company.h"
 
 
-Builder::Builder(InputManager& owner, Game* newgame) : 
-    input(owner),
+Builder::Builder(InputManager& inp, Game* newgame) : 
+    input(inp),
     game(newgame),
-    tracksystem(game->getgamestate().gettracksystems()),
-    myaccount(*game->getgamestate().controlmode.account)
+    tracksystem(game->getgamestate().gettracksystems())
 {}
 
 void Builder::render(Rendering* r)
@@ -38,7 +37,8 @@ void Builder::leftreleasedmap(Vec mappos)
         updateangle(mappos);
         if(canbuild()){
             build();
-            myaccount.pay(cost, Economy::PaymentType::buildings);
+            game->getgamestate().controlmode.account->
+                pay(cost, Economy::PaymentType::buildings);
         }
         Builder::reset();
     }
@@ -53,8 +53,7 @@ void Builder::reset()
 
 bool Builder::canbuild()
 {
-    myaccount = *game->getgamestate().controlmode.account;
-    if(!myaccount.canafford(cost))
+    if(!game->getgamestate().controlmode.account->canafford(cost))
         return false;
     if(!canfit())
         return false;
