@@ -98,12 +98,12 @@ void ManageTrains::leftclick(UIVec mousepos)
 
 void ManageEntity::leftclick(UIVec mousepos)
 {
-    game->getcontrolmode()->entity->createpanel(ui);
+    game->getcontrolmode().entity->createpanel(ui);
 }
 
 void ManageEntity::update(int ms)
 {
-    auto entity = game->getcontrolmode()->entity;
+    auto entity = game->getcontrolmode().entity;
     text = entity->getname();
 }
 
@@ -265,7 +265,7 @@ void TakeOver::leftclick(UIVec mousepos)
 
 void Buy::leftclick(UIVec mousepos)
 {
-    game->getcontrolmode()->portfolio->buy(
+    game->getcontrolmode().portfolio->buy(
         game->getgamestate().geteconomymanager().thepublic.getinvestments(),
         stock, 5
     );
@@ -274,7 +274,7 @@ void Buy::leftclick(UIVec mousepos)
 void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().thepublic.getinvestments().buy(
-        *game->getcontrolmode()->portfolio,
+        *game->getcontrolmode().portfolio,
         stock, 5
     );
 }
@@ -299,7 +299,7 @@ void ShowAccounts::leftclick(UIVec mousepos)
 Trade::Trade(Host* newpanel, Building& b) :
         TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
 {
-    BuildingOwner* playerownership = game->getcontrolmode()->buildings;
+    BuildingOwner* playerownership = game->getcontrolmode().buildings;
     updatetext(&building.getowner() == playerownership);
     if(playerownership==nullptr){ // can't own buildings
         clickable = false;
@@ -308,7 +308,7 @@ Trade::Trade(Host* newpanel, Building& b) :
 
 void Trade::mousehover(UIVec pos, int ms)
 {
-    if(!game->getcontrolmode()->buildings){
+    if(!game->getcontrolmode().buildings){
         ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
         return;
     }
@@ -317,7 +317,7 @@ void Trade::mousehover(UIVec pos, int ms)
 
 void Trade::leftclick(UIVec mousepos)
 {
-    BuildingOwner* playerownership = game->getcontrolmode()->buildings;
+    BuildingOwner* playerownership = game->getcontrolmode().buildings;
     if(!playerownership){
         clickable = false;
         return;

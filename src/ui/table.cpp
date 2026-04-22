@@ -260,9 +260,9 @@ void MainInfoTable::update(int ms)
 {
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
-    auto controlmode = ui->getgame().getcontrolmode();
+    auto& controlmode = ui->getgame().getcontrolmode();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::string(controlmode->account->getvalue())));
+    lines.emplace_back(new TableLine(panel, this, std::string(controlmode.account->getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
@@ -444,7 +444,7 @@ WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) :
 void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-    factory.orderwagon(*clickedwagon, *game->getcontrolmode()->account);
+    factory.orderwagon(*clickedwagon, *game->getcontrolmode().account);
 }
 
 

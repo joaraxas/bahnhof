@@ -12,9 +12,9 @@ ControlManager::ControlManager(Game* whatgame) :
 	controlmode = mycontrol;
 }
 
-const Economy::ControlMode* const ControlManager::getcontrolmode() const
+const Economy::ControlMode& ControlManager::getcontrolmode() const
 {
-    return &controlmode;
+    return controlmode;
 }
 
 bool ControlManager::switchcontrolto(int index)

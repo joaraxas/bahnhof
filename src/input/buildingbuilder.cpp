@@ -54,7 +54,7 @@ void BuildingBuilder::reset()
 
 bool BuildingBuilder::canfit()
 {
-    BuildingOwner* contractor = game->getcontrolmode()->buildings;
+    BuildingOwner* contractor = game->getcontrolmode().buildings;
     if(!contractor)
         return false; // not about "fitting" but needs to be checked here.
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
@@ -77,7 +77,7 @@ bool BuildingBuilder::canfit()
 
 void BuildingBuilder::build()
 {
-    BuildingOwner* contractor = game->getcontrolmode()->buildings;
+    BuildingOwner* contractor = game->getcontrolmode().buildings;
     if(!contractor) return;
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building.id)

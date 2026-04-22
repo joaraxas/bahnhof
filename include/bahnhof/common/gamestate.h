@@ -44,7 +44,7 @@ public:
     Gamestate& getgamestate() {if(!gamestate) std::cout<<"no gamestate"<<std::endl; return *gamestate;};
     InputManager& getinputmanager() {if(!input) std::cout<<"no input"<<std::endl; return *input;};
     ControlManager& getcontrolmanager() {if(!controlmanager) std::cout<<"no controlmanager"<<std::endl; return *controlmanager;};
-    const Economy::ControlMode* const getcontrolmode();
+    const Economy::ControlMode& getcontrolmode();
 private:
     std::unique_ptr<TimeManager> timer;
     std::unique_ptr<Camera> cam;

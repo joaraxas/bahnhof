@@ -8,7 +8,7 @@ class ControlManager
 {
 public:
     ControlManager(Game* whatgame);
-    const Economy::ControlMode* const getcontrolmode() const;
+    const Economy::ControlMode& getcontrolmode() const;
     const std::vector<Economy::ControlMode>& getavailablecontrolmodes() const {return controlmodes;};
     void addcontrolmode(Economy::ControlMode mode) {controlmodes.push_back(mode);};
     bool switchcontrolto(int index);

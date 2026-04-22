@@ -45,7 +45,7 @@ void Game::exit()
 	quit = true;
 }
 
-const Economy::ControlMode* const Game::getcontrolmode() 
+const Economy::ControlMode& Game::getcontrolmode() 
 {
 	return getcontrolmanager().getcontrolmode();
 }

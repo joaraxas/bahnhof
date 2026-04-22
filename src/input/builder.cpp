@@ -38,7 +38,7 @@ void Builder::leftreleasedmap(Vec mappos)
         updateangle(mappos);
         if(canbuild()){
             build();
-            game->getcontrolmode()->account->
+            game->getcontrolmode().account->
                 pay(cost, Economy::PaymentType::buildings);
         }
         Builder::reset();
@@ -54,7 +54,7 @@ void Builder::reset()
 
 bool Builder::canbuild()
 {
-    if(!game->getcontrolmode()->account->canafford(cost))
+    if(!game->getcontrolmode().account->canafford(cost))
         return false;
     if(!canfit())
         return false;
