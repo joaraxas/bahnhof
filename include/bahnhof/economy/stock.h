@@ -19,7 +19,7 @@ public:
     Stock(Entity& e, Account& a, Stockmarket& sm);
     ~Stock();
     void update(int ms);
-    bool issue(Money investment, Portfolio& buyer);
+    bool issue(uint16_t issuedshares, Portfolio& buyer);
     Money getvaluation() const {return valuation;}
     Money getshareprice() const {
         if(shares == 0) return 5;

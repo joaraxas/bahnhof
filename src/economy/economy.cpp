@@ -90,12 +90,10 @@ void Stock::update(int ms)
     lastprofit = currentprofit;
 }
 
-bool Stock::issue(Money investment, Portfolio& buyer) {
+bool Stock::issue(uint16_t issuedshares, Portfolio& buyer) {
     constexpr double devaluation = 0.95;
     Money oldvaluation = valuation;
     valuation *= devaluation;
-    uint16_t issuedshares = std::lround(
-        std::floor(investment/getshareprice()));
     if(issuedshares<=0){
         std::cout<<"failed to emit "<<issuedshares<<" shares"<<std::endl;
         valuation = oldvaluation;

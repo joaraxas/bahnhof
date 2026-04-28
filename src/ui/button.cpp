@@ -254,7 +254,7 @@ void PublicOffering::update(int ms)
 void PublicOffering::leftclick(UIVec mousepos)
 {
     if(playercontrol.is)
-        stock.issue(100, game->getgamestate().geteconomymanager().thepublic.getinvestments());
+        stock.issue(20, game->getgamestate().geteconomymanager().thepublic.getinvestments());
 }
 
 
