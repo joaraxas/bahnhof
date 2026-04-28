@@ -125,6 +125,7 @@ void DecreaseUIScale::leftclick(UIVec mousepos)
     ui->getuirendering().decreaseuiscale();
 }
 
+
 void SetRoute::leftclick(UIVec mousepos)
 {
     UIRect panelrect = panel->getglobalrect();
@@ -141,6 +142,7 @@ void SetRoute::update(int ms)
     else
         text = "No route set";
 }
+
 
 void GoTrain::leftclick(UIVec mousepos)
 {
@@ -159,6 +161,7 @@ void GoTrain::update(int ms)
         text = "Start route";
 }
 
+
 void GasTrain::render(Rendering* r)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
@@ -175,17 +178,20 @@ void GasTrain::leftpressed(UIVec mousepos, int mslogic)
     train.gas(mslogic);
 }
 
+
 void BrakeTrain::leftpressed(UIVec mousepos, int mslogic)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.brake(mslogic);
 }
 
+
 void TurnTrain::leftclick(UIVec mousepos)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.shiftdirection();
 }
+
 
 void CoupleTrain::leftclick(UIVec mousepos)
 {
@@ -271,6 +277,7 @@ void Buy::leftclick(UIVec mousepos)
     );
 }
 
+
 void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().thepublic.getinvestments().buy(
@@ -279,15 +286,18 @@ void Sell::leftclick(UIVec mousepos)
     );
 }
 
+
 void VisitStockmarket::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().stockmarket.createpanel(ui);
 }
 
+
 void ListBuildings::leftclick(UIVec mousepos)
 {
     list.createpanel(ui);
 }
+
 
 void ShowAccounts::leftclick(UIVec mousepos)
 {
@@ -295,6 +305,7 @@ void ShowAccounts::leftclick(UIVec mousepos)
 }
 
 } // end namespace EconomyPanels
+
 
 Trade::Trade(Host* newpanel, Building& b) :
         TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}

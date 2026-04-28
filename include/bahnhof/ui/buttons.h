@@ -275,7 +275,7 @@ class Buy : public TextButton
 {
 public:
     Buy(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Buy"), stock{s} {};
+        TextButton(newpanel, "Buy", 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
@@ -285,7 +285,7 @@ class Sell : public TextButton
 {
 public:
     Sell(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Sell"), stock{s} {};
+        TextButton(newpanel, "Sell", 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
@@ -294,8 +294,8 @@ private:
 class VisitStockmarket : public TextButton
 {
 public:
-    VisitStockmarket(Host* newpanel, UI::Coord w=120) : 
-        TextButton(newpanel, "Visit stock market", w) {};
+    VisitStockmarket(Host* newpanel) : 
+        TextButton(newpanel, "Visit stock market") {};
     void leftclick(UIVec mousepos);
 };
 

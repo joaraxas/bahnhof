@@ -71,7 +71,7 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
-			create<EconomyPanels::VisitStockmarket>(80),
+			create<EconomyPanels::VisitStockmarket>(),
 			create<ManageEntity>(),
 			create<SwitchControl>(),
 			create<IncreaseUIScale>(),
@@ -273,8 +273,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<Buy>(stock),
 				create<Sell>(stock),
 				create<TakeOver>(stock, playercontrol.getcontrol(), mode),
-				create<PublicOffering>(stock, playercontrol.getcontrol()),
-				create<VisitStockmarket>()
+				create<PublicOffering>(stock, playercontrol.getcontrol())
 			),
 			create<VBox>(
 				create<Text>("Major owners"),
