@@ -11,7 +11,7 @@ namespace Economy {
 class Account
 {
 public:
-    Account(Money cash) : money(cash) {}
+    Account(Money cash=0) : money(cash) {}
     Account(const Account& a) = delete;
     Account& operator=(const Account& a) = delete;
     Money getvalue() const {return money;}

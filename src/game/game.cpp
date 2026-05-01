@@ -19,9 +19,9 @@ Game::Game()
 	ui = std::make_unique<InterfaceManager>(this);
 	allsprites = std::make_unique<SpriteManager>(this);
 	resources = std::make_unique<ResourceManager>(this);
+	controlmanager = std::make_unique<ControlManager>(this);
 	gamestate = std::make_unique<Gamestate>(this);
 	input = std::make_unique<InputManager>(this);
-	controlmanager = std::make_unique<ControlManager>(this);
 	quit = false;
 }
 

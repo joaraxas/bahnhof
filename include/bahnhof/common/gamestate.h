@@ -41,9 +41,9 @@ public:
     InterfaceManager& getui() {if(!ui) std::cout<<"no ui"<<std::endl; return *ui;};
     SpriteManager& getsprites() {if(!allsprites) std::cout<<"no allsprites"<<std::endl; return *allsprites;};
     ResourceManager& getresources() {if(!resources) std::cout<<"no resources"<<std::endl; return *resources;};
+    ControlManager& getcontrolmanager() {if(!controlmanager) std::cout<<"no controlmanager"<<std::endl; return *controlmanager;};
     Gamestate& getgamestate() {if(!gamestate) std::cout<<"no gamestate"<<std::endl; return *gamestate;};
     InputManager& getinputmanager() {if(!input) std::cout<<"no input"<<std::endl; return *input;};
-    ControlManager& getcontrolmanager() {if(!controlmanager) std::cout<<"no controlmanager"<<std::endl; return *controlmanager;};
     const Economy::ControlMode& getcontrolmode();
 private:
     std::unique_ptr<TimeManager> timer;
@@ -52,9 +52,9 @@ private:
     std::unique_ptr<InterfaceManager> ui;
     std::unique_ptr<SpriteManager> allsprites;
     std::unique_ptr<ResourceManager> resources;
+    std::unique_ptr<ControlManager> controlmanager;
     std::unique_ptr<Gamestate> gamestate;
     std::unique_ptr<InputManager> input;
-    std::unique_ptr<ControlManager> controlmanager;
     bool quit;
 };
 

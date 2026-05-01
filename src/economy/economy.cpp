@@ -69,10 +69,17 @@ bool Portfolio::isplayercontrolled()
     return playercontrol.is;
 }
 
-Stock::Stock(Entity& e, Account& a, Stockmarket& sm) :
+Stock::Stock(Entity& e, Account& a, Stockmarket& sm, 
+        std::vector<std::pair<Portfolio*,Money>> owners) :
         entity{e}, account{a}, market{sm}
 {
     market.liststock(*this);
+    for(auto [portfolio, investment] : owners){
+        if(portfolio){
+            Shares nshares = std::floor(investment / getshareprice());
+            issue(nshares, *portfolio, 1.0);
+        }
+    }
 }
 
 Stock::~Stock()
@@ -90,8 +97,7 @@ void Stock::update(int ms)
     lastprofit = currentprofit;
 }
 
-bool Stock::issue(uint16_t issuedshares, Portfolio& buyer) {
-    constexpr double devaluation = 0.95;
+bool Stock::issue(Shares issuedshares, Portfolio& buyer, double devaluation) {
     Money oldvaluation = valuation;
     valuation *= devaluation;
     if(issuedshares<=0){
@@ -107,6 +113,10 @@ bool Stock::issue(uint16_t issuedshares, Portfolio& buyer) {
     valuation += getshareprice() * issuedshares;
     shares += issuedshares;
     return true;
+}
+
+bool Stock::issue(Shares issuedshares, Portfolio& buyer) {
+    return issue(issuedshares, buyer, 0.95);
 }
 
 Stake* const Stock::getstakeforportfolio(Portfolio& who) {
@@ -196,6 +206,18 @@ void ThePublic::createpanel(InterfaceManager* ui) {
     else
         panel.movetofront();
 }
+
+
+Company::Company(std::string n, Stockmarket& market, 
+        std::vector<std::pair<Portfolio*,Money>> owners, bool controlled) : 
+    playercontrol(controlled),
+    name{n},
+    slogan{generateslogan()},
+    account{},
+    portfolio{*this, account, playercontrol},
+    stock{*this, account, market, owners},
+    buildings{*this, account, playercontrol}
+{}
 
 void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())

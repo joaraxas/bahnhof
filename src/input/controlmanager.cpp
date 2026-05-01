@@ -5,12 +5,7 @@
 ControlManager::ControlManager(Game* whatgame) : 
     game{whatgame},
     controlmode{}
-{
-    auto& economymanager = game->getgamestate().geteconomymanager();
-    Economy::ControlMode mycontrol = economymanager.me.generatecontrolmode();
-	controlmodes.push_back(mycontrol);
-	controlmode = mycontrol;
-}
+{}
 
 const Economy::ControlMode& ControlManager::getcontrolmode() const
 {

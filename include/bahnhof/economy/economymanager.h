@@ -19,7 +19,6 @@ class EconomyManager
 public:
     EconomyManager(Game* whatgame);
     void update(int ms);
-    Economy::Company& getmycompany() {if(companies.empty()) std::cout<<"no company"<<std::endl; return *companies.front().get();};
     Economy::Person me;
     Economy::ThePublic thepublic;
     Economy::Stockmarket stockmarket;

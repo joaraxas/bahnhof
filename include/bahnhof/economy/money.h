@@ -24,7 +24,7 @@ public:
 
     constexpr Money& operator*=(const double rhs) {amount*=rhs; return *this;}
     constexpr Money& operator/=(const double rhs) {amount/=rhs; return *this;}
-    friend double operator/(Money lhs, const Money rhs) {return lhs.amount/rhs.amount;}
+    double operator/(const Money rhs) {return amount/rhs.amount;}
 private:
     double amount;
 };

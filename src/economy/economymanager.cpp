@@ -1,4 +1,6 @@
 #include<map>
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/input/controlmanager.h"
 #include "bahnhof/economy/economymanager.h"
 #include "bahnhof/economy/company.h"
 #include "bahnhof/economy/person.h"
@@ -9,21 +11,35 @@
 
 EconomyManager::EconomyManager(Game* whatgame) :
 	me("Sir Charles Darwin", 500, true),
-	thepublic()
+	thepublic(),
+	game(whatgame)
 {
 	using Economy::Company;
-	game = whatgame;
-	Company* bls = new Company{"BLS AG", stockmarket};
-	companies.emplace_back(bls);
-	if(!bls->getcompanysshares().issue(20, me.getinvestments()))
-		throw "couldn't emit BLS shares";
-	Company* sbb = new Company{"SBB AG", stockmarket};
+	using Economy::Portfolio;
+	using Economy::ControlMode;
+
+    auto& controlmanager = game->getcontrolmanager();
+    ControlMode mycontrol = me.generatecontrolmode();
+	controlmanager.addcontrolmode(mycontrol);
+	Portfolio* myinvestments = &me.getinvestments();
+
+	Company* sbb = new Company{"SBB AG", stockmarket, 
+		{{myinvestments, 100},
+		 {&thepublic.getinvestments(), 500}}};
 	companies.emplace_back(sbb);
-	if(!sbb->getcompanysshares().issue(10, bls->getcompanysinvestments()))
-		throw "couldn't emit SBB shares";
-	sbb->getcompanysshares().issue(100, thepublic.getinvestments());
-	me.getinvestments().buy(bls->getcompanysinvestments(), sbb->getcompanysshares(), 5);
-	companies.emplace_back(new Company{"Appenzeller Bahnen AG", stockmarket});
+
+	Company* bls = new Company{"BLS AG", stockmarket, 
+		{{myinvestments, 100},
+		 {&sbb->getinvestments(), 100}}, true};
+	companies.emplace_back(bls);
+	ControlMode companycontrol = bls->generatecontrolmode();
+	controlmanager.addcontrolmode(companycontrol);
+	controlmanager.switchcontrolto(1);
+
+	companies.emplace_back(
+		new Company{"Appenzeller Bahnen AG", stockmarket,
+		{{&sbb->getinvestments(), 100}}}
+	);
 }
 
 void EconomyManager::update(int ms)

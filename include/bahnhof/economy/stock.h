@@ -15,17 +15,19 @@ class Stockmarket;
 with a valuation */
 class Stock
 {
+    using Shares = uint16_t;
 public:
-    Stock(Entity& e, Account& a, Stockmarket& sm);
+    Stock(Entity& e, Account& a, Stockmarket& sm, 
+        std::vector<std::pair<Portfolio*,Money>> owners={});
     ~Stock();
     void update(int ms);
-    bool issue(uint16_t issuedshares, Portfolio& buyer);
+    bool issue(Shares issuedshares, Portfolio& buyer);
     Money getvaluation() const {return valuation;}
     Money getshareprice() const {
         if(shares == 0) return 5;
         return valuation/shares;
     }
-    uint16_t getnumshares() const {return shares;}
+    Shares getnumshares() const {return shares;}
     Stake* const getstakeforportfolio(Portfolio& who);
     Stake& registernewstake(Portfolio& who);
     bool removeemptystake(Portfolio& who);
@@ -35,10 +37,11 @@ public:
     Entity& getentity() {return entity;}
     bool attempttakeover();
 private:
+    bool issue(Shares issuedshares, Portfolio& buyer, double devaluation);
     Entity& entity;
     Account& account;
     Stockmarket& market;
-    uint16_t shares{0};
+    Shares shares{0};
     std::unordered_map<Portfolio*, Stake> stakes;
     std::vector<std::pair<Stake*, Entity*>> sortedowners;
     Money valuation{0};
