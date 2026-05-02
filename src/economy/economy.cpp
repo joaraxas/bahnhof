@@ -216,7 +216,8 @@ Company::Company(std::string n, Stockmarket& market,
     account{},
     portfolio{*this, account, playercontrol},
     stock{*this, account, market, owners},
-    buildings{*this, account, playercontrol}
+    buildings{*this, account, playercontrol},
+    storages{*this, account, playercontrol}
 {}
 
 void Company::createpanel(InterfaceManager* ui) {

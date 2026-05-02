@@ -17,8 +17,8 @@ public:
     Money getvalue() const {return money;}
     Money getprofit() const {return profit;}
     bool canafford(Money amount) const {return money>=amount;}
-    bool pay(Money amount, PaymentType type, Account* receiver=nullptr){
-        if(!canafford(amount)) return false;
+    bool pay(Money amount, PaymentType type, Account* receiver=nullptr, bool allowneg=false){
+        if(!allowneg && !canafford(amount)) return false;
         if(amount<=0) return false;
         money-=amount;
         if(receiver){

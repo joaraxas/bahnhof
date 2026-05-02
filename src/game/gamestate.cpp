@@ -46,6 +46,7 @@ void Gamestate::update(int ms)
 void Gamestate::randommap()
 {
 	auto& publicbuildings = economymanager->thepublic.getbuildings();
+	auto& companystorages = economymanager->getmycompany()->getstorages();
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,50);
 		Vec size = buildingmanager->gettypefromid(brewery).size;
@@ -53,7 +54,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Brewery>(
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
@@ -64,7 +66,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Hopsfield>(
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
@@ -75,7 +78,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<Barleyfield>(
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
@@ -86,7 +90,8 @@ void Gamestate::randommap()
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
 		buildingmanager->addbuilding(std::make_unique<City>(
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}

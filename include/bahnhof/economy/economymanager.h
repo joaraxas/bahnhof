@@ -19,6 +19,7 @@ class EconomyManager
 public:
     EconomyManager(Game* whatgame);
     void update(int ms);
+    Economy::Company* getmycompany() {return companies[1].get();}; //HACK
     Economy::Person me;
     Economy::ThePublic thepublic;
     Economy::Stockmarket stockmarket;

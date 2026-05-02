@@ -6,15 +6,20 @@
 #include<set>
 #include "bahnhof/common/math.h"
 #include "resourcetypes.h"
+#include "bahnhof/economy/control.h"
 
 class Game;
 class ResourceManager;
 class Rendering;
+class Storage;
+
+using StorageOwner = Economy::Control<Storage>;
 
 class Storage
 {
 public:
-    Storage(Game* game, int x, int y, int w, int h);
+    Storage(Game* game, StorageOwner& o, int x, int y, int w, int h);
+    ~Storage();
     void render(Rendering* r);
     bool containspoint(Vec pos);
     int loadstorage(resourcetype type, int amount);
@@ -24,6 +29,8 @@ public:
     void setaccepting(resourcetype resource, bool shouldaccept);
     void setproviding(resourcetype resource, bool shouldprovide);
     resourcetype getfirstprovidedresource();
+    StorageOwner& getowner() const {return control.getowner();};
+    void setowner(StorageOwner& newowner) {control.setowner(newowner);};
 private:
     std::set<resourcetype> providedresources;
     std::set<resourcetype> acceptedresources;
@@ -31,6 +38,7 @@ private:
     ResourceManager* allresources;
     std::map<resourcetype, int> storedresources;
     SDL_Rect rect;
+    Economy::ControllerPointer<StorageOwner> control;
 };
 
 Storage* getstorageatpoint(Vec pos);

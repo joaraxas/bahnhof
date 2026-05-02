@@ -102,17 +102,22 @@ void Industry::trigger()
 		int got = 0;
 		for(auto want: wants)
 			got += storage->unloadstorage(want, 1);
-		if(wants.size()==0)
-			got = 1;
-		if(got > 0){
+		if(got > 0 || wants.empty()){
+			int put = 1;
 			if(!makes.empty()){
+				put = 0;
 				for(auto product: makes)
-					storage->loadstorage(product, got);
+					put += storage->loadstorage(product, 1);
 			}
-			else{
-				// TODO: account should depend on who delivered the goods,
-				// or payment should be made when received
-				control.getowner().getaccount().earn(got, PaymentType::ticketfare);
+			if(put>0){
+				getowner().getaccount().pay(
+					2*got, PaymentType::ticketfare,
+					&storage->getowner().getaccount(), true
+				);
+				storage->getowner().getaccount().pay(
+					put, PaymentType::ticketfare,
+					&getowner().getaccount(), true
+				);
 			}
 		}
 	}
