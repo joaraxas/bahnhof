@@ -91,10 +91,18 @@ void Stock::update(int ms)
 {
     constexpr double stdpersec = 0.05/60.0;
     valuation *= randnorm(stdpersec*0.001*ms, 1.0);
+    
+    Money currentrevenue = account.getrevenue();
+    Money newrevenue = currentrevenue - lastrevenue;
+    valuation += newrevenue * 5;
+    lastrevenue = currentrevenue;
+    
     Money currentprofit = account.getprofit();
     Money newprofit = currentprofit - lastprofit;
-    valuation += newprofit * 5;
+    valuation += newprofit;
     lastprofit = currentprofit;
+
+    valuation = std::max(Money{0}, valuation);
 }
 
 bool Stock::issue(Shares issuedshares, Portfolio& buyer, double devaluation) {

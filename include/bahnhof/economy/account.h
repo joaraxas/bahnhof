@@ -15,6 +15,7 @@ public:
     Account(const Account& a) = delete;
     Account& operator=(const Account& a) = delete;
     Money getvalue() const {return money;}
+    Money getrevenue() const {return revenue;}
     Money getprofit() const {return profit;}
     bool canafford(Money amount) const {return money>=amount;}
     bool pay(Money amount, PaymentType type, Account* receiver=nullptr, bool allowneg=false){
@@ -28,6 +29,7 @@ public:
         expenses[type] += amount;
         if(isrecurring(type)){
             profit -= amount;
+            receiver->revenue += amount;
             receiver->profit += amount;
         }
         return true;
@@ -37,14 +39,17 @@ public:
         // from nowhere
         money+=amount;
         income[type] += amount;
-        if(isrecurring(type))
+        if(isrecurring(type)){
+            revenue += amount;
             profit += amount;
+        }
     }
     void createpanel(InterfaceManager* ui);
 private:
     Money money;
     std::map<PaymentType, Money> income;
     std::map<PaymentType, Money> expenses;
+    Money revenue;
     Money profit;
     UI::Ownership panel;
 };

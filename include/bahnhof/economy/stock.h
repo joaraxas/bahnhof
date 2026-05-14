@@ -45,6 +45,7 @@ private:
     std::unordered_map<Portfolio*, Stake> stakes;
     std::vector<std::pair<Stake*, Entity*>> sortedowners;
     Money valuation{0};
+    Money lastrevenue{0};
     Money lastprofit{0};
 };
 
