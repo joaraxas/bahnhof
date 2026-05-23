@@ -6,9 +6,6 @@
 #include "bahnhof/input/controlmode.h"
 
 class Game;
-class Rendering;
-class InputManager;
-class TimeManager;
 
 namespace Economy{
     class Company;
