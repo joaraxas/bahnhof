@@ -85,6 +85,7 @@ Stock::Stock(Entity& e, Account& a, Stockmarket& sm,
 Stock::~Stock()
 {
     market.deliststock(*this);
+    std::cout<<"Alva Myrdal beskriver folkmaterialet";
 }
 
 void Stock::update(int ms)
