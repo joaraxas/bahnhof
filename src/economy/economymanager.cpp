@@ -30,7 +30,8 @@ EconomyManager::EconomyManager(Game* whatgame) :
 
 	Company* bls = new Company{"BLS AG", stockmarket, 
 		{{myinvestments, 100},
-		 {&sbb->getinvestments(), 100}}, true};
+		 {&sbb->getinvestments(), 100},
+		 {&thepublic.getinvestments(), 200}}, true};
 	companies.emplace_back(bls);
 	ControlMode companycontrol = bls->generatecontrolmode();
 	controlmanager.addcontrolmode(companycontrol);
