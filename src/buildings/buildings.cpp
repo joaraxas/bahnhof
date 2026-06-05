@@ -181,7 +181,7 @@ void WagonFactory::removefromqueue(int wagonid)
 {
 	using namespace Economy;
 	if(wagonid>=0 && wagonid<productionqueue.size()){
-		Economy::Account* payer = productionqueue[wagonid].payer;
+		Account* payer = productionqueue[wagonid].payer;
 		payer->earn(productionqueue[wagonid].type->cost, PaymentType::rollingstock);
 		productionqueue.erase(productionqueue.begin() + wagonid);
 		if(wagonid==0) timeleft = 3500;
