@@ -171,8 +171,8 @@ public:
 class AccountPanel : public Panel
 {
 public:
-    AccountPanel(InterfaceManager* newui, const Economy::Typelist& income, 
-        const Economy::Typelist& expenses);
+    AccountPanel(InterfaceManager* newui, const Economy::PaymentList& income, 
+        const Economy::PaymentList& expenses);
 };
 
 } // end namespace Economy

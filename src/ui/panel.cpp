@@ -369,8 +369,8 @@ PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui,
 }
 
 
-AccountPanel::AccountPanel(InterfaceManager* newui, const Typelist& income, 
-	const Typelist& expenses) :
+AccountPanel::AccountPanel(InterfaceManager* newui, const PaymentList& income, 
+	const PaymentList& expenses) :
 		Panel(newui)
 {
 	setlayout(

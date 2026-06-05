@@ -224,12 +224,12 @@ class IncomeTable : public Table
 {
 public:
     IncomeTable(
-        Host* p, const Economy::Typelist& t, 
+        Host* p, const Economy::PaymentList& pays, 
         UIVec pos={0,0}, UIVec minsz={200,80}): 
-            Table(p, minsz, pos), types{t} {};
+            Table(p, minsz, pos), payments{pays} {};
     void update(int ms);
 private:
-    const Economy::Typelist& types;
+    const Economy::PaymentList& payments;
 };
 
 class InvestmentsTable : public ClickableTable

@@ -41,6 +41,6 @@ constexpr bool isrecurring(PaymentType type)
     }
 }
 
-using Typelist = std::map<Economy::PaymentType, Economy::Money>;
+using PaymentList = std::map<Economy::PaymentType, Economy::Money>;
 
 } // namespace Economy

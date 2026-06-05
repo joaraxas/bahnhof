@@ -504,11 +504,11 @@ void AccountInfoTable::update(int ms)
 void IncomeTable::update(int ms)
 {
     lines.clear();
-    for(const auto& type : types){
+    for(const auto& payment : payments){
         lines.emplace_back(
             new TableLine(panel, this, 
-                getbudgetpostname(type.first) + ": " + 
-                std::string(type.second))
+                getbudgetpostname(payment.first) + ": " + 
+                std::string(payment.second))
         );
     }
 }
