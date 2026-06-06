@@ -24,7 +24,7 @@ public:
         buildings{*this, account, playercontrol}
     {}
     const std::string& getname() const override {return name;}
-    void createpanel(InterfaceManager* ui);
+    void createpanel(InterfaceManager* ui) override;
     Portfolio& getinvestments() {return portfolio;} // might remove
     Control<Building>& getbuildings() {return buildings;} // might remove
 private:

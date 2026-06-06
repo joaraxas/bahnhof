@@ -27,7 +27,7 @@ public:
     const std::string& getname() const override {return name;}
     Portfolio& getinvestments() {return portfolio;} // might remove
     Control<Storage>& getstorages() {return storages;} // should remove
-    void createpanel(InterfaceManager* ui);
+    void createpanel(InterfaceManager* ui) override;
     ControlMode generatecontrolmode();
 private:
     PlayerControl playercontrol;
