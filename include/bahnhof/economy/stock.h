@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "money.h"
 #include "stake.h"
+#include "shares.h"
 
 class Entity;
 
@@ -15,7 +16,6 @@ class Stockmarket;
 with a valuation */
 class Stock
 {
-    using Shares = uint16_t;
 public:
     Stock(Entity& e, Account& a, Stockmarket& sm, 
         std::vector<std::pair<Portfolio*,Money>> owners={});

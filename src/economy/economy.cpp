@@ -22,7 +22,7 @@ bool Stake::takefrom(Stake& from, int howmany) {
     return false;
 }
 
-bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
+bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, Shares amount) {
     if(amount<=0){
         std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
         return false;
@@ -41,7 +41,7 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, uint16_t amount) {
     return true;
 }
 
-bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) {
+bool Portfolio::buy(Stake& fromstake, Account& payableaccount, Shares amount) {
     amount = std::min(amount, fromstake.getamount());
     if(amount<=0) {
         std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
@@ -172,7 +172,7 @@ void Stock::updateregistry() {
 }
 
 bool Stock::attempttakeover() {
-    uint16_t votesfor{0};
+    Shares votesfor{0};
     for(auto& [portfolio, stake] : stakes){
         if(portfolio->isplayercontrolled()){
             std::cout<<stake.getamount()<<" votes for"<<std::endl;
