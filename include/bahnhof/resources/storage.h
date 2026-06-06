@@ -7,6 +7,7 @@
 #include "bahnhof/common/math.h"
 #include "resourcetypes.h"
 #include "bahnhof/economy/control.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Game;
 class ResourceManager;

@@ -6,6 +6,7 @@
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/rollingstock/wagontypes.h"
 #include "bahnhof/economy/control.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Storage;
 class Game;

@@ -4,7 +4,7 @@
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/buildings/buildingtypes.h"
 #include "bahnhof/economy/payments.h"
-#include "bahnhof/economy/control.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Game;
 class Gamestate;

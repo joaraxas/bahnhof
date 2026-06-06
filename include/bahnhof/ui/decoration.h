@@ -3,7 +3,7 @@
 #include "bahnhof/ui/element.h"
 #include "bahnhof/ui/uistyle.h"
 #include "bahnhof/economy/entity.h"
-#include "bahnhof/economy/control.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Rendering;
 class Train;
