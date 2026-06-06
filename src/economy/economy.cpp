@@ -66,7 +66,7 @@ bool Portfolio::buy(Stake& fromstake, Account& payableaccount, uint16_t amount) 
 
 bool Portfolio::isplayercontrolled()
 {
-    return playercontrol.is;
+    return playercontrol();
 }
 
 Stock::Stock(Entity& e, Account& a, Stockmarket& sm, 

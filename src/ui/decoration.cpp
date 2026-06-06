@@ -152,12 +152,12 @@ EditableTextWithAccessControl::EditableTextWithAccessControl(
         EditableText(p, t, r), playercontrol(c) {}
 
 void EditableTextWithAccessControl::leftclick(UIVec mousepos){
-    if(playercontrol.getcontrol().is)
+    if(playercontrol())
         EditableText::leftclick(mousepos);
 }
 
 void EditableTextWithAccessControl::render(Rendering* r){
-    if(playercontrol.getcontrol().is)
+    if(playercontrol())
         EditableText::render(r);
     else
         Text::render(r);

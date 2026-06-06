@@ -2,6 +2,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/economy/money.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Entity;
 class InterfaceManager;
@@ -40,6 +41,7 @@ class ControllerPointerBase
 {
 public:
     virtual PlayerControl& getcontrol() const = 0;
+    virtual bool operator()() const = 0;
 };
 
 class ControllerPointerDirect : public ControllerPointerBase
@@ -48,6 +50,7 @@ class ControllerPointerDirect : public ControllerPointerBase
 public:
     ControllerPointerDirect(PlayerControl& c) : control{c} {}
     PlayerControl& getcontrol() const override {return control;}
+    bool operator()() const {return control();}
 };
 
 template<typename T>
@@ -57,6 +60,7 @@ class ControllerPointer : public ControllerPointerBase
 public:
     ControllerPointer(T& owner) : control{&owner} {}
     PlayerControl& getcontrol() const override {return control->getplayercontrol();}
+    bool operator()() const {auto& pcontrol = getcontrol(); return pcontrol();}
     T& getowner() const {return *control;}
     void setowner(T& newowner) {control = &newowner;}
 };

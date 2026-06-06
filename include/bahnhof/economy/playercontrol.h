@@ -2,7 +2,11 @@
 #include "bahnhof/common/forwardincludes.h"
 
 namespace Economy{
-struct PlayerControl{
+class PlayerControl{
     bool is{false};
+public:
+    PlayerControl(bool playercontrolled) : is(playercontrolled) {}
+    bool operator()() const {return is;}
+    void operator()(bool set) {is = set;}
 };
 }
