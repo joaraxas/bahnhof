@@ -46,7 +46,7 @@ void Gamestate::update(int ms)
 void Gamestate::randommap()
 {
 	auto& publicbuildings = economymanager->thepublic.getbuildings();
-	auto& companystorages = economymanager->getmycompany()->getstorages();
+	auto& companystorages = *game->getcontrolmode().storages;
 	for(int i=0; i<6; i++){
 		Vec newpos = randpos(100,50);
 		Vec size = buildingmanager->gettypefromid(brewery).size;

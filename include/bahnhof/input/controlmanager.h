@@ -4,6 +4,7 @@
 
 class Game;
 
+// Handles the pool of available control modes to allow a player to switch between roles of action.
 class ControlManager
 {
 public:

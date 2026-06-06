@@ -198,11 +198,7 @@ void Person::createpanel(InterfaceManager* ui) {
 
 ControlMode Person::generatecontrolmode()
 {
-    ControlMode mode;
-    mode.entity = this;
-    mode.account = &account;
-    mode.portfolio = &portfolio;
-    mode.buildings = nullptr;
+    ControlMode mode{this, &account, &portfolio, nullptr, nullptr};
     return mode;
 }
 
@@ -242,11 +238,7 @@ void Company::createpanel(InterfaceManager* ui) {
 
 ControlMode Company::generatecontrolmode()
 {
-    ControlMode mode;
-    mode.entity = this;
-    mode.account = &account;
-    mode.portfolio = &portfolio;
-    mode.buildings = &buildings;
+    ControlMode mode{this, &account, &portfolio, &buildings, &storages};
     return mode;
 }
 

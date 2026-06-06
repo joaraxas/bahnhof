@@ -19,7 +19,7 @@ class ThePublic : Entity
 {
 public:
     ThePublic() : 
-        account{1e8f}, 
+        account{1.0e8}, 
         portfolio{*this, account, playercontrol},
         buildings{*this, account, playercontrol}
     {}
