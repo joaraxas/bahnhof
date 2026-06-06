@@ -41,7 +41,7 @@ protected:
     Game* game;
     std::unique_ptr<Shape> shape;
     Sprite sprite;
-    Economy::ControllerPointer<BuildingOwner> control;
+    Economy::PlayerPointerIndirect<BuildingOwner> control;
     int timeleft = 3000;
     int timebetweentriggers = 10000;
     bool hassprite = false;

@@ -105,7 +105,7 @@ class BuildingPanel : public Panel
 {
 public:
     BuildingPanel(InterfaceManager* newui, Building& b, std::string& name,
-	    Economy::ControllerPointer<BuildingOwner>& cp);
+	    Economy::PlayerPointerIndirect<BuildingOwner>& cp);
     ~BuildingPanel();
 };
 
@@ -113,7 +113,7 @@ class FactoryPanel : public BuildingPanel
 {
 public:
     FactoryPanel(InterfaceManager* newui, WagonFactory& f, std::string& name,
-	    Economy::ControllerPointer<BuildingOwner>& cp);
+	    Economy::PlayerPointerIndirect<BuildingOwner>& cp);
     ~FactoryPanel();
 };
 
@@ -130,10 +130,10 @@ public:
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings, 
-        Economy::ControllerPointerDirect c,
+        Economy::PlayerPointerDirect c,
         Economy::ControlMode mode);
 private:
-    Economy::ControllerPointerDirect playercontrol;
+    Economy::PlayerPointerDirect playercontrol;
 };
 
 class InvestorPanel : public Panel

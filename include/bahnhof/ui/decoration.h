@@ -73,11 +73,11 @@ class EditableTextWithAccessControl : public EditableText
 {
 public:
     EditableTextWithAccessControl(Host* p, std::string& t, 
-        const Economy::ControllerPointerBase& c, UIRect r={0, 0, 50, 20});
+        const Economy::PlayerPointer& c, UIRect r={0, 0, 50, 20});
     void leftclick(UIVec mousepos);
     void render(Rendering*);
 private:
-    const Economy::ControllerPointerBase& playercontrol;
+    const Economy::PlayerPointer& playercontrol;
 };
 
 class TrainCoupler : public Element

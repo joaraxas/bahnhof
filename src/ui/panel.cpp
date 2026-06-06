@@ -203,7 +203,7 @@ BuildingConstructionPanel::BuildingConstructionPanel(
 
 BuildingPanel::BuildingPanel(
 	InterfaceManager* newui, Building& building, std::string& name,
-	Economy::ControllerPointer<BuildingOwner>& cp) : 
+	Economy::PlayerPointerIndirect<BuildingOwner>& cp) : 
 		Panel(newui)
 {
 	setlayout(
@@ -229,7 +229,7 @@ BuildingPanel::~BuildingPanel()
 
 FactoryPanel::FactoryPanel(
 	InterfaceManager* newui, WagonFactory& factory, std::string& name,
-	Economy::ControllerPointer<BuildingOwner>& cp) : 
+	Economy::PlayerPointerIndirect<BuildingOwner>& cp) : 
 		BuildingPanel(newui, factory, name, cp)
 {
 	getlayout()->setpadding({0,0});
@@ -258,7 +258,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings,
-						   ControllerPointerDirect c,
+						   PlayerPointerDirect c,
 						   ControlMode mode) : 
 		Panel(newui),
 		playercontrol{c}

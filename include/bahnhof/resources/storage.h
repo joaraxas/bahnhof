@@ -39,7 +39,7 @@ private:
     ResourceManager* allresources;
     std::map<resourcetype, int> storedresources;
     SDL_Rect rect;
-    Economy::ControllerPointer<StorageOwner> control;
+    Economy::PlayerPointerIndirect<StorageOwner> control;
 };
 
 Storage* getstorageatpoint(Vec pos);

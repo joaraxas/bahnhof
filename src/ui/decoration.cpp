@@ -147,7 +147,7 @@ void EditableText::updatewritingarea(){
 
 
 EditableTextWithAccessControl::EditableTextWithAccessControl(
-    Host* p, std::string& t, const Economy::ControllerPointerBase& c, 
+    Host* p, std::string& t, const Economy::PlayerPointer& c, 
     UIRect r) : 
         EditableText(p, t, r), playercontrol(c) {}
 

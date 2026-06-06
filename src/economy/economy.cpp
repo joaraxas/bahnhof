@@ -233,7 +233,7 @@ void Company::createpanel(InterfaceManager* ui) {
         panel.set(
             new UI::EconomyPanels::CompanyPanel(ui, stock, name,
                 slogan, portfolio, account, buildings, 
-                ControllerPointerDirect(playercontrol),
+                PlayerPointerDirect(playercontrol),
                 generatecontrolmode())
         );
     else
