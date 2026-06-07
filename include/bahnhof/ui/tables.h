@@ -267,6 +267,7 @@ public:
         UIVec pos={0,0}, UIVec minsz={200,300}) : 
             ClickableTable{p, minsz, pos}, possessions{s}
     {}
+    void render(Rendering* r) override;
     void update(int ms);
 private:
     void lineclicked(int index);

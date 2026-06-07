@@ -571,10 +571,15 @@ template<>
 void PossessionsTable<Building>::lineclicked(int index) {
     if(possessions.size()>0)
         possessions[index]->leftclick(Vec{});
-    else{
-        game->getgamestate().getbuildingmanager().
-            createconstructionpanel();
-    }
+}
+
+template<>
+void PossessionsTable<Building>::render(Rendering* r)
+{
+    if(possessions.size() > 0)
+        ClickableTable::render(r);
+    else
+        Table::render(r);
 }
 
 template<>
@@ -589,7 +594,7 @@ void PossessionsTable<Building>::update(int ms)
     if(lines.size() == 0){
         lines.emplace_back(
             new TableLine(panel, this, 
-                "No buildings owned, click to construct one")
+                "No buildings owned")
         );
     }
 }
