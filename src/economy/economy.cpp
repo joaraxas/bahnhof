@@ -90,7 +90,10 @@ Stock::~Stock()
 void Stock::update(int ms)
 {
     constexpr double stdpersec = 0.05/60.0;
-    valuation *= randnorm(stdpersec*0.001*ms, 1.0);
+    double changefactor = 0.0;
+    while(changefactor<=0.0)
+        changefactor = randnorm(stdpersec*0.001*ms, 1.0);
+    valuation *= changefactor;
     
     Money currentrevenue = account.getrevenue();
     Money newrevenue = currentrevenue - lastrevenue;
