@@ -112,7 +112,7 @@ void SwitchControl::leftclick(UIVec mousepos)
     UIRect panelrect = panel->getglobalrect();
     UIVec dropdownpos = {mousepos.x-panelrect.x, 
                         mousepos.y-panelrect.y};
-    new ControlDropdown(panel, dropdownpos);
+    new ControlModeDropdown(panel, dropdownpos);
 }
 
 void IncreaseUIScale::leftclick(UIVec mousepos)

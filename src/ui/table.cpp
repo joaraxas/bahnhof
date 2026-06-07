@@ -233,7 +233,7 @@ void RouteDropdown::lineclicked(int index)
         dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
-void ControlDropdown::update(int ms)
+void ControlModeDropdown::update(int ms)
 {
 	lines.clear();
     auto modes = game->getcontrolmanager().getavailablecontrolmodes();
@@ -247,7 +247,7 @@ void ControlDropdown::update(int ms)
         }
 }
 
-void ControlDropdown::lineclicked(int index)
+void ControlModeDropdown::lineclicked(int index)
 {
     game->getcontrolmanager().switchcontrolto(index);
 }

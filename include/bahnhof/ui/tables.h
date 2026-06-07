@@ -82,10 +82,10 @@ private:
     std::vector<int> ids;
 };
 
-class ControlDropdown : public Dropdown
+class ControlModeDropdown : public Dropdown
 {
 public:
-    ControlDropdown(Host* p, UIVec pos, UIVec minsz={150,100}) : 
+    ControlModeDropdown(Host* p, UIVec pos, UIVec minsz={150,100}) : 
         Dropdown(p, pos, minsz) {}
     void update(int ms);
 private:
@@ -181,7 +181,7 @@ private:
     WagonFactory& factory;
 };
 
-class CompanyInfoTable : public Table // TODO: Either change to StockInfoTable or pass &Company
+class CompanyInfoTable : public Table
 {
     using Stock = Economy::Stock;
     using Account = Economy::Account;

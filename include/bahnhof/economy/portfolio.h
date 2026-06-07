@@ -19,7 +19,6 @@ public:
         entity{e}, account{a}, playercontrol(controlled) {}
     bool buy(Portfolio& fromportfolio, Stock& stock, Shares amount);
     bool buy(Stake& fromstake, Account& payableaccount, Shares amount);
-    Account& getaccount() {return account;}
     const std::set<Stock*>& getstocks() {return stocks;}
     Entity& getentity() {return entity;}
     bool isplayercontrolled();
