@@ -11,7 +11,7 @@ namespace Economy {
 class Account
 {
 public:
-    Account(Money cash=0) : money(cash) {}
+    Account(Money cash=0_Fr) : money(cash) {}
     Account(const Account& a) = delete;
     Account& operator=(const Account& a) = delete;
     Money getvalue() const {return money;}
@@ -20,7 +20,7 @@ public:
     bool canafford(Money amount) const {return money>=amount;}
     bool pay(Money amount, PaymentType type, Account* receiver=nullptr, bool allowneg=false){
         if(!allowneg && !canafford(amount)) return false;
-        if(amount<=0) return false;
+        if(amount<=0_Fr) return false;
         money-=amount;
         if(receiver){
             receiver->money += amount;
@@ -35,7 +35,7 @@ public:
         return true;
     }
     void earn(Money amount, PaymentType type){
-        if(amount<=0) return;
+        if(amount<=0_Fr) return;
         // from nowhere
         money+=amount;
         income[type] += amount;

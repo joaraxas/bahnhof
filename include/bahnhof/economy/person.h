@@ -17,7 +17,7 @@ class ControlMode;
 class Person : Entity
 {
 public:
-    Person(std::string n, Money startamount=0, bool controlled=false) : 
+    Person(std::string n, Money startamount=0_Fr, bool controlled=false) : 
         playercontrol{controlled},
         name{n}, 
         account{startamount}, 

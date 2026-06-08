@@ -2,12 +2,13 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/graphics/rendering.h"
+#include "bahnhof/economy/money.h"
 
 
 SignalBuilder::SignalBuilder(InputManager& owner, Game* newgame) : Builder(owner, newgame)
 {
     icon.setspritesheet(game->getsprites(), sprites::signal);
-    cost = 1;
+    cost = 1_Fr;
 }
 
 void SignalBuilder::render(Rendering* r)

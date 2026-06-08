@@ -111,11 +111,11 @@ void Industry::trigger()
 			}
 			if(put>0){
 				getowner().getaccount().pay(
-					2*got, PaymentType::ticketfare,
+					Money{2.0*got}, PaymentType::ticketfare,
 					&storage->getowner().getaccount(), true
 				);
 				storage->getowner().getaccount().pay(
-					put, PaymentType::ticketfare,
+					Money{1.0*put}, PaymentType::ticketfare,
 					&getowner().getaccount(), true
 				);
 			}

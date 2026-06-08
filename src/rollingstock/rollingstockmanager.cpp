@@ -11,7 +11,7 @@ RollingStockManager::RollingStockManager(Game* g) : game(g)
 	wagon->name = "Tank locomotive";
 	wagon->iconname = sprites::icontankloco;
 	wagon->spritename = sprites::tankloco;
-	wagon->cost = 20;
+	wagon->cost = 20_Fr;
 	wagon->engine = enginetype::steam;
 	wagon->forwardpower = 0.2;
 	wagon->backwardpower = 0.2;
@@ -23,7 +23,7 @@ RollingStockManager::RollingStockManager(Game* g) : game(g)
 	wagon->name = "Open wagon";
 	wagon->iconname = sprites::iconopenwagon;
 	wagon->spritename = sprites::openwagon;
-	wagon->cost = 4;
+	wagon->cost = 4_Fr;
 	wagon->storableresources = {hops, barley};
 	wagon->storagecapacity = 1;
 	wagon->renderstorage = true;
@@ -33,7 +33,7 @@ RollingStockManager::RollingStockManager(Game* g) : game(g)
 	wagon->name = "Refrigerator car";
 	wagon->iconname = sprites::iconrefrigeratorcar;
 	wagon->spritename = sprites::refrigeratorcar;
-	wagon->cost = 6;
+	wagon->cost = 6_Fr;
 	wagon->storableresources = {beer};
 	wagon->storagecapacity = 1;
 

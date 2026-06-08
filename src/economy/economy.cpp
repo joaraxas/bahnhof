@@ -105,7 +105,7 @@ void Stock::update(int ms)
     valuation += newprofit;
     lastprofit = currentprofit;
 
-    valuation = std::max(Money{0}, valuation);
+    valuation = std::max(0.0_Fr, valuation);
 }
 
 bool Stock::issue(Shares issuedshares, Portfolio& buyer, double devaluation) {
