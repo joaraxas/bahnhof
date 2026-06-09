@@ -1,5 +1,4 @@
 #include "bahnhof/common/forwardincludes.h"
-#include "bahnhof/economy/company.h"
 #include "bahnhof/common/math.h"
 
 constexpr auto slogans = std::to_array<const char*> ({
