@@ -32,7 +32,7 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, Shares amount) {
         std::cout<<"failed to buy shares from non-owner"<<std::endl;
         return false;
     }
-    if(!buy(*hisstake, fromportfolio.account, amount))
+    if(!buystake(*hisstake, fromportfolio.account, amount))
         return false;
     if(hisstake->getamount() == 0){
         stock.removeemptystake(fromportfolio);
@@ -41,7 +41,7 @@ bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, Shares amount) {
     return true;
 }
 
-bool Portfolio::buy(Stake& fromstake, Account& payableaccount, Shares amount) {
+bool Portfolio::buystake(Stake& fromstake, Account& payableaccount, Shares amount) {
     amount = std::min(amount, fromstake.getamount());
     if(amount<=0) {
         std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
@@ -117,7 +117,7 @@ bool Stock::issue(Shares issuedshares, Portfolio& buyer, double devaluation) {
         return false;
     }
     Stake tempstake(*this, issuedshares);
-    if(!buyer.buy(tempstake, account, issuedshares)){
+    if(!buyer.buystake(tempstake, account, issuedshares)){
         valuation = oldvaluation;
         return false;
     }
