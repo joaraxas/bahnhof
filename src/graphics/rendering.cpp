@@ -12,9 +12,9 @@
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/resources/storage.h"
 
-Vec randpos(int xoffset, int yoffset)
+Vec randpos(Vec offset)
 {
-	return Vec(randint(MAP_WIDTH-xoffset), randint(MAP_HEIGHT-yoffset));
+	return Vec(randint(MAP_WIDTH-offset.x), randint(MAP_HEIGHT-offset.y));
 };
 
 

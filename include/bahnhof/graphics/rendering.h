@@ -51,4 +51,4 @@ private:
     SDL_Texture* fieldtex;
 };
 
-Vec randpos(int xoffset=0, int yoffset=0);
+Vec randpos(Vec minsize=Vec{});

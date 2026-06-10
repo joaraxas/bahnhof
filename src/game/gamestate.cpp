@@ -48,8 +48,8 @@ void Gamestate::randommap()
 	auto& publicbuildings = economymanager->thepublic.getbuildings();
 	auto& companystorages = *game->getcontrolmode().storages;
 	for(int i=0; i<6; i++){
-		Vec newpos = randpos(100,50);
 		Vec size = buildingmanager->gettypefromid(brewery).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
@@ -60,8 +60,8 @@ void Gamestate::randommap()
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
-		Vec newpos = randpos(200,200);
 		Vec size = buildingmanager->gettypefromid(hopsfield).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
@@ -72,8 +72,8 @@ void Gamestate::randommap()
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
-		Vec newpos = randpos(200,200);
 		Vec size = buildingmanager->gettypefromid(barleyfield).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
@@ -84,8 +84,8 @@ void Gamestate::randommap()
 			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<6; i++){
-		Vec newpos = randpos(100,150);
 		Vec size = buildingmanager->gettypefromid(city).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
