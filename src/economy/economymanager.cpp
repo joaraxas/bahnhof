@@ -12,13 +12,15 @@
 
 
 EconomyManager::EconomyManager(Game* whatgame) :
-	game(whatgame),
-	thepublic()
+	game(whatgame)
 {
 	using Economy::Company;
 	using Economy::Person;
 	using Economy::Portfolio;
 	using Economy::ControlMode;
+
+	thepublic = new Economy::ThePublic();
+	entities.emplace_back(thepublic);
 
 	Person* me = new Person("Sir Charles Darwin", 500_Fr, true);
 	entities.emplace_back(me);
@@ -29,13 +31,13 @@ EconomyManager::EconomyManager(Game* whatgame) :
 
 	Company* sbb = new Company{"SBB AG", stockmarket, 
 		{{&myinvestments, 100_Fr},
-		 {&thepublic.getinvestments(), 500_Fr}}};
+		 {&thepublic->getinvestments(), 500_Fr}}};
 	entities.emplace_back(sbb);
 
 	Company* bls = new Company{"BLS AG", stockmarket, 
 		{{&myinvestments, 100_Fr},
 		 {&sbb->getinvestments(), 100_Fr},
-		 {&thepublic.getinvestments(), 200_Fr}}, true};
+		 {&thepublic->getinvestments(), 200_Fr}}, true};
 	entities.emplace_back(bls);
 	ControlMode companycontrol = bls->generatecontrolmode();
 	controlmanager.addcontrolmode(companycontrol);

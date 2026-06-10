@@ -254,7 +254,7 @@ void PublicOffering::update(int ms)
 void PublicOffering::leftclick(UIVec mousepos)
 {
     if(playercontrol())
-        stock.issue(20, game->getgamestate().geteconomymanager().thepublic.getinvestments());
+        stock.issue(20, game->getgamestate().geteconomymanager().thepublic->getinvestments());
 }
 
 
@@ -272,7 +272,7 @@ void TakeOver::leftclick(UIVec mousepos)
 void Buy::leftclick(UIVec mousepos)
 {
     game->getcontrolmode().portfolio->buy(
-        game->getgamestate().geteconomymanager().thepublic.getinvestments(),
+        game->getgamestate().geteconomymanager().thepublic->getinvestments(),
         stock, 5
     );
 }
@@ -280,7 +280,7 @@ void Buy::leftclick(UIVec mousepos)
 
 void Sell::leftclick(UIVec mousepos)
 {
-    game->getgamestate().geteconomymanager().thepublic.getinvestments().buy(
+    game->getgamestate().geteconomymanager().thepublic->getinvestments().buy(
         *game->getcontrolmode().portfolio,
         stock, 5
     );
@@ -335,7 +335,7 @@ void Trade::leftclick(UIVec mousepos)
     }
     bool wasplayerowned = true;
     BuildingOwner* buyer = &game->getgamestate().geteconomymanager().
-        thepublic.getbuildings();
+        thepublic->getbuildings();
     if(&building.getowner() != playerownership){
         buyer = playerownership;
         wasplayerowned = false;

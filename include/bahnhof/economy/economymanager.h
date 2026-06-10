@@ -13,7 +13,7 @@ class EconomyManager
 public:
     EconomyManager(Game* whatgame);
     void update(int ms);
-    Economy::ThePublic thepublic;
+    Economy::ThePublic* thepublic;
     Economy::Stockmarket stockmarket;
 private:
     Game* game;
