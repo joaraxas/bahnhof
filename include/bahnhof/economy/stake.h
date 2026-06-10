@@ -12,7 +12,7 @@ class Stake
 public:
     Stake(Stock& c) : amount(0), stock(&c) {}
     Stake(Stock& c, Shares a) : amount(a), stock(&c) {}
-    bool takefrom(Stake& from, int howmany);
+    bool transfersharesfrom(Stake& from, int howmany);
     Shares getamount() const {return amount;}
     Stock& getstock() const {return *stock;}
 

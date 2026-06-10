@@ -11,7 +11,7 @@
 
 namespace Economy{
     
-bool Stake::takefrom(Stake& from, int howmany) {
+bool Stake::transfersharesfrom(Stake& from, int howmany) {
     if(from.stock!=stock) return false;
     if(from.amount>=howmany){
         from.amount -= howmany;
@@ -60,7 +60,7 @@ bool Portfolio::buystake(Stake& fromstake, Account& payableaccount, Shares amoun
         stocks.emplace(&stock);
         mystake = &stock.registernewstake(*this);
     }
-    mystake->takefrom(fromstake, amount);
+    mystake->transfersharesfrom(fromstake, amount);
     return true;
 }
 
