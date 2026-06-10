@@ -17,10 +17,10 @@ public:
     EconomyManager(Game* whatgame);
     void update(int ms);
     Economy::Company* getmycompany() {return companies[1].get();}; //HACK
-    Economy::Person me;
     Economy::ThePublic thepublic;
     Economy::Stockmarket stockmarket;
 private:
     Game* game;
     std::vector<std::unique_ptr<Economy::Company>> companies;
+    std::vector<std::unique_ptr<Economy::Person>> persons;
 };

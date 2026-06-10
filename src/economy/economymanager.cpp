@@ -11,26 +11,28 @@
 
 
 EconomyManager::EconomyManager(Game* whatgame) :
-	me("Sir Charles Darwin", 500_Fr, true),
-	thepublic(),
-	game(whatgame)
+	game(whatgame),
+	thepublic()
 {
 	using Economy::Company;
+	using Economy::Person;
 	using Economy::Portfolio;
 	using Economy::ControlMode;
 
+	Person* me = new Person("Sir Charles Darwin", 500_Fr, true);
+	persons.emplace_back(me);
+
     auto& controlmanager = game->getcontrolmanager();
-    ControlMode mycontrol = me.generatecontrolmode();
-	controlmanager.addcontrolmode(mycontrol);
-	Portfolio* myinvestments = &me.getinvestments();
+	controlmanager.addcontrolmode(me->generatecontrolmode());
+	Portfolio& myinvestments = me->getinvestments();
 
 	Company* sbb = new Company{"SBB AG", stockmarket, 
-		{{myinvestments, 100_Fr},
+		{{&myinvestments, 100_Fr},
 		 {&thepublic.getinvestments(), 500_Fr}}};
 	companies.emplace_back(sbb);
 
 	Company* bls = new Company{"BLS AG", stockmarket, 
-		{{myinvestments, 100_Fr},
+		{{&myinvestments, 100_Fr},
 		 {&sbb->getinvestments(), 100_Fr},
 		 {&thepublic.getinvestments(), 200_Fr}}, true};
 	companies.emplace_back(bls);
