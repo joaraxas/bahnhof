@@ -6,10 +6,7 @@
 #include "bahnhof/input/controlmode.h"
 
 class Game;
-
-namespace Economy{
-    class Company;
-}
+class Entity;
 
 class EconomyManager
 {
@@ -20,6 +17,5 @@ public:
     Economy::Stockmarket stockmarket;
 private:
     Game* game;
-    std::vector<std::unique_ptr<Economy::Company>> companies;
-    std::vector<std::unique_ptr<Economy::Person>> persons;
+    std::vector<std::unique_ptr<Entity>> entities;
 };

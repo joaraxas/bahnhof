@@ -6,7 +6,7 @@ class InterfaceManager;
 class Entity
 {
 public:
-    ~Entity() {}
+    virtual ~Entity() {};
     virtual const std::string& getname() const = 0;
     virtual void createpanel(InterfaceManager* ui) = 0;
 };

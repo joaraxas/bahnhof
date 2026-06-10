@@ -14,7 +14,7 @@ namespace Economy {
 class Stock;
 class ControlMode;
 
-class Person : Entity
+class Person : public Entity
 {
 public:
     Person(std::string n, Money startamount=0_Fr, bool controlled=false) : 

@@ -15,7 +15,7 @@ namespace Economy {
 
 class Stock;
 
-class ThePublic : Entity
+class ThePublic : public  Entity
 {
 public:
     ThePublic() : 

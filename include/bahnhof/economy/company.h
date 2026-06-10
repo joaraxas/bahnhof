@@ -18,7 +18,7 @@ class ControlMode;
 
 std::string generateslogan();
 
-class Company : Entity
+class Company : public Entity
 {
 public:
     Company(std::string n, Stockmarket& market, 

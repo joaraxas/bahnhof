@@ -1,6 +1,7 @@
 #include<map>
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/controlmanager.h"
+#include "bahnhof/economy/entity.h"
 #include "bahnhof/economy/money.h"
 #include "bahnhof/economy/economymanager.h"
 #include "bahnhof/economy/company.h"
@@ -20,7 +21,7 @@ EconomyManager::EconomyManager(Game* whatgame) :
 	using Economy::ControlMode;
 
 	Person* me = new Person("Sir Charles Darwin", 500_Fr, true);
-	persons.emplace_back(me);
+	entities.emplace_back(me);
 
     auto& controlmanager = game->getcontrolmanager();
 	controlmanager.addcontrolmode(me->generatecontrolmode());
@@ -29,18 +30,18 @@ EconomyManager::EconomyManager(Game* whatgame) :
 	Company* sbb = new Company{"SBB AG", stockmarket, 
 		{{&myinvestments, 100_Fr},
 		 {&thepublic.getinvestments(), 500_Fr}}};
-	companies.emplace_back(sbb);
+	entities.emplace_back(sbb);
 
 	Company* bls = new Company{"BLS AG", stockmarket, 
 		{{&myinvestments, 100_Fr},
 		 {&sbb->getinvestments(), 100_Fr},
 		 {&thepublic.getinvestments(), 200_Fr}}, true};
-	companies.emplace_back(bls);
+	entities.emplace_back(bls);
 	ControlMode companycontrol = bls->generatecontrolmode();
 	controlmanager.addcontrolmode(companycontrol);
 	controlmanager.switchcontrolto(1);
 
-	companies.emplace_back(
+	entities.emplace_back(
 		new Company{"Appenzeller Bahnen AG", stockmarket,
 		{{&sbb->getinvestments(), 100_Fr}}}
 	);
