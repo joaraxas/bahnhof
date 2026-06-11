@@ -3,6 +3,7 @@
 #include<SDL_image.h>
 #include<SDL_ttf.h>
 #include "math.h"
+#include "textinput.h"
 #include "bahnhof/ui/ownership.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
@@ -28,7 +29,6 @@ const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
 const int downpanbutton = SDL_SCANCODE_S;
 
-class TextInputManager;
 class InputMode;
 class TrackBuilder;
 class SignalBuilder;
@@ -39,7 +39,7 @@ class InputManager
 public:
     InputManager(Game* whatgame);
     ~InputManager();
-    TextInputManager& gettextinputmanager() const;
+    TextInputManager& gettextinputmanager();
     void handle(int ms, int mslogic);
     void render(Rendering*) const;
     Vec mapmousepos() const;
@@ -50,7 +50,7 @@ public:
 private:
     void onkeydown(SDL_Keycode key);
     Game* game;
-    std::unique_ptr<TextInputManager> textinput;
+    TextInputManager textinput;
     std::unique_ptr<InputMode> mode;
 };
 

@@ -11,6 +11,7 @@ class Rendering;
 class SpriteManager;
 class ResourceManager;
 class InputManager;
+class ControlManager;
 class RouteManager;
 class TrainManager;
 class TimeManager;
@@ -20,6 +21,10 @@ class RollingStockManager;
 class Gamestate;
 namespace Tracks{
     class Tracksystem;
+}
+class EconomyManager;
+namespace Economy{
+    class ControlMode;
 }
 
 class Game
@@ -36,8 +41,10 @@ public:
     InterfaceManager& getui() {if(!ui) std::cout<<"no ui"<<std::endl; return *ui;};
     SpriteManager& getsprites() {if(!allsprites) std::cout<<"no allsprites"<<std::endl; return *allsprites;};
     ResourceManager& getresources() {if(!resources) std::cout<<"no resources"<<std::endl; return *resources;};
+    ControlManager& getcontrolmanager() {if(!controlmanager) std::cout<<"no controlmanager"<<std::endl; return *controlmanager;};
     Gamestate& getgamestate() {if(!gamestate) std::cout<<"no gamestate"<<std::endl; return *gamestate;};
     InputManager& getinputmanager() {if(!input) std::cout<<"no input"<<std::endl; return *input;};
+    const Economy::ControlMode& getcontrolmode();
 private:
     std::unique_ptr<TimeManager> timer;
     std::unique_ptr<Camera> cam;
@@ -45,6 +52,7 @@ private:
     std::unique_ptr<InterfaceManager> ui;
     std::unique_ptr<SpriteManager> allsprites;
     std::unique_ptr<ResourceManager> resources;
+    std::unique_ptr<ControlManager> controlmanager;
     std::unique_ptr<Gamestate> gamestate;
     std::unique_ptr<InputManager> input;
     bool quit;
@@ -63,9 +71,8 @@ public:
     TrainManager& gettrainmanager() {if(!trainmanager) std::cout<<"no trainmanager"<<std::endl; return *trainmanager;};
     BuildingManager& getbuildingmanager() {if(!buildingmanager) std::cout<<"no buildingmanager"<<std::endl; return *buildingmanager;};
     RollingStockManager& getrollingstockmanager() {if(!rollingstockmanager) std::cout<<"no rollingstockmanager"<<std::endl; return *rollingstockmanager;};
+    EconomyManager& geteconomymanager() {if(!economymanager) std::cout<<"no economymanager"<<std::endl; return *economymanager;};
     int time = 0;
-    float money = 10;
-    int revenue = 0;
 private:
     Game* game;
     std::unique_ptr<Tracks::Tracksystem> tracksystem;
@@ -73,15 +80,5 @@ private:
     std::unique_ptr<TrainManager> trainmanager;
     std::unique_ptr<BuildingManager> buildingmanager;
     std::unique_ptr<RollingStockManager> rollingstockmanager;
-    //Map* map;
-};
-
-class Background
-{
-
-};
-
-class Map
-{
-    Background* background;
+    std::unique_ptr<EconomyManager> economymanager;
 };

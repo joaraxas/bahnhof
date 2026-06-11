@@ -225,12 +225,12 @@ void deleteat(Tracksystem& tracks, Vec pos)
 	tracks.references.validatereferences();
 }
 
-float getcostoftracks(const Tracksection& section)
+Economy::Money getcostoftracks(const Tracksection& section)
 {
 	float cost = 0;
 	for(auto track : section.tracks)
 		cost += 0.003*track->getarclength(1);
-	return cost;
+	return Economy::Money{cost};
 }
 
 float getminradiusofsection(const Tracksection& section)
@@ -244,7 +244,8 @@ float getminradiusofsection(const Tracksection& section)
 	return minradius;
 }
 
-std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section)
+std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(
+	const Tracksection& section)
 {
 	std::vector<std::unique_ptr<Shape>> shapes;
 	for(auto track : section.tracks)

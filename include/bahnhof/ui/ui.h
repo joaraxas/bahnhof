@@ -33,7 +33,7 @@ public:
         bool ported=false, 
         bool originiscenter=false, 
         int centerx=0, 
-        int centery=0);
+        int centery=0) const;
     void renderrectangle(
         Rendering* r, 
         UIRect rectangle, 
@@ -60,21 +60,21 @@ public:
     std::string croptexttowidth(
         const std::string& text, 
         Coord maxwidth, 
-        Coord margin_x=0);
-    float getuiscale();
+        Coord margin_x=0) const;
+    float getuiscale() const;
     void increaseuiscale();
     void decreaseuiscale();
-    SDL_Rect uitoscreen(UIRect rect);
-    UIRect screentoui(SDL_Rect rect);
-    Vec uitoscreen(UIVec pos);
-    UIVec screentoui(Vec pos);
-    UIRect getuiview();
+    SDL_Rect uitoscreen(UIRect rect) const;
+    UIRect screentoui(SDL_Rect rect) const;
+    Vec uitoscreen(UIVec pos) const;
+    UIVec screentoui(Vec pos) const;
+    UIRect getuiview() const;
     void renderscaleruler(
         Rendering* r, Coord leftx, Coord lefty, Coord scalelinelength);
 private:
     float uiscale = 1;
     void setuiscale(float newscale);
-    SDL_Color getcolorfromstyle(TextStyle style);
+    SDL_Color getcolorfromstyle(TextStyle style) const;
     InterfaceManager& ui;
 };
 

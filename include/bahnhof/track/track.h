@@ -4,6 +4,7 @@
 #include "bahnhof/common/math.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/orientation.h"
+#include "bahnhof/economy/money.h"
 
 class Order;
 class Gotostate;
@@ -109,7 +110,7 @@ namespace Input
     bool switchat(Tracksystem& tracksystem, Vec pos);
     Order* generateorderat(const Tracksystem& tracksystem, Vec pos);
     void deleteat(Tracksystem& tracksystem, Vec pos);
-    float getcostoftracks(const Tracksection& section);
+    Economy::Money getcostoftracks(const Tracksection& section);
     float getminradiusofsection(const Tracksection& section);
     std::vector<std::unique_ptr<Shape>> gettrackcollisionmasks(const Tracksection& section);
 };

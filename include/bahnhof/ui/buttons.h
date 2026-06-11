@@ -1,12 +1,18 @@
 #pragma once
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/element.h"
+#include "bahnhof/economy/company.h"
+#include "bahnhof/input/controlmode.h"
 
 class Game;
 class Gamestate;
 class Rendering;
 class Route;
 class InterfaceManager;
+
+namespace Economy{
+    class ControlMode;
+}
 
 namespace UI{
 
@@ -88,6 +94,24 @@ class ManageTrains : public TextButton
 public:
     ManageTrains(Host* newpanel) : 
         TextButton(newpanel, "Manage trains") {};
+    void leftclick(UIVec mousepos);
+};
+
+class ManageEntity : public TextButton
+{
+public:
+    ManageEntity(Host* newpanel) : 
+        TextButton(newpanel, "Manage company") {};
+    void leftclick(UIVec mousepos);
+    void update(int ms);
+};
+
+class SwitchControl : public TextButton
+{
+public:
+    SwitchControl(Host* newpanel) : 
+        TextButton(newpanel, "Switch use")
+        {};
     void leftclick(UIVec mousepos);
 };
 
@@ -213,5 +237,99 @@ public:
     void leftclick(UIVec mousepos);
 };
 
-} //namespace Routing
-} //namespace UI
+} // end namespace Routing
+
+namespace EconomyPanels
+{
+using Stock = Economy::Stock;
+using PlayerControl = Economy::PlayerControl;
+using ControlMode = Economy::ControlMode;
+
+class PublicOffering : public TextButton
+{
+public:
+    PublicOffering(Host* newpanel, Stock& s, PlayerControl& c) : 
+        TextButton(newpanel, "Seasoned equity offering", 120), 
+        stock{s}, playercontrol{c} {};
+    virtual void update(int ms) override;
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+    PlayerControl& playercontrol;
+};
+
+class TakeOver : public TextButton
+{
+public:
+    TakeOver(Host* newpanel, Stock& s, PlayerControl& c, ControlMode mode) : 
+        TextButton(newpanel, "Attempt takeover", 120), stock{s}, 
+        playercontrol{c}, controlmode{mode} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+    PlayerControl& playercontrol;
+    ControlMode controlmode;
+};
+
+class Buy : public TextButton
+{
+public:
+    Buy(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Buy", 120), stock{s} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+class Sell : public TextButton
+{
+public:
+    Sell(Host* newpanel, Stock& s) : 
+        TextButton(newpanel, "Sell", 120), stock{s} {};
+    void leftclick(UIVec mousepos);
+private:
+    Stock& stock;
+};
+
+class VisitStockmarket : public TextButton
+{
+public:
+    VisitStockmarket(Host* newpanel) : 
+        TextButton(newpanel, "Visit stock market") {};
+    void leftclick(UIVec mousepos);
+};
+
+class ListBuildings : public TextButton
+{
+public:
+    ListBuildings(Host* newpanel, Economy::Control<Building>& l) : 
+        TextButton(newpanel, "Show buildings"), list{l} {};
+    void leftclick(UIVec mousepos);
+private:
+    Economy::Control<Building>& list;
+};
+
+class ShowAccounts : public TextButton
+{
+public:
+    ShowAccounts(Host* newpanel, Economy::Account& a) : 
+        TextButton(newpanel, "Accounting"), account{a} {};
+    void leftclick(UIVec mousepos);
+private:
+    Economy::Account& account;
+};
+
+} // end namespace Economy
+
+class Trade : public TextButton
+{
+public:
+    Trade(Host* newpanel, Building& b);
+    void leftclick(UIVec mousepos);
+    void mousehover(UIVec pos, int ms);
+private:
+    void updatetext(bool isplayerowned);
+    Building& building;
+};
+
+} // end namespace UI

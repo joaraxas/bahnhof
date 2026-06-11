@@ -9,11 +9,14 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/builder.h"
 #include "bahnhof/input/inputmodes.h"
+#include "bahnhof/input/controlmanager.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/wagontypes.h"
+#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/portfolio.h"
 
 namespace UI{
 
@@ -230,6 +233,25 @@ void RouteDropdown::lineclicked(int index)
         dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
 }
 
+void ControlModeDropdown::update(int ms)
+{
+	lines.clear();
+    auto modes = game->getcontrolmanager().getavailablecontrolmodes();
+    if(modes.size()==0){
+        lines.emplace_back(new TableLine(panel, this, "You have no say in anything"));
+    }
+    else
+        for(int iMode = 0; iMode<modes.size(); iMode++){
+            std::string name = modes[iMode].entity->getname();
+            lines.emplace_back(new TableLine(panel, this, name));
+        }
+}
+
+void ControlModeDropdown::lineclicked(int index)
+{
+    game->getcontrolmanager().switchcontrolto(index);
+}
+
 MainInfoTable::MainInfoTable(Host* newpanel, UIVec pos, UIVec minsz) : 
     Table(newpanel, minsz, pos) 
 {}
@@ -238,11 +260,10 @@ void MainInfoTable::update(int ms)
 {
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
+    auto& controlmode = ui->getgame().getcontrolmode();
     lines.clear();
-    lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.money)) + " Fr"));
+    lines.emplace_back(new TableLine(panel, this, std::string(controlmode.account->getvalue())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
-    int income = int(60*float(gamestate.revenue)/float(gamestate.time*0.001/60));
-    lines.emplace_back(new TableLine(panel, this, std::to_string(income) + " Fr/h"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
@@ -373,12 +394,15 @@ void TrainOrderTable::lineclicked(int index)
 }
 
 
-ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) : 
-    ClickableTable(p, minsz, pos), 
-    buildingtypes(game->getgamestate().getbuildingmanager().gettypes())
+ConstructionTable::ConstructionTable(Host* p, const BuildingManager& manager, 
+    const std::vector<BuildingID>& availtypes,
+    UIVec pos, UIVec minsz) : 
+        ClickableTable(p, minsz, pos), 
+        buildingmanager(manager),
+        availabletypes(availtypes)
 {
-    for(int i=0; i<buildingtypes.size(); i++){
-        const BuildingType& type = buildingtypes[i];
+    for(int i=0; i<availabletypes.size(); i++){
+        const BuildingType& type = buildingmanager.gettypefromid(availabletypes[i]);
         lines.emplace_back(
             new PurchaseOptionTableLine(panel, 
                 this,
@@ -392,7 +416,8 @@ ConstructionTable::ConstructionTable(Host* p, UIVec pos, UIVec minsz) :
 
 void ConstructionTable::lineclicked(int index)
 {
-    const BuildingType& clickedbuilding = buildingtypes.at(index); // TODO: Highlight the one currently being built
+    const BuildingType& clickedbuilding = 
+        buildingmanager.gettypefromid(availabletypes.at(index)); // TODO: Highlight the one currently being built
     auto& input = game->getinputmanager();
     input.setinputmode(
         std::make_unique<BuildingBuilder>(input, game, clickedbuilding));
@@ -419,7 +444,159 @@ WagonTable::WagonTable(Host* p, WagonFactory& f, UIVec pos, UIVec minsz) :
 void WagonTable::lineclicked(int index)
 {
     const WagonType* clickedwagon = factory.getavailabletypes().at(index);
-    factory.orderwagon(*clickedwagon);
+    factory.orderwagon(*clickedwagon, *game->getcontrolmode().account);
+}
+
+
+void CompanyInfoTable::update(int ms)
+{
+    lines.clear();
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        "Market cap " + std::string(stock.getvaluation())));
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        "Share price " + std::string(stock.getshareprice())));
+    lines.emplace_back(
+        new TableLine(panel, this, 
+        "Cash " + std::string(account.getvalue())));
+}
+
+
+OwnersTable::OwnersTable(
+    Host* p, Stock& s, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), stock(s) 
+{}
+
+void OwnersTable::update(int ms)
+{
+    lines.clear();
+    investors.clear();
+    for(auto [stake, entity] : stock.getsortedowners()){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            entity->getname() + ": " + 
+            std::to_string(stake->getamount())+ " shares " + 
+            std::format("{0:.1f} %", 100.0*stake->getamount() / 
+                stock.getnumshares()
+            )
+        ));
+        investors.push_back(entity);
+    }
+}
+
+void OwnersTable::lineclicked(int index)
+{
+    Entity* clickedinvestor = investors[index];
+    clickedinvestor->createpanel(ui);
+}
+
+
+void AccountInfoTable::update(int ms)
+{
+    lines.clear();
+    lines.emplace_back(
+        new TableLine(panel, this, "Cash: "+std::string(account.getvalue()))
+    );
+}
+
+
+void IncomeTable::update(int ms)
+{
+    lines.clear();
+    for(const auto& payment : payments){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+                getbudgetpostname(payment.first) + ": " + 
+                std::string(payment.second))
+        );
+    }
+}
+
+
+InvestmentsTable::InvestmentsTable(
+    Host* p, Portfolio& port, UIVec pos, UIVec minsz): 
+        ClickableTable(p, minsz, pos), portfolio(port) 
+{}
+
+void InvestmentsTable::update(int ms)
+{
+    stocks.clear();
+    lines.clear();
+    for(auto stock : portfolio.getstocks()){
+        const Economy::Stake* const stake = stock->getstakeforportfolio(portfolio);
+        if(!stake) continue;
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            stock->getentity().getname() + 
+            ": " + std::to_string(stake->getamount())
+            + " shares"));
+        stocks.push_back(stock);
+    }
+}
+
+void InvestmentsTable::lineclicked(int index)
+{
+    Economy::Stock* clickedstock = stocks[index];
+    clickedstock->getentity().createpanel(ui);
+}
+
+
+StocksTable::StocksTable(Host* p, const std::vector<Stock*>& s, 
+    UIVec pos, UIVec minsz): 
+        ClickableTable{p, minsz, pos}, stocks{s}
+{}
+
+void StocksTable::update(int ms)
+{
+    lines.clear();
+    for(auto stock : stocks){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+            stock->getentity().getname() + 
+            ": " + std::string(stock->getshareprice()) + 
+            ", " + std::string(stock->getvaluation())
+            )
+        );
+    }
+}
+
+void StocksTable::lineclicked(int index)
+{
+    stocks[index]->getentity().createpanel(ui);
+}
+
+
+template<>
+void PossessionsTable<Building>::lineclicked(int index) {
+    if(possessions.size()>0)
+        possessions[index]->leftclick(Vec{});
+}
+
+template<>
+void PossessionsTable<Building>::render(Rendering* r)
+{
+    if(possessions.size() > 0)
+        ClickableTable::render(r);
+    else
+        Table::render(r);
+}
+
+template<>
+void PossessionsTable<Building>::update(int ms)
+{
+    lines.clear();
+    for(auto poss : possessions){
+        lines.emplace_back(
+            new TableLine(panel, this, poss->getname())
+        );
+    }
+    if(lines.size() == 0){
+        lines.emplace_back(
+            new TableLine(panel, this, 
+                "No buildings owned")
+        );
+    }
 }
 
 } //end namespace UI

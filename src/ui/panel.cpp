@@ -11,6 +11,7 @@
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/economy/company.h"
 
 namespace UI{
 	
@@ -70,6 +71,9 @@ MainPanel::MainPanel(InterfaceManager* newui) : Panel(newui)
 			create<Bulldoze>(),
 			create<ManageRoutes>(),
 			create<ManageTrains>(),
+			create<EconomyPanels::VisitStockmarket>(),
+			create<ManageEntity>(),
+			create<SwitchControl>(),
 			create<IncreaseUIScale>(),
 			create<DecreaseUIScale>()
 		),
@@ -99,8 +103,8 @@ RouteListPanel::RouteListPanel(InterfaceManager* newui) :
 }
 
 
-RoutePanel::RoutePanel(InterfaceManager* newui, Route* editroute) :
-	Panel(newui), input(game->getinputmanager()), route(editroute)
+RoutePanel::RoutePanel(InterfaceManager* newui, Route* route) :
+	Panel(newui), input(game->getinputmanager())
 {
 	setlayout(
 		create<VBox>(
@@ -135,10 +139,12 @@ void RoutePanel::conformtorect(UIRect confrect)
 
 TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 {
-	setlayout(create<VBox>(
-		create<Close>(),
-		create<TrainTable>()
-	));
+	setlayout(
+		create<VBox>(
+			create<Close>(),
+			create<TrainTable>()
+		)
+	);
 	applylayout();
 	placeautomatically();
 }
@@ -178,30 +184,39 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 	placeautomatically();
 }
 
-BuildingConstructionPanel::BuildingConstructionPanel(InterfaceManager* newui) :
-	Panel(newui)
+
+BuildingConstructionPanel::BuildingConstructionPanel(
+	InterfaceManager* newui, const BuildingManager& manager,
+    const std::vector<BuildingID>& availabletypes) :
+		Panel(newui)
 {
 	setlayout(
 	create<VBox>(
 		create<Close>(),
-		create<ConstructionTable>()
+		create<ConstructionTable>(manager, availabletypes)
 	)
 	);
 	applylayout();
 	placeautomatically();
 }
 
-BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) : 
-		Panel(newui),
-		building(b)
+
+BuildingPanel::BuildingPanel(
+	InterfaceManager* newui, Building& building, std::string& name,
+	Economy::PlayerPointerIndirect<BuildingOwner>& cp) : 
+		Panel(newui)
 {
 	setlayout(
 		create<VBox>(
-			create<EditableText>(building->name, UIRect{0, 0, 250, 20}),
+			create<EditableTextWithAccessControl>(name, 
+				cp,
+				UIRect{0, 0, 250, 20}),
 			create<HBox>(
 				create<Close>(),
-				create<Text>(building->type.name, UIRect{0, 0, 150, 20})
-			)
+				create<Text>(building.type.name, UIRect{0, 0, 150, 20})
+			),
+			create<BuildingOwnerText>(building),
+			create<Trade>(building)
 		)
 	);
 	applylayout();
@@ -211,16 +226,18 @@ BuildingPanel::BuildingPanel(InterfaceManager* newui, Building* b) :
 BuildingPanel::~BuildingPanel()
 {}
 
-FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) : 
-		BuildingPanel(newui, f),
-		factory(f)
+
+FactoryPanel::FactoryPanel(
+	InterfaceManager* newui, WagonFactory& factory, std::string& name,
+	Economy::PlayerPointerIndirect<BuildingOwner>& cp) : 
+		BuildingPanel(newui, factory, name, cp)
 {
 	getlayout()->setpadding({0,0});
 	Layout* newlayout = create<VBox>();
 	newlayout->addelements({
 		getlayout(),
-		create<WagonTable>(*f),
-		create<WagonQueue>(*f)
+		create<WagonTable>(factory),
+		create<WagonQueue>(factory)
 	});
 	setlayout(newlayout);
 	applylayout();
@@ -229,5 +246,151 @@ FactoryPanel::FactoryPanel(InterfaceManager* newui, WagonFactory* f) :
 
 FactoryPanel::~FactoryPanel()
 {}
+
+namespace EconomyPanels
+{
+using namespace Economy;
+
+CompanyPanel::CompanyPanel(InterfaceManager* newui, 
+						   Stock& stock,
+						   std::string& companyname,
+						   std::string& slogan,
+						   Portfolio& portfolio,
+						   Account& account,
+						   Control<Building>& buildings,
+						   PlayerPointerDirect c,
+						   ControlMode mode) : 
+		Panel(newui),
+		playercontrol{c}
+{
+	setlayout(
+	create<VBox>(
+		create<EditableTextWithAccessControl>(companyname, playercontrol),
+		create<EditableTextWithAccessControl>(slogan, playercontrol),
+		create<HBox>(
+			create<VBox>(
+				create<CompanyInfoTable>(stock, account),
+				create<Buy>(stock),
+				create<Sell>(stock),
+				create<TakeOver>(stock, playercontrol.getcontrol(), mode),
+				create<PublicOffering>(stock, playercontrol.getcontrol())
+			),
+			create<VBox>(
+				create<Text>("Major owners"),
+				create<OwnersTable>(stock),
+				create<ShowAccounts>(account)
+			),
+			create<VBox>(
+				create<Text>("Company interests"),
+				create<InvestmentsTable>(portfolio),
+				create<ListBuildings>(buildings),
+				create<Close>()
+			)
+		)
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+
+InvestorPanel::InvestorPanel(InterfaceManager* newui,
+	const std::string& name, Portfolio& portfolio, Account& account) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>(name),
+		create<HBox>(
+			create<VBox>(
+				create<AccountInfoTable>(account),
+				create<ShowAccounts>(account)
+			),
+			create<VBox>(
+				create<Text>("Interests"),
+				create<InvestmentsTable>(portfolio)
+			)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+
+ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
+	const std::string& name, Portfolio& portfolio) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>(name),
+		create<Text>("Interests"),
+		create<InvestmentsTable>(portfolio),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+
+StockmarketPanel::StockmarketPanel(InterfaceManager* newui, 
+        const std::vector<Stock*>& stocks) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Stock market"),
+		create<StocksTable>(stocks),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+
+template<>
+PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui, 
+        const std::vector<Building*>& poss) :
+	Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Buildings"),
+		create<PossessionsTable<Building>>(poss),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+
+AccountPanel::AccountPanel(InterfaceManager* newui, const PaymentList& income, 
+	const PaymentList& expenses) :
+		Panel(newui)
+{
+	setlayout(
+	create<VBox>(
+		create<Text>("Accounts"),
+		create<HBox>(
+			create<VBox>(
+				create<Text>("Income"),
+				create<IncomeTable>(income),
+				create<Text>("Expenses"),
+				create<IncomeTable>(expenses)
+			)
+		),
+		create<Close>()
+	)
+	);
+	applylayout();
+	placeautomatically();
+}
+
+} // end namespace EconomyPanels
 
 } // namespace UI

@@ -2,6 +2,9 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/host.h"
 #include "bahnhof/ui/ownership.h"
+#include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/economy/payments.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Game;
 class Gamestate;
@@ -12,8 +15,22 @@ class Route;
 class TrainManager;
 class Train;
 class Building;
+class BuildingManager;
 class BuildingBuilder;
 class WagonFactory;
+namespace Economy {
+    class Stock;
+    class Portfolio;
+    class Account;
+    class ControlMode;
+}
+
+namespace Economy{
+    template<typename T>
+    class Control;
+}
+
+using BuildingOwner = Economy::Control<Building>;
 
 namespace UI{
 
@@ -58,7 +75,6 @@ public:
     bool usermovable() {return false;};
     void conformtorect(UIRect confrect) override;
 private:
-    Route* route;
     InputManager& input;
 };
 
@@ -81,25 +97,84 @@ private:
 class BuildingConstructionPanel : public Panel
 {
 public:
-    BuildingConstructionPanel(InterfaceManager* newui);
+    BuildingConstructionPanel(InterfaceManager* newui, const BuildingManager& bm,
+        const std::vector<BuildingID>& availabletypes);
 };
 
 class BuildingPanel : public Panel
 {
 public:
-    BuildingPanel(InterfaceManager* newui, Building* b);
+    BuildingPanel(InterfaceManager* newui, Building& b, std::string& name,
+	    Economy::PlayerPointerIndirect<BuildingOwner>& cp);
     ~BuildingPanel();
-private:
-    Building* building;
 };
 
 class FactoryPanel : public BuildingPanel
 {
 public:
-    FactoryPanel(InterfaceManager* newui, WagonFactory* f);
+    FactoryPanel(InterfaceManager* newui, WagonFactory& f, std::string& name,
+	    Economy::PlayerPointerIndirect<BuildingOwner>& cp);
     ~FactoryPanel();
-private:
-    WagonFactory* factory;
 };
 
-}
+namespace EconomyPanels
+{
+
+class CompanyPanel : public Panel
+{
+public:
+    CompanyPanel(InterfaceManager* newui, 
+        Economy::Stock& stock, 
+        std::string& companyname,
+        std::string& slogan,
+        Economy::Portfolio& portfolio,
+        Economy::Account& account,
+        Economy::Control<Building>& buildings, 
+        Economy::PlayerPointerDirect c,
+        Economy::ControlMode mode);
+private:
+    Economy::PlayerPointerDirect playercontrol;
+};
+
+class InvestorPanel : public Panel
+{
+    using Portfolio = Economy::Portfolio;
+    using Account = Economy::Account;
+public:
+    InvestorPanel(InterfaceManager* newui, 
+        const std::string& n, Portfolio& p, Account& a);
+};
+
+class ThePublicPanel : public Panel
+{
+    using Portfolio = Economy::Portfolio;
+public:
+    ThePublicPanel(InterfaceManager* newui, 
+        const std::string& n, Portfolio& p);
+};
+
+class StockmarketPanel : public Panel
+{
+public:
+    StockmarketPanel(InterfaceManager* newui, 
+        const std::vector<Economy::Stock*>& s);
+};
+
+template<typename Possession>
+class PossessionsPanel : public Panel
+{
+public:
+    PossessionsPanel(InterfaceManager* newui, 
+        const std::vector<Building*>& s);
+};
+
+class AccountPanel : public Panel
+{
+public:
+    AccountPanel(InterfaceManager* newui, const Economy::PaymentList& income, 
+        const Economy::PaymentList& expenses);
+};
+
+} // end namespace Economy
+
+} // end namespace UI

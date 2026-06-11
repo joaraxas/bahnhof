@@ -3,6 +3,7 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/buildings/buildingtypes.h"
+#include "bahnhof/economy/payments.h"
 
 class Game;
 class Gamestate;
@@ -11,8 +12,17 @@ class InterfaceManager;
 class Route;
 class RouteManager;
 class BuildingType;
+class BuildingManager;
 class BuildingBuilder;
+class Building;
 class WagonFactory;
+class Entity;
+namespace Economy{
+    class Stock;
+    class Portfolio;
+    class Account;
+    class ControlMode;
+}
 
 namespace UI{
 
@@ -23,7 +33,7 @@ class Table : public Element
 public:
     Table(Host*, UIVec minsz, UIVec pos={0,0});
     virtual ~Table();
-    bool checkclick(UIVec pos) override;
+    bool checkclick(UIVec pos) final;
     virtual void render(Rendering*) override;
     virtual UIVec getminimumsize() override;
     UIRect place(UIRect r) override;
@@ -40,9 +50,9 @@ class ClickableTable : public Table
 public:
     ClickableTable(Host* h, UIVec minsz, UIVec pos={0,0}) : 
         Table(h, minsz, pos) {};
-    void leftclick(UIVec pos);
-    void scroll(UIVec pos, int distance);
-    virtual void render(Rendering*);
+    void leftclick(UIVec pos) final;
+    void scroll(UIVec pos, int distance) final;
+    virtual void render(Rendering*) override;
 protected:
     virtual void lineclicked(int index) {selectedlineindex = index;};
     int selectedlineindex = -1;
@@ -70,6 +80,16 @@ private:
 	RouteManager& routing;
     std::vector<std::string> names;
     std::vector<int> ids;
+};
+
+class ControlModeDropdown : public Dropdown
+{
+public:
+    ControlModeDropdown(Host* p, UIVec pos, UIVec minsz={150,100}) : 
+        Dropdown(p, pos, minsz) {}
+    void update(int ms);
+private:
+    void lineclicked(int index);
 };
 
 class MainInfoTable : public Table
@@ -142,10 +162,13 @@ private:
 class ConstructionTable : public ClickableTable
 {
 public:
-    ConstructionTable(Host* p, UIVec pos={0,0}, UIVec minsz={200,100});
+    ConstructionTable(Host* p, const BuildingManager& manager, 
+        const std::vector<BuildingID>& availtypes,
+        UIVec pos={0,0}, UIVec minsz={200,100});
 private:
     void lineclicked(int index);
-    const std::vector<BuildingType>& buildingtypes;
+    const BuildingManager& buildingmanager;
+    const std::vector<BuildingID>& availabletypes;
 };
 
 class WagonTable : public ClickableTable
@@ -156,6 +179,99 @@ private:
     void lineclicked(int index);
     InputManager& input;
     WagonFactory& factory;
+};
+
+class CompanyInfoTable : public Table
+{
+    using Stock = Economy::Stock;
+    using Account = Economy::Account;
+public:
+    CompanyInfoTable(
+        Host* p, Stock& c, Account& a, UIVec pos={0,0}, UIVec minsz={150,60}): 
+            Table(p, minsz, pos), stock(c), account{a} {};
+    void update(int ms);
+private:
+    Stock& stock;
+    Account& account;
+};
+
+class OwnersTable : public ClickableTable
+{
+    using Stock = Economy::Stock;
+public:
+    OwnersTable(
+        Host* p, Stock& s, UIVec pos={0,0}, UIVec minsz={180,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    std::vector<Entity*> investors;
+    Stock& stock;
+};
+
+class AccountInfoTable : public Table
+{
+    using Account = Economy::Account;
+public:
+    AccountInfoTable(
+        Host* p, Account& a, UIVec pos={0,0}, UIVec minsz={100,40}): 
+            Table(p, minsz, pos), account(a) {};
+    void update(int ms);
+private:
+    Account& account;
+};
+
+class IncomeTable : public Table
+{
+public:
+    IncomeTable(
+        Host* p, const Economy::PaymentList& pays, 
+        UIVec pos={0,0}, UIVec minsz={200,80}): 
+            Table(p, minsz, pos), payments{pays} {};
+    void update(int ms);
+private:
+    const Economy::PaymentList& payments;
+};
+
+class InvestmentsTable : public ClickableTable
+{
+    using Portfolio = Economy::Portfolio;
+public:
+    InvestmentsTable(
+        Host* p, Portfolio& port, UIVec pos={0,0}, UIVec minsz={180,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    std::vector<Economy::Stock*> stocks;
+    Portfolio& portfolio;
+};
+
+class StocksTable : public ClickableTable
+{
+    using Stock = Economy::Stock;
+public:
+    StocksTable(
+        Host* p, const std::vector<Stock*>& s, 
+        UIVec pos={0,0}, UIVec minsz={300,80});
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    const std::vector<Stock*>& stocks;
+};
+
+template<typename Possession>
+class PossessionsTable : public ClickableTable
+{
+public:
+    PossessionsTable(
+        Host* p, const std::vector<Possession*>& s, 
+        UIVec pos={0,0}, UIVec minsz={200,300}) : 
+            ClickableTable{p, minsz, pos}, possessions{s}
+    {}
+    void render(Rendering* r) override;
+    void update(int ms);
+private:
+    void lineclicked(int index);
+    const std::vector<Possession*>& possessions;
 };
 
 }

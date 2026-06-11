@@ -8,9 +8,13 @@
 #include "bahnhof/input/input.h"
 #include "bahnhof/input/inputmodes.h"
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/controlmanager.h"
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildingmanager.h"
+#include "bahnhof/buildings/buildings.h"
+#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/economymanager.h"
 
 namespace UI{
 
@@ -92,6 +96,25 @@ void ManageTrains::leftclick(UIVec mousepos)
     game->getgamestate().gettrainmanager().createlistpanel();
 }
 
+void ManageEntity::leftclick(UIVec mousepos)
+{
+    game->getcontrolmode().entity->createpanel(ui);
+}
+
+void ManageEntity::update(int ms)
+{
+    auto entity = game->getcontrolmode().entity;
+    text = entity->getname();
+}
+
+void SwitchControl::leftclick(UIVec mousepos)
+{
+    UIRect panelrect = panel->getglobalrect();
+    UIVec dropdownpos = {mousepos.x-panelrect.x, 
+                        mousepos.y-panelrect.y};
+    new ControlModeDropdown(panel, dropdownpos);
+}
+
 void IncreaseUIScale::leftclick(UIVec mousepos)
 {
     ui->getuirendering().increaseuiscale();
@@ -101,6 +124,7 @@ void DecreaseUIScale::leftclick(UIVec mousepos)
 {
     ui->getuirendering().decreaseuiscale();
 }
+
 
 void SetRoute::leftclick(UIVec mousepos)
 {
@@ -119,6 +143,7 @@ void SetRoute::update(int ms)
         text = "No route set";
 }
 
+
 void GoTrain::leftclick(UIVec mousepos)
 {
     bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
@@ -136,6 +161,7 @@ void GoTrain::update(int ms)
         text = "Start route";
 }
 
+
 void GasTrain::render(Rendering* r)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
@@ -152,17 +178,20 @@ void GasTrain::leftpressed(UIVec mousepos, int mslogic)
     train.gas(mslogic);
 }
 
+
 void BrakeTrain::leftpressed(UIVec mousepos, int mslogic)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.brake(mslogic);
 }
 
+
 void TurnTrain::leftclick(UIVec mousepos)
 {
     Train& train = dynamic_cast<TrainPanel*>(panel)->gettrain();
     train.shiftdirection();
 }
+
 
 void CoupleTrain::leftclick(UIVec mousepos)
 {
@@ -208,5 +237,119 @@ void RemoveOrder::leftclick(UIVec mousepos)
 }
 
 } //end namespace Routing
+
+namespace EconomyPanels
+{
+
+void PublicOffering::update(int ms)
+{
+    if(playercontrol()){
+        clickable = true;
+    }
+    else{
+        clickable = false;
+    }
+}
+
+void PublicOffering::leftclick(UIVec mousepos)
+{
+    if(playercontrol())
+        stock.issue(20, game->getgamestate().geteconomymanager().thepublic->getinvestments());
+}
+
+
+void TakeOver::leftclick(UIVec mousepos)
+{
+    if(playercontrol()) return;
+    bool succeeded = stock.attempttakeover();
+    if(succeeded) {
+        playercontrol(true);
+        game->getcontrolmanager().addcontrolmode(controlmode);
+    }
+}
+
+
+void Buy::leftclick(UIVec mousepos)
+{
+    game->getcontrolmode().portfolio->buy(
+        game->getgamestate().geteconomymanager().thepublic->getinvestments(),
+        stock, 5
+    );
+}
+
+
+void Sell::leftclick(UIVec mousepos)
+{
+    game->getgamestate().geteconomymanager().thepublic->getinvestments().buy(
+        *game->getcontrolmode().portfolio,
+        stock, 5
+    );
+}
+
+
+void VisitStockmarket::leftclick(UIVec mousepos)
+{
+    game->getgamestate().geteconomymanager().stockmarket.createpanel(ui);
+}
+
+
+void ListBuildings::leftclick(UIVec mousepos)
+{
+    list.createpanel(ui);
+}
+
+
+void ShowAccounts::leftclick(UIVec mousepos)
+{
+    account.createpanel(ui);
+}
+
+} // end namespace EconomyPanels
+
+
+Trade::Trade(Host* newpanel, Building& b) :
+        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
+{
+    BuildingOwner* playerownership = game->getcontrolmode().buildings;
+    updatetext(&building.getowner() == playerownership);
+    if(playerownership==nullptr){ // can't own buildings
+        clickable = false;
+    }
+}
+
+void Trade::mousehover(UIVec pos, int ms)
+{
+    if(!game->getcontrolmode().buildings){
+        ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
+        return;
+    }
+    TextButton::mousehover(pos, ms);
+}
+
+void Trade::leftclick(UIVec mousepos)
+{
+    BuildingOwner* playerownership = game->getcontrolmode().buildings;
+    if(!playerownership){
+        clickable = false;
+        return;
+    }
+    bool wasplayerowned = true;
+    BuildingOwner* buyer = &game->getgamestate().geteconomymanager().
+        thepublic->getbuildings();
+    if(&building.getowner() != playerownership){
+        buyer = playerownership;
+        wasplayerowned = false;
+    }
+    if(!buy(building, *buyer, building.getvalue())) return;
+    updatetext(!wasplayerowned);
+}
+
+void Trade::updatetext(bool isplayerowned)
+{
+    if(isplayerowned)
+        text = "Sell\n(" + std::string(building.getvalue()) + ")";
+    else
+        text = "Buy\n(" + std::string(building.getvalue()) + ")";
+}
 
 } //end namespace UI

@@ -18,9 +18,9 @@ public:
     constexpr Coord(int v) : value{v} {};
     constexpr Coord(double v) : value{iround(v)} {};
 
-    Coord operator*=(const int v) {value*=v; return *this;};
-    Coord operator+=(const Coord v) {value+=v.value; return *this;};
-    Coord operator-=(const Coord v) {value-=v.value; return *this;};
+    Coord& operator*=(const int v) {value*=v; return *this;};
+    Coord& operator+=(const Coord v) {value+=v.value; return *this;};
+    Coord& operator-=(const Coord v) {value-=v.value; return *this;};
     double operator*(const double d) const {return d*value;};
     friend double operator*(const double d, Coord c) {return c*d;};
     double operator/(const double d) const {return double(value)/d;};

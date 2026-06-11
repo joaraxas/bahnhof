@@ -11,12 +11,17 @@
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/rollingstockmanager.h"
 #include "bahnhof/ui/panels.h"
+#include "bahnhof/economy/account.h"
+#include "bahnhof/economy/control.h"
+#include "bahnhof/economy/entity.h"
 
 
-Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) : 
+Building::Building(
+		Game* g, BuildingID id, std::unique_ptr<Shape> s, BuildingOwner& c) : 
 	shape(std::move(s)),
 	game(g),
-	type(g->getgamestate().getbuildingmanager().gettypefromid(id))
+	type(g->getgamestate().getbuildingmanager().gettypefromid(id)),
+	control(c)
 {
 	color = type.color;
 	if(type.spritename){
@@ -24,10 +29,13 @@ Building::Building(Game* g, BuildingID id, std::unique_ptr<Shape> s) :
 		sprite.imageangle = shape->getorientation();
 		hassprite = true;
 	}
+	control.getowner().listpossession(*this);
 }
 
 Building::~Building()
-{}
+{
+	control.getowner().delistpossession(*this);
+}
 
 void Building::render(Rendering* r)
 {
@@ -46,12 +54,12 @@ void Building::update(int ms)
 	}
 }
 
-bool Building::checkcollisionwithpoint(Vec pos)
+bool Building::checkcollisionwithpoint(Vec pos) const
 {
 	return shape->contains(pos);
 }
 
-bool Building::checkcollisionwithshape(const Shape& othershape)
+bool Building::checkcollisionwithshape(const Shape& othershape) const
 {
 	return shape->intersects(othershape);
 }
@@ -59,23 +67,24 @@ bool Building::checkcollisionwithshape(const Shape& othershape)
 bool Building::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::BuildingPanel(&game->getui(), this));
+		panel.set(new UI::BuildingPanel(&game->getui(), *this, name, control));
 	}
+	panel.movetofront();
+}
+
+std::string Building::getownername() const
+{
+	return control.getowner().getentity().getname();
 }
 
 
-Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s, 
-					std::set<resourcetype> need, 
-					std::set<resourcetype> production) :
-					Building(whatgame, id, std::move(s))
+Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
+			BuildingOwner& c, 
+			std::set<resourcetype> need, 
+			std::set<resourcetype> production) :
+			Building(whatgame, id, std::move(s), c)
 {
 	storage = getstorageatpoint(shape->mid());
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x+w,y));
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x,y+h));
-	// if(!storage)
-	// storage = getstorageatpoint(Vec(x+w,y+h));
 	wants = need;
 	makes = production;
 	if(storage){
@@ -88,27 +97,35 @@ Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
 
 void Industry::trigger()
 {
+	using namespace Economy;
 	if(storage){
 		int got = 0;
 		for(auto want: wants)
 			got += storage->unloadstorage(want, 1);
-		if(wants.size()==0)
-			got = 1;
-		if(got > 0){
+		if(got > 0 || wants.empty()){
+			int put = 1;
 			if(!makes.empty()){
+				put = 0;
 				for(auto product: makes)
-					storage->loadstorage(product, got);
+					put += storage->loadstorage(product, 1);
 			}
-			else{
-				game->getgamestate().money+=got;
+			if(put>0){
+				getowner().getaccount().pay(
+					Money{2.0*got}, PaymentType::ticketfare,
+					&storage->getowner().getaccount(), true
+				);
+				storage->getowner().getaccount().pay(
+					Money{1.0*put}, PaymentType::ticketfare,
+					&getowner().getaccount(), true
+				);
 			}
 		}
 	}
 }
 
-WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st, 
-		RollingStockManager& r) : 
-	Building(g, wagonfactory, std::move(s)), 
+WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, BuildingOwner& c, 
+		State st, RollingStockManager& r) : 
+	Building(g, wagonfactory, std::move(s), c), 
 	state(st),
 	rollingstock(r)
 {
@@ -120,7 +137,7 @@ WagonFactory::WagonFactory(Game* g, std::unique_ptr<Shape> s, State st,
 void WagonFactory::trigger()
 {
 	if(!productionqueue.empty()){
-		const WagonType& type = *productionqueue.front();
+		const WagonType& type = *productionqueue.front().type;
 		productionqueue.pop_front();
 
 		TrainManager& trainmanager = game->getgamestate().gettrainmanager();
@@ -138,49 +155,64 @@ void WagonFactory::trigger()
 bool WagonFactory::leftclick(Vec pos)
 {
 	if(!panel.exists()){
-		panel.set(new UI::FactoryPanel(&game->getui(), this));
+		panel.set(new UI::FactoryPanel(&game->getui(), *this, name, control));
 	}
+	panel.movetofront();
 }
 
-const std::vector<WagonType*> WagonFactory::getavailabletypes()
+const std::vector<WagonType*>& WagonFactory::getavailabletypes() const
 {
 	return rollingstock.gettypes();
 }
 
-void WagonFactory::orderwagon(const WagonType& type)
+void WagonFactory::orderwagon(
+	const WagonType& type, Economy::Account& payer)
 {
-	if(type.cost<=game->getgamestate().money){
+	using namespace Economy;
+	if(payer.canafford(type.cost)){
 		if(productionqueue.empty())
 			timeleft = 3500;
-		productionqueue.push_back(&type);
-		game->getgamestate().money -= type.cost;
+		productionqueue.push_back(WagonOrder{&type, &payer});
+		payer.pay(type.cost, PaymentType::rollingstock);
 	}
 }
 
 void WagonFactory::removefromqueue(int wagonid)
 {
+	using namespace Economy;
 	if(wagonid>=0 && wagonid<productionqueue.size()){
-		game->getgamestate().money+=productionqueue[wagonid]->cost;
+		Account* payer = productionqueue[wagonid].payer;
+		payer->earn(productionqueue[wagonid].type->cost, PaymentType::rollingstock);
 		productionqueue.erase(productionqueue.begin() + wagonid);
 		if(wagonid==0) timeleft = 3500;
 	}
 }
 
-const std::deque<const WagonType*>& WagonFactory::getqueue()
+const std::deque<WagonOrder>& WagonFactory::getqueue()
 {
 	return productionqueue;
 }
 
-Brewery::Brewery(Game* game, std::unique_ptr<Shape> s) : Industry(game, brewery, std::move(s), {hops, barley}, {beer})
+Brewery::Brewery(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
+	Industry(game, brewery, std::move(s), c, {hops, barley}, {beer})
 {
 	name = "Augustator";
 }
 
-Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, hopsfield, std::move(s), {}, {hops})
-{}
+Hopsfield::Hopsfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
+	Industry(game, hopsfield, std::move(s), c, {}, {hops})
+{
+	name = "Hopfentropfen";
+}
 
-Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s) : Industry(game, barleyfield, std::move(s), {}, {barley})
-{}
+Barleyfield::Barleyfield(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
+	Industry(game, barleyfield, std::move(s), c, {}, {barley})
+{
+	name = "Gerstentraum";
+}
 
-City::City(Game* game, std::unique_ptr<Shape> s) : Industry(game, city, std::move(s), {beer}, {})
-{}
+City::City(Game* game, std::unique_ptr<Shape> s, BuildingOwner& c) : 
+	Industry(game, city, std::move(s), c, {beer}, {})
+{
+	name = "Bern";
+}

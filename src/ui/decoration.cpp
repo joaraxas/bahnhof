@@ -7,6 +7,7 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/buildings/buildings.h"
+#include "bahnhof/economy/playercontrol.h"
 
 namespace UI{
 
@@ -20,6 +21,25 @@ void Text::render(Rendering* r)
     ui->getuirendering().rendertext(
         r, text, getglobalrect(), style, centered, margin_x, margin_y);
 }
+
+UIRect Text::place(UIRect r)
+{
+    Element::place(r);
+    rect.w = std::max(r.w-2*getpadding().x, Coord{20});
+    rect.h = std::max(r.h-2*getpadding().y, Coord{14});
+    return rect;
+}
+
+
+BuildingOwnerText::BuildingOwnerText(Host* p, Building& b, UIRect r) : 
+    Text{p, b.getowner().getentity().getname(), r}, building{b} 
+{}
+
+void BuildingOwnerText::update(int ms) 
+{
+    text = building.getowner().getentity().getname();
+}
+
 
 EditableText::EditableText(Host* p, std::string& t, UIRect r) : 
         Text(p, t, r), 
@@ -126,6 +146,23 @@ void EditableText::updatewritingarea(){
 }
 
 
+EditableTextWithAccessControl::EditableTextWithAccessControl(
+    Host* p, std::string& t, const Economy::PlayerPointer& c, 
+    UIRect r) : 
+        EditableText(p, t, r), playercontrol(c) {}
+
+void EditableTextWithAccessControl::leftclick(UIVec mousepos){
+    if(playercontrol())
+        EditableText::leftclick(mousepos);
+}
+
+void EditableTextWithAccessControl::render(Rendering* r){
+    if(playercontrol())
+        EditableText::render(r);
+    else
+        Text::render(r);
+}
+
 void TrainCoupler::render(Rendering* r)
 {
     TrainInfo traininfo = train.getinfo();
@@ -172,8 +209,8 @@ int TrainCoupler::getwagonidatmousepos(UIVec mousepos)
 void WagonQueue::render(Rendering* r)
 {
     std::vector<WagonInfo> wagoninfos;
-	for(const WagonType* type : factory.getqueue()){
-		WagonInfo info(type->iconname, none, 0);
+	for(WagonOrder order : factory.getqueue()){
+		WagonInfo info(order.type->iconname, none, 0);
 		wagoninfos.push_back(info);
 	}
 	iconrects = rendertrainicons(r, *ui, wagoninfos, getglobalrect());

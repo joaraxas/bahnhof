@@ -2,26 +2,40 @@
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/element.h"
 #include "bahnhof/ui/uistyle.h"
+#include "bahnhof/economy/entity.h"
+#include "bahnhof/economy/playercontrol.h"
 
 class Rendering;
 class Train;
 struct TrainInfo;
 struct WagonInfo;
 class WagonFactory;
+class Building;
 
 namespace UI{
 
 class Text : public Element
 {
 public:
-    Text(Host* p, std::string t, UIRect r);
+    Text(Host* p, std::string t, UIRect r={0, 0, 50, 20});
     void render(Rendering*);
+    bool resizable_x() const override {return true;};
+    UIRect place(UIRect r);
     std::string text;
     SDL_Color color = {0,0,0,255};
     bool centered = true;
     TextStyle style = Info;
     static constexpr Coord margin_x = 2;
     static constexpr Coord margin_y = 1;
+};
+
+class BuildingOwnerText : public Text
+{
+public:
+    BuildingOwnerText(Host* p, Building& b, UIRect r={0, 0, 50, 20});
+    void update(int ms) override;
+private:
+    Building& building;
 };
 
 class EditableText : public Text
@@ -31,9 +45,11 @@ public:
     ~EditableText();
     void leftclick(UIVec mousepos);
     void render(Rendering*);
-    UIVec getminimumsize() {return {originalrect.w+getpadding().x*2, originalrect.h+getpadding().y*2};};
+    UIVec getminimumsize() {
+        return {originalrect.w+getpadding().x*2, 
+                originalrect.h+getpadding().y*2};
+    };
     UIRect place(UIRect r);
-    bool resizable_x() const override {return true;};
     void updatesource();
     void startwriting();
     void stopwriting();
@@ -43,9 +59,9 @@ public:
     void movecursorright();
 private:
     void updatewritingarea();
-    std::string& textreference; // TODO: This is currently safe but will 
-                                // break if the referred string is destroyed 
-                                // without removing the panel with the editable text
+    std::string& textreference; // TODO: This is currently safe but will break 
+                                // if the referred string is destroyed without 
+                                // removing the panel with the editable text
     std::string fallbacktext;
     std::string shortenedtext;
     bool beingedited;
@@ -53,10 +69,22 @@ private:
     UIRect originalrect;
 };
 
+class EditableTextWithAccessControl : public EditableText
+{
+public:
+    EditableTextWithAccessControl(Host* p, std::string& t, 
+        const Economy::PlayerPointer& c, UIRect r={0, 0, 50, 20});
+    void leftclick(UIVec mousepos);
+    void render(Rendering*);
+private:
+    const Economy::PlayerPointer& playercontrol;
+};
+
 class TrainCoupler : public Element
 {
 public:
-    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : Element(p), train(t) {rect = maxarea;};
+    TrainCoupler(Host* p, Train& t, UIRect maxarea={0,0,200,20}) : 
+        Element(p), train(t) {rect = maxarea;};
     void render(Rendering*);
     void mousehover(UIVec pos, int ms);
     void leftclick(UIVec mousepos);

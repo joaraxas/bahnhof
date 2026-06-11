@@ -1,0 +1,302 @@
+#include "bahnhof/common/forwardincludes.h"
+#include "bahnhof/economy/person.h"
+#include "bahnhof/economy/thepublic.h"
+#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/stockmarket.h"
+#include "bahnhof/economy/control.h"
+#include "bahnhof/input/controlmode.h"
+#include "bahnhof/ui/panels.h"
+#include "bahnhof/buildings/buildings.h"
+
+
+namespace Economy{
+    
+bool Stake::transfersharesfrom(Stake& from, int howmany) {
+    if(from.stock!=stock) return false;
+    if(from.amount>=howmany){
+        from.amount -= howmany;
+        amount += howmany;
+        stock->updateregistry();
+        return true;
+    }
+    return false;
+}
+
+bool Portfolio::buy(Portfolio& fromportfolio, Stock& stock, Shares amount) {
+    if(amount<=0){
+        std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
+        return false;
+    }
+    Stake* const hisstake{stock.getstakeforportfolio(fromportfolio)};
+    if(!hisstake){
+        std::cout<<"failed to buy shares from non-owner"<<std::endl;
+        return false;
+    }
+    if(!buystake(*hisstake, fromportfolio.account, amount))
+        return false;
+    if(hisstake->getamount() == 0){
+        stock.removeemptystake(fromportfolio);
+        fromportfolio.stocks.erase(&stock);
+    }
+    return true;
+}
+
+bool Portfolio::buystake(Stake& fromstake, Account& payableaccount, Shares amount) {
+    amount = std::min(amount, fromstake.getamount());
+    if(amount<=0) {
+        std::cout<<"failed to buy "<<amount<<" shares"<<std::endl;
+        return false;
+    }
+    Stock& stock = fromstake.getstock();
+    Money purchaseamount = amount * fromstake.getstock().getshareprice();
+    if(!account.canafford(purchaseamount)){
+        std::cout<<"failed to buy shares for "<<purchaseamount<<", owner has only "<<
+            account.getvalue()<<std::endl;
+        return false;
+    }
+    account.pay(purchaseamount, PaymentType::stocks, &payableaccount);
+    Stake* mystake = stock.getstakeforportfolio(*this);
+    if(!mystake){
+        stocks.emplace(&stock);
+        mystake = &stock.registernewstake(*this);
+    }
+    mystake->transfersharesfrom(fromstake, amount);
+    return true;
+}
+
+bool Portfolio::isplayercontrolled()
+{
+    return playercontrol();
+}
+
+Stock::Stock(Entity& e, Account& a, Stockmarket& sm, 
+        std::vector<std::pair<Portfolio*,Money>> owners) :
+        entity{e}, account{a}, market{sm}
+{
+    market.liststock(*this);
+    for(auto [portfolio, investment] : owners){
+        if(portfolio){
+            Shares nshares = std::floor(investment / getshareprice());
+            issue(nshares, *portfolio, 1.0);
+        }
+    }
+}
+
+Stock::~Stock()
+{
+    market.deliststock(*this);
+}
+
+void Stock::update(int ms)
+{
+    constexpr double stdpersec = 0.05/60.0;
+    double changefactor = 0.0;
+    while(changefactor<=0.0)
+        changefactor = randnorm(stdpersec*0.001*ms, 1.0);
+    valuation *= changefactor;
+    
+    Money currentrevenue = account.getrevenue();
+    Money newrevenue = currentrevenue - lastrevenue;
+    valuation += newrevenue * 5;
+    lastrevenue = currentrevenue;
+    
+    Money currentprofit = account.getprofit();
+    Money newprofit = currentprofit - lastprofit;
+    valuation += newprofit;
+    lastprofit = currentprofit;
+
+    valuation = std::max(0.0_Fr, valuation);
+}
+
+bool Stock::issue(Shares issuedshares, Portfolio& buyer, double devaluation) {
+    Money oldvaluation = valuation;
+    valuation *= devaluation;
+    if(issuedshares<=0){
+        std::cout<<"failed to emit "<<issuedshares<<" shares"<<std::endl;
+        valuation = oldvaluation;
+        return false;
+    }
+    Stake tempstake(*this, issuedshares);
+    if(!buyer.buystake(tempstake, account, issuedshares)){
+        valuation = oldvaluation;
+        return false;
+    }
+    valuation += getshareprice() * issuedshares;
+    shares += issuedshares;
+    return true;
+}
+
+bool Stock::issue(Shares issuedshares, Portfolio& buyer) {
+    return issue(issuedshares, buyer, 0.95);
+}
+
+Stake* const Stock::getstakeforportfolio(Portfolio& who) {
+    if(!stakes.contains(&who))
+        return nullptr;
+    return &stakes.at(&who);
+}
+
+Stake& Stock::registernewstake(Portfolio& who) {
+    auto [p, dummy] = stakes.emplace(&who, Stake(*this));
+    Stake& newstake = p->second;
+    sortedowners.emplace_back(&newstake, &who.getentity());
+    // no need to sort because the stake is empty.
+    return newstake;
+}
+
+bool Stock::removeemptystake(Portfolio& who) {
+    if(!stakes.contains(&who))
+        return true;
+    Stake& stake = stakes.at(&who);
+    if(stake.getamount()!=0)
+        return false;
+    for(auto p = sortedowners.rbegin(); p!=sortedowners.rend(); p++) {
+        if(p->first == &stake) {
+            sortedowners.erase(std::next(p).base(), sortedowners.end());
+            break;
+        }
+    }
+    stakes.erase(&who);
+    return true;
+}
+
+bool compareowners(const std::pair<Stake*, Entity*>& a, 
+                     const std::pair<Stake*, Entity*>& b)
+{
+    if(*a.first > *b.first)
+        return true;
+    if(*a.first < *b.first)
+        return false;
+    return a.second->getname() < b.second->getname();
+}
+
+void Stock::updateregistry() {
+    std::sort(sortedowners.begin(), sortedowners.end(), compareowners);
+}
+
+bool Stock::attempttakeover() {
+    Shares votesfor{0};
+    for(auto& [portfolio, stake] : stakes){
+        if(portfolio->isplayercontrolled()){
+            std::cout<<stake.getamount()<<" votes for"<<std::endl;
+            votesfor+=stake.getamount();
+        }
+    }
+    if(votesfor>shares*0.5){
+        std::cout<<"success!"<<std::endl;
+        return true;
+    }
+    std::cout<<"failure"<<std::endl;
+    return false;
+}
+
+void Person::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::InvestorPanel(ui, name, portfolio, account)
+        );
+    else
+        panel.movetofront();
+}
+
+ControlMode Person::generatecontrolmode()
+{
+    ControlMode mode{this, &account, &portfolio, nullptr, nullptr};
+    return mode;
+}
+
+void ThePublic::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::ThePublicPanel(ui, getname(), portfolio)
+        );
+    else
+        panel.movetofront();
+}
+
+
+Company::Company(std::string n, Stockmarket& market, 
+        std::vector<std::pair<Portfolio*,Money>> owners, bool controlled) : 
+    playercontrol(controlled),
+    name{n},
+    slogan{generateslogan()},
+    account{},
+    portfolio{*this, account, playercontrol},
+    stock{*this, account, market, owners},
+    buildings{*this, account, playercontrol},
+    storages{*this, account, playercontrol}
+{}
+
+void Company::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::CompanyPanel(ui, stock, name,
+                slogan, portfolio, account, buildings, 
+                PlayerPointerDirect(playercontrol),
+                generatecontrolmode())
+        );
+    else
+        panel.movetofront();
+}
+
+ControlMode Company::generatecontrolmode()
+{
+    ControlMode mode{this, &account, &portfolio, &buildings, &storages};
+    return mode;
+}
+
+
+void Stockmarket::update(int ms) {
+    timesincelastupdate_ms += ms;
+    if(timesincelastupdate_ms > 1000){
+        timesincelastupdate_ms -= 1000;
+        for(Stock* stock: stocks) 
+            stock->update(1000);
+    }
+}
+
+void Stockmarket::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::StockmarketPanel(ui, stocks)
+        );
+    else
+        panel.movetofront();
+}
+
+template<>
+void Control<Building>::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::PossessionsPanel<Building>(ui, possessions)
+        );
+    else
+        panel.movetofront();
+}
+
+template<>
+bool buy(Building& building, Control<Building>& buyer, Money price) {
+    auto& owner = building.getowner();
+    if(&owner == &buyer) {
+        std::cout<<owner.getentity().getname()<<
+            " tried to buy "<<building.getname()<<" from himself"<<std::endl;
+        return false;
+    }
+    if(!buyer.getaccount().pay(price, PaymentType::buildings, &owner.getaccount()))
+        return false;
+    owner.delistpossession(building); 
+    buyer.listpossession(building); 
+    building.setowner(buyer);
+    return true;
+};
+
+void Account::createpanel(InterfaceManager* ui) {
+    if(!panel.exists())
+        panel.set(
+            new UI::EconomyPanels::AccountPanel(ui, income, expenses)
+        );
+    else
+        panel.movetofront();
+}
+
+} // namespace Economy

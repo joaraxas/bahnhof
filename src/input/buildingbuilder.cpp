@@ -1,4 +1,5 @@
 #include "bahnhof/input/builder.h"
+#include "bahnhof/input/controlmode.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/geometry.h"
 #include "bahnhof/common/gamestate.h"
@@ -8,7 +9,8 @@
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
 
-BuildingBuilder::BuildingBuilder(InputManager& i, Game* g, const BuildingType& b) : 
+BuildingBuilder::BuildingBuilder(InputManager& i,
+                                 Game* g, const BuildingType& b) : 
     Builder(i, g), 
     buildingmanager(g->getgamestate().getbuildingmanager()),
     building(b)
@@ -22,7 +24,10 @@ void BuildingBuilder::render(Rendering* r)
     
     if(building.id==wagonfactory){
         Angle newangle = angle;
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
+        Tracks::Tracksection section = 
+            Tracks::Input::planconstructionto(
+                tracksystem, anchorpoint, 600, newangle
+        );
         TracksDisplayMode mode = TracksDisplayMode::planned;
         if(!canbuild())
             mode = TracksDisplayMode::impossible;
@@ -49,12 +54,18 @@ void BuildingBuilder::reset()
 
 bool BuildingBuilder::canfit()
 {
+    BuildingOwner* contractor = game->getcontrolmode().buildings;
+    if(!contractor)
+        return false; // not about "fitting" but needs to be checked here.
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
     if(building.id == wagonfactory){
         Angle newangle = angle;
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
+        Tracks::Tracksection section = 
+            Tracks::Input::planconstructionto(
+                tracksystem, anchorpoint, 600, newangle
+        );
         if(buildingmanager.checkcollision(section)){
             Tracks::Input::discardsection(section); 
             return false;
@@ -66,35 +77,59 @@ bool BuildingBuilder::canfit()
 
 void BuildingBuilder::build()
 {
+    BuildingOwner* contractor = game->getcontrolmode().buildings;
+    if(!contractor) return;
     std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
     switch(building.id)
     {
     case brewery:
-        buildingmanager.addbuilding(std::make_unique<Brewery>(game, std::move(shape)));
+        buildingmanager.addbuilding(
+            std::make_unique<Brewery>(
+                game, std::move(shape), *contractor)
+        );
         break;
     case hopsfield:
-        buildingmanager.addbuilding(std::make_unique<Hopsfield>(game, std::move(shape)));
+        buildingmanager.addbuilding(
+            std::make_unique<Hopsfield>(
+                game, std::move(shape), *contractor)
+        );
         break;
     case barleyfield:
-        buildingmanager.addbuilding(std::make_unique<Barleyfield>(game, std::move(shape)));
+        buildingmanager.addbuilding(
+            std::make_unique<Barleyfield>(
+                game, std::move(shape), *contractor)
+        );
         break;
     case city:
-        buildingmanager.addbuilding(std::make_unique<City>(game, std::move(shape)));
+        buildingmanager.addbuilding(
+            std::make_unique<City>(
+                game, std::move(shape), *contractor)
+        );
         break;
     case wagonfactory:{
-        RollingStockManager& r = game->getgamestate().getrollingstockmanager();
+        RollingStockManager& r = 
+            game->getgamestate().getrollingstockmanager();
         Angle newangle = angle;
-        Tracks::Tracksection section = Tracks::Input::planconstructionto(tracksystem, anchorpoint, 600, newangle);
+        Tracks::Tracksection section = 
+            Tracks::Input::planconstructionto(
+                tracksystem, anchorpoint, 600, newangle
+        );
         Tracks::Input::buildsection(tracksystem, section);
-        State midpointstate = Tracks::Input::getstateat(tracksystem, anchorpoint);
+        State midpointstate = 
+            Tracks::Input::getstateat(tracksystem, anchorpoint);
         if(!Tracks::getorientation(tracksystem, midpointstate).isbetween(newangle-Angle(1), newangle+Angle(1)))
             midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack;
-        midpointstate = flipstate(Tracks::travel(tracksystem, midpointstate, 500));
-        buildingmanager.addbuilding(std::make_unique<WagonFactory>(game, std::move(shape), midpointstate, r));
+        midpointstate = flipstate(
+            Tracks::travel(tracksystem, midpointstate, 500));
+        buildingmanager.addbuilding(
+            std::make_unique<WagonFactory>(
+                game, std::move(shape), *contractor, midpointstate, r)
+        );
         break;
     }
     default:
-        std::cout<<"error: building id "<<building.id<<" is not covered by BuildingBuilder::build!";
+        std::cout<<"error: building id "<<building.id<<
+            " is not covered by BuildingBuilder::build!";
         break;
     }
 }

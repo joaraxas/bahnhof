@@ -12,9 +12,9 @@
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/resources/storage.h"
 
-Vec randpos(int xoffset, int yoffset)
+Vec randpos(Vec offset)
 {
-	return Vec(randint(MAP_WIDTH-xoffset), randint(MAP_HEIGHT-yoffset));
+	return Vec(randint(MAP_WIDTH-offset.x), randint(MAP_HEIGHT-offset.y));
 };
 
 
@@ -86,7 +86,7 @@ SDL_Rect Rendering::rendercenteredtext(std::string text, int x, int y, SDL_Color
 	return {x, y, 0, 0};
 }
 
-void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery)
+void Rendering::rendertexture(SDL_Texture* tex, SDL_Rect* rect, SDL_Rect* srcrect, Angle angle, bool ported, bool zoomed, bool originiscenter, int centerx, int centery) const
 {
 	if(originiscenter){
 		centerx = int(rect->w*0.5);
@@ -173,6 +173,27 @@ void Rendering::renderfilledpolygon(const std::vector<Vec>& edges, const std::ve
 float Rendering::getcamscale()
 {
 	return cam->getscale();
+}
+
+void Rendering::getrendererinfo()
+{
+	SDL_RendererInfo info;
+	if(SDL_GetRendererInfo(renderer, &info) == 0)
+	{
+		std::cout << "Current renderer: " << info.name << "\n";
+		std::cout << "Max textures: "
+				<< info.max_texture_width << " x "
+				<< info.max_texture_height << std::endl;
+	}
+
+
+	int n = SDL_GetNumRenderDrivers();
+	for (int i = 0; i < n; i++)
+	{
+		SDL_RendererInfo info;
+		SDL_GetRenderDriverInfo(i, &info);
+		printf("Available driver %d: %s\n", i, info.name);
+	}
 }
 
 Vec getviewsize()

@@ -27,6 +27,7 @@ add_executable(bahnhof
     src/game/game.cpp
     src/game/resources.cpp
     src/input/input.cpp
+    src/input/controlmanager.cpp
     src/input/textinput.cpp
     src/input/inputmodes.cpp
     src/input/builder.cpp
@@ -62,6 +63,9 @@ add_executable(bahnhof
     src/rollingstock/rollingstockmanager.cpp
     src/buildings/buildings.cpp
     src/buildings/buildingmanager.cpp
+    src/economy/economy.cpp
+    src/economy/economymanager.cpp
+    src/economy/slogans.cpp
 )
 
 target_include_directories(bahnhof PRIVATE include)

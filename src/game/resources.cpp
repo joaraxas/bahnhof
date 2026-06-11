@@ -61,10 +61,17 @@ void Resource::renderasshape(Rendering* r, const Shape* shape)
 	// shape->renderfilled(r, {0,0,255,255});
 }
 
-Storage::Storage(Game* whatgame, int x, int y, int w, int h)
+Storage::Storage(Game* whatgame, StorageOwner& o, int x, int y, int w, int h) :
+	control(o)
 {
 	game = whatgame;
 	rect = {x, y, w, h};
+	control.getowner().listpossession(*this); // TODO: This belongs in control's ctor
+}
+
+Storage::~Storage()
+{
+	control.getowner().delistpossession(*this);
 }
 
 void Storage::render(Rendering* r)

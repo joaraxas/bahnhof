@@ -13,6 +13,7 @@ public:
     bool exists();
     void deletereference();
     void resetreference();
+    void movetofront();
 private:
     Host* host = nullptr;
 };

@@ -1,8 +1,8 @@
 #pragma once
 #include "forwardincludes.h"
 
-const double pi = 3.141592653589793238;
-const float g = 9.8;
+inline constexpr double pi = 3.141592653589793238;
+inline constexpr float g = 9.8;
 
 template<typename T>
 constexpr double meterstopixels(T m)
@@ -15,9 +15,9 @@ constexpr double pixelstometers(T pixels)
 {
     return pixels*0.001*150;
 }
-const float normalgauge = 1.435;
-const float ballastwidth = 4.000;
-const float sleeperwidth = 2.600;
+inline constexpr float normalgauge = 1.435;
+inline constexpr float ballastwidth = 4.000;
+inline constexpr float sleeperwidth = 2.600;
 
 struct SDL_FPoint;
 struct Angle;
@@ -69,3 +69,4 @@ float truncate(float dir, float denominator);
 float anglediff(float a, float b, float wraparound);
 int randint(int maxinclusive);
 float randfloat(float maxexclusive);
+double randnorm(double std=1.f, double mean=0.f);

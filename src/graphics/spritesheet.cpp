@@ -24,8 +24,8 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle 
 {
 	int x = int(pos.x);
 	int y = int(pos.y);
-	srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
-	rect = {int(x - origin_x*imagescale), int(y - origin_y*imagescale), int(w*imagescale), int(h*imagescale)};
+	SDL_Rect srcrect = {int(imagetype)*w, int(imageindex)*h, w, h};
+	SDL_Rect rect = {int(x - origin_x*imagescale), int(y - origin_y*imagescale), int(w*imagescale), int(h*imagescale)};
 	if(imagealpha!=alpha){
 		SDL_SetTextureAlphaMod(tex, imagealpha);
 		alpha = imagealpha;
@@ -42,12 +42,12 @@ void Spritesheet::render(Rendering* r, Vec pos, bool ported, bool zoomed, Angle 
 		r->rendertexture(tex, &rect, &srcrect, imageangle, ported, zoomed, false, origin_x*imagescale, origin_y*imagescale);
 }
 
-int Spritesheet::getimagenumber()
+int Spritesheet::getimagenumber() const
 {
 	return imagenumber;
 }
 
-int Spritesheet::getimagetypes()
+int Spritesheet::getimagetypes() const
 {
 	return imagetypes;
 }
@@ -62,12 +62,12 @@ void Spritesheet::setoriginy(int neworiginy)
 	origin_y = neworiginy;
 }
 
-Vec Spritesheet::getsize()
+Vec Spritesheet::getsize() const
 {
 	return Vec(w, h);
 }
 
-sprites::name Spritesheet::getname()
+sprites::name Spritesheet::getname() const
 {
 	if(name == sprites::name::none)
 		std::cout<<"Warning: spritesheet with name none was called";

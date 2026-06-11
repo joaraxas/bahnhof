@@ -4,6 +4,9 @@
 #include "bahnhof/common/shape.h"
 #include "bahnhof/track/state.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/economy/money.h"
+#include "bahnhof/economy/account.h"
+#include "bahnhof/economy/control.h"
 
 namespace Tracks{
     class Tracksystem;
@@ -16,11 +19,15 @@ class InputManager;
 class InterfaceManager;
 class BuildingManager;
 class BuildingType;
+class Building;
+namespace Economy{
+    class Account;
+}
 
 class Builder : public InputMode
 {
 public:
-    Builder(InputManager& owner, Game* newgame);
+    Builder(InputManager& inp, Game* newgame);
     virtual ~Builder() {};
     virtual void render(Rendering*);
     virtual void leftclickmap(Vec mappos);
@@ -31,7 +38,7 @@ protected:
     bool canbuild();
     virtual bool canfit() {return true;};
     virtual void build() {};
-    float cost;
+    Economy::Money cost;
     Vec anchorpoint{0,0};
     bool droppedanchor = false;
     Angle angle;
@@ -72,8 +79,10 @@ private:
     Icon icon;
 };
 
+
 class BuildingBuilder : public Builder
 {
+    using BuildingOwner = Economy::Control<Building>;
 public:
     BuildingBuilder(InputManager& i, Game* g, const BuildingType& b);
     void render(Rendering*);

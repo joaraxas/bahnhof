@@ -12,18 +12,21 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/common/shape.h"
 #include "bahnhof/common/geometry.h"
+#include "bahnhof/economy/company.h"
+#include "bahnhof/economy/economymanager.h"
+
 
 
 Gamestate::Gamestate(Game* whatgame)
 {
 	game = whatgame;
-	money = 600;
 	inittracks();
 	routing = std::make_unique<RouteManager>(tracksystem.get());
 	rollingstockmanager = std::make_unique<RollingStockManager>(game);
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
 	trainmanager->inittrain(State(1,0.8,1));
+	economymanager = std::make_unique<EconomyManager>(game);
 }
 
 Gamestate::~Gamestate()
@@ -32,58 +35,65 @@ Gamestate::~Gamestate()
 
 void Gamestate::update(int ms)
 {
-	int lastmoney = money;
-
 	Tracks::Signaling::update(*tracksystem, ms);
 	trainmanager->update(ms);
 	buildingmanager->update(ms);
-
-	revenue += money-lastmoney;
+	economymanager->update(ms);
 
 	time += ms;
 }
 
 void Gamestate::randommap()
 {
+	auto& publicbuildings = economymanager->thepublic->getbuildings();
+	auto& companystorages = *game->getcontrolmode().storages;
 	for(int i=0; i<6; i++){
-		Vec newpos = randpos(100,50);
 		Vec size = buildingmanager->gettypefromid(brewery).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildingmanager->addbuilding(std::make_unique<Brewery>(game, std::make_unique<Rectangle>(newpos, size.x, size.y)));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
+		buildingmanager->addbuilding(std::make_unique<Brewery>(
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
-		Vec newpos = randpos(200,200);
 		Vec size = buildingmanager->gettypefromid(hopsfield).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildingmanager->addbuilding(std::make_unique<Hopsfield>(game, std::make_unique<Rectangle>(newpos, size.x, size.y)));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
+		buildingmanager->addbuilding(std::make_unique<Hopsfield>(
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<4; i++){
-		Vec newpos = randpos(200,200);
 		Vec size = buildingmanager->gettypefromid(barleyfield).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildingmanager->addbuilding(std::make_unique<Barleyfield>(game, std::make_unique<Rectangle>(newpos, size.x, size.y)));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
+		buildingmanager->addbuilding(std::make_unique<Barleyfield>(
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 	for(int i=0; i<6; i++){
-		Vec newpos = randpos(100,150);
 		Vec size = buildingmanager->gettypefromid(city).size;
+		Vec newpos = randpos(size);
 		int storageextraw = randint(600);
 		int storageextrah = randint(600);
 		int storagex = newpos.x-size.x*0.5-randint(storageextraw);
 		int storagey = newpos.y-size.y*0.5-randint(storageextrah);
-		storages.emplace_back(new Storage(game, storagex, storagey, storageextraw+400, storageextrah+400));
-		buildingmanager->addbuilding(std::make_unique<City>(game, std::make_unique<Rectangle>(newpos, size.x, size.y)));
+		storages.emplace_back(new Storage(game, companystorages, 
+			storagex, storagey, storageextraw+400, storageextrah+400));
+		buildingmanager->addbuilding(std::make_unique<City>(
+			game, std::make_unique<Rectangle>(newpos, size.x, size.y), publicbuildings));
 	}
 }
 
