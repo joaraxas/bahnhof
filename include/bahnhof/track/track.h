@@ -63,8 +63,9 @@ struct Referencehandler
 struct Tracksystem
 {
 public:
-    Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys);
+    Tracksystem(Game& whatgame);
     ~Tracksystem();
+    void buildfromcoords(std::vector<Vec> vs);
     Node* getnode(nodeid node) const;
     Track* gettrack(trackid track) const;
     Switch* getswitch(switchid _switch) const;

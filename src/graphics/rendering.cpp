@@ -12,6 +12,9 @@
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/resources/storage.h"
 
+
+bool nicetracks = true;
+
 Vec randpos(Vec offset)
 {
 	return Vec(randint(MAP_WIDTH-offset.x), randint(MAP_HEIGHT-offset.y));

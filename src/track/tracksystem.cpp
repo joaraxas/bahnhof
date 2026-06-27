@@ -36,14 +36,18 @@ Tracksection& Tracksection::operator+=(const Tracksection& rhs)
 	return *this;
 }
 
-Tracksystem::Tracksystem(Game& whatgame, std::vector<float> xs, std::vector<float> ys)
+Tracksystem::Tracksystem(Game& whatgame)
 	: references{this}
 {
 	game = &whatgame;
-	Node* newnode = new Node(*this, Vec(xs[0], ys[0]), Tangent(0), -1);
+}
+
+void Tracksystem::buildfromcoords(std::vector<Vec> vs)
+{
+	Node* newnode = new Node(*this, vs[0], Tangent(0), -1);
 	addnode(*newnode);
-	for(int iNode = 1; iNode<xs.size(); iNode++){
-		Tracksection section = Input::planconstructionto(*this, newnode, Vec(xs[iNode], ys[iNode]));
+	for(int iNode = 1; iNode<vs.size(); iNode++){
+		Tracksection section = Input::planconstructionto(*this, newnode, vs[iNode]);
 		Input::buildsection(*this, section);
 		newnode = section.nodes.back();
 	}

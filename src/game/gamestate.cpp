@@ -20,12 +20,11 @@
 Gamestate::Gamestate(Game* whatgame)
 {
 	game = whatgame;
-	inittracks();
+	tracksystem = std::make_unique<Tracks::Tracksystem>(*game);
 	routing = std::make_unique<RouteManager>(tracksystem.get());
 	rollingstockmanager = std::make_unique<RollingStockManager>(game);
 	trainmanager = std::make_unique<TrainManager>(tracksystem.get(), *rollingstockmanager);
 	buildingmanager = std::make_unique<BuildingManager>(game);
-	trainmanager->inittrain(State(1,0.8,1));
 	economymanager = std::make_unique<EconomyManager>(game);
 }
 
@@ -45,6 +44,9 @@ void Gamestate::update(int ms)
 
 void Gamestate::randommap()
 {
+	inittracks();
+	trainmanager->inittrain(State(1,0.8,1));
+
 	auto& publicbuildings = economymanager->thepublic->getbuildings();
 	auto& companystorages = *game->getcontrolmode().storages;
 	for(int i=0; i<6; i++){
@@ -99,7 +101,6 @@ void Gamestate::randommap()
 
 void Gamestate::inittracks()
 {
-	std::vector<float> xs = {600,900,1100};
-	std::vector<float> ys = {300,300,400};
-	tracksystem = std::make_unique<Tracks::Tracksystem>(*game, xs, ys);
+	std::vector<Vec> vs = {{600,300},{900,300},{1100,400}};
+	tracksystem->buildfromcoords(vs);
 }
