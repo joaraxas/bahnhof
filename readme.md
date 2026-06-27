@@ -22,7 +22,7 @@ cmake --build build
 and run the binary with 
 ```
 cd build
-./bahnhof
+./bin/bahnhof
 ```
 ### Gameplay
 Breweries require either hops or barley from farms to produce beer. 
