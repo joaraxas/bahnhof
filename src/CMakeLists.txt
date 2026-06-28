@@ -55,15 +55,17 @@ add_library(bahnhof_lib
     economy/economy.cpp
     economy/economymanager.cpp
     economy/slogans.cpp
-    localization/localization.cpp
 )
 
 target_include_directories(bahnhof_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
+
+add_subdirectory(localization)
 
 target_link_libraries(bahnhof_lib PUBLIC
     SDL2::SDL2
     SDL2_image::SDL2_image
     SDL2_ttf::SDL2_ttf
+    localization_lib
 )
 
 target_compile_features(bahnhof_lib PUBLIC cxx_std_20)

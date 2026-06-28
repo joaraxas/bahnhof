@@ -1,7 +1,7 @@
 #pragma once
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
-#include "bahnhof/common/localization.h"
+#include <localization/localization.h>
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;

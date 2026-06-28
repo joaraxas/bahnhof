@@ -3,7 +3,7 @@
 #include "bahnhof/ui/element.h"
 #include "bahnhof/economy/company.h"
 #include "bahnhof/input/controlmode.h"
-#include "bahnhof/common/localization.h"
+#include <localization/localization.h>
 
 class Game;
 class Gamestate;
