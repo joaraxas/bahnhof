@@ -7,6 +7,7 @@ extern TTF_Font* font;
 
 int init();
 
+std::string getpathtoassets();
 int setfontsize(int size);
 SDL_Texture* loadimage(std::string path);
 SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth=0);

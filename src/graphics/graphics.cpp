@@ -51,9 +51,21 @@ int init()
 	return success;
 }
 
+std::string getpathtoassets()
+{
+	char* basepath = SDL_GetBasePath();
+	if(basepath){
+		std::string exedir(basepath);
+		SDL_free(basepath); // free the memory SDL allocated
+		return exedir + "../assets/";
+	}
+	std::cout << "Failed to infer executable path, falling back to guessing" << std::endl;
+	return "../assets/";
+}
+
 int setfontsize(int fontsize)
 {
-	font = TTF_OpenFont("../assets/fonts/Georgia.ttf", fontsize);
+	font = TTF_OpenFont((getpathtoassets() + "fonts/Georgia.ttf").c_str(), fontsize);
     if(font == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
@@ -65,7 +77,7 @@ int setfontsize(int fontsize)
 SDL_Texture* loadimage(std::string path)
 {
 	SDL_Texture* tex = NULL;
-	tex = IMG_LoadTexture(renderer, ("../assets/png/" + path).c_str());
+	tex = IMG_LoadTexture(renderer, (getpathtoassets() + "png/" + path).c_str());
 	if(tex==NULL){
 		std::cout << "Failed to load texture " << path << ": " << IMG_GetError() << std::endl;
 	}
