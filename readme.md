@@ -8,8 +8,7 @@ More will follow.
 ### Build
 This project requires SDL2, SDL2_image, and SDL2_ttf, available at https://www.libsdl.org/
 
-On Unix systems, the libraries are automatically found and linked if they are installed in a standard location. 
-For Windows you need to manually edit the `SDL2_PATH`, `SDL2_IMAGE_PATH`, and `SDL2_TTF_PATH` in CMakeLists.txt to wherever you have installed each of these libraries.
+The libraries are automatically found and linked if they are installed in a standard location. 
 
 Create a `build` folder in this directory, then use cmake to generate the makefile and the binary:
 
