@@ -19,7 +19,6 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 		// straight track must point in dir.radiansup()
 		radius = INFINITY;
 		phi = Angle::zero;
-		aboveprev = true; // define straight track direction so that this always holds
 		if(nextnode->getpos().y > previousnode->getpos().y){
 			// define straight tracks to always point upwards
 			nextnode = &previous;
@@ -31,6 +30,11 @@ Track::Track(Tracksystem& newtracksystem, Node& previous, Node& next, trackid my
 				nextnode = &previous;
 				previousnode = &next;
 			}
+		}
+		aboveprev = true; // this is true except in some rounding edge cases of horizontal tracks
+		Angle trackorientation{nextnode->getpos() - previousnode->getpos()};
+		if(trackorientation.absanglediff(previousnode->getdir().getradiansup())>pi/2){
+			aboveprev = false;
 		}
 	}
 	else{
