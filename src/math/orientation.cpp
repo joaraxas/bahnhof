@@ -7,6 +7,12 @@ bool Angle::isbetween(const Angle& lower, const Angle& upper)
     return _angle>=lower._angle || _angle<=upper._angle;
 }
 
+double Angle::absanglediff(const Angle& other) const
+{
+    // Computes the smallest angle difference between two orientations
+    return abs(anglediff(_angle, other._angle, 2*pi));
+}
+
 Tangent::Tangent(): Tangent(0)
 {}
 

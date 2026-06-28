@@ -24,6 +24,7 @@ struct Angle
     bool isbetween(const Angle& lower, const Angle& upper);
     double getdegrees() const {return _angle*180/pi;};
     double arclength(double radius) {return radius*_angle;};
+    double absanglediff(const Angle&) const;
 
     static const Angle zero;
 
