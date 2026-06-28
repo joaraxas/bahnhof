@@ -55,6 +55,7 @@ add_library(bahnhof_lib
     economy/economy.cpp
     economy/economymanager.cpp
     economy/slogans.cpp
+    localization/localization.cpp
 )
 
 target_include_directories(bahnhof_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
