@@ -102,7 +102,7 @@ class ManageEntity : public TextButton
 {
 public:
     ManageEntity(Host* newpanel) : 
-        TextButton(newpanel, tr("button.company")) {};
+        TextButton(newpanel, tr("button.currententity")) {};
     void leftclick(UIVec mousepos);
     void update(int ms);
 };
@@ -111,7 +111,7 @@ class SwitchControl : public TextButton
 {
 public:
     SwitchControl(Host* newpanel) : 
-        TextButton(newpanel, "Switch use")
+        TextButton(newpanel, tr("button.switchuser"))
         {};
     void leftclick(UIVec mousepos);
 };
@@ -120,7 +120,7 @@ class IncreaseUIScale : public TextButton
 {
 public:
     IncreaseUIScale(Host* p) : 
-        TextButton(p, "Increase UI size") {};
+        TextButton(p, tr("button.increaseuiscale")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -128,7 +128,7 @@ class DecreaseUIScale : public TextButton
 {
 public:
     DecreaseUIScale(Host* p) : 
-        TextButton(p, "Decrease UI size") {};
+        TextButton(p, tr("button.decreaseuiscale")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -296,7 +296,7 @@ class VisitStockmarket : public TextButton
 {
 public:
     VisitStockmarket(Host* newpanel) : 
-        TextButton(newpanel, "Visit stock market") {};
+        TextButton(newpanel, tr("button.visitstockmarket")) {};
     void leftclick(UIVec mousepos);
 };
 
