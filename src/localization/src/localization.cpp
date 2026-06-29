@@ -1,5 +1,6 @@
 #include <fstream>
 #include <unordered_map>
+#include <iostream>
 #include "localization/localization.h"
 
 class Localization
@@ -14,6 +15,10 @@ private:
 bool Localization::load(std::string path)
 {
     std::ifstream file{path};
+    if(!file){
+        std::cerr<<"Failed to load language from path "<<path<<std::endl;
+        return false;
+    }
     std::string line;
     strings.clear();
     
@@ -23,16 +28,20 @@ bool Localization::load(std::string path)
             continue;
         std::string key = line.substr(0, pos);
         std::string sentence = line.substr(pos+1);
+        if(strings.contains(key))
+            std::cout<<"warning: key \""<<key<<"\" duplicated in language, overwriting \""<<strings[key]<<"\" with \""<<sentence<<"\""<<std::endl;
         strings[key] = std::move(sentence);
     }
 
-    file.close();
     return true;
 }
 
 const std::string& Localization::get(std::string id)
 {
-    return strings[id];
+    if(strings.contains(id))
+        return strings[id];
+    static std::string missing = "missing: "+id;
+    return missing;
 }
 
 static Localization loc{};

@@ -46,7 +46,7 @@ class Close : public TextButton
 {
 public:
     Close(Host* newpanel) : 
-        TextButton(newpanel, "Close") {};
+        TextButton(newpanel, tr("button.close")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -54,7 +54,7 @@ class PlaceSignal : public TextButton
 {
 public:
     PlaceSignal(Host* newpanel) : 
-        TextButton(newpanel, "Build signal") {};
+        TextButton(newpanel, tr("button.buildsignal")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -62,7 +62,7 @@ class PlaceTrack : public TextButton
 {
 public:
     PlaceTrack(Host* newpanel) : 
-        TextButton(newpanel, tr("mainmenu.buildtrack")) {};
+        TextButton(newpanel, tr("button.buildtrack")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -70,7 +70,7 @@ class PlaceBuildings : public TextButton
 {
 public:
     PlaceBuildings(Host* newpanel) : 
-        TextButton(newpanel, "Raise building") {};
+        TextButton(newpanel, tr("button.buildbuilding")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -78,7 +78,7 @@ class Bulldoze : public TextButton
 {
 public:
     Bulldoze(Host* newpanel) : 
-        TextButton(newpanel, "Bulldoze") {};
+        TextButton(newpanel, tr("button.bulldoze")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -86,7 +86,7 @@ class ManageRoutes : public TextButton
 {
 public:
     ManageRoutes(Host* newpanel) : 
-        TextButton(newpanel, "Manage routes") {};
+        TextButton(newpanel, tr("button.routes")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -94,7 +94,7 @@ class ManageTrains : public TextButton
 {
 public:
     ManageTrains(Host* newpanel) : 
-        TextButton(newpanel, "Manage trains") {};
+        TextButton(newpanel, tr("button.trains")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -102,7 +102,7 @@ class ManageEntity : public TextButton
 {
 public:
     ManageEntity(Host* newpanel) : 
-        TextButton(newpanel, "Manage company") {};
+        TextButton(newpanel, tr("button.company")) {};
     void leftclick(UIVec mousepos);
     void update(int ms);
 };

@@ -1,1 +1,10 @@
-mainmenu.buildtrack=Place tracks
+button.close=Close
+button.buildtrack=Place tracks
+button.buildsignal=Build signal
+button.buildbuilding=Raise building
+button.bulldoze=Bulldoze
+button.routes=Manage routes
+button.trains=Manage trains
+button.company=Manage company
+button.=
+button.=
