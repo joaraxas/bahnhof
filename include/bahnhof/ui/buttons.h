@@ -136,7 +136,7 @@ class SetRoute : public TextButton
 {
 public:
     SetRoute(Host* newpanel) : 
-        TextButton(newpanel, "No route set") {};
+        TextButton(newpanel, tr("button.train.noroute")) {};
     void update(int ms);
     void leftclick(UIVec mousepos);
 };
@@ -145,7 +145,7 @@ class GoTrain : public TextButton
 {
 public:
     GoTrain(Host* newpanel) : 
-        TextButton(newpanel, "Start route") {};
+        TextButton(newpanel, tr("button.train.go")) {};
     void update(int ms);
     void leftclick(UIVec mousepos);
 };
@@ -154,7 +154,7 @@ class GasTrain : public TextButton
 {
 public:
     GasTrain(Host* newpanel) : 
-        TextButton(newpanel, "Gas") {};
+        TextButton(newpanel, tr("button.train.gas")) {};
     void render(Rendering* r) override;
     void leftpressed(UIVec mousepos, int mslogic);
 };
@@ -163,7 +163,7 @@ class BrakeTrain : public TextButton
 {
 public:
     BrakeTrain(Host* newpanel) : 
-        TextButton(newpanel, "Brake") {};
+        TextButton(newpanel, tr("button.train.brake")) {};
     void leftpressed(UIVec mousepos, int mslogic);
 };
 
@@ -171,7 +171,7 @@ class TurnTrain : public TextButton
 {
 public:
     TurnTrain(Host* newpanel) : 
-        TextButton(newpanel, "Reverse") {};
+        TextButton(newpanel, tr("button.train.reverse")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -179,7 +179,7 @@ class CoupleTrain : public TextButton
 {
 public:
     CoupleTrain(Host* newpanel) : 
-        TextButton(newpanel, "Accept coupling") {};
+        TextButton(newpanel, tr("button.train.acceptcoupling")) {};
     void update(int ms);
     void leftclick(UIVec mousepos);
 };
@@ -202,7 +202,7 @@ class AddTurn : public AddOrder
 {
 public:
     AddTurn(Host* newpanel, Route* whatroute) : 
-        AddOrder(newpanel, whatroute, "Reverse direction") {}
+        AddOrder(newpanel, whatroute, tr("button.order.reverse")) {}
     void leftclick(UIVec mousepos);
 };
 
@@ -210,7 +210,7 @@ class AddCouple : public AddOrder
 {
 public:
     AddCouple(Host* newpanel, Route* whatroute) : 
-        AddOrder(newpanel, whatroute, "Couple") {};
+        AddOrder(newpanel, whatroute, tr("button.order.couple")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -218,7 +218,7 @@ class AddDecouple : public AddOrder
 {
 public:
     AddDecouple(Host* newpanel, Route* whatroute) : 
-        AddOrder(newpanel, whatroute, "Decouple") {};
+        AddOrder(newpanel, whatroute, tr("button.order.decouple")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -226,7 +226,7 @@ class AddLoadResource : public AddOrder
 {
 public:
     AddLoadResource(Host* newpanel, Route* whatroute) : 
-        AddOrder(newpanel, whatroute, "Load resource") {};
+        AddOrder(newpanel, whatroute, tr("button.order.loadunload")) {};
     void leftclick(UIVec mousepos);
 };
 
@@ -234,7 +234,7 @@ class RemoveOrder : public AddOrder
 {
 public:
     RemoveOrder(Host* newpanel, Route* whatroute) : 
-        AddOrder(newpanel, whatroute, "Remove selected") {};
+        AddOrder(newpanel, whatroute, tr("button.order.remove")) {};
     void leftclick(UIVec mousepos);
 };
 

@@ -140,7 +140,7 @@ void SetRoute::update(int ms)
     if(route)
         text = route->name;
     else
-        text = "No route set";
+        text = tr("button.train.noroute");
 }
 
 
@@ -156,9 +156,9 @@ void GoTrain::update(int ms)
 {
     bool go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
     if(go)
-        text = "Stop train";
+        text = tr("button.train.stop");
     else
-        text = "Start route";
+        text = tr("button.train.go");
 }
 
 
@@ -203,9 +203,9 @@ void CoupleTrain::update(int ms)
 {
     bool wantstocouple = dynamic_cast<TrainPanel*>(panel)->gettrain().wantstocouple;
     if(wantstocouple)
-        text = "Reject coupling";
+        text = tr("button.train.rejectcoupling");
     else
-        text = "Accept coupling";
+        text = tr("button.train.acceptcoupling");
 }
 
 namespace Routing

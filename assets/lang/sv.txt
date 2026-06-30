@@ -1,7 +1,7 @@
 button.close = Stäng
 button.buildtrack = Anlägg järnväg
 button.buildsignal = Ny signal
-button.buildbuilding = Ny byggnad
+button.buildbuilding = Anlägg fastighet
 button.bulldoze = Riv
 button.routes = Ruttöversikt
 button.trains = Tågöversikt
@@ -10,3 +10,18 @@ button.switchuser = Växla juridisk person
 button.increaseuiscale = Skala upp gränssnitt
 button.decreaseuiscale = Skala ned gränssnitt
 button.visitstockmarket = Besök börsen
+
+button.train.noroute = Tidtabell saknas
+button.train.go = Inled färd
+button.train.stop = Avbryt färd
+button.train.gas = Accelerera
+button.train.brake = Bromsa
+button.train.reverse = Byt färdriktning
+button.train.acceptcoupling = Förbered koppling
+button.train.rejectcoupling = Avbryt koppling
+
+button.order.reverse = Byt färdriktning
+button.order.couple = Förbered för koppling
+button.order.decouple = Koppla av vagnar
+button.order.loadunload = Stanna för lastning och lossning
+button.order.remove = Tag bort befäl

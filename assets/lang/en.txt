@@ -10,3 +10,18 @@ button.switchuser = Switch use
 button.increaseuiscale = Scale up UI
 button.decreaseuiscale = Scale down UI
 button.visitstockmarket = Visit stock market
+
+button.train.noroute = No route set
+button.train.go = Start route
+button.train.stop = Stop train
+button.train.gas = Gas
+button.train.brake = Brake
+button.train.reverse = Reverse
+button.train.acceptcoupling = Accept coupling
+button.train.rejectcoupling = Reject coupling
+
+button.order.reverse = Reverse direction
+button.order.couple = Prepare for coupling
+button.order.decouple = Decouple wagons
+button.order.loadunload = Load and unload all
+button.order.remove = Remove order
