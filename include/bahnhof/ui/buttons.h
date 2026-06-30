@@ -250,7 +250,7 @@ class PublicOffering : public TextButton
 {
 public:
     PublicOffering(Host* newpanel, Stock& s, PlayerControl& c) : 
-        TextButton(newpanel, "Seasoned equity offering", 120), 
+        TextButton(newpanel, tr("button.stocks.equityoffering"), 120), 
         stock{s}, playercontrol{c} {};
     virtual void update(int ms) override;
     void leftclick(UIVec mousepos);
@@ -263,7 +263,7 @@ class TakeOver : public TextButton
 {
 public:
     TakeOver(Host* newpanel, Stock& s, PlayerControl& c, ControlMode mode) : 
-        TextButton(newpanel, "Attempt takeover", 120), stock{s}, 
+        TextButton(newpanel, tr("button.stocks.takeover"), 120), stock{s}, 
         playercontrol{c}, controlmode{mode} {};
     void leftclick(UIVec mousepos);
 private:
@@ -276,7 +276,7 @@ class Buy : public TextButton
 {
 public:
     Buy(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Buy", 120), stock{s} {};
+        TextButton(newpanel, tr("button.stocks.buy"), 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
@@ -286,7 +286,7 @@ class Sell : public TextButton
 {
 public:
     Sell(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, "Sell", 120), stock{s} {};
+        TextButton(newpanel, tr("button.stocks.sell"), 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
@@ -304,7 +304,7 @@ class ListBuildings : public TextButton
 {
 public:
     ListBuildings(Host* newpanel, Economy::Control<Building>& l) : 
-        TextButton(newpanel, "Show buildings"), list{l} {};
+        TextButton(newpanel, tr("button.listbuildings")), list{l} {};
     void leftclick(UIVec mousepos);
 private:
     Economy::Control<Building>& list;
@@ -314,7 +314,7 @@ class ShowAccounts : public TextButton
 {
 public:
     ShowAccounts(Host* newpanel, Economy::Account& a) : 
-        TextButton(newpanel, "Accounting"), account{a} {};
+        TextButton(newpanel, tr("button.accounting")), account{a} {};
     void leftclick(UIVec mousepos);
 private:
     Economy::Account& account;

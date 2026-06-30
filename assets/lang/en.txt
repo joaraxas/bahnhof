@@ -25,3 +25,10 @@ button.order.couple = Prepare for coupling
 button.order.decouple = Decouple wagons
 button.order.loadunload = Load and unload all
 button.order.remove = Remove order
+
+button.stocks.equityoffering = Seasoned equity offering
+button.stocks.takeover = Attempt takeover
+button.stocks.buy = Buy
+button.stocks.sell = Sell
+button.accounting = Accounting
+button.listbuildings = Show buildings
