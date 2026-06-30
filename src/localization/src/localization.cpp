@@ -27,7 +27,11 @@ bool Localization::load(std::string path)
         if(pos == std::string::npos)
             continue;
         std::string key = line.substr(0, pos);
-        std::string sentence = line.substr(pos+1);
+        key.erase(remove_if(key.begin(), key.end(), isspace), key.end());
+        if(key.find('#') != std::string::npos)
+            continue;
+        std::string sentence = line.substr(pos + 1);
+        sentence = sentence.substr(sentence.find_first_not_of(' '));
         if(strings.contains(key))
             std::cout<<"warning: key \""<<key<<"\" duplicated in language, overwriting \""<<strings[key]<<"\" with \""<<sentence<<"\""<<std::endl;
         strings[key] = std::move(sentence);
