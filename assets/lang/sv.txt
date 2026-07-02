@@ -32,3 +32,8 @@ button.stocks.buy = Köp
 button.stocks.sell = Sälj
 button.accounting = Bokföring
 button.listbuildings = Fastighetsöversikt
+
+tooltip.bulldozing = River
+tooltip.editingroute = Anpassar tidtabell
+tooltip.trackbuilder.startpoint = Välj banans utgångspunkt
+tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.

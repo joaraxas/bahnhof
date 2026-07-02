@@ -5,6 +5,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/buildings/buildingmanager.h"
 #include "bahnhof/ui/ui.h"
+#include "localization/localization.h"
 
 TrackBuilder::TrackBuilder(InputManager& i, Game* g) : 
         Builder(i, g), ui(g->getui()) {};
@@ -63,7 +64,7 @@ void TrackBuilder::render(Rendering* r)
         }
     }
     else
-        ui.addtooltip("Click track startpoint");
+        ui.addtooltip(tr("tooltip.trackbuilder.startpoint"));
 
     Tracks::Input::discardsection(section);
 }

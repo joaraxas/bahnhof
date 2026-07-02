@@ -32,3 +32,8 @@ button.stocks.buy = Buy
 button.stocks.sell = Sell
 button.accounting = Accounting
 button.listbuildings = Show buildings
+
+tooltip.bulldozing = Bulldozing
+tooltip.editingroute = Editing route
+tooltip.trackbuilder.startpoint = Click track startpoint
+tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.

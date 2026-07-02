@@ -320,7 +320,7 @@ Trade::Trade(Host* newpanel, Building& b) :
 void Trade::mousehover(UIVec pos, int ms)
 {
     if(!game->getcontrolmode().buildings){
-        ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
+        ui->addtooltip(tr("tooltip.usermodecantownbuilding"));
         return;
     }
     TextButton::mousehover(pos, ms);

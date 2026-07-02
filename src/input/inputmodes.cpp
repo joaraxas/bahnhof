@@ -7,6 +7,7 @@
 #include "bahnhof/routing/routing.h"
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/ui/ui.h"
+#include "localization/localization.h"
 
 
 IdleMode::IdleMode(Game& g) :
@@ -61,7 +62,7 @@ void DeleteMode::rightclickmap(Vec mappos)
 
 void DeleteMode::render(Rendering* r)
 {
-    ui.addtooltip("Bulldozing");
+    ui.addtooltip(tr("tooltip.bulldozing"));
 }
 
 
@@ -85,7 +86,7 @@ void RouteMode::render(Rendering* r)
         delete neworder;
     }
     else
-        ui.addtooltip("Editing route");
+        ui.addtooltip(tr("tooltip.editingroute"));
 }
 
 void RouteMode::leftclickmap(Vec mappos)
