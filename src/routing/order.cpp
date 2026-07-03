@@ -5,6 +5,7 @@
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/ui/ui.h"
+#include <localization/localization.h>
 
 
 void Order::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
@@ -17,7 +18,7 @@ void Order::invalidate()
 {
 	if(valid){
 		valid = false;
-		description = "Invalid: " + description;
+		description = tr("order.invalid", description);
 	}
 }
 
@@ -26,7 +27,7 @@ Gotostate::Gotostate(State whichstate, bool mustpass)
 	order = ordertype::gotostate;
 	state = whichstate;
 	pass = mustpass;
-	description = "Reach state at track " + std::to_string(state.track) + " and nodedist " + std::to_string(state.nodedist);
+	description = tr("order.go.detailed", state.track, state.nodedist);
 }
 
 void Gotostate::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
@@ -49,11 +50,11 @@ Setsignal::Setsignal(signalid whichsignal, int redgreenorflip)
     signal = whichsignal;
     redgreenflip = redgreenorflip;
 	if(redgreenflip==0)
-		description = "Set signal " + std::to_string(signal) + " to red";
+		description = tr("order.signal.red", signal);
 	else if(redgreenflip==1)
-		description = "Set signal " + std::to_string(signal) + " to green";
+		description = tr("order.signal.green", signal);
 	else if(redgreenflip==2)
-		description = "Flip signal " + std::to_string(signal);
+		description = tr("order.signal.flip", signal);
 }
 
 void Setsignal::assignroute(Route* newroute, Tracks::Tracksystem* tracksystem)
@@ -80,18 +81,17 @@ Setswitch::Setswitch(switchid whichswitch, int whichswitchstate)
     _switch = whichswitch;
 	switchstate = whichswitchstate;
 	flip = false;
-	std::string switchname = "switch " + std::to_string(_switch);
 	if(switchstate == -1){
 		flip = true;
-		description = "Flip " + switchname;
+		description = tr("order.switch.flip", _switch);
 	}
 	else{
 		if(switchstate==0)
-			description = "Set " + switchname + " to left";
-		else if(switchstate==1)
-			description = "Set " + switchname + " to right";
+			description = tr("order.switch.left", _switch);
+		else if(switchstate==1) // TODO: this reads "right" for multitrack switches
+			description = tr("order.switch.right", _switch);
 		else
-			description = "Set " + switchname + " to track no. " + std::to_string(switchstate+1) + " counting from left";
+			description = tr("order.switch.totrack", _switch, switchstate+1);
 	}
 }
 

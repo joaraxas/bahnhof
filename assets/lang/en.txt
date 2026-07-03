@@ -41,3 +41,14 @@ tooltip.editingroute = Editing route
 tooltip.addorder = Add command:
 tooltip.trackbuilder.startpoint = Click track startpoint
 tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.
+
+// many of these are unused
+order.invalid = Invalid: {}
+order.go.detailed = Reach track {} and nodedist {}
+order.signal.green = Set signal {} to green
+order.signal.red = Set signal {} to red
+order.signal.flip = Flip signal {}
+order.switch.flip = Flip switch {}
+order.switch.left = Set switch {} left
+order.switch.right = Set switch {} right
+order.switch.totrack = Set switch {} to track {} counting from left

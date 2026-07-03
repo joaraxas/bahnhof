@@ -41,3 +41,14 @@ tooltip.editingroute = Anpassar tidtabell
 tooltip.addorder = Infoga befäl:
 tooltip.trackbuilder.startpoint = Välj banans utgångspunkt
 tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.
+
+# flera av dessa används inte
+order.invalid = Ogiltig: {}
+order.go.detailed = Ankom vid spår {} med knutpunktsavstånd {}
+order.signal.green = Ställ signal {} till grönt
+order.signal.red = Ställ signal {} till rött
+order.signal.flip = Ställ om signal {}
+order.switch.flip = Ställ om växel {}
+order.switch.left = Ställ växel {} till vänster
+order.switch.right = Ställ växel {} till höger
+order.switch.totrack = Ställ växel {} till spår {} från vänster
