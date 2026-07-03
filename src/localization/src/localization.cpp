@@ -42,18 +42,19 @@ bool Localization::load(std::string path)
 
 const std::string& Localization::get(std::string id)
 {
-    if(strings.contains(id))
-        return strings[id];
+    auto it = strings.find(id);
+    if(it != strings.end())
+        return it->second;
     static std::string missing = "missing: "+id;
     return missing;
 }
 
 static Localization loc{};
 
-const std::string& tr(std::string id){
-    return loc.get(id);
-}
-
 bool loadlanguage(std::string path){
     return loc.load(path);
+}
+
+const std::string& tr(std::string id){
+    return loc.get(id);
 }
