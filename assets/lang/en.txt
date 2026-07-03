@@ -28,12 +28,16 @@ button.order.remove = Remove order
 
 button.stocks.equityoffering = Seasoned equity offering
 button.stocks.takeover = Attempt takeover
-button.stocks.buy = Buy
-button.stocks.sell = Sell
+button.stocks.buy = Buy {} shares
+button.stocks.sell = Sell {} shares
 button.accounting = Accounting
 button.listbuildings = Show buildings
 
+button.building.buy = Buy ({})
+button.building.sell = Sell ({})
+
 tooltip.bulldozing = Bulldozing
 tooltip.editingroute = Editing route
+tooltip.addorder = Add command:
 tooltip.trackbuilder.startpoint = Click track startpoint
 tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.

@@ -28,12 +28,16 @@ button.order.remove = Tag bort befäl
 
 button.stocks.equityoffering = Nyemisson
 button.stocks.takeover = Kalla till bolagsstämma
-button.stocks.buy = Köp
-button.stocks.sell = Sälj
+button.stocks.buy = Köp {} aktier
+button.stocks.sell = Sälj {} aktier
 button.accounting = Bokföring
 button.listbuildings = Fastighetsöversikt
 
+button.building.buy = Förvärva ({})
+button.building.sell = Avyttra ({})
+
 tooltip.bulldozing = River
 tooltip.editingroute = Anpassar tidtabell
+tooltip.addorder = Infoga befäl:
 tooltip.trackbuilder.startpoint = Välj banans utgångspunkt
 tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.

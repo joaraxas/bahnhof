@@ -273,7 +273,7 @@ void Buy::leftclick(UIVec mousepos)
 {
     game->getcontrolmode().portfolio->buy(
         game->getgamestate().geteconomymanager().thepublic->getinvestments(),
-        stock, 5
+        stock, numshares
     );
 }
 
@@ -282,7 +282,7 @@ void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().thepublic->getinvestments().buy(
         *game->getcontrolmode().portfolio,
-        stock, 5
+        stock, numshares
     );
 }
 
@@ -308,7 +308,9 @@ void ShowAccounts::leftclick(UIVec mousepos)
 
 
 Trade::Trade(Host* newpanel, Building& b) :
-        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
+        TextButton{newpanel,
+                   tr("button.building.buy", std::string(b.getvalue()))},
+        building{b}
 {
     BuildingOwner* playerownership = game->getcontrolmode().buildings;
     updatetext(&building.getowner() == playerownership);
@@ -347,9 +349,9 @@ void Trade::leftclick(UIVec mousepos)
 void Trade::updatetext(bool isplayerowned)
 {
     if(isplayerowned)
-        text = "Sell\n(" + std::string(building.getvalue()) + ")";
+        text = tr("button.building.sell", std::string(building.getvalue()));
     else
-        text = "Buy\n(" + std::string(building.getvalue()) + ")";
+        text = tr("button.building.buy", std::string(building.getvalue()));
 }
 
 } //end namespace UI

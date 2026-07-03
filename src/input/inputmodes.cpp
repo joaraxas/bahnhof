@@ -81,7 +81,7 @@ void RouteMode::render(Rendering* r)
     Order* neworder = Tracks::Input::generateorderat(
             tracksystem, input.mapmousepos());
     if(neworder){
-        ui.addtooltip("Add order:");
+        ui.addtooltip(tr("tooltip.addorder"));
         ui.addtooltip(neworder->description);
         delete neworder;
     }

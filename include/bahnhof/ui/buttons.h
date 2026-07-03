@@ -274,9 +274,10 @@ private:
 
 class Buy : public TextButton
 {
+    static constexpr int numshares = 5;
 public:
     Buy(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, tr("button.stocks.buy"), 120), stock{s} {};
+        TextButton(newpanel, tr("button.stocks.buy", numshares), 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
@@ -284,9 +285,10 @@ private:
 
 class Sell : public TextButton
 {
+    static constexpr int numshares = 5;
 public:
     Sell(Host* newpanel, Stock& s) : 
-        TextButton(newpanel, tr("button.stocks.sell"), 120), stock{s} {};
+        TextButton(newpanel, tr("button.stocks.sell", numshares), 120), stock{s} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
