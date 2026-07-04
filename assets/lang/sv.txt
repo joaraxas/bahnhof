@@ -100,3 +100,9 @@ buildings.wagonfactory = Mekanisk verkstad
 rollingstock.tankloco = Tanklok
 rollingstock.openwagon = Flakvagn
 rollingstock.refrigeratorcar = Kylvagn
+
+payments.stocks = Aktier
+payments.rollingstock = Fordon
+payments.buildings = Fastigheter
+payments.tickets = Biljetter
+payments.unknown = Okänt

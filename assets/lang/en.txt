@@ -100,3 +100,9 @@ buildings.wagonfactory = Locomotive works
 rollingstock.tankloco = Tank locomotive
 rollingstock.openwagon = Open wagon
 rollingstock.refrigeratorcar = Refrigerator car
+
+payments.stocks = Stock investments
+payments.rollingstock = Rolling stock
+payments.buildings = Buildings
+payments.tickets = Ticket sales
+payments.unknown = Unknown
