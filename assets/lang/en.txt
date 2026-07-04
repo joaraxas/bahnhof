@@ -106,3 +106,11 @@ payments.rollingstock = Rolling stock
 payments.buildings = Buildings
 payments.tickets = Ticket sales
 payments.unknown = Unknown
+
+slogans.0 = Where the wheels keep on turning
+slogans.1 = Your satisfaction is our obligation
+slogans.2 = Excellence delivered
+slogans.3 = Speed and comfort
+slogans.4 = Delivering value - every day
+slogans.5 = Full steam ahead!
+slogans.6 = On the right track

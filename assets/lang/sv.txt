@@ -106,3 +106,11 @@ payments.rollingstock = Fordon
 payments.buildings = Fastigheter
 payments.tickets = Biljetter
 payments.unknown = Okänt
+
+slogans.0=Där hjulen alltid rullar
+slogans.1=Lägger på ett kol
+slogans.2=Går som tåget
+slogans.3=Med högsta tillåtna hastighet
+slogans.4=Tag tåget i sommar
+slogans.5=Full fart framåt!
+slogans.6=På rätt spår
