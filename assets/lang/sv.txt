@@ -89,3 +89,14 @@ title.buildings = Fastigheter
 title.accounts = Bokföring
 title.accounts.income = Inkomster
 title.accounts.expenses = Utgifter
+thepublic = Allmänheten
+
+buildings.brewery = Bryggeri
+buildings.hopsfield = Humlegård
+buildings.barleyfield = Kornåker
+buildings.city = Stad
+buildings.wagonfactory = Mekanisk verkstad
+
+rollingstock.tankloco = Tanklok
+rollingstock.openwagon = Flakvagn
+rollingstock.refrigeratorcar = Kylvagn

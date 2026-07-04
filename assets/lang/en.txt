@@ -89,3 +89,14 @@ title.buildings = Buildings
 title.accounts = Accounts
 title.accounts.income = Revenue
 title.accounts.expenses = Expenses
+thepublic = The public
+
+buildings.brewery = Brewery
+buildings.hopsfield = Hops field
+buildings.barleyfield = Barley field
+buildings.city = City
+buildings.wagonfactory = Locomotive works
+
+rollingstock.tankloco = Tank locomotive
+rollingstock.openwagon = Open wagon
+rollingstock.refrigeratorcar = Refrigerator car
