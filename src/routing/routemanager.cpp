@@ -3,6 +3,7 @@
 #include "bahnhof/ui/panels.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
+#include <localization/localization.h>
 
 
 RouteManager::RouteManager(Tracks::Tracksystem* tracks)
@@ -12,7 +13,7 @@ RouteManager::RouteManager(Tracks::Tracksystem* tracks)
 
 void RouteManager::addroute()
 {
-	Route* newroute = new Route(tracksystem, "Route "+std::to_string(routes.size()+1));
+	Route* newroute = new Route(tracksystem, tr("routenr", routes.size()+1));
 	routes.emplace_back(newroute);
 }
 

@@ -9,7 +9,7 @@ button.currententity = Manage company
 button.switchuser = Switch use
 button.increaseuiscale = Scale up UI
 button.decreaseuiscale = Scale down UI
-button.visitstockmarket = Visit stock market
+button.visitstockmarket = Visit stock exchange
 
 button.train.noroute = No route set
 button.train.go = Start route
@@ -73,8 +73,19 @@ minutes = {} min
 fps = {} fps
 kmh = {} km/h
 tracks = {} tracks
+trainnr = Train {}
+routenr = Route {}
+numshares = {} shares
 
 table.stock.marketcap = Market cap {}
 table.stock.shareprice = Share price {}
 table.account.cash = Cash {}
-numshares = {} shares
+
+title.company.owners = Major shareholders
+title.company.interests = Company interests
+title.investor.interests = Interests
+title.stockmarket = Stock exchange
+title.buildings = Buildings
+title.accounts = Accounts
+title.accounts.income = Revenue
+title.accounts.expenses = Expenses

@@ -66,15 +66,26 @@ order.wipe = Tag bort alla tidigare befäl
 table.routes.new = Ny tidtabell
 table.routes.none = Inga förhandenvarande tidtabeller
 table.control.none = Ingen juridisk person kan väljas
-table.orders.none = Inga befäl har tillfogats än
+table.orders.none = Inga befäl har ännu tillfogats
 table.buildings.none = Inga fastigheter ägs
 
 minutes = {} min
 fps = {} rutor/s
 kmh = {} km/tim
 tracks = {} spår
+trainnr = Tåg {}
+routenr = Tidtabell {}
+numshares = {} aktier
 
 table.stock.marketcap = Börsvärde {}
 table.stock.shareprice = Kurs {}
 table.account.cash = Kontanta medel: {}
-numshares = {} aktier
+
+title.company.owners = Största ägare
+title.company.interests = Innehav
+title.investor.interests = Innehav
+title.stockmarket = Börsen
+title.buildings = Fastigheter
+title.accounts = Bokföring
+title.accounts.income = Inkomster
+title.accounts.expenses = Utgifter
