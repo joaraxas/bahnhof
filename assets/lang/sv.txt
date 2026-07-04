@@ -59,3 +59,18 @@ order.assignroute = , tilldela det bortkopplade tåget tidtabell {}
 order.reverse = Byt färdriktning
 order.loadunload = Stanna för lastning och lossning
 order.wipe = Tag bort alla tidigare befäl
+
+table.routes.new = Ny tidtabell
+table.routes.none = Inga förhandenvarande tidtabeller
+table.control.none = Ingen juridisk person kan väljas
+table.orders.none = Inga befäl har tillfogats än
+table.buildings.none = Inga fastigheter ägs
+
+minutes = {} min
+fps = {} rutor/s
+kmh = {} km/tim
+
+table.stock.marketcap = Börsvärde {}
+table.stock.shareprice = Kurs {}
+table.account.cash = Kontanta medel: {}
+numshares = {} aktier

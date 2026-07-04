@@ -59,3 +59,18 @@ order.assignroute = , assign route {} to other half
 order.reverse = Switch travel direction
 order.loadunload = Load and unload all available goods
 order.wipe = Erase all previous commands
+
+table.routes.new = New route
+table.routes.none = No routes created yet
+table.control.none = You have no say in anything
+table.orders.none = No orders added yet
+table.buildings.none = No buildings owned
+
+minutes = {} min
+fps = {} fps
+kmh = {} km/h
+
+table.stock.marketcap = Market cap {}
+table.stock.shareprice = Share price {}
+table.account.cash = Cash {}
+numshares = {} shares
