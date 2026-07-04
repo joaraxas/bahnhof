@@ -40,6 +40,9 @@ tooltip.bulldozing = Bulldozing
 tooltip.editingroute = Editing route
 tooltip.addorder = Add command:
 tooltip.trackbuilder.startpoint = Click track startpoint
+tooltip.trackbuilder.minradius = Min radius {}
+tooltip.trackbuilder.radius = Radius {}
+tooltip.trackbuilder.infradius = Straight
 tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.
 
 // many of these are unused
@@ -69,6 +72,7 @@ table.buildings.none = No buildings owned
 minutes = {} min
 fps = {} fps
 kmh = {} km/h
+tracks = {} tracks
 
 table.stock.marketcap = Market cap {}
 table.stock.shareprice = Share price {}

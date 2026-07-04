@@ -40,6 +40,9 @@ tooltip.bulldozing = River
 tooltip.editingroute = Anpassar tidtabell
 tooltip.addorder = Infoga befäl:
 tooltip.trackbuilder.startpoint = Välj banans utgångspunkt
+tooltip.trackbuilder.minradius = Minsta kurvradie {}
+tooltip.trackbuilder.radius = Kurvradie {}
+tooltip.trackbuilder.infradius = Raksträcka
 tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.
 
 # flera av dessa används inte
@@ -69,6 +72,7 @@ table.buildings.none = Inga fastigheter ägs
 minutes = {} min
 fps = {} rutor/s
 kmh = {} km/tim
+tracks = {} spår
 
 table.stock.marketcap = Börsvärde {}
 table.stock.shareprice = Kurs {}
