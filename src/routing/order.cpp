@@ -118,23 +118,24 @@ Decouple::Decouple(int keephowmany, Route* givewhatroute)
 	order = ordertype::decouple;
 	where = keephowmany;
 	route = givewhatroute;
-	description = "Decouple";
-	if(where>1)
-		description += " " + std::to_string(where) + " wagons";
+	if(where==1)
+		description = tr("order.decouple.1");
+	else
+		description = tr("order.decouple.n", where);
 	if(route)
-		description += ", assign route " + route->name + " to other half";
+		description += tr("order.assignroute", route->name);
 }
 
 Turn::Turn()
 {
 	order = ordertype::turn;
-	description = "Switch travel direction";
+	description = tr("order.reverse");
 }
 
 Couple::Couple()
 {
 	order = ordertype::couple;
-	description = "Prepare for coupling";
+	description = tr("order.couple");
 }
 
 Loadresource::Loadresource()
@@ -144,13 +145,13 @@ Loadresource::Loadresource()
 	anyresource = true;
 	loading = true;
 	unloading = true;
-	description = "Load and unload all possible cargo";
+	description = tr("order.loadunload");
 }
 
 Wipe::Wipe()
 {
 	order = ordertype::wipe;
-	description = "Wipe all previous orders";
+	description = tr("order.wipe");
 }
 
 void Order::renderlabel(Rendering* r, Vec pos, int number, SDL_Color bgrcol, SDL_Color textcol)

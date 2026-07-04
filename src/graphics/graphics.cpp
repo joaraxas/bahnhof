@@ -50,7 +50,7 @@ int init()
 	if(res<0)
 		success = false;
 
-	success &= loadlanguage(getpathtoassets() + "lang/sv.txt");
+	success &= loadlanguage(getpathtoassets() + "lang/en.txt");
 	return success;
 }
 
