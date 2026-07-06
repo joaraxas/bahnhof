@@ -7,7 +7,7 @@ class Localization
 {
 public:
     bool load(std::string path);
-    const std::string& get(std::string id);
+    const std::string& get(const std::string& id);
 private:
     std::unordered_map<std::string, std::string> strings;
 };
@@ -40,7 +40,7 @@ bool Localization::load(std::string path)
     return true;
 }
 
-const std::string& Localization::get(std::string id)
+const std::string& Localization::get(const std::string& id)
 {
     auto it = strings.find(id);
     if(it != strings.end())
@@ -55,6 +55,6 @@ bool loadlanguage(std::string path){
     return loc.load(path);
 }
 
-const std::string& tr(std::string id){
+const std::string& tr(const std::string& id){
     return loc.get(id);
 }
