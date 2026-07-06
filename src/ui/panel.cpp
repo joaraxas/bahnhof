@@ -276,12 +276,12 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 				create<PublicOffering>(stock, playercontrol.getcontrol())
 			),
 			create<VBox>(
-				create<Text>("Major owners"),
+				create<Text>(tr("title.company.owners")),
 				create<OwnersTable>(stock),
 				create<ShowAccounts>(account)
 			),
 			create<VBox>(
-				create<Text>("Company interests"),
+				create<Text>(tr("title.company.interests")),
 				create<InvestmentsTable>(portfolio),
 				create<ListBuildings>(buildings),
 				create<Close>()
@@ -307,7 +307,7 @@ InvestorPanel::InvestorPanel(InterfaceManager* newui,
 				create<ShowAccounts>(account)
 			),
 			create<VBox>(
-				create<Text>("Interests"),
+				create<Text>(tr("title.investor.interests")),
 				create<InvestmentsTable>(portfolio)
 			)
 		),
@@ -326,7 +326,7 @@ ThePublicPanel::ThePublicPanel(InterfaceManager* newui,
 	setlayout(
 	create<VBox>(
 		create<Text>(name),
-		create<Text>("Interests"),
+		create<Text>(tr("title.investor.interests")),
 		create<InvestmentsTable>(portfolio),
 		create<Close>()
 	)
@@ -342,7 +342,7 @@ StockmarketPanel::StockmarketPanel(InterfaceManager* newui,
 {
 	setlayout(
 	create<VBox>(
-		create<Text>("Stock market"),
+		create<Text>(tr("title.stockmarket")),
 		create<StocksTable>(stocks),
 		create<Close>()
 	)
@@ -359,7 +359,7 @@ PossessionsPanel<Building>::PossessionsPanel(InterfaceManager* newui,
 {
 	setlayout(
 	create<VBox>(
-		create<Text>("Buildings"),
+		create<Text>(tr("title.buildings")),
 		create<PossessionsTable<Building>>(poss),
 		create<Close>()
 	)
@@ -375,12 +375,12 @@ AccountPanel::AccountPanel(InterfaceManager* newui, const PaymentList& income,
 {
 	setlayout(
 	create<VBox>(
-		create<Text>("Accounts"),
+		create<Text>(tr("title.accounts")),
 		create<HBox>(
 			create<VBox>(
-				create<Text>("Income"),
+				create<Text>(tr("title.accounts.income")),
 				create<IncomeTable>(income),
-				create<Text>("Expenses"),
+				create<Text>(tr("title.accounts.expenses")),
 				create<IncomeTable>(expenses)
 			)
 		),

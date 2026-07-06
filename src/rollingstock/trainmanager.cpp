@@ -1,3 +1,4 @@
+#include <localization/localization.h>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/track/track.h"
 #include "bahnhof/common/gamestate.h"
@@ -131,7 +132,5 @@ void TrainManager::inittrain(State startstate)
 
 std::string TrainManager::generatetrainname()
 {
-	std::string name = "Train ";
-	name += std::to_string(size(trains));
-	return name;
+	return tr("trainnr", size(trains));
 }

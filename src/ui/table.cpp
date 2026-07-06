@@ -1,4 +1,5 @@
-#include<format>
+#include <format>
+#include <localization/localization.h>
 #include "bahnhof/ui/ui.h"
 #include "bahnhof/ui/tables.h"
 #include "bahnhof/ui/tablelines.h"
@@ -216,7 +217,7 @@ void RouteDropdown::update(int ms)
     names = routing.getroutenames();
     ids = routing.getrouteids();
     if(names.size()==0){
-        lines.emplace_back(new TableLine(panel, this, "No routes created yet"));
+        lines.emplace_back(new TableLine(panel, this, tr("table.routes.none")));
     }
     else
         for(int iRoute = 0; iRoute<names.size(); iRoute++){
@@ -238,7 +239,7 @@ void ControlModeDropdown::update(int ms)
 	lines.clear();
     auto modes = game->getcontrolmanager().getavailablecontrolmodes();
     if(modes.size()==0){
-        lines.emplace_back(new TableLine(panel, this, "You have no say in anything"));
+        lines.emplace_back(new TableLine(panel, this, tr("table.control.none")));
     }
     else
         for(int iMode = 0; iMode<modes.size(); iMode++){
@@ -261,10 +262,11 @@ void MainInfoTable::update(int ms)
     Gamestate& gamestate = ui->getgame().getgamestate();
     InputManager& input = ui->getgame().getinputmanager();
     auto& controlmode = ui->getgame().getcontrolmode();
+
     lines.clear();
     lines.emplace_back(new TableLine(panel, this, std::string(controlmode.account->getvalue())));
-    lines.emplace_back(new TableLine(panel, this, std::to_string(int(gamestate.time*0.001/60)) + " min"));
-    lines.emplace_back(new TableLine(panel, this, std::to_string(game->gettimemanager().getfps()) + " fps"));
+    lines.emplace_back(new TableLine(panel, this, tr("minutes", int(gamestate.time*0.001/60))));
+    lines.emplace_back(new TableLine(panel, this, tr("fps", game->gettimemanager().getfps())));
     lines.emplace_back(new TableLine(panel, this, std::to_string(int(input.mapmousepos().x))+","+std::to_string(int(input.mapmousepos().y))));
 }
 
@@ -303,8 +305,7 @@ void TrainInfoTable::update(int ms)
     lines.clear();
     float mps = abs(pixelstometers(info.speed));
     float kmh = mps*3.6;
-    lines.emplace_back(new TableLine(panel, this, std::format("{0:.1f} km/h", kmh)));
-    // lines.emplace_back(new TableLine(panel, this, std::format("{0:.1f} m/s", abs(mps))));
+    lines.emplace_back(new TableLine(panel, this, tr("kmh", std::format("{0:.1f}", kmh))));
 }
 
 
@@ -324,7 +325,7 @@ void RouteTable::update(int ms)
         std::string name = names[iRoute];
         lines.emplace_back(new TableLine(panel, this, name));
     }
-    lines.emplace_back(new TableLine(panel, this, "New route"));
+    lines.emplace_back(new TableLine(panel, this, tr("table.routes.new")));
 }
 
 void RouteTable::lineclicked(int index)
@@ -356,7 +357,7 @@ void OrderTable::update(int ms)
         }
     }
     if(lines.size() == 0)
-        lines.emplace_back(new TableLine(panel, this, "No orders yet"));
+        lines.emplace_back(new TableLine(panel, this, tr("table.orders.none")));
 }
 
 void OrderTable::render(Rendering* r)
@@ -453,13 +454,13 @@ void CompanyInfoTable::update(int ms)
     lines.clear();
     lines.emplace_back(
         new TableLine(panel, this, 
-        "Market cap " + std::string(stock.getvaluation())));
+        tr("table.stock.marketcap", std::string(stock.getvaluation()))));
     lines.emplace_back(
         new TableLine(panel, this, 
-        "Share price " + std::string(stock.getshareprice())));
+        tr("table.stock.shareprice", std::string(stock.getshareprice()))));
     lines.emplace_back(
         new TableLine(panel, this, 
-        "Cash " + std::string(account.getvalue())));
+        tr("table.account.cash", std::string(account.getvalue()))));
 }
 
 
@@ -476,7 +477,7 @@ void OwnersTable::update(int ms)
         lines.emplace_back(
             new TableLine(panel, this, 
             entity->getname() + ": " + 
-            std::to_string(stake->getamount())+ " shares " + 
+            tr("numshares", stake->getamount())+ ", " + 
             std::format("{0:.1f} %", 100.0*stake->getamount() / 
                 stock.getnumshares()
             )
@@ -496,7 +497,8 @@ void AccountInfoTable::update(int ms)
 {
     lines.clear();
     lines.emplace_back(
-        new TableLine(panel, this, "Cash: "+std::string(account.getvalue()))
+        new TableLine(panel, this, tr("table.account.cash", 
+                                std::string(account.getvalue())))
     );
 }
 
@@ -529,8 +531,7 @@ void InvestmentsTable::update(int ms)
         lines.emplace_back(
             new TableLine(panel, this, 
             stock->getentity().getname() + 
-            ": " + std::to_string(stake->getamount())
-            + " shares"));
+            ": " + tr("numshares", stake->getamount())));
         stocks.push_back(stock);
     }
 }
@@ -594,7 +595,7 @@ void PossessionsTable<Building>::update(int ms)
     if(lines.size() == 0){
         lines.emplace_back(
             new TableLine(panel, this, 
-                "No buildings owned")
+                tr("table.buildings.none"))
         );
     }
 }

@@ -1,21 +1,13 @@
+#include <localization/localization.h>
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/common/math.h"
-
-constexpr auto slogans = std::to_array<const char*> ({
-    "Where the wheels keep on turning",
-    "Your satisfaction is our obligation",
-    "Excellence delivered",
-    "Speed and comfort",
-    "Delivering value - every day",
-    "Full steam ahead!",
-    "On the right track"
-});
 
 namespace Economy{
 
 std::string generateslogan() {
-    int num = randint(slogans.size()-1);
-    return slogans[num];
+    int num = randint(7-1);
+    std::string key = "slogans."+std::to_string(num);
+    return tr(key);
 }
 
 } // namespace Economy

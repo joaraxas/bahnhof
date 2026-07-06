@@ -1,4 +1,5 @@
 #pragma once
+#include <localization/localization.h>
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
 #include "entity.h"
@@ -29,7 +30,7 @@ public:
     Control<Building>& getbuildings() {return buildings;} // might remove
 private:
     PlayerControl playercontrol{false};
-    std::string name{"The public"};
+    std::string name{tr("thepublic")};
     Account account;
     Portfolio portfolio;
     Control<Building> buildings;

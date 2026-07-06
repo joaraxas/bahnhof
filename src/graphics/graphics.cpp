@@ -1,6 +1,7 @@
 #pragma once
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/graphics/rendering.h"
+#include <localization/localization.h>
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -48,6 +49,8 @@ int init()
 	res = setfontsize(12);
 	if(res<0)
 		success = false;
+
+	success &= loadlanguage(getpathtoassets() + "lang/en.txt");
 	return success;
 }
 

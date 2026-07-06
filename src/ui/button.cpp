@@ -140,7 +140,7 @@ void SetRoute::update(int ms)
     if(route)
         text = route->name;
     else
-        text = "No route set";
+        text = tr("button.train.noroute");
 }
 
 
@@ -156,9 +156,9 @@ void GoTrain::update(int ms)
 {
     bool go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
     if(go)
-        text = "Stop train";
+        text = tr("button.train.stop");
     else
-        text = "Start route";
+        text = tr("button.train.go");
 }
 
 
@@ -203,9 +203,9 @@ void CoupleTrain::update(int ms)
 {
     bool wantstocouple = dynamic_cast<TrainPanel*>(panel)->gettrain().wantstocouple;
     if(wantstocouple)
-        text = "Reject coupling";
+        text = tr("button.train.rejectcoupling");
     else
-        text = "Accept coupling";
+        text = tr("button.train.acceptcoupling");
 }
 
 namespace Routing
@@ -273,7 +273,7 @@ void Buy::leftclick(UIVec mousepos)
 {
     game->getcontrolmode().portfolio->buy(
         game->getgamestate().geteconomymanager().thepublic->getinvestments(),
-        stock, 5
+        stock, numshares
     );
 }
 
@@ -282,7 +282,7 @@ void Sell::leftclick(UIVec mousepos)
 {
     game->getgamestate().geteconomymanager().thepublic->getinvestments().buy(
         *game->getcontrolmode().portfolio,
-        stock, 5
+        stock, numshares
     );
 }
 
@@ -308,7 +308,9 @@ void ShowAccounts::leftclick(UIVec mousepos)
 
 
 Trade::Trade(Host* newpanel, Building& b) :
-        TextButton{newpanel, "Buy\n(" + std::string(b.getvalue()) + ")"}, building{b}
+        TextButton{newpanel,
+                   tr("button.building.buy", std::string(b.getvalue()))},
+        building{b}
 {
     BuildingOwner* playerownership = game->getcontrolmode().buildings;
     updatetext(&building.getowner() == playerownership);
@@ -320,7 +322,7 @@ Trade::Trade(Host* newpanel, Building& b) :
 void Trade::mousehover(UIVec pos, int ms)
 {
     if(!game->getcontrolmode().buildings){
-        ui->addtooltip("Can't own buildings, switch user mode to e.g. a company.");
+        ui->addtooltip(tr("tooltip.usermodecantownbuilding"));
         return;
     }
     TextButton::mousehover(pos, ms);
@@ -347,9 +349,9 @@ void Trade::leftclick(UIVec mousepos)
 void Trade::updatetext(bool isplayerowned)
 {
     if(isplayerowned)
-        text = "Sell\n(" + std::string(building.getvalue()) + ")";
+        text = tr("button.building.sell", std::string(building.getvalue()));
     else
-        text = "Buy\n(" + std::string(building.getvalue()) + ")";
+        text = tr("button.building.buy", std::string(building.getvalue()));
 }
 
 } //end namespace UI

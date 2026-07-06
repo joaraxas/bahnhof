@@ -1,4 +1,5 @@
 #include<map>
+#include<localization/localization.h>
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/buildings/buildings.h"
 #include "bahnhof/buildings/buildingmanager.h"
@@ -8,11 +9,46 @@
 
 BuildingManager::BuildingManager(Game* g) : game(g)
 {
-	types[brewery] = BuildingType{brewery, "Brewery", Vec(232,150), {63,63,127,255}, sprites::brewery, sprites::beer, 120_Fr};
-	types[hopsfield] = BuildingType{hopsfield, "Hops field", Vec(248,168), {63,127,63,255}, sprites::hopsfield, sprites::hops, 90_Fr};
-	types[barleyfield] = BuildingType{barleyfield, "Barley field", Vec(300,450), {127,127,31,255}, sprites::barleyfield, sprites::barley, 70_Fr};
-	types[city] = BuildingType{city, "City", Vec(170,132), {63,63,31,255}, sprites::tavern, sprites::iconopenwagon, 200_Fr};
-	types[wagonfactory] = BuildingType{wagonfactory, "Locomotive works", Vec(370,185), {127,127,127,255}, sprites::wagonfactory, sprites::icontankloco, 100_Fr};
+	types[brewery] = BuildingType{
+		brewery, 
+		tr("buildings.brewery"), 
+		Vec(232,150), 
+		{63,63,127,255}, 
+		sprites::brewery, 
+		sprites::beer, 
+		120_Fr};
+	types[hopsfield] = BuildingType{
+		hopsfield, 
+		tr("buildings.hopsfield"),
+		Vec(248,168), 
+		{63,127,63,255}, 
+		sprites::hopsfield, 
+		sprites::hops, 
+		90_Fr};
+	types[barleyfield] = BuildingType{
+		barleyfield, 
+		tr("buildings.barleyfield"),
+		Vec(300,450), 
+		{127,127,31,255}, 
+		sprites::barleyfield, 
+		sprites::barley, 
+		70_Fr};
+	types[city] = BuildingType{
+		city, 
+		tr("buildings.city"),
+		Vec(170,132), 
+		{63,63,31,255}, 
+		sprites::tavern, 
+		sprites::iconopenwagon, 
+		200_Fr};
+	types[wagonfactory] = BuildingType{
+		wagonfactory, 
+		tr("buildings.wagonfactory"),
+		Vec(370,185), 
+		{127,127,127,255}, 
+		sprites::wagonfactory, 
+		sprites::icontankloco, 
+		100_Fr};
 
 	availabletypes.push_back(types[brewery].id);
 	availabletypes.push_back(types[wagonfactory].id);

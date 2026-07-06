@@ -1,0 +1,116 @@
+button.close = Close
+button.buildtrack = Place tracks
+button.buildsignal = Add signal
+button.buildbuilding = Raise building
+button.bulldoze = Bulldoze
+button.routes = Manage routes
+button.trains = Manage trains
+button.currententity = Manage company
+button.switchuser = Switch use
+button.increaseuiscale = Scale up UI
+button.decreaseuiscale = Scale down UI
+button.visitstockmarket = Visit stock exchange
+
+button.train.noroute = No route set
+button.train.go = Start route
+button.train.stop = Stop train
+button.train.gas = Gas
+button.train.brake = Brake
+button.train.reverse = Reverse
+button.train.acceptcoupling = Accept coupling
+button.train.rejectcoupling = Reject coupling
+
+button.order.reverse = Reverse direction
+button.order.couple = Prepare for coupling
+button.order.decouple = Decouple wagons
+button.order.loadunload = Load and unload all
+button.order.remove = Remove order
+
+button.stocks.equityoffering = Seasoned equity offering
+button.stocks.takeover = Attempt takeover
+button.stocks.buy = Buy {} shares
+button.stocks.sell = Sell {} shares
+button.accounting = Accounting
+button.listbuildings = Show buildings
+
+button.building.buy = Buy ({})
+button.building.sell = Sell ({})
+
+tooltip.bulldozing = Bulldozing
+tooltip.editingroute = Editing route
+tooltip.addorder = Add command:
+tooltip.trackbuilder.startpoint = Click track startpoint
+tooltip.trackbuilder.minradius = Min radius {}
+tooltip.trackbuilder.radius = Radius {}
+tooltip.trackbuilder.infradius = Straight
+tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.
+
+// many of these are unused
+order.invalid = Invalid: {}
+order.go.detailed = Reach track {} and nodedist {}
+order.signal.green = Set signal {} to green
+order.signal.red = Set signal {} to red
+order.signal.flip = Flip signal {}
+order.switch.flip = Flip switch {}
+order.switch.left = Set switch {} left
+order.switch.right = Set switch {} right
+order.switch.totrack = Set switch {} to track {} counting from left
+order.couple = Prepare for coupling
+order.decouple.1 = Decouple first wagon
+order.decouple.n = Decouple {} wagons
+order.assignroute = , assign route {} to other half
+order.reverse = Switch travel direction
+order.loadunload = Load and unload all available goods
+order.wipe = Erase all previous commands
+
+table.routes.new = New route
+table.routes.none = No routes created yet
+table.control.none = You have no say in anything
+table.orders.none = No orders added yet
+table.buildings.none = No buildings owned
+
+minutes = {} min
+fps = {} fps
+kmh = {} km/h
+tracks = {} tracks
+trainnr = Train {}
+routenr = Route {}
+numshares = {} shares
+
+table.stock.marketcap = Market cap {}
+table.stock.shareprice = Share price {}
+table.account.cash = Cash {}
+
+title.company.owners = Major shareholders
+title.company.interests = Company interests
+title.investor.interests = Interests
+title.stockmarket = Stock exchange
+title.buildings = Buildings
+title.accounts = Accounts
+title.accounts.income = Revenue
+title.accounts.expenses = Expenses
+thepublic = The public
+
+buildings.brewery = Brewery
+buildings.hopsfield = Hops field
+buildings.barleyfield = Barley field
+buildings.city = City
+buildings.wagonfactory = Locomotive works
+
+rollingstock.tankloco = Tank locomotive
+rollingstock.openwagon = Open wagon
+rollingstock.refrigeratorcar = Refrigerator car
+
+payments.stocks = Stock investments
+payments.rollingstock = Rolling stock
+payments.buildings = Buildings
+payments.tickets = Ticket sales
+payments.unknown = Unknown
+
+slogans.0 = Where the wheels keep on turning
+slogans.1 = Your satisfaction is our obligation
+slogans.2 = Excellence delivered
+slogans.3 = Speed and comfort
+slogans.4 = Delivering value - every day
+slogans.5 = Full steam ahead!
+slogans.6 = On the right track

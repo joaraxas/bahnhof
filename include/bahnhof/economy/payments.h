@@ -1,4 +1,5 @@
 #pragma once
+#include <localization/localization.h>
 #include "bahnhof/common/forwardincludes.h"
 #include "bahnhof/ui/ownership.h"
 #include "money.h"
@@ -18,15 +19,15 @@ constexpr std::string getbudgetpostname(PaymentType type)
     switch (type)
     {
     case PaymentType::stocks:
-        return "Stock investments";
+        return tr("payments.stocks");
     case PaymentType::rollingstock:
-        return "Rolling stock";
+        return tr("payments.rollingstock");
     case PaymentType::buildings:
-        return "Buildings";
+        return tr("payments.buildings");
     case PaymentType::ticketfare:
-        return "Ticket sales";
+        return tr("payments.tickets");
     default:
-        return "Unknown";
+        return tr("payments.unknown");
     }
 }
 
