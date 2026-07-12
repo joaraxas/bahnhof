@@ -57,7 +57,11 @@ add_library(bahnhof_lib
     economy/slogans.cpp
 )
 
-target_include_directories(bahnhof_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(bahnhof_lib 
+    PUBLIC 
+        ${PROJECT_SOURCE_DIR}/include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/third_party/utfcpp)
 
 add_subdirectory(localization)
 
