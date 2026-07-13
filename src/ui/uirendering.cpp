@@ -2,6 +2,7 @@
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/graphics/graphics.h"
 #include "bahnhof/common/gamestate.h"
+#include <utf8.h>
 
 using namespace UI;
 
@@ -155,8 +156,9 @@ std::string UIRendering::croptexttowidth(
     int maxwidthint = round(maxwidth*uiscale);
     int ncharactersfitting;
     TTF_MeasureUTF8(font, text.c_str(), maxwidthint, NULL, &ncharactersfitting);
+    int numchars = utf8::distance(text.begin(), text.end());
 
-    if(ncharactersfitting>=text.size())
+    if(ncharactersfitting>=numchars)
         return text;
 
     if(ncharactersfitting>3)
