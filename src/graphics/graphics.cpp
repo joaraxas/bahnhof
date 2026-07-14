@@ -145,7 +145,8 @@ std::pair<int, int> textsize(const std::string& text, int maxwidth)
 		if(count < line.size()){
 			// If the line wraps, render to get correct line breaks
 			SDL_Surface* surf = nullptr;
-			surf = TTF_RenderUTF8_Blended_Wrapped(font, start, {0, 0, 0, 0}, maxwidth);
+			surf = TTF_RenderUTF8_Blended_Wrapped(
+				font, start, {0, 0, 0, 0}, maxwidth);
 			if(!surf){
 				std::cout << "Failed to load surface from text " << text << ", error: " << TTF_GetError() << std::endl;
 				return {0,0};	

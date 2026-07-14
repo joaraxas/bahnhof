@@ -155,16 +155,22 @@ std::string UIRendering::croptexttowidth(
     maxwidth -= 2*margin_x;
     int maxwidthint = round(maxwidth*uiscale);
     int ncharactersfitting;
-    TTF_MeasureUTF8(font, text.c_str(), maxwidthint, NULL, &ncharactersfitting);
+    TTF_MeasureUTF8(
+        font, text.c_str(), maxwidthint, NULL, &ncharactersfitting);
     int numchars = utf8::distance(text.begin(), text.end());
 
     if(ncharactersfitting>=numchars)
         return text;
 
-    if(ncharactersfitting>3)
-        return text.substr(0, ncharactersfitting-3)+"...";
+    if(ncharactersfitting>=3){
+        auto it = text.begin();
+        utf8::advance(it, ncharactersfitting-3, text.end());
+        return std::string(text.begin(), it)+"...";
+    }
 
-    return text.substr(0, ncharactersfitting);
+    if(ncharactersfitting>=1)
+        return "..";
+    return ".";
 }
 
 float UIRendering::getuiscale() const
@@ -210,8 +216,8 @@ SDL_Rect UIRendering::uitoscreen(UIRect uirect) const
 UIRect UIRendering::screentoui(SDL_Rect screenrect) const
 {
     float scale = getuiscale();
-    // Computing the height and width as a difference should ensures that (y+h)-y=h also 
-    // for the UIRect
+    // Computing the height and width as a difference ensures that 
+    // (y+h)-y=h also for the UIRect
     UIRect uirect = {
         screenrect.x/scale,
         screenrect.y/scale,
