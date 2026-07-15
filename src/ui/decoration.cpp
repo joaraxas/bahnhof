@@ -1,3 +1,4 @@
+#include <utf8.h>
 #include "bahnhof/graphics/rendering.h"
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
@@ -119,8 +120,10 @@ void EditableText::stopwriting(){
 
 void EditableText::deleteselection(){
     if(!text.empty() && cursorindex>0){
-        text.erase(cursorindex-1, 1);
-        cursorindex--;
+        movecursorleft();
+        auto it = text.begin() + cursorindex;
+        utf8::advance(it, 1, text.end());
+        text.erase(text.begin() + cursorindex, it);
         updatewritingarea();
     }
 }
@@ -132,11 +135,21 @@ void EditableText::addtext(const std::string& string){
 }
 
 void EditableText::movecursorleft(){
-    cursorindex = std::max(0, cursorindex-1);
+    if(cursorindex<=0)
+        return;
+    auto it = text.begin() + cursorindex;
+    utf8::advance(it, -1, text.begin());
+    int numbytesmoved = std::distance(it, text.begin() + cursorindex);
+    cursorindex = std::max(0, cursorindex-numbytesmoved);
 }
 
 void EditableText::movecursorright(){
-    cursorindex = std::fmin(text.size(), cursorindex+1);
+    if(cursorindex>=text.size())
+        return;
+    auto it = text.begin() + cursorindex;
+    utf8::advance(it, 1, text.end());
+    int numbytesmoved = std::distance(text.begin() + cursorindex, it);
+    cursorindex = std::fmin(text.size(), cursorindex+numbytesmoved);
 }
 
 void EditableText::updatewritingarea(){
