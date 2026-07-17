@@ -61,6 +61,8 @@ bool TextInputManager::handle(SDL_Event& e)
             editingtextobject->addtext(e.text.text);
             return true;
         }
+        case SDL_MOUSEBUTTONDOWN:
+            savetext();
         default:
             return false;
         }

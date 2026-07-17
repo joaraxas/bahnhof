@@ -39,9 +39,7 @@ void InputManager::handle(int ms, int mslogic){
         }
         
         case SDL_MOUSEBUTTONDOWN:{
-            if(textinput.iswriting()){
-                textinput.endtextinput();
-            }
+            textinput.handle(e);
             if(ui.click(screenmousepos(), e.button.button))
                 break;
             Vec mousepos = mapmousepos();
