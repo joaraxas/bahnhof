@@ -101,14 +101,17 @@ void InputManager::handle(int ms, int mslogic){
         ui.leftpressed(screenmousepos(), mslogic);
 
     if(!textinput.iswriting()){
+        int turbo = 1;
+        if(iskeypressed(fastpanbutton))
+            turbo = 3;
         if(iskeypressed(leftpanbutton))
-            cam.pan(Vec(-ms, 0));
+            cam.pan(Vec(-ms*turbo, 0));
         if(iskeypressed(rightpanbutton))
-            cam.pan(Vec(+ms, 0));
+            cam.pan(Vec(+ms*turbo, 0));
         if(iskeypressed(uppanbutton))
-            cam.pan(Vec(0, -ms));
+            cam.pan(Vec(0, -ms*turbo));
         if(iskeypressed(downpanbutton))
-            cam.pan(Vec(0, +ms));
+            cam.pan(Vec(0, +ms*turbo));
 
         trainmanager.getinput(this, mslogic);
     }

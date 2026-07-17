@@ -24,6 +24,7 @@ const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, S
 const int loadbutton = SDL_SCANCODE_L;
 const int unloadbutton = SDL_SCANCODE_U;
 const int couplebutton = SDL_SCANCODE_G;
+const int fastpanbutton = SDL_SCANCODE_LSHIFT;
 const int leftpanbutton = SDL_SCANCODE_A;
 const int rightpanbutton = SDL_SCANCODE_D;
 const int uppanbutton = SDL_SCANCODE_W;
