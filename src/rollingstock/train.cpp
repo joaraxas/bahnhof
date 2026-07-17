@@ -26,6 +26,7 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 
 void Train::getinput(InputManager* input, int ms)
 {
+	using namespace Keynames;
 	if(selected){
 		if(input->iskeypressed(gasbutton))
 			gas(ms);

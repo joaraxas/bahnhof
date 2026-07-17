@@ -17,18 +17,20 @@ class Train;
 class Route;
 struct BuildingType;
 
-const int gasbutton = SDL_SCANCODE_RIGHT;
-const int brakebutton = SDL_SCANCODE_LEFT;
-const int gearbutton = SDL_SCANCODE_LSHIFT;
-const int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
-const int loadbutton = SDL_SCANCODE_L;
-const int unloadbutton = SDL_SCANCODE_U;
-const int couplebutton = SDL_SCANCODE_G;
-const int fastpanbutton = SDL_SCANCODE_LSHIFT;
-const int leftpanbutton = SDL_SCANCODE_A;
-const int rightpanbutton = SDL_SCANCODE_D;
-const int uppanbutton = SDL_SCANCODE_W;
-const int downpanbutton = SDL_SCANCODE_S;
+namespace Keynames{
+    static constexpr int gasbutton = SDL_SCANCODE_RIGHT;
+    static constexpr int brakebutton = SDL_SCANCODE_LEFT;
+    static constexpr int gearbutton = SDL_SCANCODE_LSHIFT;
+    static constexpr int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
+    static constexpr int loadbutton = SDL_SCANCODE_L;
+    static constexpr int unloadbutton = SDL_SCANCODE_U;
+    static constexpr int couplebutton = SDL_SCANCODE_G;
+    static constexpr int fastpanbutton = SDL_SCANCODE_LSHIFT;
+    static constexpr int leftpanbutton = SDL_SCANCODE_A;
+    static constexpr int rightpanbutton = SDL_SCANCODE_D;
+    static constexpr int uppanbutton = SDL_SCANCODE_W;
+    static constexpr int downpanbutton = SDL_SCANCODE_S;
+}
 
 class InputMode;
 class TrackBuilder;

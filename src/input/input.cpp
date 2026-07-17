@@ -8,6 +8,8 @@
 #include "bahnhof/rollingstock/trainmanager.h"
 #include "bahnhof/graphics/rendering.h"
 
+using namespace Keynames;
+
 InputManager::InputManager(Game* whatgame) : 
     game(whatgame),
     textinput(*this),
