@@ -174,7 +174,7 @@ void Stock::updateregistry() {
     std::sort(sortedowners.begin(), sortedowners.end(), compareowners);
 }
 
-bool Stock::attempttakeover() {
+bool Stock::vote() const {
     Shares votesfor{0};
     for(auto& [portfolio, stake] : stakes){
         if(portfolio->isplayercontrolled()){
@@ -216,8 +216,10 @@ void ThePublic::createpanel(InterfaceManager* ui) {
 
 
 Company::Company(std::string n, Stockmarket& market, 
-        std::vector<std::pair<Portfolio*,Money>> owners, bool controlled) : 
+        std::vector<std::pair<Portfolio*,Money>> owners,
+        bool controlled, Entity* chair) : 
     playercontrol(controlled),
+    chairman{chair},
     name{n},
     slogan{generateslogan()},
     account{},
@@ -231,7 +233,7 @@ void Company::createpanel(InterfaceManager* ui) {
     if(!panel.exists())
         panel.set(
             new UI::EconomyPanels::CompanyPanel(ui, stock, name,
-                slogan, portfolio, account, buildings, 
+                slogan, portfolio, account, buildings, &chairman,
                 PlayerPointerDirect(playercontrol),
                 generatecontrolmode())
         );

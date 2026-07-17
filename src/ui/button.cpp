@@ -253,18 +253,24 @@ void PublicOffering::update(int ms)
 
 void PublicOffering::leftclick(UIVec mousepos)
 {
-    if(playercontrol())
-        stock.issue(20, game->getgamestate().geteconomymanager().thepublic->getinvestments());
+    if(playercontrol()){
+        auto thepublic = game->getgamestate().geteconomymanager().thepublic;
+        stock.issue(20, thepublic->getinvestments());
+    }
 }
 
 
 void TakeOver::leftclick(UIVec mousepos)
 {
-    if(playercontrol()) return;
-    bool succeeded = stock.attempttakeover();
+    auto challenger = game->getcontrolmanager().getcontrolmode().entity;
+    if(*chairmanptr == challenger) return;
+    bool succeeded = stock.vote();
     if(succeeded) {
-        playercontrol(true);
-        game->getcontrolmanager().addcontrolmode(controlmode);
+        *chairmanptr = challenger;
+        if(!playercontrol()){
+            playercontrol(true);
+            game->getcontrolmanager().addcontrolmode(controlmode);
+        }
     }
 }
 

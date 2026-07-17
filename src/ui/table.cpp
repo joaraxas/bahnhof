@@ -461,6 +461,12 @@ void CompanyInfoTable::update(int ms)
     lines.emplace_back(
         new TableLine(panel, this, 
         tr("table.account.cash", std::string(account.getvalue()))));
+    if(*chairmanptr)
+        lines.emplace_back(
+            new TableLine(panel, this, "Chairman: " + 
+                (**chairmanptr).getname()
+            )
+        );
 }
 
 

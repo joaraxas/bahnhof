@@ -35,7 +35,7 @@ public:
     const std::vector<std::pair<Stake*, Entity*>>& getsortedowners() 
         {return sortedowners;}
     Entity& getentity() {return entity;}
-    bool attempttakeover();
+    bool vote() const;
 private:
     bool issue(Shares issuedshares, Portfolio& buyer, double devaluation);
     Entity& entity;

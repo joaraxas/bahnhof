@@ -258,6 +258,7 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 						   Portfolio& portfolio,
 						   Account& account,
 						   Control<Building>& buildings,
+						   Entity** chairmanptr,
 						   PlayerPointerDirect c,
 						   ControlMode mode) : 
 		Panel(newui),
@@ -269,10 +270,11 @@ CompanyPanel::CompanyPanel(InterfaceManager* newui,
 		create<EditableTextWithAccessControl>(slogan, playercontrol),
 		create<HBox>(
 			create<VBox>(
-				create<CompanyInfoTable>(stock, account),
+				create<CompanyInfoTable>(stock, account, chairmanptr),
 				create<Buy>(stock),
 				create<Sell>(stock),
-				create<TakeOver>(stock, playercontrol.getcontrol(), mode),
+				create<TakeOver>(stock, playercontrol.getcontrol(), 
+					chairmanptr, mode),
 				create<PublicOffering>(stock, playercontrol.getcontrol())
 			),
 			create<VBox>(

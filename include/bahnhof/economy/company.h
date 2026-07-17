@@ -23,13 +23,14 @@ class Company : public Entity
 public:
     Company(std::string n, Stockmarket& market, 
             std::vector<std::pair<Portfolio*,Money>> owners={}, 
-            bool controlled=false);
+            bool controlled=false, Entity* chair = nullptr);
     const std::string& getname() const override {return name;}
     Portfolio& getinvestments() {return portfolio;} // might remove
     void createpanel(InterfaceManager* ui) override;
     ControlMode generatecontrolmode();
 private:
     PlayerControl playercontrol;
+    Entity* chairman;
     std::string name;
     std::string slogan;
     Account account;

@@ -18,6 +18,8 @@ class Building;
 class BuildingManager;
 class BuildingBuilder;
 class WagonFactory;
+
+class Entity;
 namespace Economy {
     class Stock;
     class Portfolio;
@@ -130,6 +132,7 @@ public:
         Economy::Portfolio& portfolio,
         Economy::Account& account,
         Economy::Control<Building>& buildings, 
+        Entity** chairman,
         Economy::PlayerPointerDirect c,
         Economy::ControlMode mode);
 private:

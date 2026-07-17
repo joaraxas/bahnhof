@@ -262,13 +262,15 @@ private:
 class TakeOver : public TextButton
 {
 public:
-    TakeOver(Host* newpanel, Stock& s, PlayerControl& c, ControlMode mode) : 
+    TakeOver(Host* newpanel, Stock& s, PlayerControl& c, Entity** chairptr,
+            ControlMode mode) : 
         TextButton(newpanel, tr("button.stocks.takeover"), 120), stock{s}, 
-        playercontrol{c}, controlmode{mode} {};
+        playercontrol{c}, chairmanptr{chairptr}, controlmode{mode} {};
     void leftclick(UIVec mousepos);
 private:
     Stock& stock;
     PlayerControl& playercontrol;
+    Entity** chairmanptr;
     ControlMode controlmode;
 };
 

@@ -187,12 +187,15 @@ class CompanyInfoTable : public Table
     using Account = Economy::Account;
 public:
     CompanyInfoTable(
-        Host* p, Stock& c, Account& a, UIVec pos={0,0}, UIVec minsz={150,60}): 
-            Table(p, minsz, pos), stock(c), account{a} {};
+        Host* p, Stock& c, Account& a, Entity** chairptr, 
+        UIVec pos={0,0}, UIVec minsz={150,80}): 
+            Table(p, minsz, pos), stock(c), account{a}, chairmanptr{chairptr}
+                {};
     void update(int ms);
 private:
     Stock& stock;
     Account& account;
+    Entity** chairmanptr;
 };
 
 class OwnersTable : public ClickableTable
