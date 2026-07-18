@@ -68,12 +68,14 @@ std::string getpathtoassets()
 
 int setfontsize(int fontsize)
 {
-	font = TTF_OpenFont((getpathtoassets() + "fonts/Georgia.ttf").c_str(), fontsize);
-    if(font == NULL)
+	TTF_Font* newfont = TTF_OpenFont((getpathtoassets() + "fonts/Georgia.ttf").c_str(), fontsize);
+    if(newfont == NULL)
     {
 		std::cout << "Failed to load font, SDL_ttf error: " << TTF_GetError() << std::endl;
         return -1;
     }
+	TTF_CloseFont(font);
+	font = newfont;
 	return 1;
 }
 
@@ -84,7 +86,7 @@ SDL_Texture* loadimage(std::string path)
 	if(tex==NULL){
 		std::cout << "Failed to load texture " << path << ": " << IMG_GetError() << std::endl;
 	}
-	return tex;	
+	return tex;
 }
 
 SDL_Texture* loadtext(std::string text, SDL_Color color, int maxwidth)
