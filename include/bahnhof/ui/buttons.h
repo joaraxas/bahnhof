@@ -266,8 +266,10 @@ public:
             ControlMode mode) : 
         TextButton(newpanel, tr("button.stocks.takeover"), 120), stock{s}, 
         playercontrol{c}, chairmanptr{chairptr}, controlmode{mode} {};
+    virtual void update(int ms) override;
     void leftclick(UIVec mousepos);
 private:
+    bool cantakeover();
     Stock& stock;
     PlayerControl& playercontrol;
     Entity** chairmanptr;

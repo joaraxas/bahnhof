@@ -260,18 +260,36 @@ void PublicOffering::leftclick(UIVec mousepos)
 }
 
 
+void TakeOver::update(int ms)
+{
+    if(cantakeover()){
+        clickable = false;
+        return;
+    }
+    
+    clickable = true;
+}
+
 void TakeOver::leftclick(UIVec mousepos)
 {
-    auto challenger = game->getcontrolmanager().getcontrolmode().entity;
-    if(*chairmanptr == challenger) return;
+    if(!cantakeover()) return;
     bool succeeded = stock.vote();
     if(succeeded) {
+        auto challenger = game->getcontrolmanager().getcontrolmode().entity;
         *chairmanptr = challenger;
         if(!playercontrol()){
             playercontrol(true);
             game->getcontrolmanager().addcontrolmode(controlmode);
         }
     }
+}
+
+bool TakeOver::cantakeover()
+{
+    auto challenger = game->getcontrolmanager().getcontrolmode().entity;
+    if(*chairmanptr == challenger)
+        return false;
+    return true;
 }
 
 

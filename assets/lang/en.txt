@@ -80,6 +80,8 @@ numshares = {} shares
 table.stock.marketcap = Market cap {}
 table.stock.shareprice = Share price {}
 table.account.cash = Cash {}
+table.company.chairman = Chairman: {}
+table.company.nochairman = No chairman
 
 title.company.owners = Major shareholders
 title.company.interests = Company interests

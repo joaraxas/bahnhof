@@ -80,6 +80,8 @@ numshares = {} aktier
 table.stock.marketcap = Börsvärde {}
 table.stock.shareprice = Kurs {}
 table.account.cash = Kontanta medel: {}
+table.company.chairman = Ordförande: {}
+table.company.nochairman = Ordförandeposten vakant
 
 title.company.owners = Största ägare
 title.company.interests = Innehav
