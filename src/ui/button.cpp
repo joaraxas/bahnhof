@@ -259,6 +259,15 @@ void PublicOffering::leftclick(UIVec mousepos)
     }
 }
 
+void PublicOffering::mousehover(UIVec pos, int ms)
+{
+    if(!playercontrol()){
+        ui->addtooltip(tr("tooltip.companynotcontrolled"));
+        return;
+    }
+    TextButton::mousehover(pos, ms);
+}
+
 
 void TakeOver::update(int ms)
 {

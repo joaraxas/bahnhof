@@ -44,7 +44,8 @@ tooltip.trackbuilder.minradius = Min radius {}
 tooltip.trackbuilder.radius = Radius {}
 tooltip.trackbuilder.infradius = Straight
 tooltip.usermodecantownbuilding = Can't own buildings, switch user mode to e.g. a company.
-tooltip.usermodecanttakeover = Can't take over, you are already the chairman
+tooltip.companynotcontrolled = You do not control this company
+tooltip.usermodecanttakeover = Can't take over, you are already the chairman.
 tooltip.takeover = Call for a vote to assume control. If you hold share majority, {} will be named chairman.
 
 // many of these are unused

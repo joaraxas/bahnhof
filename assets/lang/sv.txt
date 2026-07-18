@@ -44,8 +44,9 @@ tooltip.trackbuilder.minradius = Minsta kurvradie {}
 tooltip.trackbuilder.radius = Kurvradie {}
 tooltip.trackbuilder.infradius = Raksträcka
 tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.
+tooltip.companynotcontrolled = Endast bolagsstyrelsen får fatta sådana beslut.
 tooltip.usermodecanttakeover = Direktören själv innehar redan ordförandeskapet. Bolagsstämman är överflödig.
-tooltip.takeover = Föreslå nyval av bolagsstyrelsen. Vid aktiemajoritet blir {} direktör.
+tooltip.takeover = Föreslå nyval av bolagsstyrelsen. Vid aktiemajoritet blir {} ny direktör.
 
 # flera av dessa används inte
 order.invalid = Ogiltig: {}

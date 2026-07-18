@@ -254,6 +254,7 @@ public:
         stock{s}, playercontrol{c} {};
     virtual void update(int ms) override;
     void leftclick(UIVec mousepos);
+    void mousehover(UIVec pos, int ms);
 private:
     Stock& stock;
     PlayerControl& playercontrol;
