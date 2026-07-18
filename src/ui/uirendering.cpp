@@ -88,7 +88,7 @@ SDL_Color UIRendering::getcolorfromstyle(UI::TextStyle style) const
         color = {0,0,0,127};
         break;
     case UI::TooltipBackground:
-        color = {0,0,0,63};
+        color = {0,0,0,127};
         break;
     case UI::TooltipBorder:
         color = {0,0,0,255};
