@@ -13,6 +13,7 @@ public:
     void zoomin(Vec centerpoint);
     void zoomout(Vec centerpoint);
     void pan(Vec direction);
+    void centerat(Vec point);
     float getscale();
 private:
     Game* game;

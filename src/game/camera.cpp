@@ -44,6 +44,12 @@ void Camera::pan(Vec direction){
     restricttomap();
 }
 
+void Camera::centerat(Vec point){
+    cam.x = point.x-cam.w/2;
+    cam.y = point.y-cam.h/2;
+    restricttomap();
+}
+
 void Camera::restricttomap(){
     Vec viewsize = getviewsize();
     cam.w = viewsize.x/getscale();
