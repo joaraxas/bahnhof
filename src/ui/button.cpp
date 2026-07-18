@@ -262,7 +262,7 @@ void PublicOffering::leftclick(UIVec mousepos)
 
 void TakeOver::update(int ms)
 {
-    if(cantakeover()){
+    if(!cantakeover(getchallenger())){
         clickable = false;
         return;
     }
@@ -272,10 +272,11 @@ void TakeOver::update(int ms)
 
 void TakeOver::leftclick(UIVec mousepos)
 {
-    if(!cantakeover()) return;
+    auto challenger = getchallenger();
+    if(!cantakeover(challenger))
+        return;
     bool succeeded = stock.vote();
     if(succeeded) {
-        auto challenger = game->getcontrolmanager().getcontrolmode().entity;
         *chairmanptr = challenger;
         if(!playercontrol()){
             playercontrol(true);
@@ -284,9 +285,24 @@ void TakeOver::leftclick(UIVec mousepos)
     }
 }
 
-bool TakeOver::cantakeover()
+void TakeOver::mousehover(UIVec pos, int ms)
 {
-    auto challenger = game->getcontrolmanager().getcontrolmode().entity;
+    auto challenger = getchallenger();
+    if(!cantakeover(challenger)){
+        ui->addtooltip(tr("tooltip.usermodecanttakeover"));
+        return;
+    }
+    ui->addtooltip(tr("tooltip.takeover", challenger->getname()));    
+    TextButton::mousehover(pos, ms);
+}
+
+Entity* const TakeOver::getchallenger() const
+{
+    return game->getcontrolmanager().getcontrolmode().entity;
+}
+
+bool TakeOver::cantakeover(const Entity* const challenger) const
+{
     if(*chairmanptr == challenger)
         return false;
     return true;

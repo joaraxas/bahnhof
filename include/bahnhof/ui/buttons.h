@@ -268,8 +268,10 @@ public:
         playercontrol{c}, chairmanptr{chairptr}, controlmode{mode} {};
     virtual void update(int ms) override;
     void leftclick(UIVec mousepos);
+    void mousehover(UIVec pos, int ms);
 private:
-    bool cantakeover();
+    Entity* const getchallenger() const;
+    bool cantakeover(const Entity* const challenger) const;
     Stock& stock;
     PlayerControl& playercontrol;
     Entity** chairmanptr;

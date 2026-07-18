@@ -44,6 +44,8 @@ tooltip.trackbuilder.minradius = Minsta kurvradie {}
 tooltip.trackbuilder.radius = Kurvradie {}
 tooltip.trackbuilder.infradius = Raksträcka
 tooltip.usermodecantownbuilding = Fastighetsförvärv är ej tillåtet, välj en annan juridisk person.
+tooltip.usermodecanttakeover = Direktören själv innehar redan ordförandeskapet. Bolagsstämman är överflödig.
+tooltip.takeover = Föreslå nyval av bolagsstyrelsen. Vid aktiemajoritet blir {} direktör.
 
 # flera av dessa används inte
 order.invalid = Ogiltig: {}
@@ -80,8 +82,8 @@ numshares = {} aktier
 table.stock.marketcap = Börsvärde {}
 table.stock.shareprice = Kurs {}
 table.account.cash = Kontanta medel: {}
-table.company.chairman = Ordförande: {}
-table.company.nochairman = Ordförandeposten vakant
+table.company.chairman = Direktör: {}
+table.company.nochairman = Direktörsposten vakant
 
 title.company.owners = Största ägare
 title.company.interests = Innehav
