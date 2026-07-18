@@ -46,8 +46,7 @@ void Train::getinput(InputManager* input, int ms)
 void Train::update(int ms)
 {
 	if(go)
-		if(perform(ms))
-			proceed();
+		perform(ms);
 	
 	float minradius = INFINITY;
 	// comment to remove radius speed restriction
@@ -75,16 +74,14 @@ void Train::update(int ms)
 
 bool Train::perform(int ms)
 {
-	bool done = false;
-	if(route){
+	if(!route)
+		return false;
 	Order* order = route->getorder(orderid);
-	if(!order){//orderid does not exist in route
+	if(!order || !order->valid){
 		proceed();
+		return false;
 	}
-	else if(!order->valid){
-		proceed();
-	}
-	else{
+	bool done = false;
 	switch(order->order){
 		case ordertype::gotostate:{
 			Gotostate* specification = dynamic_cast<Gotostate*>(order);
@@ -94,34 +91,40 @@ bool Train::perform(int ms)
 					brake(ms);
 				else
 					gas(ms);}
-			break;}
+			break;
+		}
 		//case 1:
 		//	done = checkifleftstate(state); break;
 		case ordertype::setsignal:{
 			Setsignal* specification = dynamic_cast<Setsignal*>(order);
 			setsignal(*tracksystem, specification->signal, specification->redgreenflip);
 			done = true;
-			break;}
+			break;
+		}
 		case ordertype::setswitch:{
 			Setswitch* specification = dynamic_cast<Setswitch*>(order);
 			setswitch(*tracksystem, specification->_switch, specification->switchstate); 
 			done = true;
-			break;}
+			break;
+		}
 		case ordertype::couple:{
 			wantstocouple = true;
 			done = true;
-			break;}
+			break;
+		}
 		case ordertype::decouple:{
 			Decouple* specification = dynamic_cast<Decouple*>(order);
 			done = split(specification->where, specification->route);
 			if(!done)
 				brake(ms);
-			break;}
+			break;
+		}
 		case ordertype::turn:{
 			done = shiftdirection();
 			if(!done)
 				brake(ms);
-			break;}
+			break;
+		}
 		case ordertype::loadresource:{
 			Loadresource* specification = dynamic_cast<Loadresource*>(order);
 			if(specification->anyresource){
@@ -134,14 +137,16 @@ bool Train::perform(int ms)
 				if(!done)
 					brake(ms);
 			}
-			break;}
+			break;
+		}
 		case ordertype::wipe:{
 			route->removeordersupto(orderid);
 			done = true;
-			break;}
+			break;
+		}
 	}
-	}
-	}
+	if(done)
+		proceed();
 	return done;
 }
 
