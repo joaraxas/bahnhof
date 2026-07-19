@@ -382,7 +382,7 @@ void TrainOrderTable::update(int ms)
     int id;
     if(route){
         id = route->selectedorderid;
-        route->selectedorderid = routefollower.orderid; // TODO: This is a temporary hack, should extend this functionality to abstract table class
+        route->selectedorderid = routefollower.getorderid(); // TODO: This is a temporary hack, should extend this functionality to abstract table class
     }
     OrderTable::update(ms);
     if(route)
@@ -392,7 +392,7 @@ void TrainOrderTable::update(int ms)
 void TrainOrderTable::lineclicked(int index)
 {
     if(index<orderids.size())
-        routefollower.orderid = orderids[index];
+        routefollower.setorderid(orderids[index]);
 }
 
 

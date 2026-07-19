@@ -13,7 +13,7 @@
 
 
 Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons) :
-	routefollower(*this, &newtracksystem)
+	routefollower(*this, newtracksystem)
 {
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;

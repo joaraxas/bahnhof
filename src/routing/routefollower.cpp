@@ -3,6 +3,18 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/train.h"
 
+void RouteFollower::setorderid(int id)
+{
+	if(!route || !route->getorder(id))
+		return;
+	orderid = id;
+}
+
+int RouteFollower::getorderid()
+{
+	return orderid;
+}
+
 bool RouteFollower::perform(int ms)
 {
 	if(!route)
@@ -83,5 +95,7 @@ bool RouteFollower::perform(int ms)
 
 void RouteFollower::proceed()
 {
+	if(!route)
+		return;
 	orderid = route->nextorder(orderid);
 }

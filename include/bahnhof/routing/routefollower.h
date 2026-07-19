@@ -9,14 +9,19 @@ namespace Tracks{
 
 class RouteFollower
 {
+    using Tracksystem = Tracks::Tracksystem;
 public:
+    RouteFollower(Train& t, Tracksystem& tr) : 
+        train{t}, tracksystem{&tr} {}
     void trigger(int ms) {if(go) perform(ms);}
-    Train& train;
-    Tracks::Tracksystem* tracksystem;
+    void setorderid(int orderid);
+    int getorderid();
     Route* route = nullptr;
-    int orderid = 0;
     bool go = false;
 private:
     bool perform(int ms);
     void proceed();
+    Train& train;
+    Tracksystem* tracksystem;
+    int orderid = 0;
 };
