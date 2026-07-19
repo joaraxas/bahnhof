@@ -3,6 +3,15 @@
 #include "bahnhof/track/track.h"
 #include "bahnhof/rollingstock/train.h"
 
+void RouteFollower::trigger(int ms)
+{
+	if(go){
+		if(perform(ms)){
+			proceed();
+		}
+	}
+}
+
 void RouteFollower::setorderid(int id)
 {
 	if(!route || !route->getorder(id))
@@ -21,8 +30,7 @@ bool RouteFollower::perform(int ms)
 		return false;
 	Order* order = route->getorder(orderid);
 	if(!order || !order->valid){
-		proceed();
-		return false;
+		return true;
 	}
 	bool done = false;
 	switch(order->order){
@@ -88,8 +96,6 @@ bool RouteFollower::perform(int ms)
 			break;
 		}
 	}
-	if(done)
-		proceed();
 	return done;
 }
 

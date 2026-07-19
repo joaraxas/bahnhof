@@ -17,7 +17,8 @@ namespace Tracks{
 class Train
 {
 public:
-    Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons);
+    Train(Tracks::Tracksystem& newtracksystem, 
+          const std::vector<Wagon*> &newwagons);
     void update(int ms);
     void checkcollision(int ms, Train* train);
     void render(Rendering* r);

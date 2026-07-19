@@ -13,7 +13,7 @@ class RouteFollower
 public:
     RouteFollower(Train& t, Tracksystem& tr) : 
         train{t}, tracksystem{&tr} {}
-    void trigger(int ms) {if(go) perform(ms);}
+    void trigger(int ms);
     void setorderid(int orderid);
     int getorderid();
     Route* route = nullptr;
