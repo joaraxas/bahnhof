@@ -5,7 +5,6 @@
 #include "bahnhof/common/gamestate.h"
 #include "bahnhof/input/input.h"
 #include "bahnhof/track/track.h"
-#include "bahnhof/routing/routing.h"
 #include "bahnhof/rollingstock/rollingstock.h"
 #include "bahnhof/rollingstock/train.h"
 #include "bahnhof/rollingstock/trainmanager.h"
@@ -13,7 +12,8 @@
 #include "bahnhof/ui/panels.h"
 
 
-Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons)
+Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons) :
+	routefollower(*this, &newtracksystem)
 {
 	tracksystem = &newtracksystem;
 	game = tracksystem->game;
@@ -45,8 +45,7 @@ void Train::getinput(InputManager* input, int ms)
 
 void Train::update(int ms)
 {
-	if(go)
-		perform(ms);
+	routefollower.trigger(ms);
 	
 	float minradius = INFINITY;
 	// comment to remove radius speed restriction
@@ -70,89 +69,6 @@ void Train::update(int ms)
 	Tracks::Signaling::runoverblocks(*tracksystem, flipstate(backwardstate()), pixels, nullptr);
 	for(auto& wagon : wagons)
 		wagon->axes->travel(sign(speed)*pixels);
-}
-
-bool Train::perform(int ms)
-{
-	if(!route)
-		return false;
-	Order* order = route->getorder(orderid);
-	if(!order || !order->valid){
-		proceed();
-		return false;
-	}
-	bool done = false;
-	switch(order->order){
-		case ordertype::gotostate:{
-			Gotostate* specification = dynamic_cast<Gotostate*>(order);
-			done = checkifreachedstate(specification->state, ms);
-			if(!done){
-				if(Tracks::Signaling::isred(*tracksystem, this))
-					brake(ms);
-				else
-					gas(ms);}
-			break;
-		}
-		//case 1:
-		//	done = checkifleftstate(state); break;
-		case ordertype::setsignal:{
-			Setsignal* specification = dynamic_cast<Setsignal*>(order);
-			setsignal(*tracksystem, specification->signal, specification->redgreenflip);
-			done = true;
-			break;
-		}
-		case ordertype::setswitch:{
-			Setswitch* specification = dynamic_cast<Setswitch*>(order);
-			setswitch(*tracksystem, specification->_switch, specification->switchstate); 
-			done = true;
-			break;
-		}
-		case ordertype::couple:{
-			wantstocouple = true;
-			done = true;
-			break;
-		}
-		case ordertype::decouple:{
-			Decouple* specification = dynamic_cast<Decouple*>(order);
-			done = split(specification->where, specification->route);
-			if(!done)
-				brake(ms);
-			break;
-		}
-		case ordertype::turn:{
-			done = shiftdirection();
-			if(!done)
-				brake(ms);
-			break;
-		}
-		case ordertype::loadresource:{
-			Loadresource* specification = dynamic_cast<Loadresource*>(order);
-			if(specification->anyresource){
-				bool doneloading = true; bool doneunloading = true;
-				if(specification->loading)
-					doneloading = loadall();
-				if(specification->unloading)
-					doneunloading = unloadall();
-				done = doneloading && doneunloading;
-				if(!done)
-					brake(ms);
-			}
-			break;
-		}
-		case ordertype::wipe:{
-			route->removeordersupto(orderid);
-			done = true;
-			break;
-		}
-	}
-	if(done)
-		proceed();
-	return done;
-}
-
-void Train::proceed()
-{
-	orderid = route->nextorder(orderid);
 }
 
 void Train::render(Rendering* r)
@@ -369,8 +285,8 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		train.wantstocouple = false;
 	}
 	else{
-		go = false;
-		train.go = false;
+		routefollower.go = false;
+		train.routefollower.go = false;
 	}
 }
 
@@ -384,7 +300,7 @@ bool Train::split(int where, Route* assignedroute)
 		Train* newtrain = new Train(*tracksystem, {wagons.begin() + where, wagons.end()});
 		wagons = {wagons.begin(), wagons.begin() + where};
 		trainmanager.addtrain(newtrain);
-		newtrain->route = assignedroute;
+		newtrain->routefollower.route = assignedroute;
 	}
 	else{
 		Train* newtrain = new Train(*tracksystem, {wagons.rbegin() + where, wagons.rend()});
@@ -392,7 +308,7 @@ bool Train::split(int where, Route* assignedroute)
 		wagons = {wagons.rbegin(), wagons.rbegin() + where};
 		std::reverse(wagons.begin(), wagons.end());
 		trainmanager.addtrain(newtrain);
-		newtrain->route = assignedroute;
+		newtrain->routefollower.route = assignedroute;
 	}
 	return true;
 }
@@ -412,7 +328,8 @@ void Train::select()
 	if(!panel.exists()){
 		panel.set(new UI::TrainPanel(&game->getui(), 
 									  game->getgamestate().gettrainmanager(), 
-									  *this));
+									  *this,
+									  routefollower));
 	}
 }
 

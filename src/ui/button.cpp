@@ -131,12 +131,12 @@ void SetRoute::leftclick(UIVec mousepos)
     UIRect panelrect = panel->getglobalrect();
     UIVec dropdownpos = {mousepos.x-panelrect.x, 
                         mousepos.y-panelrect.y};
-    Dropdown* ntable = new RouteDropdown(panel, dropdownpos);
+    Dropdown* ntable = new RouteDropdown(panel, routefollower, dropdownpos);
 }
 
 void SetRoute::update(int ms)
 {
-    Route* route = dynamic_cast<TrainPanel*>(panel)->gettrain().route;
+    Route* route = routefollower.route;
     if(route)
         text = route->name;
     else
@@ -146,7 +146,7 @@ void SetRoute::update(int ms)
 
 void GoTrain::leftclick(UIVec mousepos)
 {
-    bool& go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
+    bool& go = routefollower.go;
     go = !go;
     if(!go)
         dynamic_cast<TrainPanel*>(panel)->gettrain().speed = 0;
@@ -154,8 +154,7 @@ void GoTrain::leftclick(UIVec mousepos)
 
 void GoTrain::update(int ms)
 {
-    bool go = dynamic_cast<TrainPanel*>(panel)->gettrain().go;
-    if(go)
+    if(routefollower.go)
         text = tr("button.train.stop");
     else
         text = tr("button.train.go");

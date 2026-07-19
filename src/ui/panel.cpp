@@ -150,7 +150,10 @@ TrainListPanel::TrainListPanel(InterfaceManager* newui) : Panel(newui)
 }
 
 
-TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain) :
+TrainPanel::TrainPanel(InterfaceManager* newui, 
+					   TrainManager& manager, 
+					   Train& newtrain,
+					   RouteFollower& routefollower) :
 		Panel(newui), 
 		trainmanager(manager), 
 		train(newtrain)
@@ -162,8 +165,8 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 		create<HBox>(
 			create<VBox>(
 				create<Close>(),
-				create<SetRoute>(),
-				create<GoTrain>(),
+				create<SetRoute>(routefollower),
+				create<GoTrain>(routefollower),
 				create<GasTrain>(),
 				create<BrakeTrain>(),
 				create<TurnTrain>(),
@@ -173,7 +176,7 @@ TrainPanel::TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& ne
 			create<VBox>(
 				create<HBox>(
 					create<TrainInfoTable>(train),
-					create<TrainOrderTable>(train)
+					create<TrainOrderTable>(routefollower)
 				),
 				create<TrainCoupler>(train)
 			)

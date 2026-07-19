@@ -11,6 +11,7 @@ class Rendering;
 class InterfaceManager;
 class Route;
 class RouteManager;
+class RouteFollower;
 class BuildingType;
 class BuildingManager;
 class BuildingBuilder;
@@ -73,11 +74,12 @@ public:
 class RouteDropdown : public Dropdown
 {
 public:
-    RouteDropdown(Host* p, UIVec pos, UIVec minsz={150,100});
+    RouteDropdown(Host* p, RouteFollower& r, UIVec pos, UIVec minsz={150,100});
     void update(int ms);
 private:
     void lineclicked(int index);
 	RouteManager& routing;
+    RouteFollower& routefollower;
     std::vector<std::string> names;
     std::vector<int> ids;
 };
@@ -130,12 +132,13 @@ protected:
 class TrainOrderTable : public OrderTable
 {
 public:
-    TrainOrderTable(Host* p, Train& t, UIVec pos={0,0}, UIVec minsz={200,150}) : 
-        OrderTable(p, nullptr, pos, minsz), train(t) {};
+    TrainOrderTable(Host* p, RouteFollower& r, UIVec pos={0,0}, 
+                    UIVec minsz={200,150}) : 
+        OrderTable(p, nullptr, pos, minsz), routefollower(r) {};
     void update(int ms);
 private:
     void lineclicked(int index);
-    Train& train;
+    RouteFollower& routefollower;
 };
 
 class TrainTable : public ClickableTable

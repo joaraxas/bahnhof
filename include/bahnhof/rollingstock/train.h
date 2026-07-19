@@ -3,6 +3,7 @@
 #include "bahnhof/track/state.h"
 #include "bahnhof/resources/resources.h"
 #include "bahnhof/graphics/sprite.h"
+#include "bahnhof/routing/routefollower.h"
 
 
 class InputManager;
@@ -37,20 +38,16 @@ public:
     bool hasnowagons() {return wagons.empty();}
     float speed;
     bool gasisforward = true;
-    Route* route = nullptr;
-    int orderid = 0;
-    bool go = false;
     bool wantstocouple = false;
     std::string name = "no name";
-private:
-    bool perform(int ms);
-    void proceed();
     bool checkifreachedstate(State goalstate, int ms);
+private:
     void couple(Train& train, bool ismyback, bool ishisback);
     std::vector<Wagon*> wagons;
     Tracks::Tracksystem* tracksystem;
     UI::Ownership panel;
     bool selected = false;
     Sprite light;
+    RouteFollower routefollower;
     Game* game = nullptr;
 };

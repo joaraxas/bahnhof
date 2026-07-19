@@ -45,6 +45,7 @@ add_library(bahnhof_lib
     track/signal.cpp
     routing/routemanager.cpp
     routing/route.cpp
+    routing/routefollower.cpp
     routing/order.cpp
     rollingstock/rollingstock.cpp
     rollingstock/train.cpp

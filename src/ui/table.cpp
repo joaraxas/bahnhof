@@ -206,9 +206,10 @@ void Dropdown::render(Rendering* r)
     ClickableTable::render(r);
 }
 
-RouteDropdown::RouteDropdown(Host* p, UIVec pos, UIVec minsz) : 
+RouteDropdown::RouteDropdown(Host* p, RouteFollower& r, UIVec pos, UIVec minsz) : 
     Dropdown(p, pos, minsz), 
-    routing(ui->getgame().getgamestate().getrouting())
+    routing(ui->getgame().getgamestate().getrouting()),
+    routefollower{r}
 {}
 
 void RouteDropdown::update(int ms)
@@ -231,7 +232,7 @@ void RouteDropdown::lineclicked(int index)
     names = routing.getroutenames();
     ids = routing.getrouteids();
     if(index<ids.size())
-        dynamic_cast<TrainPanel*>(panel)->gettrain().route = routing.getroute(ids[index]);
+        routefollower.route = routing.getroute(ids[index]);
 }
 
 void ControlModeDropdown::update(int ms)
@@ -377,11 +378,11 @@ void OrderTable::lineclicked(int index)
 
 void TrainOrderTable::update(int ms)
 {
-    route = train.route;
+    route = routefollower.route;
     int id;
     if(route){
         id = route->selectedorderid;
-        route->selectedorderid = train.orderid; // TODO: This is a temporary hack, should extend this functionality to abstract table class
+        route->selectedorderid = routefollower.orderid; // TODO: This is a temporary hack, should extend this functionality to abstract table class
     }
     OrderTable::update(ms);
     if(route)
@@ -391,7 +392,7 @@ void TrainOrderTable::update(int ms)
 void TrainOrderTable::lineclicked(int index)
 {
     if(index<orderids.size())
-        train.orderid = orderids[index];
+        routefollower.orderid = orderids[index];
 }
 
 

@@ -12,6 +12,7 @@ class Rendering;
 class InterfaceManager;
 class InputManager;
 class Route;
+class RouteFollower;
 class TrainManager;
 class Train;
 class Building;
@@ -89,7 +90,10 @@ public:
 class TrainPanel : public Panel
 {
 public:
-    TrainPanel(InterfaceManager* newui, TrainManager& manager, Train& newtrain);
+    TrainPanel(InterfaceManager* newui, 
+               TrainManager& manager, 
+               Train& newtrain,
+               RouteFollower& r);
     Train& gettrain() {return train;};
 private:
     TrainManager& trainmanager;

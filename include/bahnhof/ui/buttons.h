@@ -9,6 +9,7 @@ class Game;
 class Gamestate;
 class Rendering;
 class Route;
+class RouteFollower;
 class InterfaceManager;
 
 namespace Economy{
@@ -135,19 +136,24 @@ public:
 class SetRoute : public TextButton
 {
 public:
-    SetRoute(Host* newpanel) : 
-        TextButton(newpanel, tr("button.train.noroute")) {};
+    SetRoute(Host* newpanel, RouteFollower& r) : 
+        TextButton(newpanel, tr("button.train.noroute")), 
+        routefollower{r} {};
     void update(int ms);
     void leftclick(UIVec mousepos);
+private:
+    RouteFollower& routefollower;
 };
 
 class GoTrain : public TextButton
 {
 public:
-    GoTrain(Host* newpanel) : 
-        TextButton(newpanel, tr("button.train.go")) {};
+    GoTrain(Host* newpanel, RouteFollower& r) : 
+        TextButton(newpanel, tr("button.train.go")), routefollower{r} {};
     void update(int ms);
     void leftclick(UIVec mousepos);
+private:
+    RouteFollower& routefollower;
 };
 
 class GasTrain : public TextButton
