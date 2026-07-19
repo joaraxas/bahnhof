@@ -104,15 +104,15 @@ void InputManager::handle(int ms, int mslogic){
 
     if(!textinput.iswriting()){
         int turbo = 1;
-        if(iskeypressed(fastpanbutton))
+        if(iskeypressed(fastpankey))
             turbo = 3;
-        if(iskeypressed(leftpanbutton))
+        if(iskeypressed(leftpankey))
             cam.pan(Vec(-ms*turbo, 0));
-        if(iskeypressed(rightpanbutton))
+        if(iskeypressed(rightpankey))
             cam.pan(Vec(+ms*turbo, 0));
-        if(iskeypressed(uppanbutton))
+        if(iskeypressed(uppankey))
             cam.pan(Vec(0, -ms*turbo));
-        if(iskeypressed(downpanbutton))
+        if(iskeypressed(downpankey))
             cam.pan(Vec(0, +ms*turbo));
     }
 }

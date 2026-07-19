@@ -18,12 +18,12 @@ class Route;
 struct BuildingType;
 
 namespace Keynames{
-    static constexpr int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
-    static constexpr int fastpanbutton = SDL_SCANCODE_LSHIFT;
-    static constexpr int leftpanbutton = SDL_SCANCODE_A;
-    static constexpr int rightpanbutton = SDL_SCANCODE_D;
-    static constexpr int uppanbutton = SDL_SCANCODE_W;
-    static constexpr int downpanbutton = SDL_SCANCODE_S;
+    static constexpr int numberkeys[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
+    static constexpr int fastpankey = SDL_SCANCODE_LSHIFT;
+    static constexpr int leftpankey = SDL_SCANCODE_A;
+    static constexpr int rightpankey = SDL_SCANCODE_D;
+    static constexpr int uppankey = SDL_SCANCODE_W;
+    static constexpr int downpankey = SDL_SCANCODE_S;
 }
 
 class InputMode;
