@@ -18,13 +18,7 @@ class Route;
 struct BuildingType;
 
 namespace Keynames{
-    static constexpr int gasbutton = SDL_SCANCODE_RIGHT;
-    static constexpr int brakebutton = SDL_SCANCODE_LEFT;
-    static constexpr int gearbutton = SDL_SCANCODE_LSHIFT;
     static constexpr int numberbuttons[10] = {SDL_SCANCODE_0, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4, SDL_SCANCODE_5, SDL_SCANCODE_6, SDL_SCANCODE_7, SDL_SCANCODE_8, SDL_SCANCODE_9};
-    static constexpr int loadbutton = SDL_SCANCODE_L;
-    static constexpr int unloadbutton = SDL_SCANCODE_U;
-    static constexpr int couplebutton = SDL_SCANCODE_G;
     static constexpr int fastpanbutton = SDL_SCANCODE_LSHIFT;
     static constexpr int leftpanbutton = SDL_SCANCODE_A;
     static constexpr int rightpanbutton = SDL_SCANCODE_D;
