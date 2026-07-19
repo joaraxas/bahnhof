@@ -114,8 +114,6 @@ void InputManager::handle(int ms, int mslogic){
             cam.pan(Vec(0, -ms*turbo));
         if(iskeypressed(downpanbutton))
             cam.pan(Vec(0, +ms*turbo));
-
-        trainmanager.getinput(this, mslogic);
     }
 }
 

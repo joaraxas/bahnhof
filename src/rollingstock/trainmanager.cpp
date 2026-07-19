@@ -15,12 +15,6 @@ TrainManager::TrainManager(Tracks::Tracksystem* newtracks, RollingStockManager& 
 	addtrainstoorphans();
 }
 
-void TrainManager::getinput(InputManager* input, int mslogic)
-{
-    for(int iTrain=0; iTrain<trains.size(); iTrain++)
-        trains[iTrain]->getinput(input, mslogic);
-}
-
 void TrainManager::update(int ms)
 {
 	for(int iTrain=0; iTrain<trains.size(); iTrain++)
@@ -67,13 +61,6 @@ void TrainManager::addtrainstoorphans(float speed)
 			addtrain(train);
 			train->speed = speed;
 		}
-	}
-}
-
-void TrainManager::deselectall()
-{
-	for(auto& train: trains){
-		train->deselect();
 	}
 }
 

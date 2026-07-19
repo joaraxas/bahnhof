@@ -36,11 +36,9 @@ class TrainManager
 public:
     TrainManager(Tracks::Tracksystem* newtracks, RollingStockManager& r);
     void update(int ms);
-    void getinput(InputManager* input, int mslogic); 
     void render(Rendering* r);
     void addwagon(Wagon* wagon);
     void addtrain(Train* train);
-    void deselectall();
     Train* gettrainatpos(Vec pos);
     std::vector<TrainInfo> gettrainsinfo();
     void createlistpanel();

@@ -24,25 +24,6 @@ Train::Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &new
 	light.setspritesheet(game->getsprites(), sprites::light);
 }
 
-void Train::getinput(InputManager* input, int ms)
-{
-	using namespace Keynames;
-	if(selected){
-		if(input->iskeypressed(gasbutton))
-			gas(ms);
-		if(input->iskeypressed(brakebutton))
-			brake(ms);
-		if(input->iskeypressed(gearbutton))
-			shiftdirection();
-		if(input->iskeypressed(loadbutton))
-			loadall();
-		if(input->iskeypressed(unloadbutton))
-			unloadall();
-		if(input->iskeypressed(couplebutton))
-			wantstocouple = true;
-	}
-}
-
 void Train::update(int ms)
 {
 	routefollower.trigger(ms);
@@ -73,18 +54,16 @@ void Train::update(int ms)
 
 void Train::render(Rendering* r)
 {
-	if(selected){
-		Vec frontpos = getpos(*tracksystem, forwardstate());
-		Angle forwarddir = getorientation(*tracksystem, forwardstate());
-		light.imagetype = 0;
-		light.imageangle = forwarddir;
-		light.render(r, frontpos);
-		Vec backpos = getpos(*tracksystem, backwardstate());
-		Angle backwarddir = getorientation(*tracksystem, backwardstate());
-		light.imagetype = 1;
-		light.imageangle = backwarddir;
-		light.render(r, backpos);
-	}
+	Vec frontpos = getpos(*tracksystem, forwardstate());
+	Angle forwarddir = getorientation(*tracksystem, forwardstate());
+	light.imagetype = 0;
+	light.imageangle = forwarddir;
+	light.render(r, frontpos);
+	Vec backpos = getpos(*tracksystem, backwardstate());
+	Angle backwarddir = getorientation(*tracksystem, backwardstate());
+	light.imagetype = 1;
+	light.imageangle = backwarddir;
+	light.render(r, backpos);
 }
 
 State Train::forwardstate()
@@ -279,7 +258,7 @@ void Train::couple(Train& train, bool ismyfront, bool ishisfront)
 		std::cout<<"couple me: "<<name<<std::endl;
 		std::cout<<"to other train: "<<train.name<<std::endl;
 		if(train.panel.exists()){
-			select();
+			createpanel();
 		}
 		wantstocouple = false;
 		train.wantstocouple = false;
@@ -322,18 +301,12 @@ TrainInfo Train::getinfo()
 	return TrainInfo(this, name, speed, wagoninfos);
 }
 
-void Train::select()
+void Train::createpanel()
 {
-	selected = true;
 	if(!panel.exists()){
 		panel.set(new UI::TrainPanel(&game->getui(), 
 									  game->getgamestate().gettrainmanager(), 
 									  *this,
 									  routefollower));
 	}
-}
-
-void Train::deselect()
-{
-	selected = false;
 }

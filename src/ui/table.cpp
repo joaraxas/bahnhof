@@ -286,17 +286,14 @@ void TrainTable::update(int ms)
     for(int index=0; index<traininfos.size(); index++){
 	    TrainInfo& info = traininfos[index];
         lines.emplace_back(new TrainTableLine(panel, this, info));
-        if(info.train->isselected())
-            selectedlineindex = index;
 	}
 }
 
 void TrainTable::lineclicked(int index)
 {
     traininfos = trainmanager->gettrainsinfo();
-    trainmanager->deselectall();
     TrainInfo info = traininfos[index];
-    info.train->select();
+    info.train->createpanel();
 }
 
 

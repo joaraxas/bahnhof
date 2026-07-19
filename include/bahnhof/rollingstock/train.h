@@ -18,7 +18,6 @@ class Train
 {
 public:
     Train(Tracks::Tracksystem& newtracksystem, const std::vector<Wagon*> &newwagons);
-    void getinput(InputManager* input, int ms);
     void update(int ms);
     void checkcollision(int ms, Train* train);
     void render(Rendering* r);
@@ -32,9 +31,7 @@ public:
     State backwardstate();
     bool split(int where, Route* assignedroute=nullptr);
     TrainInfo getinfo();
-    void select();
-    void deselect();
-    bool isselected() {return selected;};
+    void createpanel();
     bool hasnowagons() {return wagons.empty();}
     float speed;
     bool gasisforward = true;
@@ -46,7 +43,6 @@ private:
     std::vector<Wagon*> wagons;
     Tracks::Tracksystem* tracksystem;
     UI::Ownership panel;
-    bool selected = false;
     Sprite light;
     RouteFollower routefollower;
     Game* game = nullptr;

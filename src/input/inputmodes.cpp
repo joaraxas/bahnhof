@@ -23,22 +23,12 @@ void IdleMode::leftclickmap(Vec mappos)
     
     Train* clickedtrain = trainmanager.gettrainatpos(mappos);
     if(clickedtrain){
-        selecttrain(clickedtrain);
+        clickedtrain->createpanel();
         return;
     }
     
     if(Tracks::Input::switchat(tracksystem, mappos)){
         return;
-    }
-
-    selecttrain(nullptr);
-}
-
-void IdleMode::selecttrain(Train* train)
-{
-    trainmanager.deselectall();
-	if(train){
-		train->select();
     }
 }
 
