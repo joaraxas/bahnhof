@@ -100,31 +100,34 @@ State Train::backwardstate()
 
 void Train::checkcollision(int ms, Train* train)
 {
-	if(speed!=0 && size(wagons) >= 1 && size(train->wagons) >= 1){
-		float pixels = ms*0.001*abs(speed);
-		float distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->forwardstate()), pixels, true);
-		if(distance<pixels){
-			distance-=0.0001; // prevents comparison of equal floats
-			for(auto wagon: wagons)
-				wagon->axes->travel(distance*sign(speed));
-			couple(*train, gasisforward, train->gasisforward);
-		}
-		else{
-			distance = Tracks::distancefromto(*tracksystem, forwardstate(), flipstate(train->backwardstate()), pixels, true);
-			if(distance<pixels){
-				distance-=0.0001; // prevents comparison of equal floats
-				for(auto wagon: wagons)
-					wagon->axes->travel(distance*sign(speed));
-				couple(*train, gasisforward, !train->gasisforward);
-			}
-		}
+	if(speed==0 || wagons.empty() || train->wagons.empty())
+		return;
+	float pixels = ms*0.001*abs(speed);
+	float distance = Tracks::distancefromto(*tracksystem, forwardstate(), 
+		flipstate(train->forwardstate()), pixels, true);
+	if(distance<pixels){
+		distance-=0.0001; // prevents comparison of equal floats
+		for(auto wagon: wagons)
+			wagon->axes->travel(distance*sign(speed));
+		couple(*train, gasisforward, train->gasisforward);
+		return;
+	}
+	distance = Tracks::distancefromto(*tracksystem, forwardstate(), 
+		flipstate(train->backwardstate()), pixels, true);
+	if(distance<pixels){
+		distance-=0.0001; // prevents comparison of equal floats
+		for(auto wagon: wagons)
+			wagon->axes->travel(distance*sign(speed));
+		couple(*train, gasisforward, !train->gasisforward);
 	}
 }
 
 bool Train::checkifreachedstate(State goalstate, int ms)
 {
 	float pixels = 4*abs(speed)*ms*0.001;
-	if(Tracks::distancefromto(*tracksystem, flipstate(forwardstate()), goalstate, pixels)<pixels)
+	if(Tracks::distancefromto(
+		*tracksystem, flipstate(forwardstate()), goalstate, pixels) < pixels
+	)
 		return true;
 	else
 		return false;
