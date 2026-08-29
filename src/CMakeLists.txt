@@ -15,6 +15,7 @@ add_library(bahnhof_lib
     game/gamestate.cpp
     game/game.cpp
     game/resources.cpp
+    game/storage.cpp
     input/input.cpp
     input/controlmanager.cpp
     input/textinput.cpp

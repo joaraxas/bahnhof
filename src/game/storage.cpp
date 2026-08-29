@@ -1,0 +1,147 @@
+#include "bahnhof/common/shape.h"
+#include "bahnhof/common/gamestate.h"
+#include "bahnhof/graphics/sprite.h"
+#include "bahnhof/graphics/rendering.h"
+#include "bahnhof/resources/resources.h"
+#include "bahnhof/resources/storage.h"
+#include "bahnhof/ui/ui.h"
+
+std::vector<std::unique_ptr<Storage>> storages;
+
+
+Storage::Storage(Game* whatgame, StorageOwner& o, int x, int y, int w, int h) :
+	control(o)
+{
+	game = whatgame;
+	rect = {x, y, w, h};
+	control.getowner().listpossession(*this); // TODO: This belongs in control's ctor
+}
+
+Storage::~Storage()
+{
+	control.getowner().delistpossession(*this);
+}
+
+void Storage::render(Rendering* r)
+{
+	ResourceManager& allresources = game->getresources();
+	InterfaceManager& ui = allresources.getgame().getui();
+
+	SDL_SetRenderDrawColor(renderer, 63, 63, 63, 255);
+	r->renderrectangle(rect);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	
+	int xoffset = 0;
+	int nCols = 0;
+	const float camscale = r->getcamscale();
+	const float uiscale = ui.getuirendering().getuiscale();
+	const int iconwidth = 20*uiscale/camscale;
+	const int frameoffset = fmax(1,int(2*uiscale/camscale));
+
+	for(auto resourcepair : storedresources){
+		Resource* resource = allresources.get(resourcepair.first);
+		int amount = resourcepair.second;
+		if(amount*iconwidth*iconwidth < rect.w*rect.h*0.6){
+			int maxrows = floor(rect.h/iconwidth);
+			for(int i=0; i<amount; i++){
+				nCols = floor(i/maxrows);
+				int x = rect.x +
+						frameoffset +
+						xoffset +
+						iconwidth/2 +
+						iconwidth*nCols;
+				int y = rect.y +
+						frameoffset +
+						iconwidth/2 +
+						iconwidth*i -
+						nCols*maxrows*iconwidth;
+				resource->render(r, Vec(x, y));
+			}
+			xoffset += (1+nCols)*iconwidth;
+		}
+		else{
+			int x = rect.x + frameoffset + xoffset;
+			int y = rect.y + frameoffset;
+			SDL_Rect textrect = r->rendertext(std::to_string(amount), x, y);
+			int textwidth = textrect.w/camscale;
+			resource->render(r, 
+							 Vec(x + textwidth + iconwidth/2, 
+							 	 y + iconwidth/2)
+			);
+			xoffset += textwidth+iconwidth;
+		}
+	}
+}
+
+bool Storage::containspoint(Vec pos)
+{
+	return pos.x>=rect.x && pos.x<=rect.x+rect.w && pos.y>=rect.y && pos.y<=rect.y+rect.h;
+}
+
+int Storage::loadstorage(resourcetype resource, int amount)
+{
+	if(resource!=none){
+		if(storedresources.count(resource)){
+			amount = std::min(amount, 20-storedresources[resource]);
+			storedresources[resource] += amount;
+		}
+		else
+			storedresources[resource] = amount;
+	}
+	else
+		amount = 0;
+	return amount;
+}
+
+int Storage::unloadstorage(resourcetype resource, int amount)
+{
+	int unloadedamount = 0;
+	if(storedresources.count(resource)){
+		unloadedamount = std::min(storedresources[resource], amount);
+		storedresources[resource] -= unloadedamount;
+		if(storedresources[resource] == 0)
+			storedresources.erase(resource);
+	}
+	return unloadedamount;
+}
+
+bool Storage::accepts(resourcetype resource)
+{
+	return acceptedresources.contains(resource);
+}
+
+bool Storage::provides(resourcetype resource)
+{
+	return providedresources.contains(resource);
+}
+
+void Storage::setaccepting(resourcetype resource, bool shouldaccept)
+{
+	if(shouldaccept)
+		acceptedresources.insert(resource);
+	else
+		acceptedresources.erase(resource);
+}
+
+void Storage::setproviding(resourcetype resource, bool shouldprovide)
+{
+	if(shouldprovide)
+		providedresources.insert(resource);
+	else
+		providedresources.erase(resource);
+}
+
+resourcetype Storage::getfirstprovidedresource()
+{
+	return *providedresources.begin();
+}
+
+
+Storage* getstorageatpoint(Vec pos)
+{
+	for(auto& storage : storages){
+		if(storage->containspoint(pos))
+			return storage.get();
+	}
+	return nullptr;
+}
