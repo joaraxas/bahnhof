@@ -41,5 +41,5 @@ void StorageBuilder::build()
 SDL_Rect StorageBuilder::getspace() const
 {
     Vec corner1 = orientor.getanchor();
-    return {static_cast<int>(corner1.x), static_cast<int>(corner1.y), 200, 200};
+    return {static_cast<int>(corner1.x), static_cast<int>(corner1.y), 700, 700};
 }

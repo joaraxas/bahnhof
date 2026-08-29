@@ -98,7 +98,12 @@ Industry::Industry(Game* whatgame, BuildingID id, std::unique_ptr<Shape> s,
 void Industry::trigger()
 {
 	using namespace Economy;
+	storage = getstorageatpoint(shape->mid());
 	if(storage){
+		for(auto resource : wants)
+			storage->setaccepting(resource, true);
+		for(auto resource : makes)
+			storage->setproviding(resource, true);
 		int got = 0;
 		for(auto want: wants)
 			got += storage->unloadstorage(want, 1);

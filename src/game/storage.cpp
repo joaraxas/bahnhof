@@ -14,7 +14,7 @@ Storage::Storage(Game* whatgame, StorageOwner& o, int x, int y, int w, int h) :
 {
 	game = whatgame;
 	rect = {x, y, w, h};
-	control.getowner().listpossession(*this); // TODO: This belongs in control's ctor
+	control.getowner().listpossession(*this);
 }
 
 Storage::~Storage()
