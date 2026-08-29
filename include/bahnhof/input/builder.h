@@ -120,8 +120,7 @@ public:
     StorageBuilder(InputManager& i, Game* g);
     void render(Rendering*);
 private:
-    void reset();
     bool canfit();
     void build();
-
+    SDL_Rect getspace() const;
 };

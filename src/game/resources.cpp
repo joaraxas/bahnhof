@@ -79,7 +79,7 @@ void Storage::render(Rendering* r)
 	ResourceManager& allresources = game->getresources();
 	InterfaceManager& ui = allresources.getgame().getui();
 
-	SDL_SetRenderDrawColor(renderer, 127, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 63, 63, 63, 255);
 	r->renderrectangle(rect);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	

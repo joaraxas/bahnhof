@@ -75,6 +75,14 @@ public:
     void leftclick(UIVec mousepos);
 };
 
+class PlaceStorages : public TextButton
+{
+public:
+    PlaceStorages(Host* newpanel) : 
+        TextButton(newpanel, tr("button.buildstorage")) {};
+    void leftclick(UIVec mousepos);
+};
+
 class Bulldoze : public TextButton
 {
 public:

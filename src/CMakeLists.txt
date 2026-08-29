@@ -22,6 +22,7 @@ add_library(bahnhof_lib
     input/builder.cpp
     input/trackbuilder.cpp
     input/signalbuilder.cpp
+    input/storagebuilder.cpp
     input/buildingbuilder.cpp
     ui/ui.cpp
     ui/uirendering.cpp

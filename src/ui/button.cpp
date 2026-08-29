@@ -80,6 +80,12 @@ void PlaceBuildings::leftclick(UIVec mousepos)
     game->getgamestate().getbuildingmanager().createconstructionpanel();
 }
 
+void PlaceStorages::leftclick(UIVec mousepos)
+{
+    auto& input = game->getinputmanager();
+    input.setinputmode(std::make_unique<StorageBuilder>(input, game));
+}
+
 void Bulldoze::leftclick(UIVec mousepos)
 {
     auto& input = game->getinputmanager();
