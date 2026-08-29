@@ -111,3 +111,17 @@ private:
     const BuildingType& building;
     BuildingManager& buildingmanager;
 };
+
+
+class StorageBuilder : public Builder
+{
+    using StorageOwner = Economy::Control<Storage>;
+public:
+    StorageBuilder(InputManager& i, Game* g);
+    void render(Rendering*);
+private:
+    void reset();
+    bool canfit();
+    void build();
+
+};
