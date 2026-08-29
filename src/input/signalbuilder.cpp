@@ -16,24 +16,24 @@ void SignalBuilder::render(Rendering* r)
     Builder::render(r);
     if(canbuild()){
         icon.color = {127,255,127,255};
-        Vec signalpos = Tracks::Input::plansignalat(tracksystem, anchorpoint);
+        Vec signalpos = Tracks::Input::plansignalat(tracksystem, orientor.getanchor());
         icon.render(r, signalpos);
     }
     else{
         icon.color = {255,127,127,255};
-        icon.render(r, anchorpoint);
+        icon.render(r, orientor.getanchor());
     }
 }
 
 bool SignalBuilder::canfit()
 {
-    Vec signalpos = Tracks::Input::plansignalat(tracksystem, anchorpoint);
-    if(norm(signalpos-anchorpoint)<100)
+    Vec signalpos = Tracks::Input::plansignalat(tracksystem, orientor.getanchor());
+    if(norm(signalpos-orientor.getanchor())<100)
         return true;
     return false;
 }
 
 void SignalBuilder::build()
 {
-    Tracks::Input::buildsignalat(tracksystem, anchorpoint);
+    Tracks::Input::buildsignalat(tracksystem, orientor.getanchor());
 }

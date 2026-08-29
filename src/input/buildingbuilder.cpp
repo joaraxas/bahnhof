@@ -23,10 +23,10 @@ void BuildingBuilder::render(Rendering* r)
     Builder::render(r);
     
     if(building.id==wagonfactory){
-        Angle newangle = angle;
+        Angle newangle = orientor.get();
         Tracks::Tracksection section = 
             Tracks::Input::planconstructionto(
-                tracksystem, anchorpoint, 600, newangle
+                tracksystem, orientor.getanchor(), 600, newangle
         );
         TracksDisplayMode mode = TracksDisplayMode::planned;
         if(!canbuild())
@@ -34,7 +34,7 @@ void BuildingBuilder::render(Rendering* r)
         Tracks::render(section, r, mode);
         Tracks::Input::discardsection(section);
     }
-    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    std::unique_ptr<Shape> shape = getplacementat(orientor.getanchor());
     SDL_Color color;
     if(canbuild()){
         color = building.color;
@@ -46,25 +46,19 @@ void BuildingBuilder::render(Rendering* r)
     shape.get()->renderfilled(r, color);
 }
 
-void BuildingBuilder::reset()
-{
-    Builder::reset();
-    angle = Angle::zero;
-}
-
 bool BuildingBuilder::canfit()
 {
     BuildingOwner* contractor = game->getcontrolmode().buildings;
     if(!contractor)
         return false; // not about "fitting" but needs to be checked here.
-    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    std::unique_ptr<Shape> shape = getplacementat(orientor.getanchor());
     if(buildingmanager.checkcollision(*shape.get()))
         return false;
     if(building.id == wagonfactory){
-        Angle newangle = angle;
+        Angle newangle = orientor.get();
         Tracks::Tracksection section = 
             Tracks::Input::planconstructionto(
-                tracksystem, anchorpoint, 600, newangle
+                tracksystem, orientor.getanchor(), 600, newangle
         );
         if(buildingmanager.checkcollision(section)){
             Tracks::Input::discardsection(section); 
@@ -79,7 +73,7 @@ void BuildingBuilder::build()
 {
     BuildingOwner* contractor = game->getcontrolmode().buildings;
     if(!contractor) return;
-    std::unique_ptr<Shape> shape = getplacementat(anchorpoint);
+    std::unique_ptr<Shape> shape = getplacementat(orientor.getanchor());
     switch(building.id)
     {
     case brewery:
@@ -109,14 +103,14 @@ void BuildingBuilder::build()
     case wagonfactory:{
         RollingStockManager& r = 
             game->getgamestate().getrollingstockmanager();
-        Angle newangle = angle;
+        Angle newangle = orientor.get();
         Tracks::Tracksection section = 
             Tracks::Input::planconstructionto(
-                tracksystem, anchorpoint, 600, newangle
+                tracksystem, orientor.getanchor(), 600, newangle
         );
         Tracks::Input::buildsection(tracksystem, section);
         State midpointstate = 
-            Tracks::Input::getstateat(tracksystem, anchorpoint);
+            Tracks::Input::getstateat(tracksystem, orientor.getanchor());
         if(!Tracks::getorientation(tracksystem, midpointstate).isbetween(newangle-Angle(1), newangle+Angle(1)))
             midpointstate.alignedwithtrack = !midpointstate.alignedwithtrack;
         midpointstate = flipstate(
@@ -139,7 +133,7 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos) const
     switch (building.id)
     {
     case wagonfactory:{
-        Angle newangle = angle;
+        Angle newangle = orientor.get();
         State neareststate = Tracks::Input::getendpointat(tracksystem, pos, 20);
         Vec buildingmidpoint = Tracks::gettrackextension(tracksystem, neareststate, 500, newangle);
         if(neareststate)
@@ -158,9 +152,9 @@ std::unique_ptr<Shape> BuildingBuilder::getplacementat(Vec pos) const
             );
     }
     default:{
-        if(angle==Angle::zero)
+        if(orientor.get()==Angle::zero)
             return std::make_unique<Rectangle>(pos, building.size);
-        return std::make_unique<RotatedRectangle>(pos, building.size.x, building.size.y, angle);
+        return std::make_unique<RotatedRectangle>(pos, building.size.x, building.size.y, orientor.get());
     }
     }
 }

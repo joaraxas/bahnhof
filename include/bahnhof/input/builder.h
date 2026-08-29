@@ -14,6 +14,7 @@ namespace Tracks{
 }
 
 class Game;
+class Camera;
 class Rendering;
 class InputManager;
 class InterfaceManager;
@@ -23,6 +24,27 @@ class Building;
 namespace Economy{
     class Account;
 }
+class Storage;
+
+class Orientor
+{
+public:
+    Orientor(Camera& c) : cam{c} {};
+    void startpoint(Vec pos);
+    void endpoint(Vec pos);
+    void reset();
+    bool anchordropped() const {return droppedanchor;}
+    Angle get() const {return angle;}
+    Vec getanchor() const {return anchorpoint;}
+    bool isanglevalid() const {return valid;}
+private:
+    void updateangle(Vec pos);
+    Camera& cam;
+    Vec anchorpoint{0,0};
+    bool droppedanchor{false};
+    Angle angle{};
+    bool valid{false};
+};
 
 class Builder : public InputMode
 {
@@ -39,14 +61,10 @@ protected:
     virtual bool canfit() {return true;};
     virtual void build() {};
     Economy::Money cost;
-    Vec anchorpoint{0,0};
-    bool droppedanchor = false;
-    Angle angle;
-    bool angleisset;
     Game* game;
     Tracks::Tracksystem& tracksystem;
+    Orientor orientor;
 private:
-    void updateangle(Vec pos);
     InputManager& input;
 };
 
@@ -55,8 +73,8 @@ class TrackBuilder : public Builder
 public:
     TrackBuilder(InputManager& i, Game* g);
     void render(Rendering*);
-    void reset();
 private:
+    void reset();
     bool canfit();
     void build();
     bool islayingtrack();
@@ -86,7 +104,6 @@ class BuildingBuilder : public Builder
 public:
     BuildingBuilder(InputManager& i, Game* g, const BuildingType& b);
     void render(Rendering*);
-    void reset();
 private:
     bool canfit();
     void build();

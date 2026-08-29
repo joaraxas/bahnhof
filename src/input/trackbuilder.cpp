@@ -12,8 +12,9 @@ TrackBuilder::TrackBuilder(InputManager& i, Game* g) :
 
 Tracks::Tracksection TrackBuilder::planconstruction(Vec pos)
 {
-    Angle* angleptr = nullptr;
-    if(angleisset){
+    const Angle angle = orientor.get();
+    const Angle* angleptr = nullptr;
+    if(orientor.isanglevalid()){
         angleptr = &angle;
     }
     if(buildingfromstartpoint()){
@@ -41,7 +42,7 @@ bool TrackBuilder::islayingtrack()
 void TrackBuilder::render(Rendering* r)
 {
     Builder::render(r);
-    Tracks::Tracksection section = planconstruction(anchorpoint);
+    Tracks::Tracksection section = planconstruction(orientor.getanchor());
     cost = Tracks::Input::getcostoftracks(section);
     TracksDisplayMode mode = TracksDisplayMode::planned;
     if(!canbuild())
@@ -92,7 +93,7 @@ bool TrackBuilder::canfit()
         return true;
     bool acceptablesection = true;
 
-    Tracks::Tracksection section = planconstruction(anchorpoint);
+    Tracks::Tracksection section = planconstruction(orientor.getanchor());
     acceptablesection &= (Tracks::Input::getminradiusofsection(section) >= 100);
     acceptablesection &= !game->getgamestate().getbuildingmanager().checkcollision(section);
     Tracks::Input::discardsection(section);
@@ -103,7 +104,7 @@ bool TrackBuilder::canfit()
 void TrackBuilder::build()
 {
     if(islayingtrack()){
-        Tracks::Tracksection section = planconstruction(anchorpoint);
+        Tracks::Tracksection section = planconstruction(orientor.getanchor());
         if(section){
             cost = Tracks::Input::getcostoftracks(section);
             Tracks::Input::buildsection(tracksystem, section);
@@ -111,9 +112,9 @@ void TrackBuilder::build()
             selectedstate = State();
         }
     }
-    selectednode = Tracks::Input::selectnodeat(tracksystem, anchorpoint);
+    selectednode = Tracks::Input::selectnodeat(tracksystem, orientor.getanchor());
     if(selectednode) return;
-    selectedstate = Tracks::Input::getstateat(tracksystem, anchorpoint, 20/game->getcamera().getscale());
+    selectedstate = Tracks::Input::getstateat(tracksystem, orientor.getanchor(), 20/game->getcamera().getscale());
     if(selectedstate) return;
-    trackstartpoint = anchorpoint;
+    trackstartpoint = orientor.getanchor();
 }

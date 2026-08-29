@@ -6,25 +6,56 @@
 #include "bahnhof/economy/company.h"
 
 
+void Orientor::startpoint(Vec mappos)
+{
+    anchorpoint = mappos;
+    droppedanchor = true;
+}
+
+void Orientor::endpoint(Vec mappos)
+{
+    if(droppedanchor)
+        updateangle(mappos);
+    else
+        anchorpoint = mappos;
+}
+
+void Orientor::reset()
+{
+    anchorpoint = Vec(0,0);
+    droppedanchor = false;
+    valid = false;
+}
+
+void Orientor::updateangle(Vec mappos)
+{
+    Vec diff = mappos-anchorpoint;
+    if(norm(diff) > 20/cam.getscale()){
+        angle = Angle(diff);
+        valid = true;
+    }
+    else{
+        valid = false;
+    }
+}
+
+
 Builder::Builder(InputManager& inp, Game* newgame) : 
-    input(inp),
     game(newgame),
-    tracksystem(game->getgamestate().gettracksystems())
+    tracksystem(game->getgamestate().gettracksystems()),
+    input(inp),
+    orientor(game->getcamera())
 {}
 
 void Builder::render(Rendering* r)
 {
     Vec mousepos = input.mapmousepos();
-    if(!droppedanchor)
-        anchorpoint = mousepos;
-    else
-        updateangle(mousepos);
+    orientor.endpoint(mousepos);
 }
 
 void Builder::leftclickmap(Vec mappos)
 {
-    anchorpoint = mappos;
-    droppedanchor = true;
+    orientor.startpoint(mappos);
 }
 
 void Builder::rightclickmap(Vec mappos)
@@ -34,8 +65,8 @@ void Builder::rightclickmap(Vec mappos)
 
 void Builder::leftreleasedmap(Vec mappos)
 {
-    if(droppedanchor){
-        updateangle(mappos);
+    if(orientor.anchordropped()){
+        orientor.endpoint(mappos);
         if(canbuild()){
             build();
             game->getcontrolmode().account->
@@ -47,9 +78,7 @@ void Builder::leftreleasedmap(Vec mappos)
 
 void Builder::reset()
 {
-    anchorpoint = Vec(0,0);
-    droppedanchor = false;
-    angleisset = false;
+    orientor.reset();
 }
 
 bool Builder::canbuild()
@@ -59,14 +88,4 @@ bool Builder::canbuild()
     if(!canfit())
         return false;
     return true;
-}
-
-void Builder::updateangle(Vec pos)
-{
-    Vec diff = pos-anchorpoint;
-    angleisset = false;
-    if(norm(diff) > 20/game->getcamera().getscale()){
-        angle = Angle(diff);
-        angleisset = true;
-    }
 }

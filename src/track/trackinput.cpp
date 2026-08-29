@@ -59,7 +59,7 @@ signalid buildsignalat(Tracksystem& tracksystem, Vec pos)
 	return tracksystem.addsignal(signalstate);
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, Angle* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec topos, const Angle* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);
@@ -94,7 +94,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, Node* fromnode, Vec to
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, Angle* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec topos, const Angle* angle)
 {
 	Node* fromnode = new Node(
 		tracksystem,
@@ -108,7 +108,7 @@ Tracksection planconstructionto(Tracksystem& tracksystem, State fromstate, Vec t
 	return section;
 }
 
-Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, Angle* angle)
+Tracksection planconstructionto(Tracksystem& tracksystem, Vec frompos, Vec topos, const Angle* angle)
 {
 	trackid clickedtrack = 0;
 	State clickedstate = whatdidiclick(tracksystem, topos, &clickedtrack, nullptr, nullptr, nullptr);

@@ -21,7 +21,6 @@ public:
     virtual void rightclickmap(Vec mappos) {};
     virtual void leftreleasedmap(Vec mappos) {};
 private:
-    void selecttrain(Train* train);
     TrainManager& trainmanager;
     BuildingManager& buildingmanager;
     Tracks::Tracksystem& tracksystem;
