@@ -2,6 +2,7 @@ button.close = Close
 button.buildtrack = Place tracks
 button.buildsignal = Add signal
 button.buildbuilding = Raise building
+button.buildstorage = Create loading area
 button.bulldoze = Bulldoze
 button.routes = Manage routes
 button.trains = Manage trains

@@ -2,6 +2,7 @@ button.close = Stäng
 button.buildtrack = Anlägg järnväg
 button.buildsignal = Ny signal
 button.buildbuilding = Anlägg fastighet
+button.buildstorage = Anlägg lastyta
 button.bulldoze = Riv
 button.routes = Linjer
 button.trains = Tågöversikt
